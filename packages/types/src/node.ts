@@ -54,7 +54,7 @@ export interface PortDefinition {
   label: string;
   type: string;
   required?: boolean;
-  defaultValue?: any;
+  defaultValue?: unknown;
   description?: string;
 }
 
@@ -74,7 +74,7 @@ export interface NodeData {
   id: NodeId;
   type: NodeType;
   position: Position;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 /**
