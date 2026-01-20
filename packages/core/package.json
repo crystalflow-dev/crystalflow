@@ -1,0 +1,39 @@
+{
+  "name": "@reactflo/core",
+  "version": "0.1.0",
+  "description": "Core workflow engine for ReactFlo",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "workflow",
+    "workflow-engine",
+    "node-system",
+    "execution"
+  ],
+  "author": "ReactFlo Team",
+  "license": "MIT",
+  "dependencies": {
+    "@reactflo/types": "*",
+    "reflect-metadata": "^0.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  },
+  "peerDependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}

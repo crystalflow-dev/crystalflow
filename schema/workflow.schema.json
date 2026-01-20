@@ -1,0 +1,171 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://reactflo.dev/schemas/workflow.v1.json",
+  "title": "ReactFlo Workflow Schema",
+  "description": "JSON Schema for ReactFlo workflow definitions",
+  "type": "object",
+  "required": ["version", "id", "name", "nodes", "connections"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version (semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0"]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique workflow identifier",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable workflow name",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "description": {
+      "type": "string",
+      "description": "Workflow description",
+      "maxLength": 1000
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional workflow metadata",
+      "properties": {
+        "author": {
+          "type": "string",
+          "description": "Workflow author"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp (ISO 8601)"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp (ISO 8601)"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Workflow tags",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "description": "Array of workflow nodes",
+      "items": {
+        "$ref": "#/definitions/node"
+      }
+    },
+    "connections": {
+      "type": "array",
+      "description": "Array of node connections",
+      "items": {
+        "$ref": "#/definitions/connection"
+      }
+    },
+    "variables": {
+      "type": "object",
+      "description": "Global workflow variables",
+      "additionalProperties": true
+    }
+  },
+  "definitions": {
+    "node": {
+      "type": "object",
+      "required": ["id", "type", "position", "data"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique node identifier",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "description": "Node type identifier (e.g., 'math.add')",
+          "pattern": "^[a-z0-9]+\\.[a-z0-9]+$"
+        },
+        "position": {
+          "$ref": "#/definitions/position"
+        },
+        "data": {
+          "type": "object",
+          "description": "Node-specific data",
+          "properties": {
+            "label": {
+              "type": "string",
+              "description": "Custom node label"
+            },
+            "inputs": {
+              "type": "object",
+              "description": "Input port values",
+              "additionalProperties": true
+            },
+            "outputs": {
+              "type": "object",
+              "description": "Output port values",
+              "additionalProperties": true
+            },
+            "config": {
+              "type": "object",
+              "description": "Node configuration",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "connection": {
+      "type": "object",
+      "required": ["id", "source", "target"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique connection identifier",
+          "minLength": 1
+        },
+        "source": {
+          "$ref": "#/definitions/portReference"
+        },
+        "target": {
+          "$ref": "#/definitions/portReference"
+        }
+      }
+    },
+    "portReference": {
+      "type": "object",
+      "required": ["nodeId", "portId"],
+      "properties": {
+        "nodeId": {
+          "type": "string",
+          "description": "Node identifier",
+          "minLength": 1
+        },
+        "portId": {
+          "type": "string",
+          "description": "Port identifier",
+          "minLength": 1
+        }
+      }
+    },
+    "position": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": {
+          "type": "number",
+          "description": "X coordinate on canvas"
+        },
+        "y": {
+          "type": "number",
+          "description": "Y coordinate on canvas"
+        }
+      }
+    }
+  }
+}
