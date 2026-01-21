@@ -11,8 +11,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsc -p tsconfig.build.json --watch",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "cd ../.. && npm test -- --testPathPatterns=packages/core",
+    "test:watch": "cd ../.. && npm test -- --testPathPatterns=packages/core --watch",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
   },

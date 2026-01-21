@@ -6,11 +6,13 @@
 // Node System
 export * from './node';
 
+// Workflow System
+export * from './workflow';
+
 // Utilities
 export * from './utils/serialization';
 
 // TODO: Implement remaining features
-// - Workflow System (Workflow, Connection, Graph)
 // - Execution System (Executor, ExecutionContext)
 // - Event System (EventEmitter)
 // - Type System (DataType, TypeValidator)
