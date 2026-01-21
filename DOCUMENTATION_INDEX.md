@@ -13,6 +13,7 @@ Welcome to ReactFlo! This index will help you navigate all project documentation
 ## 📚 Core Documentation
 
 ### For Users
+
 - **[docs/getting-started.md](docs/getting-started.md)** - How to use ReactFlo in your project
 - **[docs/core-concepts.md](docs/core-concepts.md)** - Understanding nodes, workflows, and execution
 - **[docs/json-schema.md](docs/json-schema.md)** - Workflow JSON format and serialization
@@ -20,21 +21,25 @@ Welcome to ReactFlo! This index will help you navigate all project documentation
 - **[docs/decorators-in-react.md](docs/decorators-in-react.md)** - How decorators work with React
 
 ### For Contributors
+
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute to ReactFlo
 - **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)** - Complete file structure guide
 - **[PROJECT_STATUS.md](PROJECT_STATUS.md)** - Current progress and what's next
 
 ### For Developers
+
 - **[SETUP_SUMMARY.md](SETUP_SUMMARY.md)** - Setup instructions and next steps
 - **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Commands, conventions, and best practices
 
 ## 📦 Package Documentation
 
 ### @reactflo/core
+
 - **[packages/core/README.md](packages/core/README.md)** - Core workflow engine
 - **[packages/core/src/index.ts](packages/core/src/index.ts)** - API exports
 
 ### @reactflo/types
+
 - **[packages/types/README.md](packages/types/README.md)** - TypeScript type definitions
 - **[packages/types/src/node.ts](packages/types/src/node.ts)** - Node types
 - **[packages/types/src/workflow.ts](packages/types/src/workflow.ts)** - Workflow types
@@ -44,11 +49,13 @@ Welcome to ReactFlo! This index will help you navigate all project documentation
 ## 🛠️ Development Resources
 
 ### Setup & Configuration
+
 - **[scripts/setup.sh](scripts/setup.sh)** - Development environment setup
 - **[scripts/build.sh](scripts/build.sh)** - Build all packages
 - **[scripts/test.sh](scripts/test.sh)** - Run all tests
 
 ### Configuration Files
+
 - **[package.json](package.json)** - Workspace configuration
 - **[tsconfig.json](tsconfig.json)** - TypeScript configuration
 - **[jest.config.js](jest.config.js)** - Testing configuration

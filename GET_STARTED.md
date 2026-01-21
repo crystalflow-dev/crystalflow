@@ -16,6 +16,7 @@ ReactFlo is now ready for development! The framework foundation has been establi
 ## 📁 What's Been Created
 
 ### 📚 Documentation (7 files)
+
 ```
 ✅ README.md                    - Main project overview & roadmap
 ✅ PROJECT_STRUCTURE.md         - Detailed file structure
@@ -27,6 +28,7 @@ ReactFlo is now ready for development! The framework foundation has been establi
 ```
 
 ### ⚙️ Configuration (8 files)
+
 ```
 ✅ package.json                - Monorepo workspace config
 ✅ tsconfig.json               - TypeScript base config
@@ -38,12 +40,14 @@ ReactFlo is now ready for development! The framework foundation has been establi
 ```
 
 ### 🤖 CI/CD (2 files)
+
 ```
 ✅ .github/workflows/ci.yml    - Continuous integration
 ✅ .github/workflows/test.yml  - Automated testing
 ```
 
 ### 🔧 Scripts (3 files)
+
 ```
 ✅ scripts/setup.sh            - Development setup
 ✅ scripts/build.sh            - Build all packages
@@ -51,6 +55,7 @@ ReactFlo is now ready for development! The framework foundation has been establi
 ```
 
 ### 📖 Docs (2 files)
+
 ```
 ✅ docs/getting-started.md     - User guide
 ✅ docs/core-concepts.md       - Framework concepts
@@ -59,6 +64,7 @@ ReactFlo is now ready for development! The framework foundation has been establi
 ### 📦 Packages (13 files)
 
 #### @reactflo/types (Complete)
+
 ```
 ✅ packages/types/package.json
 ✅ packages/types/tsconfig.json
@@ -72,6 +78,7 @@ ReactFlo is now ready for development! The framework foundation has been establi
 ```
 
 #### @reactflo/core (Structure Ready)
+
 ```
 ✅ packages/core/package.json
 ✅ packages/core/tsconfig.json
@@ -89,8 +96,9 @@ ReactFlo is now ready for development! The framework foundation has been establi
 **Built on React Flow:** ReactFlo leverages React Flow's battle-tested canvas implementation and focuses on what's missing: declarative node definitions, automatic registration, and powerful execution.
 
 ### Key Features
+
 - 🎨 Declarative node definition with TypeScript decorators
-- 🔍 Automatic node discovery and registration  
+- 🔍 Automatic node discovery and registration
 - ✅ Type-safe connections with validation
 - ⚡ Smart execution engine (parallel, async, error handling)
 - 🎭 Visual workflow builder (powered by React Flow)
@@ -103,6 +111,7 @@ ReactFlo is now ready for development! The framework foundation has been establi
 ## 🚀 Getting Started
 
 ### 1. Run Setup
+
 ```bash
 cd /home/hamza-ben-yazid/Fladeed/reactflo
 chmod +x scripts/*.sh
@@ -110,11 +119,13 @@ chmod +x scripts/*.sh
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 3. Start Development
+
 ```bash
 npm run dev
 ```
@@ -128,18 +139,20 @@ npm run dev
 **Priority: HIGH** - Foundation for everything else
 
 1. **Create Base Node Class** [`packages/core/src/node/Node.ts`]
+
    ```typescript
    export abstract class Node {
      id: string;
      type: string;
      inputs: Record<string, any>;
      outputs: Record<string, any>;
-     
+
      abstract execute(): Promise<void> | void;
    }
    ```
 
 2. **Implement Decorators** [`packages/core/src/node/decorators.ts`]
+
    ```typescript
    @defineNode({ type: 'math.add', label: 'Add' })
    @Input({ type: 'number' })
@@ -199,6 +212,7 @@ npm run dev
 ## 📈 Development Roadmap
 
 ### Q1 2026: Core Foundation ✅ 25% Complete
+
 - [x] Project setup
 - [x] Type definitions
 - [ ] Node system
@@ -206,24 +220,28 @@ npm run dev
 - [ ] Execution engine
 
 ### Q1-Q2 2026: Visual Builder
+
 - [ ] React components
 - [ ] Canvas implementation
 - [ ] Node palette
 - [ ] Property panel
 
 ### Q2 2026: Advanced Features
+
 - [ ] Async execution
 - [ ] Conditional logic
 - [ ] Error handling
 - [ ] Plugin system
 
 ### Q3 2026: Ecosystem
+
 - [ ] CLI tools
 - [ ] Documentation site
 - [ ] Official plugins
 - [ ] Examples
 
 ### Q4 2026: Production Ready
+
 - [ ] Testing & optimization
 - [ ] Security audit
 - [ ] v1.0.0 release
@@ -253,6 +271,7 @@ npm run format                 # Format code
 ## 🎓 Learning Resources
 
 ### Internal Documentation
+
 - [README.md](README.md) - Project overview
 - [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) - File organization
 - [QUICK_REFERENCE.md](QUICK_REFERENCE.md) - Developer guide
@@ -260,6 +279,7 @@ npm run format                 # Format code
 - [docs/core-concepts.md](docs/core-concepts.md) - Framework concepts
 
 ### External Resources
+
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [Jest Documentation](https://jestjs.io/)
 - [React Flow](https://reactflow.dev/) - Inspiration for UI
@@ -283,6 +303,7 @@ npm run format                 # Format code
 We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ### How to Contribute
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
@@ -304,6 +325,7 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 The foundation is solid. Time to start implementing the core functionality!
 
 **Recommended Starting Point:**
+
 1. Read [QUICK_REFERENCE.md](QUICK_REFERENCE.md)
 2. Start with `packages/core/src/node/Node.ts`
 3. Follow the roadmap step by step

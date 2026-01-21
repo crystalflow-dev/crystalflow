@@ -187,7 +187,9 @@ reactflo/
 ## Package Descriptions
 
 ### @reactflo/core
+
 The core engine that powers ReactFlo. Contains:
+
 - Node registration and management
 - Workflow graph structure
 - Execution engine
@@ -197,7 +199,9 @@ The core engine that powers ReactFlo. Contains:
 **Dependencies:** None (zero dependencies)
 
 ### @reactflo/react
+
 React components for building workflow UIs. Contains:
+
 - WorkflowBuilder component
 - Canvas with pan/zoom
 - Node rendering
@@ -207,7 +211,9 @@ React components for building workflow UIs. Contains:
 **Dependencies:** react, react-dom, @reactflo/core
 
 ### @reactflo/cli
+
 Command-line tools for developers. Contains:
+
 - Project scaffolding
 - Node generator
 - Development server
@@ -216,11 +222,13 @@ Command-line tools for developers. Contains:
 **Dependencies:** commander, inquirer, @reactflo/core
 
 ### @reactflo/types
+
 Shared TypeScript type definitions used across all packages.
 
 **Dependencies:** None
 
 ### @reactflo/plugins
+
 Collection of official pre-built nodes for common use cases.
 
 **Dependencies:** @reactflo/core
@@ -228,6 +236,7 @@ Collection of official pre-built nodes for common use cases.
 ## Development Workflow
 
 1. **Initial Setup:**
+
    ```bash
    npm install
    npm run bootstrap  # Install dependencies for all packages
@@ -235,11 +244,13 @@ Collection of official pre-built nodes for common use cases.
    ```
 
 2. **Development:**
+
    ```bash
    npm run dev        # Start development mode with watch
    ```
 
 3. **Testing:**
+
    ```bash
    npm test           # Run all tests
    npm run test:watch # Run tests in watch mode

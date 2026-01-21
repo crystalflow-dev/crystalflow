@@ -29,7 +29,7 @@ import { Node, defineNode, Input, Output } from '@reactflo/core';
 @defineNode({
   type: 'math.add',
   label: 'Add',
-  category: 'Math'
+  category: 'Math',
 })
 class AddNode extends Node {
   @Input({ type: 'number' })

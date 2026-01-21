@@ -33,7 +33,7 @@ import { Node, Input, Output, defineNode } from '@reactflo/core';
 @defineNode({
   type: 'math.add',
   label: 'Add Numbers',
-  category: 'Math'
+  category: 'Math',
 })
 class AddNode extends Node {
   @Input({ type: 'number', label: 'A' })
@@ -56,10 +56,10 @@ import { WorkflowBuilder } from '@reactflo/react';
 
 function App() {
   return (
-    <WorkflowBuilder 
+    <WorkflowBuilder
       nodes={[AddNode]}
-      showJsonEditor={true}  // Built-in JSON editor
-      editorMode="split"     // Visual + JSON side-by-side
+      showJsonEditor={true} // Built-in JSON editor
+      editorMode="split" // Visual + JSON side-by-side
       onWorkflowChange={(workflow) => {
         console.log('Workflow JSON:', workflow);
       }}
@@ -82,76 +82,105 @@ ReactFlo is organized as a monorepo with multiple packages:
 
 ## 🗺️ Roadmap
 
-### Phase 1: Core Foundation (Current)
-- [x] Project setup and repository structure
-- [ ] Core workflow engine
-  - [ ] Node registration system
-  - [ ] Connection graph validation
-  - [ ] Execution orchestrator
-  - [ ] Event system for lifecycle hooks
-  - [ ] JSON serialization/deserialization
-- [ ] Node definition API
-  - [ ] Decorator-based definition
-  - [ ] Class-based definition
-  - [ ] Input/Output types and validation
-  - [ ] Node metadata system
-- [ ] JSON Schema definition
-- [ ] Basic TypeScript support
+### ✅ Phase 1: Core Node System (100% Complete)
 
-### Phase 2: Visual Builder (Q1 2026)
+- [x] Project setup and repository structure
+- [x] Core workflow engine
+  - [x] Node base class with decorator metadata
+  - [x] NodeRegistry for registration and factory functionality 
+  - [x] Decorator system (@defineNode, @Input, @Output)
+  - [x] Node type definitions and validation
+  - [x] Comprehensive unit tests (139 tests passing)
+- [x] JSON Schema definition
+- [x] TypeScript support with strict mode
+
+### ✅ Phase 2: Workflow System (100% Complete)
+
+- [x] Workflow orchestration
+  - [x] Workflow class for managing nodes and connections
+  - [x] Connection validation with type checking
+  - [x] Graph structure with dependency tracking
+  - [x] Circular dependency detection
+  - [x] Topological sorting for execution order
+  - [x] JSON serialization/deserialization
+  - [x] Comprehensive validation system
+
+### 🚧 Phase 3: Execution Engine (Next - Q1 2026)
+
+- [ ] Workflow execution
+  - [ ] Executor class for workflow orchestration
+  - [ ] ExecutionContext for runtime state management
+  - [ ] Execution strategies (sequential, parallel)
+  - [ ] Async/await support
+  - [ ] Event system for lifecycle hooks
+  - [ ] Error handling and recovery
+- [ ] Performance optimization
+  - [ ] Execution monitoring
+  - [ ] Resource management
+
+### Phase 4: Visual Builder (Q1-Q2 2026)
+
 - [ ] React workflow builder component
   - [ ] Integrate React Flow
   - [ ] Bridge decorated nodes to React Flow nodes
   - [ ] Custom node renderer from definitions
-  - [ ] Connection validation using core
   - [ ] Node palette from registry
-  - [ ] Property inspector
+  - [ ] Property inspector for node editing
   - [ ] Integrated JSON editor (Monaco)
   - [ ] Dual-mode editing with real-time sync
-- [ ] State management integration
-- [ ] Undo/redo system (via React Flow)
-- [ ] Workflow serialization (save/load)
+- [ ] Advanced UI features
+  - [ ] Undo/redo system
+  - [ ] Keyboard shortcuts
+  - [ ] Connection validation visual feedback
 
-### Phase 3: Advanced Features (Q2 2026)
-- [ ] Execution features
-  - [ ] Async/await support
-  - [ ] Parallel execution
-  - [ ] Conditional branching
-  - [ ] Loop nodes
-  - [ ] Error handling and recovery
-- [ ] Developer tools
-  - [ ] Debugging interface
-  - [ ] Execution visualization
-  - [ ] Performance profiling
-- [ ] Plugin system
-  - [ ] Custom node types
-  - [ ] Custom validation rules
-  - [ ] Custom execution strategies
+### Phase 5: Type System & Utilities (Q2 2026)
 
-### Phase 4: Ecosystem & Tooling (Q3 2026)
+- [ ] Enhanced type system
+  - [ ] DataType class implementation
+  - [ ] TypeValidator for advanced validation
+  - [ ] Built-in types (primitives, objects, arrays)
+- [ ] Utility framework
+  - [ ] Custom error classes
+  - [ ] Logger utility
+  - [ ] Serialization utilities
+
+### Phase 6: Developer Experience (Q3 2026)
+
 - [ ] CLI tools
   - [ ] Project scaffolding
-  - [ ] Node generator
+  - [ ] Node generator templates
+  - [ ] Development server
   - [ ] Build and bundle tools
-- [ ] Documentation site
-  - [ ] Interactive examples
-  - [ ] API reference
-  - [ ] Guides and tutorials
-- [ ] Official plugins
-  - [ ] HTTP/REST nodes
-  - [ ] Database nodes
-  - [ ] File system nodes
-  - [ ] Data transformation nodes
+- [ ] Development tools
+  - [ ] VS Code extension
+  - [ ] Node debugging interface
+  - [ ] Hot reload support
+  - [ ] Testing utilities
 
-### Phase 5: Production Ready (Q4 2026)
-- [ ] Testing infrastructure
-  - [ ] Unit tests
-  - [ ] Integration tests
-  - [ ] E2E tests
-- [ ] Performance optimization
-- [ ] Security audit
-- [ ] Migration guides
-- [ ] v1.0.0 release
+### Phase 7: Ecosystem & Content (Q3-Q4 2026)
+
+- [ ] Documentation and examples
+  - [ ] Interactive documentation website
+  - [ ] Comprehensive API reference
+  - [ ] Tutorial series and guides
+  - [ ] Example applications showcase
+- [ ] Official node libraries
+  - [ ] Math operations
+  - [ ] HTTP/REST nodes
+  - [ ] Data transformation
+  - [ ] Logic and control flow
+
+### Phase 8: Production Ready (Q4 2026)
+
+- [ ] Quality assurance
+  - [ ] 80%+ test coverage across all packages
+  - [ ] Integration and E2E tests
+  - [ ] Performance benchmarks
+  - [ ] Security audit
+- [ ] Release preparation
+  - [ ] Migration guides
+  - [ ] Production deployment examples
+  - [ ] v1.0.0 stable release
 
 ## 🏗️ Architecture
 
@@ -191,6 +220,6 @@ Inspired by Node-RED, React Flow, and modern workflow automation tools.
 
 **We build the how, you focus on the what.**
 
-**Status:** 🚧 Under active development
+**Status:** � **Phases 1-2 Complete** | **Phase 3 In Progress** | 2/8 major phases done
 
-**Documentation:** Coming soon
+**Next Milestone:** Execution Engine (Q1 2026)

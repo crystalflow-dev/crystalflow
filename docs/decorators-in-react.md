@@ -5,6 +5,7 @@
 ### ✅ The Pattern
 
 **Node Definitions** (TypeScript classes with decorators):
+
 ```typescript
 // nodes/AddNode.ts
 import { Node, defineNode, Input, Output } from '@reactflo/core';
@@ -12,7 +13,7 @@ import { Node, defineNode, Input, Output } from '@reactflo/core';
 @defineNode({
   type: 'math.add',
   label: 'Add Numbers',
-  category: 'Math'
+  category: 'Math',
 })
 export class AddNode extends Node {
   @Input({ type: 'number', label: 'A' })
@@ -31,6 +32,7 @@ export class AddNode extends Node {
 ```
 
 **React Components** (functional components that consume nodes):
+
 ```tsx
 // App.tsx
 import React from 'react';
@@ -45,17 +47,21 @@ function App() {
 ## Key Points
 
 ### 1. Decorators are for Node Classes
+
 - ✅ You decorate **Node class definitions** (business logic)
 - ✅ These are plain TypeScript classes, not React components
 - ✅ They define **what** the node does
 
 ### 2. React Components are Separate
+
 - ✅ React components (functional) **consume** the decorated nodes
 - ✅ `@reactflo/react` converts decorated nodes → React Flow nodes
 - ✅ No decorators on React components themselves
 
 ### 3. TypeScript Configuration
+
 Already set up in `tsconfig.json`:
+
 ```json
 {
   "compilerOptions": {
@@ -104,12 +110,14 @@ Already set up in `tsconfig.json`:
 ## Why This Works
 
 ### In Development (Node.js/Webpack/Vite)
+
 - ✅ TypeScript compiles decorators
 - ✅ `reflect-metadata` provides runtime metadata
 - ✅ Decorators run at class definition time (once)
 - ✅ React renders the results
 
 ### In Production
+
 - ✅ Decorators are compiled to JavaScript
 - ✅ No runtime overhead for decoration
 - ✅ Metadata is embedded in the build
@@ -118,6 +126,7 @@ Already set up in `tsconfig.json`:
 ## Common Patterns
 
 ### Pattern 1: Multiple Node Types
+
 ```typescript
 // Define many nodes
 @defineNode({ type: 'math.add', ... })
@@ -134,6 +143,7 @@ class ConcatNode extends Node { ... }
 ```
 
 ### Pattern 2: Dynamic Loading
+
 ```typescript
 // Lazy load nodes
 const nodes = await import('./nodes');
@@ -144,19 +154,21 @@ function App() {
 ```
 
 ### Pattern 3: Plugin System
+
 ```typescript
 import { coreNodes } from '@reactflo/plugins/core';
 import { httpNodes } from '@reactflo/plugins/http';
 import { customNodes } from './custom-nodes';
 
-<WorkflowBuilder 
-  nodes={[...coreNodes, ...httpNodes, ...customNodes]} 
+<WorkflowBuilder
+  nodes={[...coreNodes, ...httpNodes, ...customNodes]}
 />
 ```
 
 ## Limitations & Solutions
 
 ### ❌ Can't Use Decorators on React Components
+
 ```typescript
 // This won't work as intended
 @someDecorator
@@ -164,6 +176,7 @@ function MyComponent() { ... }  // Don't do this
 ```
 
 ### ✅ Solution: Separate Concerns
+
 ```typescript
 // Node definition (with decorators)
 @defineNode({ ... })
@@ -178,6 +191,7 @@ function MyApp() {
 ## Browser Compatibility
 
 Decorators compile to standard JavaScript, so they work in:
+
 - ✅ Chrome/Edge (latest)
 - ✅ Firefox (latest)
 - ✅ Safari (latest)
@@ -185,7 +199,7 @@ Decorators compile to standard JavaScript, so they work in:
 
 ## Summary
 
-**Yes, decorators work perfectly with React!** 
+**Yes, decorators work perfectly with React!**
 
 - You use them for **Node class definitions** (business logic)
 - React components **consume** those nodes (no decorators needed)

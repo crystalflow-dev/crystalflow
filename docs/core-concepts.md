@@ -10,20 +10,20 @@ Nodes are the building blocks of workflows. Each node represents a single operat
 
 ```typescript
 @defineNode({
-  type: 'category.operation',  // Unique identifier
-  label: 'Display Name',        // Human-readable name
-  category: 'Category',         // For organization
-  description: 'What it does'   // Optional description
+  type: 'category.operation', // Unique identifier
+  label: 'Display Name', // Human-readable name
+  category: 'Category', // For organization
+  description: 'What it does', // Optional description
 })
 class MyNode extends Node {
   // Inputs - data coming into the node
   @Input({ type: 'string' })
   inputValue: string;
-  
+
   // Outputs - data going out of the node
   @Output({ type: 'string' })
   outputValue: string;
-  
+
   // Execute method - where the logic happens
   execute() {
     this.outputValue = this.inputValue.toUpperCase();
@@ -53,10 +53,7 @@ const node1 = workflow.addNode(NodeClass1);
 const node2 = workflow.addNode(NodeClass2);
 
 // Connect nodes
-workflow.connect(
-  { nodeId: node1.id, portId: 'output' },
-  { nodeId: node2.id, portId: 'input' }
-);
+workflow.connect({ nodeId: node1.id, portId: 'output' }, { nodeId: node2.id, portId: 'input' });
 
 // Execute
 await workflow.execute();
