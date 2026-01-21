@@ -6,6 +6,17 @@ ReactFlo is a declarative workflow builder framework that provides tools for cre
 
 **Core Principle:** "We build the how, you focus on the what."
 
+## Important: No Backward Compatibility Required
+
+**Version 1.0.0 has not been published yet.** Therefore:
+- **DO NOT maintain backward compatibility** for any changes
+- **DO NOT keep deprecated methods** or legacy code
+- **DO NOT add compatibility layers** or fallback logic
+- Feel free to make breaking changes to improve the codebase
+- Focus on clean, maintainable code over compatibility concerns
+
+Once version 1.0.0 is published, semantic versioning and backward compatibility rules will apply.
+
 ## Architecture
 
 ```
