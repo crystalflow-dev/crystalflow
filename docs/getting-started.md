@@ -25,26 +25,26 @@ import { Node, defineNode, Input, Output } from '@reactflo/core';
   type: 'math.add',
   label: 'Add Numbers',
   category: 'Math',
-  description: 'Adds two numbers together'
+  description: 'Adds two numbers together',
 })
 export class AddNode extends Node {
-  @Input({ 
-    type: 'number', 
+  @Input({
+    type: 'number',
     label: 'First Number',
-    required: true 
+    required: true,
   })
   a: number = 0;
 
-  @Input({ 
-    type: 'number', 
+  @Input({
+    type: 'number',
     label: 'Second Number',
-    required: true 
+    required: true,
   })
   b: number = 0;
 
-  @Output({ 
-    type: 'number', 
-    label: 'Sum' 
+  @Output({
+    type: 'number',
+    label: 'Sum',
   })
   result: number;
 
@@ -64,12 +64,12 @@ import { AddNode } from './nodes/AddNode';
 const workflow = new Workflow();
 
 // Add nodes
-const node1 = workflow.addNode(AddNode, { 
-  position: { x: 100, y: 100 } 
+const node1 = workflow.addNode(AddNode, {
+  position: { x: 100, y: 100 },
 });
 
-const node2 = workflow.addNode(AddNode, { 
-  position: { x: 300, y: 100 } 
+const node2 = workflow.addNode(AddNode, {
+  position: { x: 300, y: 100 },
 });
 
 // Set input values
@@ -77,10 +77,7 @@ node1.inputs.a = 5;
 node1.inputs.b = 3;
 
 // Connect nodes
-workflow.connect(
-  { nodeId: node1.id, portId: 'result' },
-  { nodeId: node2.id, portId: 'a' }
-);
+workflow.connect({ nodeId: node1.id, portId: 'result' }, { nodeId: node2.id, portId: 'a' });
 
 // Execute workflow
 await workflow.execute();
@@ -98,7 +95,7 @@ import { AddNode } from './nodes/AddNode';
 function App() {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <WorkflowBuilder 
+      <WorkflowBuilder
         nodes={[AddNode]}
         onWorkflowChange={(workflow) => {
           console.log('Workflow changed:', workflow);

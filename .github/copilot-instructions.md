@@ -49,7 +49,7 @@ Nodes are defined using TypeScript decorators:
 @defineNode({
   type: 'math.add',
   label: 'Add Numbers',
-  category: 'Math'
+  category: 'Math',
 })
 class AddNode extends Node {
   @Input({ type: 'number', label: 'A' })
@@ -67,7 +67,8 @@ class AddNode extends Node {
 }
 ```
 
-**Important:** 
+**Important:**
+
 - Decorators are for Node classes (business logic), not React components
 - React components consume decorated nodes
 - `experimentalDecorators: true` is enabled in tsconfig
@@ -94,6 +95,7 @@ All workflows are serializable to/from JSON:
 ### 3. React Flow Integration
 
 The visual builder is built on React Flow:
+
 - Don't reinvent canvas/pan/zoom - use React Flow
 - Bridge decorated nodes → React Flow nodes
 - Custom node renderer based on metadata
@@ -101,6 +103,7 @@ The visual builder is built on React Flow:
 ### 4. Dual-Mode Editing
 
 The UI supports:
+
 - **Visual Mode** - Drag-and-drop node editor
 - **JSON Mode** - Monaco Editor for code editing
 - **Split Mode** - Both views with real-time sync
@@ -108,12 +111,14 @@ The UI supports:
 ## Coding Conventions
 
 ### File Naming
+
 - **PascalCase** for classes: `Node.ts`, `Workflow.ts`, `NodeRegistry.ts`
 - **camelCase** for utilities: `logger.ts`, `serialization.ts`
 - **lowercase** for folders: `node/`, `workflow/`, `execution/`
 - **Test files**: `*.test.ts` or `*.spec.ts`
 
 ### Code Style
+
 - Use **strict TypeScript** - avoid `any` unless necessary
 - Prefer **interfaces** over types for object shapes
 - Use **arrow functions** for callbacks
@@ -121,6 +126,7 @@ The UI supports:
 - Export **named exports** (no default exports)
 
 ### Error Handling
+
 ```typescript
 import { WorkflowError, NodeExecutionError } from './utils/errors';
 
@@ -128,6 +134,7 @@ throw new NodeExecutionError(`Failed to execute node ${nodeId}`, { cause: error 
 ```
 
 ### Logging
+
 ```typescript
 import { Logger } from './utils/logger';
 
@@ -139,6 +146,7 @@ logger.error('Error occurred', error);
 ## Package-Specific Guidelines
 
 ### @reactflo/core
+
 - **Zero external dependencies** (except reflect-metadata) - keep it lightweight
 - All exports must be in `src/index.ts`
 - Use `reflect-metadata` for decorator metadata
@@ -148,11 +156,13 @@ logger.error('Error occurred', error);
 - Prefer `unknown` over `any` for type safety
 
 ### @reactflo/types
+
 - Pure type definitions only
 - No runtime code
 - Export all types from `src/index.ts`
 
 ### @reactflo/react
+
 - Use React 18+ features (hooks, concurrent mode)
 - Leverage React Flow - don't rebuild canvas
 - Use Monaco Editor for JSON editing
@@ -162,6 +172,7 @@ logger.error('Error occurred', error);
 ## Important Patterns
 
 ### Node Registration
+
 ```typescript
 import { NodeRegistry } from '@reactflo/core';
 
@@ -171,6 +182,7 @@ registry.register(MultiplyNode);
 ```
 
 ### Workflow Creation
+
 ```typescript
 import { Workflow } from '@reactflo/core';
 
@@ -181,6 +193,7 @@ await workflow.execute();
 ```
 
 ### Serialization
+
 ```typescript
 import { serializeWorkflow, deserializeWorkflow } from '@reactflo/core';
 
@@ -193,6 +206,7 @@ const workflow = Workflow.fromJSON(workflowData);
 ```
 
 ### React Component Usage
+
 ```tsx
 import { WorkflowBuilder } from '@reactflo/react';
 
@@ -201,7 +215,7 @@ import { WorkflowBuilder } from '@reactflo/react';
   showJsonEditor={true}
   editorMode="split"
   onWorkflowChange={(workflow) => console.log(workflow)}
-/>
+/>;
 ```
 
 ## Testing Guidelines
@@ -213,6 +227,7 @@ import { WorkflowBuilder } from '@reactflo/react';
 - Aim for 80%+ coverage
 
 Example:
+
 ```typescript
 describe('NodeRegistry', () => {
   describe('register', () => {
@@ -228,6 +243,7 @@ describe('NodeRegistry', () => {
 ## Common Tasks
 
 ### Creating a New Node Type
+
 1. Extend `Node` base class
 2. Add `@defineNode` decorator with metadata
 3. Define inputs with `@Input` decorators
@@ -236,12 +252,14 @@ describe('NodeRegistry', () => {
 6. Export from package index
 
 ### Adding a New Utility
+
 1. Create file in `packages/core/src/utils/`
 2. Export functions (not default export)
 3. Add to `packages/core/src/index.ts`
 4. Write tests in `__tests__/` folder
 
 ### Adding a React Component
+
 1. Create in `packages/react/src/components/`
 2. Use functional components with TypeScript
 3. Define prop types interface
@@ -268,6 +286,7 @@ describe('NodeRegistry', () => {
 ## Commit Messages
 
 Follow Conventional Commits:
+
 ```
 feat(core): add async node execution support
 fix(react): prevent connection to incompatible ports
@@ -296,14 +315,26 @@ test(executor): add async execution tests
 
 ## Current Status
 
-- **Phase:** Core Foundation (45% complete)
-- **Completed:** Node base class, decorators (@defineNode, @Input, @Output), NodeRegistry
-- **Next:** Implement Workflow system (Workflow, Connection, Graph)
-- **Priority:** Workflow creation, node connections, execution engine
+- **Phase:** Basic Execution Engine (Phase 3 - Next)
+- **Completed:** Phase 1 (Node System - 100%), Phase 2 (Workflow System - 100%)
+- **Next:** Phase 3 (Basic Execution Engine), then Phase 3.5 (Control Flow Epic REACTFLO-50)
+- **Priority:** Executor class, ExecutionContext, then advanced control flow features
+
+## Control Flow Epic (REACTFLO-50)
+
+The Control Flow & Advanced Execution epic includes:
+- Engine support for conditional/branching execution
+- Loop execution framework
+- Parallel processing capabilities  
+- Control flow nodes (If/Else, Switch/Case, For/While loops)
+- Advanced flow control (Try/Catch, Race, Parallel execution)
+
+This epic bridges the execution engine with sophisticated workflow automation capabilities.
 
 ## Questions?
 
 Check these files:
+
 - `README.md` - Project overview
 - `GET_STARTED.md` - Comprehensive guide
 - `DOCUMENTATION_INDEX.md` - All documentation

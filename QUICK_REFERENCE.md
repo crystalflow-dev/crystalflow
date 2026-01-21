@@ -46,7 +46,7 @@ export abstract class Node {
   id: string;
   type: string;
   metadata: NodeMetadata;
-  
+
   abstract execute(): void | Promise<void>;
 }
 ```
@@ -103,11 +103,11 @@ describe('Node', () => {
 // ✅ Good
 export class WorkflowBuilder {
   private nodes: Map<string, Node>;
-  
+
   constructor() {
     this.nodes = new Map();
   }
-  
+
   addNode(node: Node): void {
     this.nodes.set(node.id, node);
   }
@@ -116,7 +116,7 @@ export class WorkflowBuilder {
 // ❌ Avoid
 export class workflow_builder {
   private _nodes: any;
-  
+
   constructor() {
     this._nodes = {};
   }
@@ -132,7 +132,7 @@ describe('WorkflowBuilder', () => {
     it('should add a node to the workflow', () => {
       // Test implementation
     });
-    
+
     it('should throw error when adding duplicate node', () => {
       // Test implementation
     });
@@ -155,6 +155,7 @@ refactor(types): improve type definitions
 ```
 
 ### Types
+
 - `feat` - New feature
 - `fix` - Bug fix
 - `docs` - Documentation
@@ -190,10 +191,10 @@ git push origin feature/node-system
 
 ## 📚 Documentation Comments
 
-```typescript
+````typescript
 /**
  * Base class for all workflow nodes.
- * 
+ *
  * @example
  * ```typescript
  * class MyNode extends Node {
@@ -206,13 +207,13 @@ git push origin feature/node-system
 export abstract class Node {
   /**
    * Executes the node's logic.
-   * 
+   *
    * @returns Promise that resolves when execution is complete
    * @throws {ExecutionError} When execution fails
    */
   abstract execute(): Promise<void>;
 }
-```
+````
 
 ## 🎯 Best Practices
 

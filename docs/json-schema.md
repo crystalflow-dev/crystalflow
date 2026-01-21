@@ -70,58 +70,58 @@ Current version: **1.0.0**
 
 ### Root Object
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `version` | string | ✅ | Schema version (semver) |
-| `id` | string | ✅ | Unique workflow identifier |
-| `name` | string | ✅ | Human-readable workflow name |
-| `description` | string | ❌ | Workflow description |
-| `metadata` | object | ❌ | Additional metadata |
-| `nodes` | array | ✅ | Array of node objects |
-| `connections` | array | ✅ | Array of connection objects |
-| `variables` | object | ❌ | Global workflow variables |
+| Field         | Type   | Required | Description                  |
+| ------------- | ------ | -------- | ---------------------------- |
+| `version`     | string | ✅       | Schema version (semver)      |
+| `id`          | string | ✅       | Unique workflow identifier   |
+| `name`        | string | ✅       | Human-readable workflow name |
+| `description` | string | ❌       | Workflow description         |
+| `metadata`    | object | ❌       | Additional metadata          |
+| `nodes`       | array  | ✅       | Array of node objects        |
+| `connections` | array  | ✅       | Array of connection objects  |
+| `variables`   | object | ❌       | Global workflow variables    |
 
 ### Node Object
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | ✅ | Unique node identifier |
-| `type` | string | ✅ | Node type (e.g., 'math.add') |
-| `position` | object | ✅ | Canvas position {x, y} |
-| `data` | object | ✅ | Node-specific data |
-| `data.label` | string | ❌ | Custom node label |
-| `data.inputs` | object | ❌ | Input port values |
-| `data.outputs` | object | ❌ | Output port values (for saved state) |
-| `data.config` | object | ❌ | Node configuration |
+| Field          | Type   | Required | Description                          |
+| -------------- | ------ | -------- | ------------------------------------ |
+| `id`           | string | ✅       | Unique node identifier               |
+| `type`         | string | ✅       | Node type (e.g., 'math.add')         |
+| `position`     | object | ✅       | Canvas position {x, y}               |
+| `data`         | object | ✅       | Node-specific data                   |
+| `data.label`   | string | ❌       | Custom node label                    |
+| `data.inputs`  | object | ❌       | Input port values                    |
+| `data.outputs` | object | ❌       | Output port values (for saved state) |
+| `data.config`  | object | ❌       | Node configuration                   |
 
 ### Connection Object
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | ✅ | Unique connection identifier |
-| `source` | object | ✅ | Source port reference |
-| `source.nodeId` | string | ✅ | Source node ID |
-| `source.portId` | string | ✅ | Source port ID |
-| `target` | object | ✅ | Target port reference |
-| `target.nodeId` | string | ✅ | Target node ID |
-| `target.portId` | string | ✅ | Target port ID |
+| Field           | Type   | Required | Description                  |
+| --------------- | ------ | -------- | ---------------------------- |
+| `id`            | string | ✅       | Unique connection identifier |
+| `source`        | object | ✅       | Source port reference        |
+| `source.nodeId` | string | ✅       | Source node ID               |
+| `source.portId` | string | ✅       | Source port ID               |
+| `target`        | object | ✅       | Target port reference        |
+| `target.nodeId` | string | ✅       | Target node ID               |
+| `target.portId` | string | ✅       | Target port ID               |
 
 ### Position Object
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `x` | number | ✅ | X coordinate on canvas |
-| `y` | number | ✅ | Y coordinate on canvas |
+| Field | Type   | Required | Description            |
+| ----- | ------ | -------- | ---------------------- |
+| `x`   | number | ✅       | X coordinate on canvas |
+| `y`   | number | ✅       | Y coordinate on canvas |
 
 ### Metadata Object
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `author` | string | ❌ | Workflow author |
-| `createdAt` | string | ❌ | ISO 8601 timestamp |
-| `updatedAt` | string | ❌ | ISO 8601 timestamp |
-| `tags` | array | ❌ | Array of string tags |
-| `*` | any | ❌ | Custom fields allowed |
+| Field       | Type   | Required | Description           |
+| ----------- | ------ | -------- | --------------------- |
+| `author`    | string | ❌       | Workflow author       |
+| `createdAt` | string | ❌       | ISO 8601 timestamp    |
+| `updatedAt` | string | ❌       | ISO 8601 timestamp    |
+| `tags`      | array  | ❌       | Array of string tags  |
+| `*`         | any    | ❌       | Custom fields allowed |
 
 ## Examples
 
@@ -373,6 +373,7 @@ if (validation.valid) {
 ### 1. Version Your Workflows
 
 Always include the schema version:
+
 ```json
 { "version": "1.0.0", ... }
 ```
@@ -380,6 +381,7 @@ Always include the schema version:
 ### 2. Use Meaningful IDs
 
 Use descriptive IDs for easier debugging:
+
 ```json
 { "id": "fetch-users", "type": "http.request", ... }
 ```
@@ -387,6 +389,7 @@ Use descriptive IDs for easier debugging:
 ### 3. Add Metadata
 
 Include author, timestamps, and tags:
+
 ```json
 {
   "metadata": {
@@ -400,6 +403,7 @@ Include author, timestamps, and tags:
 ### 4. Use Variables for Secrets
 
 Never hardcode sensitive data:
+
 ```json
 {
   "variables": {
@@ -411,6 +415,7 @@ Never hardcode sensitive data:
 ### 5. Document Complex Workflows
 
 Use descriptions liberally:
+
 ```json
 {
   "name": "User Processing Pipeline",
@@ -440,6 +445,7 @@ const newWorkflow = migrateWorkflow(oldWorkflow, '2.0.0');
 ## JSON Schema (JSON Schema Draft 7)
 
 A formal JSON Schema definition is available at:
+
 - Schema: [schema/workflow.schema.json](../schema/workflow.schema.json)
 - Validation: Use with AJV or similar validators
 

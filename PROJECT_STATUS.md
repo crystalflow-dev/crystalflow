@@ -57,6 +57,7 @@ reactflo/
 ## 📊 Project Status
 
 ### ✅ Completed
+
 - [x] Project documentation (README, Contributing, License)
 - [x] Build configuration (TypeScript, ESLint, Prettier, Jest)
 - [x] Monorepo setup with workspace configuration
@@ -72,6 +73,7 @@ reactflo/
 ### 🚧 Next To Implement
 
 #### Phase 1: Core Node System
+
 - [ ] `packages/core/src/node/Node.ts` - Base Node class
 - [ ] `packages/core/src/node/decorators.ts` - Decorators (@Input, @Output)
 - [ ] `packages/core/src/node/NodeRegistry.ts` - Registration system
@@ -79,34 +81,48 @@ reactflo/
 - [ ] `packages/core/src/node/types.ts` - Node types
 
 #### Phase 2: Workflow System
+
 - [ ] `packages/core/src/workflow/Workflow.ts` - Workflow container
 - [ ] `packages/core/src/workflow/Connection.ts` - Connections
 - [ ] `packages/core/src/workflow/Graph.ts` - Graph structure
 - [ ] `packages/core/src/workflow/Validator.ts` - Validation
 
-#### Phase 3: Execution Engine
+#### Phase 3: Basic Execution Engine
+
 - [ ] `packages/core/src/execution/Executor.ts` - Main executor
 - [ ] `packages/core/src/execution/ExecutionContext.ts` - Context
 - [ ] `packages/core/src/execution/ExecutionStrategy.ts` - Strategies
 - [ ] `packages/core/src/execution/AsyncExecutor.ts` - Async support
 
+#### Phase 3.5: Control Flow & Advanced Execution (Epic REACTFLO-50)
+
+- [ ] `packages/core/src/execution/ConditionalExecutor.ts` - Branching support
+- [ ] `packages/core/src/execution/LoopExecutor.ts` - Loop execution
+- [ ] `packages/core/src/execution/ParallelExecutor.ts` - Parallel processing
+- [ ] `packages/core/src/nodes/flow/` - Control flow nodes directory
+
 #### Phase 4: Supporting Systems
+
 - [ ] `packages/core/src/events/EventEmitter.ts` - Events
 - [ ] `packages/core/src/types/DataType.ts` - Type system
 - [ ] `packages/core/src/utils/` - Utilities
 
 #### Phase 5: React Package
+
 - [ ] `packages/react/` - Full React UI package
 
 #### Phase 6: CLI Package
+
 - [ ] `packages/cli/` - CLI tools
 
 #### Phase 7: Plugins Package
+
 - [ ] `packages/plugins/` - Official plugins
 
 ## 🎯 Immediate Next Steps
 
 1. **Run Setup**
+
    ```bash
    cd /home/hamza-ben-yazid/Fladeed/reactflo
    ./scripts/setup.sh
