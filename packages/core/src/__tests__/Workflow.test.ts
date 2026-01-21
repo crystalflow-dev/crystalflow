@@ -6,6 +6,7 @@ import 'reflect-metadata';
 
 // Test nodes for workflow testing
 @defineNode({
+  autoRegister: false,
   type: 'test.add',
   label: 'Add',
   category: 'Test',
@@ -50,6 +51,7 @@ class AddNode extends Node {
 }
 
 @defineNode({
+  autoRegister: false,
   type: 'test.multiply',
   label: 'Multiply',
   category: 'Test',

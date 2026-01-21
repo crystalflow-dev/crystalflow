@@ -8,6 +8,7 @@ describe('Decorators', () => {
     it('should store node metadata on the class', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })
@@ -31,6 +32,7 @@ describe('Decorators', () => {
     it('should store optional metadata fields', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
         description: 'A test node',
@@ -58,6 +60,7 @@ describe('Decorators', () => {
     it('should not affect the class constructor', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })
@@ -76,6 +79,7 @@ describe('Decorators', () => {
     it('should store input port definition', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })
@@ -102,6 +106,7 @@ describe('Decorators', () => {
     it('should use property name as label if not provided', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })
@@ -120,6 +125,7 @@ describe('Decorators', () => {
     it('should store multiple input ports', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })
@@ -147,6 +153,7 @@ describe('Decorators', () => {
     it('should store optional fields', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })
@@ -178,6 +185,7 @@ describe('Decorators', () => {
     it('should set default value on the property', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })
@@ -196,6 +204,7 @@ describe('Decorators', () => {
     it('should not set property value if no default is provided', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })
@@ -216,6 +225,7 @@ describe('Decorators', () => {
     it('should store output port definition', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })
@@ -240,6 +250,7 @@ describe('Decorators', () => {
     it('should use property name as label if not provided', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })
@@ -258,6 +269,7 @@ describe('Decorators', () => {
     it('should store multiple output ports', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })
@@ -281,6 +293,7 @@ describe('Decorators', () => {
     it('should store description if provided', () => {
       @defineNode({
         type: 'test.node',
+        autoRegister: false,
         label: 'Test Node',
         category: 'Test',
       })

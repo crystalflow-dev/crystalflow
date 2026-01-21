@@ -5,6 +5,7 @@ import 'reflect-metadata';
 
 // Test nodes for connection testing
 @defineNode({
+  autoRegister: false,
   type: 'test.source',
   label: 'Source',
   category: 'Test',
@@ -34,6 +35,7 @@ class SourceNode extends Node {
 }
 
 @defineNode({
+  autoRegister: false,
   type: 'test.target',
   label: 'Target',
   category: 'Test',

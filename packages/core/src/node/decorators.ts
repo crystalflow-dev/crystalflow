@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { NodeMetadata, PortDefinition } from '@reactflo/types';
+import { NodeRegistry, NodeConstructor } from './NodeRegistry';
 
 /**
  * Options for defining a node
@@ -19,6 +20,8 @@ export interface DefineNodeOptions {
   color?: string;
   /** Optional version string */
   version?: string;
+  /** Whether to automatically register this node with the NodeRegistry (default: true) */
+  autoRegister?: boolean;
 }
 
 /**
@@ -54,12 +57,24 @@ export interface OutputOptions {
  *
  * @example
  * ```typescript
+ * // Auto-registration (default)
  * @defineNode({
  *   type: 'math.add',
  *   label: 'Add Numbers',
  *   category: 'Math'
  * })
  * class AddNode extends Node {
+ *   // ...
+ * }
+ *
+ * // Manual registration (explicit opt-out)
+ * @defineNode({
+ *   type: 'math.multiply',
+ *   label: 'Multiply Numbers',
+ *   category: 'Math',
+ *   autoRegister: false
+ * })
+ * class MultiplyNode extends Node {
  *   // ...
  * }
  * ```
@@ -79,6 +94,18 @@ export function defineNode(options: DefineNodeOptions) {
     };
 
     Reflect.defineMetadata('node:metadata', metadata, constructor);
+
+    // Auto-register by default unless explicitly disabled
+    if (options.autoRegister !== false) {
+      try {
+        const registry = NodeRegistry.getInstance();
+        registry.register(constructor as NodeConstructor);
+      } catch (error) {
+        // Silently ignore registration errors (e.g., duplicate registration)
+        // This allows hot reloading and re-importing modules without errors
+        console.warn(`Failed to auto-register node '${options.type}':`, error);
+      }
+    }
 
     return constructor;
   };
@@ -159,4 +186,55 @@ export function Output(options: OutputOptions): PropertyDecorator {
     // Store updated outputs
     Reflect.defineMetadata('node:outputs', outputs, (target as object).constructor);
   } as PropertyDecorator;
+}
+
+/**
+ * Discover and register multiple node types at once
+ *
+ * This utility function provides a convenient way to register multiple nodes
+ * in a single call, making it easy to set up your node library.
+ *
+ * @param nodeClasses - Array of Node classes to register
+ *
+ * @example
+ * ```typescript
+ * import { AddNode, MultiplyNode, SubtractNode } from './nodes';
+ *
+ * // Register all nodes at once
+ * discoverNodes([AddNode, MultiplyNode, SubtractNode]);
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // Register nodes from multiple modules
+ * import * as MathNodes from './nodes/math';
+ * import * as StringNodes from './nodes/string';
+ *
+ * discoverNodes([
+ *   ...Object.values(MathNodes),
+ *   ...Object.values(StringNodes),
+ * ]);
+ * ```
+ */
+export function discoverNodes(nodeClasses: NodeConstructor[]): void {
+  const registry = NodeRegistry.getInstance();
+  registry.registerAll(nodeClasses);
+}
+
+/**
+ * Get the current node registry instance
+ *
+ * This provides direct access to the NodeRegistry singleton for advanced use cases.
+ *
+ * @returns The NodeRegistry singleton instance
+ *
+ * @example
+ * ```typescript
+ * const registry = getNodeRegistry();
+ * const allTypes = registry.getAllTypes();
+ * console.log('Registered node types:', allTypes);
+ * ```
+ */
+export function getNodeRegistry(): NodeRegistry {
+  return NodeRegistry.getInstance();
 }

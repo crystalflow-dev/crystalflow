@@ -87,7 +87,7 @@ ReactFlo is organized as a monorepo with multiple packages:
 - [x] Project setup and repository structure
 - [x] Core workflow engine
   - [x] Node base class with decorator metadata
-  - [x] NodeRegistry for registration and factory functionality 
+  - [x] NodeRegistry for registration and factory functionality
   - [x] Decorator system (@defineNode, @Input, @Output)
   - [x] Node type definitions and validation
   - [x] Comprehensive unit tests (139 tests passing)
