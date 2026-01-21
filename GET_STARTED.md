@@ -186,7 +186,7 @@ npm run dev
    - Type compatibility
    - Required inputs
 
-### Phase 3: Execution Engine (Week 5-6)
+### Phase 3: Basic Execution Engine (Week 5-6)
 
 1. **Executor** [`packages/core/src/execution/Executor.ts`]
    - Execute nodes in order
@@ -197,6 +197,24 @@ npm run dev
    - Track execution state
    - Share data between nodes
    - Abort handling
+
+### Phase 3.5: Control Flow & Advanced Execution (Week 7-10) - Epic REACTFLO-50
+
+1. **Conditional Execution** [`packages/core/src/execution/ConditionalExecutor.ts`]
+   - Branching execution strategies
+   - If/else flow control
+   - Switch/case routing
+
+2. **Loop Execution** [`packages/core/src/execution/LoopExecutor.ts`]
+   - For/while loop support
+   - ForEach iteration
+   - Break/continue controls
+
+3. **Flow Control Nodes** [`packages/core/src/nodes/flow/`]
+   - If/Else nodes
+   - Loop nodes (For, While, ForEach)
+   - Parallel execution nodes
+   - Try/Catch error handling
 
 ### Phase 4: React Components (Week 7-10)
 

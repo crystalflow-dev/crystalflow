@@ -87,12 +87,19 @@ reactflo/
 - [ ] `packages/core/src/workflow/Graph.ts` - Graph structure
 - [ ] `packages/core/src/workflow/Validator.ts` - Validation
 
-#### Phase 3: Execution Engine
+#### Phase 3: Basic Execution Engine
 
 - [ ] `packages/core/src/execution/Executor.ts` - Main executor
 - [ ] `packages/core/src/execution/ExecutionContext.ts` - Context
 - [ ] `packages/core/src/execution/ExecutionStrategy.ts` - Strategies
 - [ ] `packages/core/src/execution/AsyncExecutor.ts` - Async support
+
+#### Phase 3.5: Control Flow & Advanced Execution (Epic REACTFLO-50)
+
+- [ ] `packages/core/src/execution/ConditionalExecutor.ts` - Branching support
+- [ ] `packages/core/src/execution/LoopExecutor.ts` - Loop execution
+- [ ] `packages/core/src/execution/ParallelExecutor.ts` - Parallel processing
+- [ ] `packages/core/src/nodes/flow/` - Control flow nodes directory
 
 #### Phase 4: Supporting Systems
 

@@ -87,14 +87,23 @@ This document confirms that the ReactFlo framework has been properly initialized
 - [x] Add Validator for connections
 - [x] Write unit tests for workflow
 
-### Phase 3: Execution Engine
+### Phase 3: Basic Execution Engine
 
 - [ ] Implement Executor
 - [ ] Create ExecutionContext
-- [ ] Add execution strategies
+- [ ] Add basic execution strategies
 - [ ] Implement async executor
-- [ ] Add event system
 - [ ] Write unit tests for execution
+
+### Phase 3.5: Control Flow & Advanced Execution (Epic REACTFLO-50)
+
+- [ ] Add conditional execution support to engine
+- [ ] Implement branching execution strategies
+- [ ] Add loop execution support
+- [ ] Create parallel execution framework
+- [ ] Build conditional flow nodes (If/Else, Switch/Case)
+- [ ] Implement loop nodes (For, While, ForEach)
+- [ ] Add advanced flow control (Parallel, Try/Catch, Race)
 
 ### Phase 4: Type System
 

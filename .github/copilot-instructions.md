@@ -315,10 +315,21 @@ test(executor): add async execution tests
 
 ## Current Status
 
-- **Phase:** Core Foundation (45% complete)
-- **Completed:** Node base class, decorators (@defineNode, @Input, @Output), NodeRegistry
-- **Next:** Implement Workflow system (Workflow, Connection, Graph)
-- **Priority:** Workflow creation, node connections, execution engine
+- **Phase:** Basic Execution Engine (Phase 3 - Next)
+- **Completed:** Phase 1 (Node System - 100%), Phase 2 (Workflow System - 100%)
+- **Next:** Phase 3 (Basic Execution Engine), then Phase 3.5 (Control Flow Epic REACTFLO-50)
+- **Priority:** Executor class, ExecutionContext, then advanced control flow features
+
+## Control Flow Epic (REACTFLO-50)
+
+The Control Flow & Advanced Execution epic includes:
+- Engine support for conditional/branching execution
+- Loop execution framework
+- Parallel processing capabilities  
+- Control flow nodes (If/Else, Switch/Case, For/While loops)
+- Advanced flow control (Try/Catch, Race, Parallel execution)
+
+This epic bridges the execution engine with sophisticated workflow automation capabilities.
 
 ## Questions?
 
