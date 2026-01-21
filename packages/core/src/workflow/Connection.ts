@@ -86,8 +86,8 @@ export class Connection {
 
     try {
       // Check if source port exists and is an output
-      const sourceOutputs = this.getNodeOutputPorts(sourceNode);
-      const sourceOutput = sourceOutputs.find((port: any) => port.name === this._sourcePort);
+      const sourceOutputs = sourceNode.getOutputs();
+      const sourceOutput = sourceOutputs.find((port) => port.id === this._sourcePort);
 
       if (!sourceOutput) {
         errors.push({
@@ -99,8 +99,8 @@ export class Connection {
       }
 
       // Check if target port exists and is an input
-      const targetInputs = this.getNodeInputPorts(targetNode);
-      const targetInput = targetInputs.find((port: any) => port.name === this._targetPort);
+      const targetInputs = targetNode.getInputs();
+      const targetInput = targetInputs.find((port) => port.id === this._targetPort);
 
       if (!targetInput) {
         errors.push({
@@ -123,7 +123,6 @@ export class Connection {
         }
       }
     } catch (error) {
-      // If port introspection fails, we'll allow the connection for now
       console.warn('Connection validation failed:', error);
     }
 
@@ -139,64 +138,13 @@ export class Connection {
    */
   transferData(sourceNode: Node, targetNode: Node): void {
     try {
-      const sourceValue = this.getNodeOutputValue(sourceNode, this._sourcePort);
-      this.setNodeInputValue(targetNode, this._targetPort, sourceValue);
+      const sourceValue = sourceNode.getOutput(this._sourcePort);
+      targetNode.setInput(this._targetPort, sourceValue);
     } catch (error) {
       console.warn(
         `Failed to transfer data from ${this._sourceNodeId} to ${this._targetNodeId}:`,
         error
       );
-    }
-  }
-
-  /**
-   * Get output ports from a node (with fallback)
-   */
-  private getNodeOutputPorts(node: Node): any[] {
-    if (typeof (node as any).getOutputPorts === 'function') {
-      return (node as any).getOutputPorts();
-    }
-    if (typeof (node as any).getOutputs === 'function') {
-      return (node as any).getOutputs();
-    }
-    // Fallback: try to infer from metadata or properties
-    return [];
-  }
-
-  /**
-   * Get input ports from a node (with fallback)
-   */
-  private getNodeInputPorts(node: Node): any[] {
-    if (typeof (node as any).getInputPorts === 'function') {
-      return (node as any).getInputPorts();
-    }
-    if (typeof (node as any).getInputs === 'function') {
-      return (node as any).getInputs();
-    }
-    // Fallback: try to infer from metadata or properties
-    return [];
-  }
-
-  /**
-   * Get output value from a node (with fallback)
-   */
-  private getNodeOutputValue(node: Node, portName: string): unknown {
-    if (typeof (node as any).getOutputValue === 'function') {
-      return (node as any).getOutputValue(portName);
-    }
-    // Fallback: direct property access
-    return (node as any)[portName];
-  }
-
-  /**
-   * Set input value on a node (with fallback)
-   */
-  private setNodeInputValue(node: Node, portName: string, value: unknown): void {
-    if (typeof (node as any).setInputValue === 'function') {
-      (node as any).setInputValue(portName, value);
-    } else {
-      // Fallback: direct property assignment
-      (node as any)[portName] = value;
     }
   }
 
