@@ -139,10 +139,13 @@ logger.error('Error occurred', error);
 ## Package-Specific Guidelines
 
 ### @reactflo/core
-- **Zero external dependencies** - keep it lightweight
+- **Zero external dependencies** (except reflect-metadata) - keep it lightweight
 - All exports must be in `src/index.ts`
 - Use `reflect-metadata` for decorator metadata
 - Validate all inputs and throw descriptive errors
+- Node base class provides: validate(), execute(), run(), reset(), toJSON(), fromJSON()
+- Use index signature `[key: string]: unknown` for dynamic properties
+- Prefer `unknown` over `any` for type safety
 
 ### @reactflo/types
 - Pure type definitions only
@@ -293,9 +296,10 @@ test(executor): add async execution tests
 
 ## Current Status
 
-- **Phase:** Core Foundation (30% complete)
-- **Next:** Implement Node base class and decorator system
-- **Priority:** Node registration, workflow engine, execution
+- **Phase:** Core Foundation (45% complete)
+- **Completed:** Node base class, decorators (@defineNode, @Input, @Output), NodeRegistry
+- **Next:** Implement Workflow system (Workflow, Connection, Graph)
+- **Priority:** Workflow creation, node connections, execution engine
 
 ## Questions?
 

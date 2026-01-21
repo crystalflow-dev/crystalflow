@@ -115,6 +115,48 @@ export abstract class Node {
   }
 
   /**
+   * Get output port definitions (compatibility method for Connection validation)
+   * @returns Array of output port definitions
+   */
+  public getOutputPorts(): Array<{ name: string; type: string; label?: string }> {
+    return this.getOutputs().map((output) => ({
+      name: output.id,
+      type: output.type,
+      label: output.label,
+    }));
+  }
+
+  /**
+   * Get input port definitions (compatibility method for Connection validation)
+   * @returns Array of input port definitions
+   */
+  public getInputPorts(): Array<{ name: string; type: string; label?: string }> {
+    return this.getInputs().map((input) => ({
+      name: input.id,
+      type: input.type,
+      label: input.label,
+    }));
+  }
+
+  /**
+   * Get the value of an output port (compatibility method for Connection data transfer)
+   * @param portName - Name of the output port
+   * @returns The output port value
+   */
+  public getOutputValue(portName: string): unknown {
+    return this.getOutput(portName);
+  }
+
+  /**
+   * Set the value of an input port (compatibility method for Connection data transfer)
+   * @param portName - Name of the input port
+   * @param value - Value to set
+   */
+  public setInputValue(portName: string, value: unknown): void {
+    this.setInput(portName, value);
+  }
+
+  /**
    * Get the value of an input port
    * @param portId - ID of the input port
    */
