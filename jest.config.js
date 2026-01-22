@@ -6,7 +6,15 @@ module.exports = {
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '/build/'],
   passWithNoTests: true,
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.ts$': [
+      'ts-jest',
+      {
+        tsconfig: {
+          noUnusedLocals: false,
+          noUnusedParameters: false,
+        },
+      },
+    ],
   },
   collectCoverageFrom: [
     'packages/*/src/**/*.ts',

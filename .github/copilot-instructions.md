@@ -9,6 +9,7 @@ ReactFlo is a declarative workflow builder framework that provides tools for cre
 ## Important: No Backward Compatibility Required
 
 **Version 1.0.0 has not been published yet.** Therefore:
+
 - **DO NOT maintain backward compatibility** for any changes
 - **DO NOT keep deprecated methods** or legacy code
 - **DO NOT add compatibility layers** or fallback logic
@@ -334,9 +335,10 @@ test(executor): add async execution tests
 ## Control Flow Epic (REACTFLO-50)
 
 The Control Flow & Advanced Execution epic includes:
+
 - Engine support for conditional/branching execution
 - Loop execution framework
-- Parallel processing capabilities  
+- Parallel processing capabilities
 - Control flow nodes (If/Else, Switch/Case, For/While loops)
 - Advanced flow control (Try/Catch, Race, Parallel execution)
 

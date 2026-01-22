@@ -5,6 +5,7 @@ import { NodeState } from '@reactflo/types';
 
 // Test node classes
 @defineNode({
+  autoRegister: false,
   type: 'test.simple',
   label: 'Simple Test Node',
   category: 'Test',
@@ -23,6 +24,7 @@ class SimpleNode extends Node {
 }
 
 @defineNode({
+  autoRegister: false,
   type: 'test.async',
   label: 'Async Test Node',
   category: 'Test',
@@ -41,6 +43,7 @@ class AsyncNode extends Node {
 }
 
 @defineNode({
+  autoRegister: false,
   type: 'test.error',
   label: 'Error Test Node',
   category: 'Test',
@@ -52,6 +55,7 @@ class ErrorNode extends Node {
 }
 
 @defineNode({
+  autoRegister: false,
   type: 'test.required',
   label: 'Required Input Node',
   category: 'Test',
@@ -69,6 +73,7 @@ class RequiredInputNode extends Node {
 }
 
 @defineNode({
+  autoRegister: false,
   type: 'test.default',
   label: 'Default Value Node',
   category: 'Test',

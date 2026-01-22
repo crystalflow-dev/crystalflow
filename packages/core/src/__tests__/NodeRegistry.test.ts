@@ -9,6 +9,7 @@ import { defineNode, Input, Output } from '../node/decorators';
   label: 'Add Numbers',
   category: 'Math',
   description: 'Adds two numbers',
+  autoRegister: false,
 })
 class AddNode extends Node {
   @Input({ type: 'number', label: 'A' })
@@ -29,6 +30,7 @@ class AddNode extends Node {
   type: 'math.multiply',
   label: 'Multiply Numbers',
   category: 'Math',
+  autoRegister: false,
 })
 class MultiplyNode extends Node {
   @Input({ type: 'number', label: 'A' })
@@ -49,6 +51,7 @@ class MultiplyNode extends Node {
   type: 'string.upper',
   label: 'To Uppercase',
   category: 'String',
+  autoRegister: false,
 })
 class UppercaseNode extends Node {
   @Input({ type: 'string', label: 'Input' })
@@ -292,12 +295,12 @@ describe('NodeRegistry', () => {
     });
 
     it('should return sorted categories', () => {
-      @defineNode({ type: 'z.node', label: 'Z', category: 'Zebra' })
+      @defineNode({ type: 'z.node', label: 'Z', category: 'Zebra', autoRegister: false })
       class ZNode extends Node {
         execute() {}
       }
 
-      @defineNode({ type: 'a.node', label: 'A', category: 'Apple' })
+      @defineNode({ type: 'a.node', label: 'A', category: 'Apple', autoRegister: false })
       class ANode extends Node {
         execute() {}
       }
