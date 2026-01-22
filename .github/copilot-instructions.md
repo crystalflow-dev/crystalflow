@@ -140,9 +140,23 @@ The UI supports:
 ### Error Handling
 
 ```typescript
-import { WorkflowError, NodeExecutionError } from './utils/errors';
+import { ExecutionError, NodeExecutionError, ValidationError, TimeoutError } from '@reactflo/core';
 
-throw new NodeExecutionError(`Failed to execute node ${nodeId}`, { cause: error });
+// Execution errors include context
+throw new NodeExecutionError(`Failed to execute node ${nodeId}`, {
+  nodeId,
+  nodeType: 'math.add',
+  executionId,
+  workflowId,
+  cause: error
+});
+
+// All execution errors have executionId and workflowId
+catch (error) {
+  if (error instanceof NodeExecutionError) {
+    console.error(`Node ${error.nodeId} of type ${error.nodeType} failed`);
+  }
+}
 ```
 
 ### Logging
@@ -193,15 +207,27 @@ registry.register(AddNode);
 registry.register(MultiplyNode);
 ```
 
-### Workflow Creation
+### Workflow Creation and Execution
 
 ```typescript
-import { Workflow } from '@reactflo/core';
+import { Workflow, Executor } from '@reactflo/core';
 
 const workflow = new Workflow();
 workflow.addNode(AddNode, { position: { x: 100, y: 100 } });
-workflow.connect(sourceRef, targetRef);
-await workflow.execute();
+workflow.connect('sourceNodeId', 'outputPort', 'targetNodeId', 'inputPort');
+
+// Execute workflow (returns ExecutionResult)
+const result = await workflow.execute({
+  timeout: 30000,
+  variables: { apiKey: 'xxx' }
+});
+
+// Or use Executor directly with events
+const executor = new Executor();
+executor.on('onNodeStart', (nodeId, node) => {
+  console.log(`Node ${nodeId} starting...`);
+});
+const result = await executor.execute(workflow, options);
 ```
 
 ### Serialization
@@ -327,10 +353,112 @@ test(executor): add async execution tests
 
 ## Current Status
 
-- **Phase:** Basic Execution Engine (Phase 3 - Next)
-- **Completed:** Phase 1 (Node System - 100%), Phase 2 (Workflow System - 100%)
-- **Next:** Phase 3 (Basic Execution Engine), then Phase 3.5 (Control Flow Epic REACTFLO-50)
-- **Priority:** Executor class, ExecutionContext, then advanced control flow features
+- **Phase:** Phase 3 ✅ COMPLETED (Basic Execution Engine - Serial Execution)
+- **Completed:** 
+  - Phase 1 (Node System - 100%)
+  - Phase 2 (Workflow System - 100%)
+  - Phase 3 (Basic Execution Engine - 100%)
+- **Next:** Phase 3.5 (Control Flow Epic REACTFLO-50)
+- **Tests:** 215 passing tests across all packages
+
+## Execution Engine (Phase 3 - COMPLETED)
+
+The serial execution engine is fully implemented with:
+
+### Core Components
+- **Executor** - Main orchestrator with EventEmitter support
+- **ExecutionContext** - Manages state, variables, timing, and node results
+- **Error Classes** - ExecutionError, NodeExecutionError, ValidationError, TimeoutError
+
+### Features
+- ✅ Serial execution (nodes execute sequentially in topological order)
+- ✅ Automatic data propagation between connected nodes
+- ✅ Event system (beforeExecute, afterExecute, onNodeStart, onNodeComplete, onNodeError, onError)
+- ✅ Error handling (stops on first error with detailed context)
+- ✅ Timing and duration tracking for workflow and nodes
+- ✅ Variables support (pass variables to execution context)
+- ✅ Full JSON serialization of ExecutionResult
+- ✅ Workflow validation before execution
+- ✅ AbortSignal support for cancellation
+
+### Event System
+
+```typescript
+const executor = new Executor();
+
+// Events are SYNCHRONOUS - executor waits for listeners to complete
+executor.on('beforeExecute', (context) => {
+  console.log('Starting execution...');
+});
+
+executor.on('onNodeStart', (nodeId, node) => {
+  console.log(`Executing ${nodeId}`);
+});
+
+executor.on('onNodeComplete', (nodeId, result) => {
+  console.log(`${nodeId} completed:`, result.outputs);
+});
+
+executor.on('onNodeError', (nodeId, error) => {
+  console.error(`${nodeId} failed:`, error);
+});
+
+executor.on('afterExecute', (result) => {
+  console.log(`Execution ${result.status}`);
+});
+
+const result = await executor.execute(workflow, options);
+```
+
+**Important:** Event listeners are synchronous. Async listeners won't block execution (EventEmitter limitation).
+
+### ExecutionResult
+
+```typescript
+interface ExecutionResult {
+  id: string;                           // Unique execution ID
+  workflowId: string;                   // Workflow being executed
+  status: ExecutionStatus;              // success, failed, cancelled
+  startTime: Date;                      // When execution started
+  endTime?: Date;                       // When execution ended
+  duration?: number;                    // Duration in milliseconds
+  nodeResults: Map<NodeId, NodeExecutionResult>;  // Results for each node
+  error?: Error;                        // Error if execution failed
+}
+
+interface NodeExecutionResult {
+  nodeId: string;
+  state: NodeState;                     // Success, Error
+  outputs: Record<string, any>;         // All output values (fully serializable)
+  error?: Error;
+  startTime: Date;
+  endTime?: Date;
+  duration?: number;
+}
+```
+
+### Execution Flow
+
+1. Validate workflow (cycles, connections, required inputs)
+2. Create ExecutionContext with unique executionId
+3. Get topological order of nodes from Graph
+4. For each node sequentially:
+   - Emit `onNodeStart`
+   - Transfer data from connected predecessor nodes
+   - Execute node (validate → execute → update state)
+   - Store execution result with outputs
+   - Emit `onNodeComplete`
+   - If error: emit `onNodeError` and stop execution
+5. Return ExecutionResult with all timing and node data
+
+### Cancellation (Current Limitations)
+
+- Currently only supports timeout-based cancellation
+- Cancellation is checked **between nodes** (not during node execution)
+- Always throws `TimeoutError` when cancelled
+- AbortSignal is set but nodes must check it manually
+
+**Future Enhancement:** Track cancellation reasons (timeout, user, error, resource-limit) - see `CHECKLIST.md`
 
 ## Control Flow Epic (REACTFLO-50)
 

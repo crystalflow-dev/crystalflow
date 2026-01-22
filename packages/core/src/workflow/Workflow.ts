@@ -2,7 +2,8 @@ import { Node } from '../node/Node';
 import { NodeRegistry } from '../node/NodeRegistry';
 import { Connection } from './Connection';
 import { Graph } from './Graph';
-import { WorkflowData, NodeData, ConnectionData, ValidationResult } from '@reactflo/types';
+import { WorkflowData, NodeData, ConnectionData, ValidationResult, ExecutionOptions, ExecutionResult } from '@reactflo/types';
+import { Executor } from '../execution/Executor';
 
 /**
  * Workflow represents a complete workflow containing nodes and their connections.
@@ -295,28 +296,12 @@ export class Workflow {
 
   /**
    * Execute the workflow
+   * @param options - Execution options (timeout, variables, etc.)
+   * @returns Execution result with status, timing, and node results
    */
-  async execute(): Promise<void> {
-    const validation = this.validate();
-    if (!validation.valid) {
-      const errorMessages = validation.errors.map((e) => e.message);
-      throw new Error(`Cannot execute invalid workflow: ${errorMessages.join(', ')}`);
-    }
-
-    const executionOrder = this.getExecutionOrder();
-
-    for (const nodeId of executionOrder) {
-      const node = this._nodes.get(nodeId);
-      if (!node) {
-        throw new Error(`Node ${nodeId} not found during execution`);
-      }
-
-      // Transfer data from connected nodes
-      this.transferNodeData(nodeId);
-
-      // Execute the node
-      await node.execute();
-    }
+  async execute(options?: ExecutionOptions): Promise<ExecutionResult> {
+    const executor = new Executor();
+    return executor.execute(this, options);
   }
 
   /**
@@ -380,7 +365,10 @@ export class Workflow {
       const NodeClass = registry.get(nodeData.type);
       const node = new NodeClass(nodeData.id);
 
-      if (nodeData.data) {
+      // Load node data using fromJSON if available, otherwise use Object.assign
+      if (typeof node.fromJSON === 'function' && nodeData.data) {
+        node.fromJSON(nodeData.data as Record<string, unknown>);
+      } else if (nodeData.data) {
         Object.assign(node, nodeData.data);
       }
 

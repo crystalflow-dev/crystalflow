@@ -273,7 +273,7 @@ describe('Workflow', () => {
       expect((node2 as MultiplyNode).result).toBe(10); // 5 * 2
     });
 
-    it('should throw error for invalid workflow', async () => {
+    it('should return failed status for invalid workflow', async () => {
       const workflow = new Workflow();
       const node1 = workflow.addNode('test.add');
       const node2 = workflow.addNode('test.multiply');
@@ -282,7 +282,11 @@ describe('Workflow', () => {
       workflow.connect(node1.id, 'result', node2.id, 'a');
       workflow.connect(node2.id, 'result', node1.id, 'a');
 
-      await expect(workflow.execute()).rejects.toThrow('Cannot execute invalid workflow');
+      const result = await workflow.execute();
+      
+      expect(result.status).toBe('failed');
+      expect(result.error).toBeDefined();
+      expect(result.error?.message).toContain('Workflow validation failed');
     });
   });
 
