@@ -75,7 +75,6 @@ export interface ToolbarProps {
  * - Save/Load workflow
  * - Clear canvas
  * - Undo/Redo actions
- * - Zoom controls
  */
 export const Toolbar: React.FC<ToolbarProps> = ({
   canExecute = false,
@@ -91,11 +90,21 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   style,
   className,
 }) => {
-  // TODO: Implement toolbar
-  // - Add action buttons
-  // - Handle click events
-  // - Show loading state
-  // - Disable buttons when appropriate
+  const buttonStyle: React.CSSProperties = {
+    padding: '8px 16px',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    background: 'white',
+    cursor: 'pointer',
+    fontSize: '14px',
+    transition: 'all 0.2s',
+  };
+
+  const disabledStyle: React.CSSProperties = {
+    ...buttonStyle,
+    opacity: 0.5,
+    cursor: 'not-allowed',
+  };
 
   return (
     <div
@@ -106,92 +115,93 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         display: 'flex',
         gap: '10px',
         alignItems: 'center',
+        backgroundColor: '#f9f9f9',
         ...style,
       }}
     >
+      {/* Execute Button */}
       <button
         onClick={onExecute}
         disabled={!canExecute || isExecuting}
         style={{
-          padding: '8px 16px',
-          borderRadius: '4px',
-          border: '1px solid #ccc',
+          ...buttonStyle,
           background: canExecute && !isExecuting ? '#4CAF50' : '#ccc',
           color: 'white',
-          cursor: canExecute && !isExecuting ? 'pointer' : 'not-allowed',
+          fontWeight: 'bold',
         }}
+        title="Execute workflow"
       >
-        {isExecuting ? 'Executing...' : 'Execute'}
+        {isExecuting ? '⏳ Executing...' : '▶ Execute'}
       </button>
 
+      <div style={{ width: '1px', height: '24px', background: '#ddd' }} />
+
+      {/* Save Button */}
       <button
         onClick={onSave}
-        style={{
-          padding: '8px 16px',
-          borderRadius: '4px',
-          border: '1px solid #ccc',
-          background: 'white',
-          cursor: 'pointer',
+        style={buttonStyle}
+        title="Save workflow"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#f0f0f0';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'white';
         }}
       >
-        Save
+        💾 Save
       </button>
 
+      {/* Load Button */}
       <button
         onClick={onLoad}
-        style={{
-          padding: '8px 16px',
-          borderRadius: '4px',
-          border: '1px solid #ccc',
-          background: 'white',
-          cursor: 'pointer',
+        style={buttonStyle}
+        title="Load workflow"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#f0f0f0';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'white';
         }}
       >
-        Load
+        📁 Load
       </button>
 
+      {/* Clear Button */}
       <button
         onClick={onClear}
-        style={{
-          padding: '8px 16px',
-          borderRadius: '4px',
-          border: '1px solid #ccc',
-          background: 'white',
-          cursor: 'pointer',
+        style={buttonStyle}
+        title="Clear canvas"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#fee';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'white';
         }}
       >
-        Clear
+        🗑️ Clear
       </button>
 
-      <div style={{ marginLeft: 'auto', display: 'flex', gap: '5px' }}>
-        <button
-          onClick={onUndo}
-          disabled={!canUndo}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-            background: 'white',
-            cursor: canUndo ? 'pointer' : 'not-allowed',
-          }}
-        >
-          Undo
-        </button>
+      <div style={{ width: '1px', height: '24px', background: '#ddd' }} />
 
-        <button
-          onClick={onRedo}
-          disabled={!canRedo}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-            background: 'white',
-            cursor: canRedo ? 'pointer' : 'not-allowed',
-          }}
-        >
-          Redo
-        </button>
-      </div>
+      {/* Undo Button */}
+      <button
+        onClick={onUndo}
+        disabled={!canUndo}
+        style={canUndo ? buttonStyle : disabledStyle}
+        title="Undo"
+      >
+        ↶ Undo
+      </button>
+
+      {/* Redo Button */}
+      <button
+        onClick={onRedo}
+        disabled={!canRedo}
+        style={canRedo ? buttonStyle : disabledStyle}
+        title="Redo"
+      >
+        ↷ Redo
+      </button>
     </div>
   );
 };

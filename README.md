@@ -74,13 +74,41 @@ ReactFlo is organized as a monorepo with multiple packages:
 
 - `@reactflo/core` ✅ - Core workflow engine and node system (100% complete)
 - `@reactflo/types` ✅ - TypeScript type definitions (100% complete)
-- `@reactflo/react` 🚧 - React components bridging decorators to React Flow (structure initialized)
+- `@reactflo/react` 🚧 - React components bridging decorators to React Flow (80% complete)
+- `@reactflo/examples` 🚧 - Example applications and demos (in progress)
 - `@reactflo/cli` ⏳ - Command-line tools for scaffolding and development (planned)
 - `@reactflo/plugins` ⏳ - Official plugin collection (planned)
 
 **Built on:** React Flow (for canvas/UI), TypeScript (with decorators)
 
-## 🗺️ Roadmap
+## �️ Development
+
+### Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Build all packages
+npm run build
+
+# Start development mode (watch all packages + examples dev server)
+npm run dev
+```
+
+Development mode runs all TypeScript watch modes in parallel with the Vite dev server. Changes to any package are automatically compiled and hot-reloaded.
+
+**See [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) for detailed development instructions.**
+
+### Key Commands
+
+- `npm run dev` - Watch mode for all packages + examples dev server
+- `npm run build` - Build all packages
+- `npm test` - Run all tests
+- `npm run lint` - Lint all packages
+- `npm run clean` - Clean all build artifacts
+
+## �🗺️ Roadmap
 
 ### ✅ Phase 1: Core Node System (100% Complete)
 
@@ -121,7 +149,7 @@ ReactFlo is organized as a monorepo with multiple packages:
   - [x] AbortSignal support for cancellation
   - [x] Async event listener support (waits for all listeners to complete)
 
-### 🚧 Phase 4: React Package (In Progress - Q1 2026)
+### 🚧 Phase 4: React Package (80% Complete - Q1 2026)
 
 - [x] Package structure initialization
   - [x] React Flow 11.10.0 integration
@@ -129,18 +157,26 @@ ReactFlo is organized as a monorepo with multiple packages:
   - [x] Component structure created
   - [x] Context providers implemented
   - [x] Custom hooks implemented
-- [ ] React workflow builder component
-  - [x] Integrate React Flow (done)
-  - [ ] Bridge decorated nodes to React Flow nodes
-  - [ ] Custom node renderer from definitions
-  - [x] Node palette from registry (stub)
-  - [x] Property inspector for node editing (stub)
-  - [ ] Integrated JSON editor (Monaco)
-  - [ ] Dual-mode editing with real-time sync
-- [ ] Advanced UI features
+- [x] React workflow builder component
+  - [x] Integrate React Flow
+  - [x] Bridge decorated nodes to React Flow nodes
+  - [x] Custom node renderer from decorator metadata
+  - [x] Node palette with drag-and-drop
+  - [x] Property inspector for node editing
+  - [x] Toolbar with workflow actions
+  - [x] Node converter utilities
+  - [x] Workflow serialization utilities
+- [x] Examples package
+  - [x] Package structure with Vite
+  - [x] Example nodes (Math, Input, Output)
+  - [x] Simple workflow demo
+  - [x] Integrated with development workflow
+- [ ] Advanced UI features (Next)
   - [ ] Undo/redo system
   - [ ] Keyboard shortcuts
   - [ ] Connection validation visual feedback
+  - [ ] JSON editor integration (Monaco)
+  - [ ] Dual-mode editing with sync
 
 ### Phase 5: Type System & Utilities (Q2 2026)
 
@@ -229,6 +265,6 @@ Inspired by Node-RED, React Flow, and modern workflow automation tools.
 
 **We build the how, you focus on the what.**
 
-**Status:** � **Phases 1-2 Complete** | **Phase 3 In Progress** | 2/8 major phases done
+**Status:** ✅ **Phases 1-3 Complete** | 🚧 **Phase 4 80% Complete** | 3.8/8 major phases done
 
-**Next Milestone:** Execution Engine (Q1 2026)
+**Next Milestone:** React Package Completion & Advanced Features (Q1 2026)

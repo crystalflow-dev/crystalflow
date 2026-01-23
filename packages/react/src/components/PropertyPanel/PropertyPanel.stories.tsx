@@ -18,12 +18,16 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
-    selectedNode: {
+    node: {
       description: 'The currently selected node',
     },
-    onPropertyChange: {
+    onUpdate: {
       description: 'Callback when a property value changes',
-      action: 'propertyChanged',
+      action: 'updated',
+    },
+    onClose: {
+      description: 'Callback when panel is closed',
+      action: 'closed',
     },
   },
 } satisfies Meta<typeof PropertyPanel>;
@@ -36,7 +40,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const NoSelection: Story = {
   args: {
-    selectedNode: null,
+    node: undefined,
   },
 };
 
@@ -45,14 +49,20 @@ export const NoSelection: Story = {
  */
 export const WithSelectedNode: Story = {
   args: {
-    selectedNode: {
+    node: {
       id: 'node-1',
-      type: 'math.add',
+      type: 'custom',
+      position: { x: 0, y: 0 },
       data: {
         label: 'Add Numbers',
-        properties: {
-          a: 5,
-          b: 10,
+        type: 'math.add',
+        category: 'Math',
+        inputs: {
+          a: { id: 'a', type: 'number', label: 'A', defaultValue: 5 },
+          b: { id: 'b', type: 'number', label: 'B', defaultValue: 10 },
+        },
+        outputs: {
+          result: { id: 'result', type: 'number', label: 'Result' },
         },
       },
     },

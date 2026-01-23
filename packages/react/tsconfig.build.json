@@ -12,6 +12,8 @@
     "**/*.spec.ts",
     "**/*.test.tsx",
     "**/*.spec.tsx",
-    "**/__tests__/**"
+    "**/__tests__/**",
+    "examples/**",
+    "**/*.stories.tsx"
   ]
 }
