@@ -1,13 +1,22 @@
 import { Workflow } from '../workflow/Workflow';
 import { Node } from '../node/Node';
 import { ExecutionContext } from './ExecutionContext';
-import { ExecutionError, NodeExecutionError, ValidationError, TimeoutError } from './errors';
+import {
+  ExecutionError,
+  NodeExecutionError,
+  ValidationError,
+  TimeoutError,
+  CancellationError,
+  UserCancelledError,
+} from './errors';
 import {
   ExecutionOptions,
   ExecutionResult,
   ExecutionStatus,
   NodeExecutionResult,
   NodeState,
+  ExecutionId,
+  CancellationReason,
 } from '@reactflo/types';
 import { AsyncEventEmitter } from '../utils/AsyncEventEmitter';
 
@@ -24,6 +33,11 @@ export interface ExecutorEvents {
   onNodeComplete: (nodeId: string, result: NodeExecutionResult) => void | Promise<void>;
   onNodeError: (nodeId: string, error: Error) => void | Promise<void>;
   onError: (error: Error) => void | Promise<void>;
+  onCancellation: (
+    executionId: string,
+    reason: CancellationReason,
+    cancelledAt: Date
+  ) => void | Promise<void>;
 }
 
 /**
@@ -50,6 +64,8 @@ export interface ExecutorEvents {
  * ```
  */
 export class Executor extends AsyncEventEmitter<ExecutorEvents> {
+  private _activeExecutions: Map<ExecutionId, ExecutionContext> = new Map();
+
   /**
    * Execute a workflow
    * @param workflow - The workflow to execute
@@ -63,7 +79,11 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
     // Create execution context
     const context = new ExecutionContext(executionId, workflow.id, options.variables);
 
+    // Track active execution
+    this._activeExecutions.set(executionId, context);
+
     let timeoutHandle: NodeJS.Timeout | undefined;
+    let abortListener: (() => void) | undefined;
 
     try {
       // Validate workflow
@@ -77,10 +97,28 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
         });
       }
 
+      // Set up external abort signal listener if provided
+      if (options.abortSignal) {
+        // Check if already aborted
+        if (options.abortSignal.aborted) {
+          throw new CancellationError('Execution aborted before start', {
+            reason: CancellationReason.ExternalSignal,
+            executionId,
+            workflowId: workflow.id,
+          });
+        }
+
+        // Listen for abort event
+        abortListener = () => {
+          context.cancel(CancellationReason.ExternalSignal);
+        };
+        options.abortSignal.addEventListener('abort', abortListener);
+      }
+
       // Set up timeout if specified
       if (options.timeout && options.timeout > 0) {
         timeoutHandle = setTimeout(() => {
-          context.cancel();
+          context.cancel(CancellationReason.Timeout);
         }, options.timeout);
       }
 
@@ -95,11 +133,45 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       for (const nodeId of executionOrder) {
         // Check if execution was cancelled
         if (context.isCancelled()) {
-          throw new TimeoutError('Workflow execution timed out', {
-            timeoutMs: options.timeout || 0,
-            executionId,
-            workflowId: workflow.id,
-          });
+          // Throw appropriate error based on cancellation reason
+          const reason = context.cancellationReason || CancellationReason.Timeout;
+          const cancelledAt = context.cancelledAt || new Date();
+
+          // Emit cancellation event
+          await this.emitAsync('onCancellation', executionId, reason, cancelledAt);
+
+          switch (reason) {
+            case CancellationReason.Timeout:
+              throw new TimeoutError('Workflow execution timed out', {
+                timeoutMs: options.timeout || 0,
+                executionId,
+                workflowId: workflow.id,
+              });
+
+            case CancellationReason.UserCancelled:
+              throw new UserCancelledError('Workflow execution was cancelled by user', {
+                executionId,
+                workflowId: workflow.id,
+                cancelledAt: context.cancelledAt,
+              });
+
+            case CancellationReason.ExternalSignal:
+              throw new CancellationError('Workflow execution was cancelled by external signal', {
+                reason: CancellationReason.ExternalSignal,
+                executionId,
+                workflowId: workflow.id,
+                cancelledAt: context.cancelledAt,
+              });
+
+            default:
+              // Fallback for any unhandled cancellation reason
+              throw new CancellationError('Workflow execution was cancelled', {
+                reason: reason || CancellationReason.UserCancelled,
+                executionId,
+                workflowId: workflow.id,
+                cancelledAt: context.cancelledAt,
+              });
+          }
         }
 
         const node = workflow.nodes.get(nodeId);
@@ -123,7 +195,27 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
 
       return result;
     } catch (error) {
-      // Handle execution error
+      // Handle cancellation errors specially
+      if (
+        error instanceof CancellationError ||
+        error instanceof TimeoutError ||
+        error instanceof UserCancelledError
+      ) {
+        // Mark as cancelled (already set by cancel() but ensure it)
+        context.complete(ExecutionStatus.Cancelled);
+
+        // Emit cancellation event
+        const reason = context.cancellationReason || CancellationReason.Timeout;
+        const cancelledAt = context.cancelledAt || new Date();
+        await this.emitAsync('onCancellation', executionId, reason, cancelledAt);
+
+        const result = this.buildExecutionResult(context, error as ExecutionError);
+        await this.emitAsync('afterExecute', result);
+
+        return result;
+      }
+
+      // Handle other execution errors
       const executionError =
         error instanceof ExecutionError
           ? error
@@ -146,6 +238,14 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       if (timeoutHandle) {
         clearTimeout(timeoutHandle);
       }
+
+      // Remove abort signal listener
+      if (abortListener && options.abortSignal) {
+        options.abortSignal.removeEventListener('abort', abortListener);
+      }
+
+      // Remove from active executions
+      this._activeExecutions.delete(executionId);
     }
   }
 
@@ -165,6 +265,9 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
 
       // Transfer data from connected nodes
       this.transferNodeData(node.id, workflow);
+
+      // Inject execution context into node for cancellation support
+      node._executionContext = context;
 
       // Execute the node (calls validate + execute + state management)
       await node.run();
@@ -186,7 +289,16 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       // Emit node complete event
       await this.emitAsync('onNodeComplete', node.id, result);
     } catch (error) {
-      // Record error result
+      // If it's a cancellation error, let it propagate immediately
+      if (
+        error instanceof CancellationError ||
+        error instanceof TimeoutError ||
+        error instanceof UserCancelledError
+      ) {
+        throw error;
+      }
+
+      // Record error result for non-cancellation errors
       const nodeError = new NodeExecutionError(
         `Node execution failed: ${error instanceof Error ? error.message : String(error)}`,
         {
@@ -215,6 +327,9 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
 
       // Re-throw to stop execution
       throw nodeError;
+    } finally {
+      // Clear execution context from node
+      node._executionContext = undefined;
     }
   }
 
@@ -264,6 +379,8 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       duration: context.duration,
       nodeResults: context.getNodeResults(),
       error,
+      cancellationReason: context.cancellationReason,
+      cancelledAt: context.cancelledAt,
     };
   }
 
@@ -272,5 +389,54 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
    */
   private generateExecutionId(): string {
     return `exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  /**
+   * Cancel a specific execution by ID
+   * @param executionId - The ID of the execution to cancel
+   * @param reason - The reason for cancellation (defaults to UserCancelled)
+   * @returns true if execution was found and cancelled, false otherwise
+   */
+  cancel(
+    executionId: ExecutionId,
+    reason: CancellationReason = CancellationReason.UserCancelled
+  ): boolean {
+    const context = this._activeExecutions.get(executionId);
+    if (context) {
+      context.cancel(reason);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Cancel all active executions
+   * @param reason - The reason for cancellation (defaults to UserCancelled)
+   * @returns Number of executions that were cancelled
+   */
+  cancelAll(reason: CancellationReason = CancellationReason.UserCancelled): number {
+    let count = 0;
+    for (const context of this._activeExecutions.values()) {
+      context.cancel(reason);
+      count++;
+    }
+    return count;
+  }
+
+  /**
+   * Check if an execution is currently active
+   * @param executionId - The ID of the execution to check
+   * @returns true if the execution is active, false otherwise
+   */
+  isExecutionActive(executionId: ExecutionId): boolean {
+    return this._activeExecutions.has(executionId);
+  }
+
+  /**
+   * Get the number of active executions
+   * @returns Number of currently running executions
+   */
+  getActiveExecutionCount(): number {
+    return this._activeExecutions.size;
   }
 }

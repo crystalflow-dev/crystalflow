@@ -2,6 +2,8 @@
  * Execution error classes for ReactFlo execution engine
  */
 
+import { CancellationReason } from '@reactflo/types';
+
 /**
  * Base error class for execution-related errors
  */
@@ -83,9 +85,38 @@ export class ValidationError extends ExecutionError {
 }
 
 /**
+ * Base error class for cancellation-related errors
+ * All cancellation errors extend this class
+ */
+export class CancellationError extends ExecutionError {
+  public readonly reason: CancellationReason;
+  public readonly cancelledAt: Date;
+
+  constructor(
+    message: string,
+    options: {
+      reason: CancellationReason;
+      cancelledAt?: Date;
+      executionId?: string;
+      workflowId?: string;
+      cause?: Error;
+    }
+  ) {
+    super(message, {
+      executionId: options.executionId,
+      workflowId: options.workflowId,
+      cause: options.cause,
+    });
+    this.name = 'CancellationError';
+    this.reason = options.reason;
+    this.cancelledAt = options.cancelledAt || new Date();
+  }
+}
+
+/**
  * Error for execution timeout
  */
-export class TimeoutError extends ExecutionError {
+export class TimeoutError extends CancellationError {
   public readonly timeoutMs: number;
 
   constructor(
@@ -97,10 +128,33 @@ export class TimeoutError extends ExecutionError {
     }
   ) {
     super(message, {
+      reason: CancellationReason.Timeout,
       executionId: options.executionId,
       workflowId: options.workflowId,
     });
     this.name = 'TimeoutError';
     this.timeoutMs = options.timeoutMs;
+  }
+}
+
+/**
+ * Error for user-initiated cancellation
+ */
+export class UserCancelledError extends CancellationError {
+  constructor(
+    message: string,
+    options?: {
+      executionId?: string;
+      workflowId?: string;
+      cancelledAt?: Date;
+    }
+  ) {
+    super(message, {
+      reason: CancellationReason.UserCancelled,
+      executionId: options?.executionId,
+      workflowId: options?.workflowId,
+      cancelledAt: options?.cancelledAt,
+    });
+    this.name = 'UserCancelledError';
   }
 }

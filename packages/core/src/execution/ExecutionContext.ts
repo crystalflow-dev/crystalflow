@@ -4,6 +4,7 @@ import {
   NodeId,
   ExecutionStatus,
   NodeExecutionResult,
+  CancellationReason,
 } from '@reactflo/types';
 
 /**
@@ -26,6 +27,8 @@ export interface SerializedExecutionContext {
     endTime?: string;
     duration?: number;
   }>;
+  cancellationReason?: CancellationReason;
+  cancelledAt?: string;
 }
 
 /**
@@ -41,6 +44,8 @@ export class ExecutionContext {
   private _variables: Map<string, unknown>;
   private _nodeResults: Map<NodeId, NodeExecutionResult>;
   private _abortController?: AbortController;
+  private _cancellationReason?: CancellationReason;
+  private _cancelledAt?: Date;
 
   constructor(
     executionId: ExecutionId,
@@ -116,6 +121,20 @@ export class ExecutionContext {
   }
 
   /**
+   * Get cancellation reason
+   */
+  get cancellationReason(): CancellationReason | undefined {
+    return this._cancellationReason;
+  }
+
+  /**
+   * Get cancellation timestamp
+   */
+  get cancelledAt(): Date | undefined {
+    return this._cancelledAt;
+  }
+
+  /**
    * Get a variable value
    */
   getVariable<T = unknown>(key: string): T | undefined {
@@ -176,9 +195,12 @@ export class ExecutionContext {
 
   /**
    * Cancel the execution
+   * @param reason - The reason for cancellation (defaults to Timeout for backward compatibility)
    */
-  cancel(): void {
+  cancel(reason: CancellationReason = CancellationReason.Timeout): void {
     if (this._status === ExecutionStatus.Running) {
+      this._cancellationReason = reason;
+      this._cancelledAt = new Date();
       this._abortController?.abort();
       this.complete(ExecutionStatus.Cancelled);
     }
@@ -208,6 +230,8 @@ export class ExecutionContext {
         startTime: result.startTime.toISOString(),
         endTime: result.endTime?.toISOString(),
       })),
+      cancellationReason: this._cancellationReason,
+      cancelledAt: this._cancelledAt?.toISOString(),
     };
   }
 }

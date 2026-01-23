@@ -1,5 +1,5 @@
 import { ExecutionContext } from '../../execution/ExecutionContext';
-import { ExecutionStatus, NodeState } from '@reactflo/types';
+import { ExecutionStatus, NodeState, CancellationReason } from '@reactflo/types';
 
 describe('ExecutionContext', () => {
   let context: ExecutionContext;
@@ -159,13 +159,35 @@ describe('ExecutionContext', () => {
       expect(context.abortSignal).toBeInstanceOf(AbortSignal);
     });
 
-    it('should cancel execution', () => {
+    it('should cancel execution with default reason (Timeout)', () => {
       context.status = ExecutionStatus.Running;
       context.cancel();
 
       expect(context.status).toBe(ExecutionStatus.Cancelled);
       expect(context.isCancelled()).toBe(true);
       expect(context.abortSignal?.aborted).toBe(true);
+      expect(context.cancellationReason).toBe(CancellationReason.Timeout);
+      expect(context.cancelledAt).toBeInstanceOf(Date);
+    });
+
+    it('should cancel execution with UserCancelled reason', () => {
+      context.status = ExecutionStatus.Running;
+      context.cancel(CancellationReason.UserCancelled);
+
+      expect(context.status).toBe(ExecutionStatus.Cancelled);
+      expect(context.isCancelled()).toBe(true);
+      expect(context.cancellationReason).toBe(CancellationReason.UserCancelled);
+      expect(context.cancelledAt).toBeInstanceOf(Date);
+    });
+
+    it('should cancel execution with ExternalSignal reason', () => {
+      context.status = ExecutionStatus.Running;
+      context.cancel(CancellationReason.ExternalSignal);
+
+      expect(context.status).toBe(ExecutionStatus.Cancelled);
+      expect(context.isCancelled()).toBe(true);
+      expect(context.cancellationReason).toBe(CancellationReason.ExternalSignal);
+      expect(context.cancelledAt).toBeInstanceOf(Date);
     });
 
     it('should not cancel if not running', () => {
@@ -174,6 +196,26 @@ describe('ExecutionContext', () => {
 
       // Should not change status if not running
       expect(context.status).toBe(ExecutionStatus.Pending);
+      expect(context.cancellationReason).toBeUndefined();
+      expect(context.cancelledAt).toBeUndefined();
+    });
+
+    it('should expose cancellationReason getter', () => {
+      context.status = ExecutionStatus.Running;
+      context.cancel(CancellationReason.UserCancelled);
+
+      expect(context.cancellationReason).toBe(CancellationReason.UserCancelled);
+    });
+
+    it('should expose cancelledAt getter', () => {
+      const beforeCancel = new Date();
+      context.status = ExecutionStatus.Running;
+      context.cancel();
+      const afterCancel = new Date();
+
+      expect(context.cancelledAt).toBeInstanceOf(Date);
+      expect(context.cancelledAt!.getTime()).toBeGreaterThanOrEqual(beforeCancel.getTime());
+      expect(context.cancelledAt!.getTime()).toBeLessThanOrEqual(afterCancel.getTime());
     });
   });
 
@@ -241,6 +283,28 @@ describe('ExecutionContext', () => {
       expect(json.endTime).toBeUndefined();
       expect(json.duration).toBeUndefined();
       expect(json.nodeResults).toHaveLength(0);
+    });
+
+    it('should serialize cancellation metadata', () => {
+      context.status = ExecutionStatus.Running;
+      context.cancel(CancellationReason.UserCancelled);
+      context.complete(ExecutionStatus.Cancelled);
+
+      const json = context.toJSON();
+
+      expect(json.status).toBe(ExecutionStatus.Cancelled);
+      expect(json.cancellationReason).toBe(CancellationReason.UserCancelled);
+      expect(json.cancelledAt).toBeDefined();
+      expect(typeof json.cancelledAt).toBe('string');
+      expect(new Date(json.cancelledAt as string).toISOString()).toBe(json.cancelledAt);
+    });
+
+    it('should not include cancellation metadata if not cancelled', () => {
+      context.complete(ExecutionStatus.Success);
+      const json = context.toJSON();
+
+      expect(json.cancellationReason).toBeUndefined();
+      expect(json.cancelledAt).toBeUndefined();
     });
   });
 });

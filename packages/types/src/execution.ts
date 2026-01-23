@@ -22,6 +22,19 @@ export enum ExecutionStatus {
 }
 
 /**
+ * Cancellation reason
+ * Tracks why an execution was cancelled
+ */
+export enum CancellationReason {
+  /** Execution exceeded the configured timeout limit */
+  Timeout = 'timeout',
+  /** User explicitly cancelled the execution */
+  UserCancelled = 'user-cancelled',
+  /** Cancelled by an external AbortSignal */
+  ExternalSignal = 'external-signal',
+}
+
+/**
  * Execution result
  */
 export interface ExecutionResult {
@@ -33,6 +46,10 @@ export interface ExecutionResult {
   duration?: number;
   nodeResults: Map<NodeId, NodeExecutionResult>;
   error?: Error;
+  /** The reason for cancellation, if execution was cancelled */
+  cancellationReason?: CancellationReason;
+  /** Timestamp when execution was cancelled */
+  cancelledAt?: Date;
 }
 
 /**
@@ -67,4 +84,6 @@ export interface ExecutionOptions {
   retryOnError?: boolean;
   maxRetries?: number;
   variables?: Record<string, unknown>;
+  /** External AbortSignal to cancel execution */
+  abortSignal?: AbortSignal;
 }
