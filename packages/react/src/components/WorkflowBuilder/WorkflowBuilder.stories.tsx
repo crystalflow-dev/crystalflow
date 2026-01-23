@@ -1,5 +1,67 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { defineNode, Input, Output, Node } from '@reactflo/core';
 import { WorkflowBuilder } from './WorkflowBuilder';
+
+// Example Nodes for the stories
+@defineNode({
+  type: 'math.add',
+  label: 'Add',
+  category: 'Math',
+  description: 'Adds two numbers together',
+  color: '#4CAF50',
+})
+class AddNode extends Node {
+  @Input({ type: 'number', label: 'A', defaultValue: 0 })
+  a: number = 0;
+
+  @Input({ type: 'number', label: 'B', defaultValue: 0 })
+  b: number = 0;
+
+  @Output({ type: 'number', label: 'Sum' })
+  sum: number = 0;
+
+  execute(): void {
+    this.sum = this.a + this.b;
+  }
+}
+
+@defineNode({
+  type: 'math.multiply',
+  label: 'Multiply',
+  category: 'Math',
+  description: 'Multiplies two numbers',
+  color: '#2196F3',
+})
+class MultiplyNode extends Node {
+  @Input({ type: 'number', label: 'A', defaultValue: 1 })
+  a: number = 1;
+
+  @Input({ type: 'number', label: 'B', defaultValue: 1 })
+  b: number = 1;
+
+  @Output({ type: 'number', label: 'Product' })
+  product: number = 0;
+
+  execute(): void {
+    this.product = this.a * this.b;
+  }
+}
+
+@defineNode({
+  type: 'output.display',
+  label: 'Display',
+  category: 'Output',
+  description: 'Displays a value',
+  color: '#FF9800',
+})
+class DisplayNode extends Node {
+  @Input({ type: 'any', label: 'Value' })
+  value: any;
+
+  execute(): void {
+    console.log('Display:', this.value);
+  }
+}
 
 /**
  * WorkflowBuilder is the main component that integrates React Flow with ReactFlo's
@@ -23,22 +85,17 @@ const meta = {
     nodes: {
       description: 'Array of node classes decorated with @defineNode',
     },
-    initialWorkflow: {
-      description: 'Initial workflow data to load',
-    },
-    showJsonEditor: {
-      description: 'Whether to show the JSON editor',
+    showPalette: {
+      description: 'Whether to show the node palette',
       control: 'boolean',
     },
-    editorMode: {
-      description: 'Editor display mode',
-      control: 'select',
-      options: ['visual', 'json', 'split'],
+    showProperties: {
+      description: 'Whether to show the property panel',
+      control: 'boolean',
     },
-    jsonEditorTheme: {
-      description: 'Monaco editor theme',
-      control: 'select',
-      options: ['vs-dark', 'vs-light', 'hc-black'],
+    showToolbar: {
+      description: 'Whether to show the toolbar',
+      control: 'boolean',
     },
     onWorkflowChange: {
       description: 'Callback when workflow changes',
@@ -59,75 +116,37 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Default workflow builder with visual mode only
+ * Default workflow builder with all panels visible
  */
 export const Default: Story = {
   args: {
-    nodes: [],
-    showJsonEditor: false,
-    editorMode: 'visual',
+    nodes: [AddNode, MultiplyNode, DisplayNode],
+    showPalette: true,
+    showProperties: true,
+    showToolbar: true,
   },
 };
 
 /**
- * Builder with JSON editor in split view
+ * Builder with palette only (no properties panel)
  */
-export const SplitView: Story = {
+export const PaletteOnly: Story = {
   args: {
-    nodes: [],
-    showJsonEditor: true,
-    editorMode: 'split',
-    jsonEditorTheme: 'vs-dark',
+    nodes: [AddNode, MultiplyNode, DisplayNode],
+    showPalette: true,
+    showProperties: false,
+    showToolbar: true,
   },
 };
 
 /**
- * Builder with dark theme JSON editor
+ * Minimal builder (canvas only)
  */
-export const DarkTheme: Story = {
+export const CanvasOnly: Story = {
   args: {
-    nodes: [],
-    showJsonEditor: true,
-    editorMode: 'json',
-    jsonEditorTheme: 'vs-dark',
-  },
-};
-
-/**
- * Builder with sample workflow
- */
-export const WithWorkflow: Story = {
-  args: {
-    nodes: [],
-    showJsonEditor: false,
-    editorMode: 'visual',
-    initialWorkflow: {
-      id: 'sample-workflow',
-      name: 'Sample Workflow',
-      version: '1.0.0',
-      nodes: [
-        {
-          id: 'node-1',
-          type: 'math.add',
-          position: { x: 100, y: 100 },
-          data: { label: 'Add Numbers' },
-        },
-        {
-          id: 'node-2',
-          type: 'math.multiply',
-          position: { x: 300, y: 100 },
-          data: { label: 'Multiply Result' },
-        },
-      ],
-      connections: [
-        {
-          id: 'conn-1',
-          source: 'node-1',
-          sourcePort: 'result',
-          target: 'node-2',
-          targetPort: 'a',
-        },
-      ],
-    },
+    nodes: [AddNode, MultiplyNode, DisplayNode],
+    showPalette: false,
+    showProperties: false,
+    showToolbar: false,
   },
 };

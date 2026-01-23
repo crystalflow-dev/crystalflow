@@ -91,11 +91,13 @@ export const WithPorts: Story = {
     data: {
       label: 'Math Add',
       type: 'math.add',
-      inputs: [
-        { id: 'a', label: 'A', type: 'number' },
-        { id: 'b', label: 'B', type: 'number' },
-      ],
-      outputs: [{ id: 'result', label: 'Result', type: 'number' }],
+      inputs: {
+        a: { id: 'a', type: 'number', label: 'A' },
+        b: { id: 'b', type: 'number', label: 'B' },
+      },
+      outputs: {
+        result: { id: 'result', type: 'number', label: 'Result' },
+      },
     },
     selected: false,
   },

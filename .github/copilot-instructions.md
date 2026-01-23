@@ -169,6 +169,52 @@ logger.debug('Message', { context });
 logger.error('Error occurred', error);
 ```
 
+## Development Workflow
+
+### Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Build all packages
+npm run build
+
+# Start development mode (watch all packages + examples dev server)
+npm run dev
+```
+
+Development mode uses `concurrently` to run all TypeScript watch modes in parallel with the Vite dev server:
+
+- Watches `@reactflo/types` and rebuilds on changes (cyan output)
+- Watches `@reactflo/core` and rebuilds on changes (magenta output)
+- Watches `@reactflo/react` and rebuilds on changes (blue output)
+- Runs Vite dev server for `@reactflo/examples` (green output)
+
+Changes to any package are automatically compiled and hot-reloaded in the browser.
+
+**See [DEVELOPMENT_WORKFLOW.md](../DEVELOPMENT_WORKFLOW.md) for detailed development instructions.**
+
+### Key Commands
+
+- `npm run dev` - Watch mode for all packages + examples dev server (parallel)
+- `npm run build` - Build all packages
+- `npm test` - Run all tests
+- `npm run lint` - Lint all packages
+- `npm run clean` - Clean all build artifacts
+
+### Development Configuration
+
+- **Root tsconfig.json**: `moduleResolution: "bundler"` (changed from "node")
+- **Build configs**: Override with `moduleResolution: "node"` for library builds
+- **Vite config**: Watches `node_modules/@reactflo/*/dist` for hot-reload
+- **No Vite aliases**: Examples consume built packages (production-like)
+- **Concurrently**: Color-coded output for easy debugging
+
+### TypeScript Module Resolution Change
+
+The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleResolution: "bundler"` to fix build issues. Individual packages override this in their `tsconfig.build.json` with `"moduleResolution": "node"` for proper library builds.
+
 ## Package-Specific Guidelines
 
 ### @reactflo/core
@@ -353,15 +399,18 @@ test(executor): add async execution tests
 
 ## Current Status
 
-- **Phase:** Phase 4 🚧 IN PROGRESS (React Package - Structure Initialized)
+- **Phase:** Phase 4 🚧 80% COMPLETE (React Package - Core Implementation Done)
 - **Completed:**
   - Phase 1 (Node System - 100%)
   - Phase 2 (Workflow System - 100%)
   - Phase 3 (Basic Execution Engine - 100%)
   - Phase 4 - React Package Structure (100%)
-- **In Progress:** Phase 4 - React Component Implementation
-- **Next:** Full component implementation with React Flow bridge
+  - Phase 4 - Core React Components (100%)
+  - Phase 4 - Examples Package (100%)
+- **In Progress:** Phase 4 - Advanced Features (JSON Editor, Undo/Redo)
+- **Next:** Monaco Editor integration, dual-mode editing
 - **Tests:** 215 passing tests across all packages
+- **Working Examples:** 1 (Simple Workflow with drag-and-drop)
 
 ## Execution Engine (Phase 3 - COMPLETED)
 
@@ -535,19 +584,24 @@ interface ExecutionResult {
 }
 ```
 
-## React Package (Phase 4 - IN PROGRESS)
+## React Package (Phase 4 - 80% COMPLETE)
 
-The React package structure has been initialized with:
+The React package has been substantially implemented with:
 
 ### Package Structure
 
-- **Components** - All UI components stubbed
-  - WorkflowBuilder: Main workflow builder with React Flow integration
-  - CustomNode: Node renderer based on decorator metadata
-  - NodePalette: Drag-and-drop node palette
-  - PropertyPanel: Property inspector for selected nodes
-  - Toolbar: Workflow action buttons
-  - ConnectionLine: Custom connection renderer
+- **Components** - Fully implemented core components
+  - WorkflowBuilder: Complete workflow builder with React Flow integration
+  - CustomNode: Full node renderer with decorator metadata parsing
+  - NodePalette: Drag-and-drop palette with category grouping and search
+  - PropertyPanel: Complete property inspector with type-aware inputs
+  - Toolbar: Full toolbar with save/load/execute/clear actions
+  - ConnectionLine: React Flow default connection renderer
+
+- **Utilities**
+  - nodeConverter.ts: Converts decorated nodes to React Flow format
+  - workflowConverter.ts: Serialization/deserialization utilities
+  - Save/load workflow to/from JSON files
 
 - **Context Providers**
   - WorkflowProvider: Global workflow state management
@@ -561,28 +615,43 @@ The React package structure has been initialized with:
 ### Dependencies
 
 - React Flow 11.10.0 - For canvas and node rendering
-- Monaco Editor 4.6.0 - For JSON editing
+- Monaco Editor 4.6.0 - For JSON editing (not yet integrated)
 - React 18+ and React DOM 18+
 
 ### Current State
 
-- ✅ Package structure initialized
-- ✅ All components stubbed with TypeScript types
+- ✅ Package structure complete
+- ✅ All core components fully implemented
 - ✅ Context providers implemented
 - ✅ Custom hooks implemented
-- ✅ Barrel exports configured
+- ✅ Node converter utilities complete
+- ✅ Workflow serialization utilities complete
+- ✅ Drag-and-drop from palette working
+- ✅ Property panel with live editing
+- ✅ Save/load workflow functionality
+- ✅ Workflow execution integrated
 - ✅ Package builds successfully
-- ⏳ Full component implementation (next)
+- ⏳ Monaco JSON editor (next)
+- ⏳ Dual-mode editing (next)
+- ⏳ Undo/redo system (next)
+
+### Examples Package
+
+- ✅ Package initialized with Vite
+- ✅ Babel decorator support configured
+- ✅ Example nodes: NumberInput, StringInput, Add, Multiply, Subtract, Display
+- ✅ SimpleWorkflow demo with full UI
+- ✅ Development workflow integration
+- ✅ Hot-reload with watch modes
 
 ### Next Steps
 
-1. Implement WorkflowBuilder with full React Flow bridge
-2. Create decorator-to-React-Flow node converter
-3. Implement CustomNode renderer with dynamic handles
-4. Build NodePalette with registry integration
-5. Create PropertyPanel with dynamic property inputs
-6. Integrate Monaco Editor for JSON editing
-7. Implement dual-mode editing with sync
+1. Integrate Monaco Editor for JSON editing
+2. Implement dual-mode editing (visual + JSON with sync)
+3. Add undo/redo system with history management
+4. Implement keyboard shortcuts
+5. Add connection validation visual feedback
+6. Create additional example workflows
 
 ## Control Flow Epic (REACTFLO-50)
 
