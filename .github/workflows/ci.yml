@@ -31,14 +31,17 @@ jobs:
       - name: Build types package
         run: npm run build --workspace=@reactflo/types
 
+      - name: Build core package
+        run: npm run build --workspace=@reactflo/core
+
+      - name: Build react package
+        run: npm run build --workspace=@reactflo/react
+
       - name: Run type check
         run: npm run typecheck
 
       - name: Run tests
         run: npm test
-
-      - name: Build packages
-        run: npm run build
 
       - name: Upload coverage
         uses: codecov/codecov-action@v5
