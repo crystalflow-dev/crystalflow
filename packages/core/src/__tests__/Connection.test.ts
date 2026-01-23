@@ -30,7 +30,7 @@ class SourceNode extends Node {
   }
 
   getOutputValue(portName: string): unknown {
-    return (this as any)[portName];
+    return this[portName];
   }
 }
 
@@ -64,7 +64,7 @@ class TargetNode extends Node {
   }
 
   setInputValue(portName: string, value: unknown): void {
-    (this as any)[portName] = value;
+    this[portName] = value;
   }
 }
 

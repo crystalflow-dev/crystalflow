@@ -41,7 +41,7 @@ export interface ExecutionResult {
 export interface NodeExecutionResult {
   nodeId: NodeId;
   state: NodeState;
-  outputs: Record<string, any>;
+  outputs: Record<string, unknown>;
   error?: Error;
   startTime: Date;
   endTime?: Date;
@@ -54,7 +54,7 @@ export interface NodeExecutionResult {
 export interface ExecutionContextData {
   executionId: ExecutionId;
   workflowId: WorkflowId;
-  variables: Map<string, any>;
+  variables: Map<string, unknown>;
   abortSignal?: AbortSignal;
 }
 
@@ -66,5 +66,5 @@ export interface ExecutionOptions {
   timeout?: number;
   retryOnError?: boolean;
   maxRetries?: number;
-  variables?: Record<string, any>;
+  variables?: Record<string, unknown>;
 }

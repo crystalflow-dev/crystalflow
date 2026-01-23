@@ -9,10 +9,11 @@ export * from './node';
 // Workflow System
 export * from './workflow';
 
+// Execution System
+export * from './execution';
+
 // Utilities
 export * from './utils/serialization';
 
 // TODO: Implement remaining features
-// - Execution System (Executor, ExecutionContext)
-// - Event System (EventEmitter)
 // - Type System (DataType, TypeValidator)

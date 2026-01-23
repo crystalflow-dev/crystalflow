@@ -182,15 +182,43 @@ Examples:                 5+ working examples
 - [x] Contribution guidelines
 - [x] MIT License
 
+## 🚀 Future Enhancements
+
+### Execution Engine Improvements
+
+- [ ] **Async Event Listeners Support** - Allow event listeners to return promises and wait for them
+- [ ] **Enhanced Cancellation System**:
+  - [ ] Track cancellation reasons (`timeout`, `user`, `error`, `resource-limit`)
+  - [ ] Add `ExecutionContext.cancel(reason)` with reason parameter
+  - [ ] Throw appropriate error types based on cancellation reason
+  - [ ] Add user-initiated cancellation API
+- [ ] **Mid-Execution Cancellation** - Check cancellation during long-running node execution (not just between nodes)
+- [ ] **Retry Logic** - Automatic retry for failed nodes with configurable strategies
+- [ ] **Execution Pause/Resume** - Ability to pause and resume workflow execution
+- [ ] **Step-by-Step Debugging** - Execute workflow one node at a time
+
+### Parallel Execution
+
+- [ ] Parallel node execution for independent branches
+- [ ] Configurable parallelism limits
+- [ ] Resource pooling for parallel execution
+
+### Control Flow Nodes
+
+- [ ] Conditional execution (If/Else, Switch/Case)
+- [ ] Loop execution (For, While, ForEach)
+- [ ] Try/Catch error handling nodes
+- [ ] Parallel execution nodes
+
 ## 🎯 Success Criteria
 
 ### For v0.1.0 (Alpha)
 
-- [ ] Core node system functional
-- [ ] Basic workflow execution
-- [ ] Simple node definitions work
-- [ ] Unit tests passing
-- [ ] Basic documentation complete
+- [x] Core node system functional
+- [x] Basic workflow execution (serial)
+- [x] Simple node definitions work
+- [x] Unit tests passing (215 tests)
+- [x] Basic documentation complete
 
 ### For v0.5.0 (Beta)
 

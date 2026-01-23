@@ -43,7 +43,7 @@ export interface WorkflowData {
   version: string;
   createdAt?: string;
   updatedAt?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 /**
