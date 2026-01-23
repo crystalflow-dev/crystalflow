@@ -74,12 +74,17 @@ Enhance the ReactFlo execution engine's cancellation system to support multiple 
 
 ---
 
-## Phase 4: Event System Enhancement 📡
+## Phase 4: Event System Enhancement ✅
 
 ### 4.1 Cancellation Events
-- [ ] Add `onCancellation` event to ExecutorEvents
-- [ ] Emit event when cancellation detected
-- [ ] Update documentation
+- [x] Add `onCancellation` event to ExecutorEvents
+- [x] Emit event when cancellation detected
+- [x] Update documentation
+
+**Changes:**
+- Updated `ExecutorEvents` interface with `onCancellation` event (executionId, reason, cancelledAt)
+- Emit event in execution loop before throwing cancellation errors
+- All 64 tests passing (1 skipped)
 
 ---
 
@@ -114,9 +119,10 @@ Enhance the ReactFlo execution engine's cancellation system to support multiple 
 
 ---
 
-**Status**: Phase 2 Complete - Ready for Phase 3
+**Status**: Phase 4 Complete - Ready for Phase 5
 **Started**: January 23, 2026
 **Branch**: `feature/enhanced-cancellation`
 **Commits**: 
 - `fe3f62a` - Phase 1 & 2.1 complete
 - `804f16f` - Phase 2.2 & 2.3 complete
+- `ef73cac` - Phase 3 complete

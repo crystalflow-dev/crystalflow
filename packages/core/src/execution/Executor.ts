@@ -33,6 +33,11 @@ export interface ExecutorEvents {
   onNodeComplete: (nodeId: string, result: NodeExecutionResult) => void | Promise<void>;
   onNodeError: (nodeId: string, error: Error) => void | Promise<void>;
   onError: (error: Error) => void | Promise<void>;
+  onCancellation: (
+    executionId: string,
+    reason: CancellationReason,
+    cancelledAt: Date
+  ) => void | Promise<void>;
 }
 
 /**
@@ -129,7 +134,11 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
         // Check if execution was cancelled
         if (context.isCancelled()) {
           // Throw appropriate error based on cancellation reason
-          const reason = context.cancellationReason;
+          const reason = context.cancellationReason || CancellationReason.Timeout;
+          const cancelledAt = context.cancelledAt || new Date();
+
+          // Emit cancellation event
+          await this.emitAsync('onCancellation', executionId, reason, cancelledAt);
 
           switch (reason) {
             case CancellationReason.Timeout:
