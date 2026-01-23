@@ -461,6 +461,7 @@ interface NodeExecutionResult {
 2. Create ExecutionContext with unique executionId
 3. Get topological order of nodes from Graph
 4. For each node sequentially:
+   - Check for cancellation (between nodes)
    - Emit `onNodeStart`
    - Transfer data from connected predecessor nodes
    - Execute node (validate → execute → update state)
@@ -469,14 +470,70 @@ interface NodeExecutionResult {
    - If error: emit `onNodeError` and stop execution
 5. Return ExecutionResult with all timing and node data
 
-### Cancellation (Current Limitations)
+### Cancellation System (ENHANCED - Phase 5 COMPLETE)
 
-- Currently only supports timeout-based cancellation
-- Cancellation is checked **between nodes** (not during node execution)
-- Always throws `TimeoutError` when cancelled
-- AbortSignal is set but nodes must check it manually
+ReactFlo provides comprehensive cancellation support:
 
-**Future Enhancement:** Track cancellation reasons (timeout, user, error, resource-limit) - see `CHECKLIST.md`
+**Cancellation Mechanisms:**
+- ✅ **Timeout-based** - Set `timeout` in execution options
+- ✅ **User-initiated** - Call `executor.cancel(executionId, reason)`
+- ✅ **External signal** - Pass `abortSignal` in execution options
+- ✅ **Between-node checks** - Automatic checks in execution loop
+- ✅ **Mid-node checks** - Nodes call `this.checkCancellation()`
+
+**Cancellation Reasons:**
+- `timeout` - Execution exceeded timeout limit
+- `user-cancelled` - User explicitly cancelled via API
+- `external-signal` - Cancelled via AbortController/AbortSignal
+- `resource-limit` - Resource constraints (reserved for future)
+
+**Error Hierarchy:**
+```typescript
+CancellationError (base)
+├── TimeoutError
+└── UserCancelledError
+```
+
+**Cancellation API:**
+```typescript
+// Cancel specific execution
+executor.cancel(executionId, CancellationReason.UserCancelled);
+
+// Cancel all active executions
+executor.cancelAll(CancellationReason.UserCancelled);
+
+// Check if execution is active
+if (executor.isExecutionActive(executionId)) {
+  executor.cancel(executionId);
+}
+
+// Listen to cancellation events
+executor.on('onCancellation', (executionId, reason, cancelledAt) => {
+  console.log(`Execution ${executionId} cancelled: ${reason}`);
+});
+```
+
+**Mid-Node Cancellation:**
+```typescript
+class LongRunningNode extends Node {
+  async execute() {
+    for (let i = 0; i < 1000; i++) {
+      this.checkCancellation(); // Throws CancellationError if cancelled
+      await processItem(i);
+    }
+  }
+}
+```
+
+**ExecutionResult with Cancellation:**
+```typescript
+interface ExecutionResult {
+  status: 'success' | 'failed' | 'cancelled';
+  cancellationReason?: CancellationReason;
+  cancelledAt?: Date;
+  // ... other fields
+}
+```
 
 ## React Package (Phase 4 - IN PROGRESS)
 
