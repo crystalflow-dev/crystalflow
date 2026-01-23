@@ -219,7 +219,7 @@ workflow.connect('sourceNodeId', 'outputPort', 'targetNodeId', 'inputPort');
 // Execute workflow (returns ExecutionResult)
 const result = await workflow.execute({
   timeout: 30000,
-  variables: { apiKey: 'xxx' }
+  variables: { apiKey: 'xxx' },
 });
 
 // Or use Executor directly with events
@@ -354,7 +354,7 @@ test(executor): add async execution tests
 ## Current Status
 
 - **Phase:** Phase 3 ✅ COMPLETED (Basic Execution Engine - Serial Execution)
-- **Completed:** 
+- **Completed:**
   - Phase 1 (Node System - 100%)
   - Phase 2 (Workflow System - 100%)
   - Phase 3 (Basic Execution Engine - 100%)
@@ -366,11 +366,13 @@ test(executor): add async execution tests
 The serial execution engine is fully implemented with:
 
 ### Core Components
+
 - **Executor** - Main orchestrator with EventEmitter support
 - **ExecutionContext** - Manages state, variables, timing, and node results
 - **Error Classes** - ExecutionError, NodeExecutionError, ValidationError, TimeoutError
 
 ### Features
+
 - ✅ Serial execution (nodes execute sequentially in topological order)
 - ✅ Automatic data propagation between connected nodes
 - ✅ Event system (beforeExecute, afterExecute, onNodeStart, onNodeComplete, onNodeError, onError)
@@ -416,20 +418,20 @@ const result = await executor.execute(workflow, options);
 
 ```typescript
 interface ExecutionResult {
-  id: string;                           // Unique execution ID
-  workflowId: string;                   // Workflow being executed
-  status: ExecutionStatus;              // success, failed, cancelled
-  startTime: Date;                      // When execution started
-  endTime?: Date;                       // When execution ended
-  duration?: number;                    // Duration in milliseconds
-  nodeResults: Map<NodeId, NodeExecutionResult>;  // Results for each node
-  error?: Error;                        // Error if execution failed
+  id: string; // Unique execution ID
+  workflowId: string; // Workflow being executed
+  status: ExecutionStatus; // success, failed, cancelled
+  startTime: Date; // When execution started
+  endTime?: Date; // When execution ended
+  duration?: number; // Duration in milliseconds
+  nodeResults: Map<NodeId, NodeExecutionResult>; // Results for each node
+  error?: Error; // Error if execution failed
 }
 
 interface NodeExecutionResult {
   nodeId: string;
-  state: NodeState;                     // Success, Error
-  outputs: Record<string, any>;         // All output values (fully serializable)
+  state: NodeState; // Success, Error
+  outputs: Record<string, any>; // All output values (fully serializable)
   error?: Error;
   startTime: Date;
   endTime?: Date;

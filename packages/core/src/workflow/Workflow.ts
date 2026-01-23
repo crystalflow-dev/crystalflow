@@ -2,7 +2,15 @@ import { Node } from '../node/Node';
 import { NodeRegistry } from '../node/NodeRegistry';
 import { Connection } from './Connection';
 import { Graph } from './Graph';
-import { WorkflowData, NodeData, ConnectionData, ValidationResult, ExecutionOptions, ExecutionResult } from '@reactflo/types';
+import {
+  WorkflowData,
+  NodeData,
+  ConnectionData,
+  ValidationResult,
+  ValidationError,
+  ExecutionOptions,
+  ExecutionResult,
+} from '@reactflo/types';
 import { Executor } from '../execution/Executor';
 
 /**
@@ -189,7 +197,7 @@ export class Workflow {
     // Validate connection
     const validationResult = connection.validate(sourceNode, targetNode);
     if (!validationResult.valid) {
-      const errorMessages = validationResult.errors.map((e) => e.message);
+      const errorMessages = validationResult.errors.map((e: ValidationError) => e.message);
       throw new Error(`Invalid connection: ${errorMessages.join(', ')}`);
     }
 
@@ -259,7 +267,7 @@ export class Workflow {
 
       const connectionResult = connection.validate(sourceNode, targetNode);
       if (!connectionResult.valid) {
-        const errorMessages = connectionResult.errors.map((e) => e.message);
+        const errorMessages = connectionResult.errors.map((e: ValidationError) => e.message);
         errors.push(`Connection ${connection.id}: ${errorMessages.join(', ')}`);
       }
     }

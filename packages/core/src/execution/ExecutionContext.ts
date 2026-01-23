@@ -1,4 +1,32 @@
-import { ExecutionId, WorkflowId, NodeId, ExecutionStatus, NodeExecutionResult } from '@reactflo/types';
+import {
+  ExecutionId,
+  WorkflowId,
+  NodeId,
+  ExecutionStatus,
+  NodeExecutionResult,
+} from '@reactflo/types';
+
+/**
+ * Serialized execution context data
+ */
+export interface SerializedExecutionContext {
+  executionId: ExecutionId;
+  workflowId: WorkflowId;
+  status: ExecutionStatus;
+  startTime: string;
+  endTime?: string;
+  duration?: number;
+  variables: Record<string, unknown>;
+  nodeResults: Array<{
+    nodeId: string;
+    state: string;
+    outputs: Record<string, unknown>;
+    error?: Error;
+    startTime: string;
+    endTime?: string;
+    duration?: number;
+  }>;
+}
 
 /**
  * ExecutionContext manages the state and data for a workflow execution.
@@ -10,11 +38,15 @@ export class ExecutionContext {
   private _status: ExecutionStatus;
   private _startTime: Date;
   private _endTime?: Date;
-  private _variables: Map<string, any>;
+  private _variables: Map<string, unknown>;
   private _nodeResults: Map<NodeId, NodeExecutionResult>;
   private _abortController?: AbortController;
 
-  constructor(executionId: ExecutionId, workflowId: WorkflowId, variables?: Record<string, any>) {
+  constructor(
+    executionId: ExecutionId,
+    workflowId: WorkflowId,
+    variables?: Record<string, unknown>
+  ) {
     this._executionId = executionId;
     this._workflowId = workflowId;
     this._status = ExecutionStatus.Pending;
@@ -86,14 +118,14 @@ export class ExecutionContext {
   /**
    * Get a variable value
    */
-  getVariable<T = any>(key: string): T | undefined {
+  getVariable<T = unknown>(key: string): T | undefined {
     return this._variables.get(key) as T | undefined;
   }
 
   /**
    * Set a variable value
    */
-  setVariable(key: string, value: any): void {
+  setVariable(key: string, value: unknown): void {
     this._variables.set(key, value);
   }
 
@@ -107,7 +139,7 @@ export class ExecutionContext {
   /**
    * Get all variables as a plain object
    */
-  getVariables(): Record<string, any> {
+  getVariables(): Record<string, unknown> {
     return Object.fromEntries(this._variables);
   }
 
@@ -135,7 +167,9 @@ export class ExecutionContext {
   /**
    * Mark execution as complete
    */
-  complete(status: ExecutionStatus.Success | ExecutionStatus.Failed | ExecutionStatus.Cancelled): void {
+  complete(
+    status: ExecutionStatus.Success | ExecutionStatus.Failed | ExecutionStatus.Cancelled
+  ): void {
     this._status = status;
     this._endTime = new Date();
   }
@@ -160,7 +194,7 @@ export class ExecutionContext {
   /**
    * Serialize to JSON
    */
-  toJSON(): Record<string, any> {
+  toJSON(): SerializedExecutionContext {
     return {
       executionId: this._executionId,
       workflowId: this._workflowId,

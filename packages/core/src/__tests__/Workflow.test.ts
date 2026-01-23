@@ -42,11 +42,11 @@ class AddNode extends Node {
   }
 
   getOutputValue(portName: string): unknown {
-    return (this as any)[portName];
+    return this[portName];
   }
 
   setInputValue(portName: string, value: unknown): void {
-    (this as any)[portName] = value;
+    this[portName] = value;
   }
 }
 
@@ -87,11 +87,11 @@ class MultiplyNode extends Node {
   }
 
   getOutputValue(portName: string): unknown {
-    return (this as any)[portName];
+    return this[portName];
   }
 
   setInputValue(portName: string, value: unknown): void {
-    (this as any)[portName] = value;
+    this[portName] = value;
   }
 }
 
@@ -283,7 +283,7 @@ describe('Workflow', () => {
       workflow.connect(node2.id, 'result', node1.id, 'a');
 
       const result = await workflow.execute();
-      
+
       expect(result.status).toBe('failed');
       expect(result.error).toBeDefined();
       expect(result.error?.message).toContain('Workflow validation failed');

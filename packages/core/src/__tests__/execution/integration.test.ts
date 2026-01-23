@@ -119,8 +119,8 @@ describe('Integration Tests - Workflow Execution', () => {
 
   beforeEach(() => {
     // Clear registry before each test to avoid conflicts
-    (registry as any).nodes.clear();
-    
+    registry.clear();
+
     // Re-register nodes
     registry.register(NumberInputNode);
     registry.register(AddNode);
@@ -391,7 +391,7 @@ describe('Integration Tests - Workflow Execution', () => {
       expect(result.duration).toBeGreaterThanOrEqual(0);
 
       // Check each node has timing
-      for (const [nodeId, nodeResult] of result.nodeResults) {
+      for (const [_nodeId, nodeResult] of result.nodeResults) {
         expect(nodeResult.startTime).toBeInstanceOf(Date);
         expect(nodeResult.endTime).toBeInstanceOf(Date);
         expect(nodeResult.duration).toBeGreaterThanOrEqual(0);

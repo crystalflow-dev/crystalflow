@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.d.ts
+
+# Coverage
+coverage/
+
+# Cache
+.eslintcache

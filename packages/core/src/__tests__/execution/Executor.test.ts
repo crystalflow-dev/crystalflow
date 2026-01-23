@@ -346,7 +346,7 @@ describe('Executor', () => {
       expect(result.status).toBe(ExecutionStatus.Success);
 
       // Verify JSON serialization
-      const json = JSON.stringify(result, (key, value) => {
+      const json = JSON.stringify(result, (_key, value) => {
         // Convert Map to Array for JSON
         if (value instanceof Map) {
           return Array.from(value.entries());

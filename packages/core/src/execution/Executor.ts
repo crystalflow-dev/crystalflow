@@ -119,7 +119,13 @@ export class Executor extends EventEmitter {
     } catch (error) {
       // Handle execution error
       const executionError =
-        error instanceof ExecutionError ? error : new ExecutionError(String(error), { executionId, workflowId: workflow.id, cause: error as Error });
+        error instanceof ExecutionError
+          ? error
+          : new ExecutionError(String(error), {
+              executionId,
+              workflowId: workflow.id,
+              cause: error as Error,
+            });
 
       context.complete(ExecutionStatus.Failed);
 
@@ -140,7 +146,11 @@ export class Executor extends EventEmitter {
   /**
    * Execute a single node
    */
-  private async executeNode(node: Node, workflow: Workflow, context: ExecutionContext): Promise<void> {
+  private async executeNode(
+    node: Node,
+    workflow: Workflow,
+    context: ExecutionContext
+  ): Promise<void> {
     const startTime = new Date();
 
     try {
@@ -154,7 +164,7 @@ export class Executor extends EventEmitter {
       await node.run();
 
       // Record execution result
-      const endTime = new Date();  
+      const endTime = new Date();
 
       const result: NodeExecutionResult = {
         nodeId: node.id,
@@ -221,8 +231,8 @@ export class Executor extends EventEmitter {
   /**
    * Extract output values from a node
    */
-  private extractNodeOutputs(node: Node): Record<string, any> {
-    const outputs: Record<string, any> = {};
+  private extractNodeOutputs(node: Node): Record<string, unknown> {
+    const outputs: Record<string, unknown> = {};
     const outputPorts = node.getOutputs();
 
     for (const output of outputPorts) {

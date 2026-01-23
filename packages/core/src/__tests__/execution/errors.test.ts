@@ -32,7 +32,7 @@ describe('Execution Errors', () => {
         cause: causeError,
       });
 
-      expect((error as any).cause).toBe(causeError);
+      expect(error.cause).toBe(causeError);
     });
 
     it('should have proper stack trace', () => {
@@ -69,7 +69,7 @@ describe('Execution Errors', () => {
         cause: originalError,
       });
 
-      expect((error as any).cause).toBe(originalError);
+      expect(error.cause).toBe(originalError);
     });
 
     it('should work without optional context', () => {
@@ -180,15 +180,12 @@ describe('Execution Errors', () => {
 
   describe('Error Messages', () => {
     it('should format descriptive error messages for NodeExecutionError', () => {
-      const error = new NodeExecutionError(
-        'Failed to execute node: Division by zero',
-        {
-          nodeId: 'math-divide-1',
-          nodeType: 'math.divide',
-          executionId: 'exec-789',
-          workflowId: 'workflow-123',
-        }
-      );
+      const error = new NodeExecutionError('Failed to execute node: Division by zero', {
+        nodeId: 'math-divide-1',
+        nodeType: 'math.divide',
+        executionId: 'exec-789',
+        workflowId: 'workflow-123',
+      });
 
       expect(error.message).toContain('Division by zero');
       expect(error.toString()).toContain('NodeExecutionError');
@@ -200,13 +197,10 @@ describe('Execution Errors', () => {
         'Connection creates circular dependency',
       ];
 
-      const error = new ValidationError(
-        `Workflow validation failed with ${errors.length} errors`,
-        {
-          validationErrors: errors,
-          workflowId: 'workflow-123',
-        }
-      );
+      const error = new ValidationError(`Workflow validation failed with ${errors.length} errors`, {
+        validationErrors: errors,
+        workflowId: 'workflow-123',
+      });
 
       expect(error.message).toContain('2 errors');
       expect(error.validationErrors).toHaveLength(2);
