@@ -110,14 +110,16 @@ ReactFlo is organized as a monorepo with multiple packages:
 - [x] Workflow execution
   - [x] Executor class for workflow orchestration
   - [x] ExecutionContext for runtime state management
+  - [x] AsyncEventEmitter for async-aware event system
   - [x] Serial execution strategy
-  - [x] Async/await support
-  - [x] Event system for lifecycle hooks
+  - [x] Async/await support for nodes and event listeners
+  - [x] Event system for lifecycle hooks (beforeExecute, afterExecute, onNodeStart, etc.)
   - [x] Error handling with detailed context
   - [x] Timing and duration tracking
 - [x] Performance optimization
   - [x] Execution monitoring with events
   - [x] AbortSignal support for cancellation
+  - [x] Async event listener support (waits for all listeners to complete)
 
 ### 🚧 Phase 4: React Package (In Progress - Q1 2026)
 

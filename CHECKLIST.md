@@ -89,11 +89,11 @@ This document confirms that the ReactFlo framework has been properly initialized
 
 ### Phase 3: Basic Execution Engine
 
-- [ ] Implement Executor
-- [ ] Create ExecutionContext
-- [ ] Add basic execution strategies
-- [ ] Implement async executor
-- [ ] Write unit tests for execution
+- [x] Implement Executor
+- [x] Create ExecutionContext
+- [x] Add basic execution strategies
+- [x] Implement async executor
+- [x] Write unit tests for execution
 
 ### Phase 3.5: Control Flow & Advanced Execution (Epic REACTFLO-50)
 
@@ -192,7 +192,7 @@ Examples:                 5+ working examples
 
 ### Execution Engine Improvements
 
-- [ ] **Async Event Listeners Support** - Allow event listeners to return promises and wait for them
+- [x] **Async Event Listeners Support** - Allow event listeners to return promises and wait for them
 - [ ] **Enhanced Cancellation System**:
   - [ ] Track cancellation reasons (`timeout`, `user`, `error`, `resource-limit`)
   - [ ] Add `ExecutionContext.cancel(reason)` with reason parameter

@@ -14,6 +14,7 @@ export * from './execution';
 
 // Utilities
 export * from './utils/serialization';
+export { AsyncEventEmitter } from './utils/AsyncEventEmitter';
 
 // TODO: Implement remaining features
 // - Type System (DataType, TypeValidator)

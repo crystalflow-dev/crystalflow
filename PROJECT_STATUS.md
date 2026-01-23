@@ -98,6 +98,7 @@ reactflo/
 - [x] Phase 1: Core Node System (100%)
 - [x] Phase 2: Workflow System (100%)
 - [x] Phase 3: Basic Execution Engine - Serial Execution (100%)
+- [x] Async Event Listeners Support (100%)
 
 ### 🚧 Next To Implement
 
@@ -118,14 +119,16 @@ reactflo/
 
 #### Phase 3: Basic Execution Engine ✅ COMPLETED
 
-- [x] `packages/core/src/execution/Executor.ts` - Main executor with EventEmitter
+- [x] `packages/core/src/execution/Executor.ts` - Main executor with AsyncEventEmitter
 - [x] `packages/core/src/execution/ExecutionContext.ts` - Context management
 - [x] `packages/core/src/execution/errors.ts` - Execution error classes
+- [x] `packages/core/src/utils/AsyncEventEmitter.ts` - Custom async event emitter
 - [x] Serial execution implementation
 - [x] Data propagation between nodes
 - [x] Error handling and state management
 - [x] Execution timing and duration tracking
-- [x] Comprehensive test suite (57 tests passing)
+- [x] Async event listener support
+- [x] Comprehensive test suite (243 tests passing)
 
 #### Phase 3.5: Control Flow & Advanced Execution (Epic REACTFLO-50) - NEXT
 
@@ -136,9 +139,9 @@ reactflo/
 
 #### Phase 4: Supporting Systems
 
-- [ ] `packages/core/src/events/EventEmitter.ts` - Events
+- [x] `packages/core/src/utils/AsyncEventEmitter.ts` - Async events (completed)
 - [ ] `packages/core/src/types/DataType.ts` - Type system
-- [ ] `packages/core/src/utils/` - Utilities
+- [ ] `packages/core/src/utils/` - Additional utilities
 
 #### Phase 5: React Package
 
@@ -170,11 +173,11 @@ reactflo/
    - Write tests alongside implementation
    - Run `npm test` frequently
 
-## 📈 Progress: 25% Complete
+## 📈 Progress: 30% Complete
 
 - ✅ Project foundation & structure
 - ✅ Type definitions
-- 🚧 Core implementation
-- ⏳ React components
+- ✅ Core implementation (Node, Workflow, Execution with async events)
+- 🚧 React components (structure initialized)
 - ⏳ CLI tools
 - ⏳ Examples & documentation site

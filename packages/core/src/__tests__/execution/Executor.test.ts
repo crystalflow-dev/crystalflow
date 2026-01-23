@@ -361,4 +361,200 @@ describe('Executor', () => {
       expect(parsed.workflowId).toBe('json-workflow');
     });
   });
+
+  describe('Async Event Listeners', () => {
+    it('should wait for async event listeners to complete', async () => {
+      const workflow = new Workflow('async-event-workflow', 'Async Event Workflow');
+      const node = new AddNode('node1');
+      node.a = 5;
+      node.b = 3;
+
+      workflow['_nodes'].set('node1', node);
+      workflow['_graph'].addNode('node1');
+
+      const executionOrder: string[] = [];
+
+      // Add async listener that takes time
+      executor.on('onNodeStart', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        executionOrder.push('async-start');
+      });
+
+      executor.on('onNodeComplete', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        executionOrder.push('async-complete');
+      });
+
+      await executor.execute(workflow);
+
+      // Both async listeners should have completed
+      expect(executionOrder).toEqual(['async-start', 'async-complete']);
+    });
+
+    it('should wait for multiple async listeners on same event', async () => {
+      const workflow = new Workflow('multi-async-workflow', 'Multi Async Workflow');
+      const node = new AddNode('node1');
+
+      workflow['_nodes'].set('node1', node);
+      workflow['_graph'].addNode('node1');
+
+      const results: string[] = [];
+
+      executor.on('beforeExecute', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        results.push('listener1');
+      });
+
+      executor.on('beforeExecute', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        results.push('listener2');
+      });
+
+      executor.on('beforeExecute', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        results.push('listener3');
+      });
+
+      await executor.execute(workflow);
+
+      // All async listeners should have completed
+      expect(results).toHaveLength(3);
+      expect(results).toContain('listener1');
+      expect(results).toContain('listener2');
+      expect(results).toContain('listener3');
+    });
+
+    it('should support mix of sync and async listeners', async () => {
+      const workflow = new Workflow('mixed-workflow', 'Mixed Workflow');
+      const node = new AddNode('node1');
+
+      workflow['_nodes'].set('node1', node);
+      workflow['_graph'].addNode('node1');
+
+      const results: string[] = [];
+
+      // Sync listener
+      executor.on('onNodeStart', () => {
+        results.push('sync-listener');
+      });
+
+      // Async listener
+      executor.on('onNodeStart', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 15));
+        results.push('async-listener');
+      });
+
+      // Another sync listener
+      executor.on('onNodeStart', () => {
+        results.push('sync-listener-2');
+      });
+
+      await executor.execute(workflow);
+
+      expect(results).toHaveLength(3);
+      expect(results).toContain('sync-listener');
+      expect(results).toContain('async-listener');
+      expect(results).toContain('sync-listener-2');
+    });
+
+    it('should handle async listener that modifies external state', async () => {
+      const workflow = new Workflow('state-workflow', 'State Workflow');
+      const node1 = new AddNode('node1');
+      const node2 = new AddNode('node2');
+
+      workflow['_nodes'].set('node1', node1);
+      workflow['_nodes'].set('node2', node2);
+      workflow['_graph'].addNode('node1');
+      workflow['_graph'].addNode('node2');
+
+      const nodeExecutionLog: Array<{ nodeId: string; timestamp: number }> = [];
+
+      executor.on('onNodeComplete', async (nodeId) => {
+        // Simulate async logging to external system
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        nodeExecutionLog.push({
+          nodeId,
+          timestamp: Date.now(),
+        });
+      });
+
+      await executor.execute(workflow);
+
+      // Log should contain both nodes (order may vary)
+      expect(nodeExecutionLog).toHaveLength(2);
+      const nodeIds = nodeExecutionLog.map((log) => log.nodeId);
+      expect(nodeIds).toContain('node1');
+      expect(nodeIds).toContain('node2');
+    });
+
+    it('should propagate async listener errors', async () => {
+      const workflow = new Workflow('error-listener-workflow', 'Error Listener Workflow');
+      const node = new AddNode('node1');
+
+      workflow['_nodes'].set('node1', node);
+      workflow['_graph'].addNode('node1');
+
+      executor.on('onNodeStart', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        throw new Error('Async listener failed');
+      });
+
+      const result = await executor.execute(workflow);
+
+      // Execution should fail due to async listener error
+      expect(result.status).toBe(ExecutionStatus.Failed);
+      expect(result.error).toBeDefined();
+      expect(result.error?.message).toContain('Async listener failed');
+    });
+
+    it('should handle async beforeExecute and afterExecute events', async () => {
+      const workflow = new Workflow('before-after-workflow', 'Before After Workflow');
+      const node = new AddNode('node1');
+
+      workflow['_nodes'].set('node1', node);
+      workflow['_graph'].addNode('node1');
+
+      const events: string[] = [];
+
+      executor.on('beforeExecute', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        events.push('before');
+      });
+
+      executor.on('afterExecute', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        events.push('after');
+      });
+
+      await executor.execute(workflow);
+
+      expect(events).toEqual(['before', 'after']);
+    });
+
+    it('should wait for async listeners even when execution fails', async () => {
+      const workflow = new Workflow('fail-workflow', 'Fail Workflow');
+      const errorNode = new ErrorNode('error-node');
+
+      workflow['_nodes'].set('error-node', errorNode);
+      workflow['_graph'].addNode('error-node');
+
+      const events: string[] = [];
+
+      executor.on('onNodeError', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        events.push('error-handled');
+      });
+
+      executor.on('afterExecute', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        events.push('after-executed');
+      });
+
+      const result = await executor.execute(workflow);
+
+      expect(result.status).toBe(ExecutionStatus.Failed);
+      expect(events).toContain('error-handled');
+      expect(events).toContain('after-executed');
+    });
+  });
 });
