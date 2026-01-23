@@ -237,6 +237,9 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       // Transfer data from connected nodes
       this.transferNodeData(node.id, workflow);
 
+      // Inject execution context into node for cancellation support
+      node._executionContext = context;
+
       // Execute the node (calls validate + execute + state management)
       await node.run();
 
@@ -286,6 +289,9 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
 
       // Re-throw to stop execution
       throw nodeError;
+    } finally {
+      // Clear execution context from node
+      node._executionContext = undefined;
     }
   }
 

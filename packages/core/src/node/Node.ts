@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { NodeId, NodeType, NodeState, NodeMetadata, PortDefinition } from '@reactflo/types';
+import type { ExecutionContext } from '../execution/ExecutionContext';
 
 /**
  * Abstract base class for all nodes in ReactFlo.
@@ -70,6 +71,12 @@ export abstract class Node {
    * Output port definitions
    */
   private _outputs?: PortDefinition[];
+
+  /**
+   * Execution context - injected by executor during node execution
+   * @internal
+   */
+  public _executionContext?: ExecutionContext;
 
   /**
    * Creates a new Node instance
@@ -259,5 +266,47 @@ export abstract class Node {
         }
       }
     }
+  }
+
+  /**
+   * Check if execution has been cancelled
+   * Long-running nodes should call this periodically to respect cancellation requests
+   *
+   * @throws {CancellationError} If execution has been cancelled
+   *
+   * @example
+   * ```typescript
+   * async execute() {
+   *   for (let i = 0; i < 1000; i++) {
+   *     this.checkCancellation(); // Check every iteration
+   *     await processItem(i);
+   *   }
+   * }
+   * ```
+   */
+  protected checkCancellation(): void {
+    if (this._executionContext?.isCancelled()) {
+      const reason = this._executionContext.cancellationReason;
+      throw new Error(`Execution cancelled: ${reason || 'unknown reason'}`);
+    }
+  }
+
+  /**
+   * Get the abort signal for this execution
+   * Use this with AbortSignal-compatible APIs (fetch, etc.)
+   *
+   * @returns AbortSignal if available, undefined otherwise
+   *
+   * @example
+   * ```typescript
+   * async execute() {
+   *   const response = await fetch(this.url, {
+   *     signal: this.abortSignal // Automatically cancelled
+   *   });
+   * }
+   * ```
+   */
+  protected get abortSignal(): AbortSignal | undefined {
+    return this._executionContext?.abortSignal;
   }
 }
