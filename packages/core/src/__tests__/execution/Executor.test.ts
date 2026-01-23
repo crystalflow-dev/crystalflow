@@ -1,5 +1,5 @@
 import { Executor } from '../../execution/Executor';
-import { ExecutionStatus } from '@reactflo/types';
+import { ExecutionStatus, CancellationReason } from '@reactflo/types';
 import { Workflow } from '../../workflow/Workflow';
 import { Node } from '../../node/Node';
 import { defineNode, Input, Output } from '../../node/decorators';
@@ -80,6 +80,75 @@ class AsyncNode extends Node {
   async execute(): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, this.delay));
     this.result = this.value.toUpperCase();
+  }
+}
+
+/**
+ * SlowNode - Takes a long time to execute with multiple steps
+ * This allows us to test mid-execution cancellation
+ */
+@defineNode({
+  type: 'test.slow',
+  label: 'Slow Node',
+  category: 'Test',
+})
+class SlowNode extends Node {
+  @Input({ type: 'number', label: 'Steps' })
+  steps: number = 10;
+
+  @Input({ type: 'number', label: 'Step Delay' })
+  stepDelay: number = 100;
+
+  @Output({ type: 'number', label: 'Completed Steps' })
+  completedSteps!: number;
+
+  async execute(): Promise<void> {
+    this.completedSteps = 0;
+
+    for (let i = 0; i < this.steps; i++) {
+      // Check for cancellation before each step
+      this.checkCancellation();
+
+      // Simulate work
+      await new Promise((resolve) => setTimeout(resolve, this.stepDelay));
+      this.completedSteps++;
+    }
+  }
+}
+
+/**
+ * LongRunningNode - Uses abortSignal for fetch-like operations
+ * (Reserved for future AbortSignal integration tests)
+ */
+@defineNode({
+  type: 'test.longRunning',
+  label: 'Long Running',
+  category: 'Test',
+})
+class _LongRunningNode extends Node {
+  @Input({ type: 'number', label: 'Duration' })
+  duration: number = 1000;
+
+  @Output({ type: 'string', label: 'Result' })
+  result!: string;
+
+  async execute(): Promise<void> {
+    // Simulate a long-running operation that respects abortSignal
+    const signal = this.abortSignal;
+
+    const timeoutPromise = new Promise((resolve) =>
+      setTimeout(() => resolve('completed'), this.duration)
+    );
+
+    const abortPromise = new Promise((_, reject) => {
+      if (signal) {
+        signal.addEventListener('abort', () => {
+          reject(new Error('Operation aborted'));
+        });
+      }
+    });
+
+    this.result = (await Promise.race([timeoutPromise, abortPromise])) as string;
   }
 }
 
@@ -555,6 +624,310 @@ describe('Executor', () => {
       expect(result.status).toBe(ExecutionStatus.Failed);
       expect(events).toContain('error-handled');
       expect(events).toContain('after-executed');
+    });
+  });
+
+  describe('Cancellation API', () => {
+    it('should track active executions during execution', async () => {
+      const workflow = new Workflow('tracking-workflow', 'Tracking Workflow');
+      const slowNode = new SlowNode('slow1');
+      slowNode.steps = 5;
+      slowNode.stepDelay = 50;
+
+      workflow['_nodes'].set('slow1', slowNode);
+      workflow['_graph'].addNode('slow1');
+
+      expect(executor.isExecutionActive('exec-123')).toBe(false);
+
+      const promise = executor.execute(workflow);
+
+      // Wait for execution to start
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // Should be active during execution
+      expect(executor['_activeExecutions'].size).toBe(1);
+
+      await promise;
+
+      // Should be removed after completion
+      expect(executor['_activeExecutions'].size).toBe(0);
+    });
+
+    it('should cancel active execution by ID with UserCancelled reason', async () => {
+      const workflow = new Workflow('cancel-workflow', 'Cancel Workflow');
+      const slowNode = new SlowNode('slow1');
+      slowNode.steps = 50; // Many steps to ensure cancellation window
+      slowNode.stepDelay = 30;
+
+      workflow['_nodes'].set('slow1', slowNode);
+      workflow['_graph'].addNode('slow1');
+
+      const promise = executor.execute(workflow);
+
+      // Wait for execution to start and run a few steps
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Get the active execution ID
+      const executionIds = Array.from(executor['_activeExecutions'].keys());
+      expect(executionIds.length).toBe(1);
+
+      const executionId = executionIds[0];
+
+      // Verify it's active
+      expect(executor.isExecutionActive(executionId)).toBe(true);
+
+      // Cancel execution
+      executor.cancel(executionId, CancellationReason.UserCancelled);
+
+      const result = await promise;
+
+      expect(result.status).toBe(ExecutionStatus.Cancelled);
+      expect(result.cancellationReason).toBe(CancellationReason.UserCancelled);
+      expect(result.cancelledAt).toBeInstanceOf(Date);
+      expect(result.error?.message).toContain('cancelled');
+
+      // Should no longer be active
+      expect(executor.isExecutionActive(executionId)).toBe(false);
+    });
+
+    it('should cancel execution between nodes', async () => {
+      const workflow = new Workflow('multi-node-cancel', 'Multi Node Cancel');
+      const node1 = new AddNode('node1');
+      const node2 = new SlowNode('slow1');
+      const node3 = new AddNode('node3');
+
+      node2.steps = 20;
+      node2.stepDelay = 50;
+
+      workflow['_nodes'].set('node1', node1);
+      workflow['_nodes'].set('slow1', node2);
+      workflow['_nodes'].set('node3', node3);
+      workflow['_graph'].addNode('node1');
+      workflow['_graph'].addNode('slow1');
+      workflow['_graph'].addNode('node3');
+      workflow['_graph'].addEdge('node1', 'slow1');
+      workflow['_graph'].addEdge('slow1', 'node3');
+
+      const promise = executor.execute(workflow);
+
+      // Wait for node1 to complete and slow1 to start
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const executionIds = Array.from(executor['_activeExecutions'].keys());
+      executor.cancel(executionIds[0], CancellationReason.UserCancelled);
+
+      const result = await promise;
+
+      expect(result.status).toBe(ExecutionStatus.Cancelled);
+      expect(result.nodeResults.has('node1')).toBe(true); // node1 completed
+      expect(result.nodeResults.has('node3')).toBe(false); // node3 never started
+    });
+
+    it('should cancel all active executions', async () => {
+      const executor1 = new Executor();
+
+      const workflow1 = new Workflow('workflow-1', 'Workflow 1');
+      const workflow2 = new Workflow('workflow-2', 'Workflow 2');
+
+      const slow1 = new SlowNode('slow1');
+      slow1.steps = 20;
+      slow1.stepDelay = 50;
+
+      const slow2 = new SlowNode('slow2');
+      slow2.steps = 20;
+      slow2.stepDelay = 50;
+
+      workflow1['_nodes'].set('slow1', slow1);
+      workflow1['_graph'].addNode('slow1');
+
+      workflow2['_nodes'].set('slow2', slow2);
+      workflow2['_graph'].addNode('slow2');
+
+      const promise1 = executor1.execute(workflow1);
+      const promise2 = executor1.execute(workflow2);
+
+      // Wait for both executions to start
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      expect(executor1['_activeExecutions'].size).toBe(2);
+
+      // Cancel all with specific reason
+      executor1.cancelAll(CancellationReason.UserCancelled);
+
+      const results = await Promise.all([promise1, promise2]);
+
+      results.forEach((result) => {
+        expect(result.status).toBe(ExecutionStatus.Cancelled);
+        expect(result.cancellationReason).toBe(CancellationReason.UserCancelled);
+        expect(result.cancelledAt).toBeInstanceOf(Date);
+      });
+
+      expect(executor1['_activeExecutions'].size).toBe(0);
+    });
+
+    it('should handle external AbortSignal cancellation', async () => {
+      const workflow = new Workflow('abort-workflow', 'Abort Workflow');
+      const slowNode = new SlowNode('slow1');
+      slowNode.steps = 20;
+      slowNode.stepDelay = 50;
+
+      workflow['_nodes'].set('slow1', slowNode);
+      workflow['_graph'].addNode('slow1');
+
+      const abortController = new AbortController();
+
+      const promise = executor.execute(workflow, {
+        abortSignal: abortController.signal,
+      });
+
+      // Wait for execution to start
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Abort via external signal
+      abortController.abort();
+
+      const result = await promise;
+
+      expect(result.status).toBe(ExecutionStatus.Cancelled);
+      expect(result.cancellationReason).toBe(CancellationReason.ExternalSignal);
+      expect(result.cancelledAt).toBeInstanceOf(Date);
+      expect(result.error?.message).toContain('external signal');
+    });
+
+    it('should emit onCancellation event with correct data', async () => {
+      const workflow = new Workflow('event-workflow', 'Event Workflow');
+      const slowNode = new SlowNode('slow1');
+      slowNode.steps = 20;
+      slowNode.stepDelay = 50;
+
+      workflow['_nodes'].set('slow1', slowNode);
+      workflow['_graph'].addNode('slow1');
+
+      let cancellationEmitted = false;
+      let emittedExecutionId = '';
+      let emittedReason: CancellationReason | undefined;
+      let emittedCancelledAt: Date | undefined;
+
+      executor.on('onCancellation', (executionId, reason, cancelledAt) => {
+        cancellationEmitted = true;
+        emittedExecutionId = executionId;
+        emittedReason = reason;
+        emittedCancelledAt = cancelledAt;
+      });
+
+      const promise = executor.execute(workflow);
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const executionIds = Array.from(executor['_activeExecutions'].keys());
+      const executionId = executionIds[0];
+
+      executor.cancel(executionId, CancellationReason.UserCancelled);
+
+      await promise;
+
+      expect(cancellationEmitted).toBe(true);
+      expect(emittedExecutionId).toBe(executionId);
+      expect(emittedReason).toBe(CancellationReason.UserCancelled);
+      expect(emittedCancelledAt).toBeInstanceOf(Date);
+    });
+
+    it('should support timeout-based cancellation', async () => {
+      const workflow = new Workflow('timeout-workflow', 'Timeout Workflow');
+      const slowNode = new SlowNode('slow1');
+      slowNode.steps = 100; // Very long execution
+      slowNode.stepDelay = 50; // Faster steps so we can check cancellation more often
+
+      workflow['_nodes'].set('slow1', slowNode);
+      workflow['_graph'].addNode('slow1');
+
+      const result = await executor.execute(workflow, {
+        timeout: 150, // Timeout after 150ms (should hit during execution)
+      });
+
+      expect(result.status).toBe(ExecutionStatus.Cancelled);
+      expect(result.cancellationReason).toBe(CancellationReason.Timeout);
+      expect(result.error?.name).toBe('TimeoutError');
+    });
+
+    it('should handle mid-node cancellation via checkCancellation', async () => {
+      const workflow = new Workflow('mid-node-cancel', 'Mid Node Cancel');
+      const slowNode = new SlowNode('slow1');
+      slowNode.steps = 20;
+      slowNode.stepDelay = 50;
+
+      workflow['_nodes'].set('slow1', slowNode);
+      workflow['_graph'].addNode('slow1');
+
+      const promise = executor.execute(workflow);
+
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
+      const executionIds = Array.from(executor['_activeExecutions'].keys());
+      executor.cancel(executionIds[0], CancellationReason.UserCancelled);
+
+      const result = await promise;
+
+      expect(result.status).toBe(ExecutionStatus.Cancelled);
+      expect(result.cancellationReason).toBe(CancellationReason.UserCancelled);
+      // When cancelled mid-node, the error propagates immediately without recording node result
+      expect(result.error?.message).toContain('cancelled');
+    });
+
+    it('should handle abortSignal in node execution', async () => {
+      const workflow = new Workflow('abort-signal-workflow', 'Abort Signal Workflow');
+      const slowNode = new SlowNode('slow1');
+      slowNode.steps = 100;
+      slowNode.stepDelay = 50;
+
+      workflow['_nodes'].set('slow1', slowNode);
+      workflow['_graph'].addNode('slow1');
+
+      const result = await executor.execute(workflow, {
+        timeout: 200, // Should timeout during execution
+      });
+
+      expect(result.status).toBe(ExecutionStatus.Cancelled);
+      expect(result.cancellationReason).toBe(CancellationReason.Timeout);
+    });
+
+    it('should not cancel non-existent execution', () => {
+      expect(() => {
+        executor.cancel('non-existent-id');
+      }).not.toThrow();
+
+      // Should just do nothing gracefully
+      executor.cancel('fake-id-123', CancellationReason.UserCancelled);
+    });
+
+    it('should clean up listeners after external signal cancellation', async () => {
+      const workflow = new Workflow('cleanup-workflow', 'Cleanup Workflow');
+      const slowNode = new SlowNode('slow1');
+      slowNode.steps = 20;
+      slowNode.stepDelay = 50;
+
+      workflow['_nodes'].set('slow1', slowNode);
+      workflow['_graph'].addNode('slow1');
+
+      const abortController = new AbortController();
+
+      const promise = executor.execute(workflow, {
+        abortSignal: abortController.signal,
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      abortController.abort();
+      await promise;
+
+      // Verify execution is cleaned up
+      expect(executor['_activeExecutions'].size).toBe(0);
+    });
+
+    it('should have proper API methods', () => {
+      expect(typeof executor.cancel).toBe('function');
+      expect(typeof executor.cancelAll).toBe('function');
+      expect(typeof executor.isExecutionActive).toBe('function');
     });
   });
 });

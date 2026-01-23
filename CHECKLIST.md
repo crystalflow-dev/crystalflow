@@ -193,12 +193,18 @@ Examples:                 5+ working examples
 ### Execution Engine Improvements
 
 - [x] **Async Event Listeners Support** - Allow event listeners to return promises and wait for them
-- [ ] **Enhanced Cancellation System**:
-  - [ ] Track cancellation reasons (`timeout`, `user`, `error`, `resource-limit`)
-  - [ ] Add `ExecutionContext.cancel(reason)` with reason parameter
-  - [ ] Throw appropriate error types based on cancellation reason
-  - [ ] Add user-initiated cancellation API
-- [ ] **Mid-Execution Cancellation** - Check cancellation during long-running node execution (not just between nodes)
+- [x] **Enhanced Cancellation System**:
+  - [x] Track cancellation reasons (`timeout`, `user`, `external-signal`, `resource-limit`)
+  - [x] Add `ExecutionContext.cancel(reason)` with reason parameter
+  - [x] Throw appropriate error types based on cancellation reason (CancellationError, TimeoutError, UserCancelledError)
+  - [x] Add user-initiated cancellation API (`executor.cancel()`, `executor.cancelAll()`)
+  - [x] Support external AbortSignal for cancellation
+  - [x] Between-node cancellation checks
+  - [x] Mid-node cancellation via `checkCancellation()` method
+  - [x] `onCancellation` event with reason and timestamp
+  - [x] Comprehensive test coverage (25+ tests, 266 total passing)
+- [ ] **Execution Pause/Resume** - Ability to pause and resume workflow execution
+- [ ] **Step-by-Step Debugging** - Execute workflow one node at a time
 - [ ] **Retry Logic** - Automatic retry for failed nodes with configurable strategies
 - [ ] **Execution Pause/Resume** - Ability to pause and resume workflow execution
 - [ ] **Step-by-Step Debugging** - Execute workflow one node at a time

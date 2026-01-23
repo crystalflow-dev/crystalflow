@@ -1,6 +1,14 @@
 import 'reflect-metadata';
-import { NodeId, NodeType, NodeState, NodeMetadata, PortDefinition } from '@reactflo/types';
+import {
+  NodeId,
+  NodeType,
+  NodeState,
+  NodeMetadata,
+  PortDefinition,
+  CancellationReason,
+} from '@reactflo/types';
 import type { ExecutionContext } from '../execution/ExecutionContext';
+import { CancellationError, UserCancelledError, TimeoutError } from '../execution/errors';
 
 /**
  * Abstract base class for all nodes in ReactFlo.
@@ -286,8 +294,41 @@ export abstract class Node {
    */
   protected checkCancellation(): void {
     if (this._executionContext?.isCancelled()) {
-      const reason = this._executionContext.cancellationReason;
-      throw new Error(`Execution cancelled: ${reason || 'unknown reason'}`);
+      const reason = this._executionContext.cancellationReason || CancellationReason.Timeout;
+      const cancelledAt = this._executionContext.cancelledAt;
+
+      // Throw appropriate error based on cancellation reason
+      switch (reason) {
+        case CancellationReason.Timeout:
+          throw new TimeoutError('Execution timed out', {
+            timeoutMs: 0, // Executor handles actual timeout value
+            executionId: this._executionContext.executionId,
+            workflowId: this._executionContext.workflowId,
+          });
+
+        case CancellationReason.UserCancelled:
+          throw new UserCancelledError('Execution cancelled by user', {
+            executionId: this._executionContext.executionId,
+            workflowId: this._executionContext.workflowId,
+            cancelledAt,
+          });
+
+        case CancellationReason.ExternalSignal:
+          throw new CancellationError('Execution cancelled by external signal', {
+            reason: CancellationReason.ExternalSignal,
+            executionId: this._executionContext.executionId,
+            workflowId: this._executionContext.workflowId,
+            cancelledAt,
+          });
+
+        default:
+          throw new CancellationError('Execution cancelled', {
+            reason,
+            executionId: this._executionContext.executionId,
+            workflowId: this._executionContext.workflowId,
+            cancelledAt,
+          });
+      }
     }
   }
 

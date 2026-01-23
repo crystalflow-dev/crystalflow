@@ -195,7 +195,27 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
 
       return result;
     } catch (error) {
-      // Handle execution error
+      // Handle cancellation errors specially
+      if (
+        error instanceof CancellationError ||
+        error instanceof TimeoutError ||
+        error instanceof UserCancelledError
+      ) {
+        // Mark as cancelled (already set by cancel() but ensure it)
+        context.complete(ExecutionStatus.Cancelled);
+
+        // Emit cancellation event
+        const reason = context.cancellationReason || CancellationReason.Timeout;
+        const cancelledAt = context.cancelledAt || new Date();
+        await this.emitAsync('onCancellation', executionId, reason, cancelledAt);
+
+        const result = this.buildExecutionResult(context, error as ExecutionError);
+        await this.emitAsync('afterExecute', result);
+
+        return result;
+      }
+
+      // Handle other execution errors
       const executionError =
         error instanceof ExecutionError
           ? error
@@ -269,7 +289,16 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       // Emit node complete event
       await this.emitAsync('onNodeComplete', node.id, result);
     } catch (error) {
-      // Record error result
+      // If it's a cancellation error, let it propagate immediately
+      if (
+        error instanceof CancellationError ||
+        error instanceof TimeoutError ||
+        error instanceof UserCancelledError
+      ) {
+        throw error;
+      }
+
+      // Record error result for non-cancellation errors
       const nodeError = new NodeExecutionError(
         `Node execution failed: ${error instanceof Error ? error.message : String(error)}`,
         {

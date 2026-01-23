@@ -401,7 +401,7 @@ executor.on('beforeExecute', (context) => {
 // Asynchronous event listeners - executor waits for them!
 executor.on('onNodeStart', async (nodeId, node) => {
   await logToDatabase(nodeId); // ✅ Executor waits
-  await sendWebhook(node);     // ✅ Executor waits
+  await sendWebhook(node); // ✅ Executor waits
   console.log(`Executing ${nodeId}`);
 });
 
@@ -424,6 +424,7 @@ const result = await executor.execute(workflow, options);
 ```
 
 **Key Features:**
+
 - Both sync and async listeners are supported
 - Executor waits for all listeners to complete before continuing
 - Multiple listeners on the same event execute in parallel (via Promise.all)

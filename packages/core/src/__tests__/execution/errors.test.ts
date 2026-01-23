@@ -3,7 +3,10 @@ import {
   NodeExecutionError,
   ValidationError,
   TimeoutError,
+  CancellationError,
+  UserCancelledError,
 } from '../../execution/errors';
+import { CancellationReason } from '@reactflo/types';
 
 describe('Execution Errors', () => {
   describe('ExecutionError', () => {
@@ -148,6 +151,92 @@ describe('Execution Errors', () => {
       expect(error.timeoutMs).toBe(1000);
       expect(error.executionId).toBeUndefined();
       expect(error.workflowId).toBeUndefined();
+    });
+  });
+
+  describe('CancellationError', () => {
+    it('should create error with cancellation metadata', () => {
+      const cancelledAt = new Date();
+      const error = new CancellationError('Execution cancelled', {
+        reason: CancellationReason.ExternalSignal,
+        executionId: 'exec-123',
+        workflowId: 'workflow-456',
+        cancelledAt,
+      });
+
+      expect(error).toBeInstanceOf(ExecutionError);
+      expect(error).toBeInstanceOf(CancellationError);
+      expect(error.message).toBe('Execution cancelled');
+      expect(error.name).toBe('CancellationError');
+      expect(error.reason).toBe(CancellationReason.ExternalSignal);
+      expect(error.cancelledAt).toBe(cancelledAt);
+      expect(error.executionId).toBe('exec-123');
+      expect(error.workflowId).toBe('workflow-456');
+    });
+
+    it('should work with minimal context', () => {
+      const error = new CancellationError('Cancelled', {
+        reason: CancellationReason.UserCancelled,
+      });
+
+      expect(error.reason).toBe(CancellationReason.UserCancelled);
+      expect(error.executionId).toBeUndefined();
+      expect(error.cancelledAt).toBeInstanceOf(Date); // Defaults to new Date()
+    });
+  });
+
+  describe('UserCancelledError', () => {
+    it('should create error for user-initiated cancellation', () => {
+      const cancelledAt = new Date();
+      const error = new UserCancelledError('User stopped execution', {
+        executionId: 'exec-789',
+        workflowId: 'workflow-123',
+        cancelledAt,
+      });
+
+      expect(error).toBeInstanceOf(CancellationError);
+      expect(error).toBeInstanceOf(UserCancelledError);
+      expect(error.message).toBe('User stopped execution');
+      expect(error.name).toBe('UserCancelledError');
+      expect(error.reason).toBe(CancellationReason.UserCancelled);
+      expect(error.cancelledAt).toBe(cancelledAt);
+    });
+
+    it('should inherit CancellationError properties', () => {
+      const error = new UserCancelledError('Cancelled by user', {
+        executionId: 'exec-1',
+      });
+
+      expect(error instanceof UserCancelledError).toBe(true);
+      expect(error instanceof CancellationError).toBe(true);
+      expect(error instanceof ExecutionError).toBe(true);
+      expect(error.reason).toBe(CancellationReason.UserCancelled);
+    });
+  });
+
+  describe('TimeoutError extends CancellationError', () => {
+    it('should extend CancellationError', () => {
+      const error = new TimeoutError('Timeout', {
+        timeoutMs: 5000,
+      });
+
+      expect(error instanceof TimeoutError).toBe(true);
+      expect(error instanceof CancellationError).toBe(true);
+      expect(error instanceof ExecutionError).toBe(true);
+      expect(error.reason).toBe(CancellationReason.Timeout);
+    });
+
+    it('should include timeout-specific properties', () => {
+      const error = new TimeoutError('Execution timed out', {
+        timeoutMs: 10000,
+        executionId: 'exec-123',
+        workflowId: 'workflow-456',
+      });
+
+      expect(error.timeoutMs).toBe(10000);
+      expect(error.reason).toBe(CancellationReason.Timeout);
+      expect(error.executionId).toBe('exec-123');
+      expect(error.workflowId).toBe('workflow-456');
     });
   });
 
