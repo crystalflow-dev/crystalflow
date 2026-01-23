@@ -369,15 +369,16 @@ The serial execution engine is fully implemented with:
 
 ### Core Components
 
-- **Executor** - Main orchestrator with EventEmitter support
+- **Executor** - Main orchestrator with AsyncEventEmitter support
 - **ExecutionContext** - Manages state, variables, timing, and node results
 - **Error Classes** - ExecutionError, NodeExecutionError, ValidationError, TimeoutError
+- **AsyncEventEmitter** - Custom event emitter that supports async listeners
 
 ### Features
 
 - ✅ Serial execution (nodes execute sequentially in topological order)
 - ✅ Automatic data propagation between connected nodes
-- ✅ Event system (beforeExecute, afterExecute, onNodeStart, onNodeComplete, onNodeError, onError)
+- ✅ Event system with async support (beforeExecute, afterExecute, onNodeStart, onNodeComplete, onNodeError, onError)
 - ✅ Error handling (stops on first error with detailed context)
 - ✅ Timing and duration tracking for workflow and nodes
 - ✅ Variables support (pass variables to execution context)
@@ -387,34 +388,46 @@ The serial execution engine is fully implemented with:
 
 ### Event System
 
+The Executor uses `AsyncEventEmitter` which supports both synchronous and asynchronous event listeners. The executor will wait for all listeners (including async ones) to complete before continuing execution.
+
 ```typescript
 const executor = new Executor();
 
-// Events are SYNCHRONOUS - executor waits for listeners to complete
+// Synchronous event listeners
 executor.on('beforeExecute', (context) => {
   console.log('Starting execution...');
 });
 
-executor.on('onNodeStart', (nodeId, node) => {
+// Asynchronous event listeners - executor waits for them!
+executor.on('onNodeStart', async (nodeId, node) => {
+  await logToDatabase(nodeId); // ✅ Executor waits
+  await sendWebhook(node);     // ✅ Executor waits
   console.log(`Executing ${nodeId}`);
 });
 
-executor.on('onNodeComplete', (nodeId, result) => {
+executor.on('onNodeComplete', async (nodeId, result) => {
+  await persistToStorage(result); // ✅ Executor waits
   console.log(`${nodeId} completed:`, result.outputs);
 });
 
-executor.on('onNodeError', (nodeId, error) => {
+executor.on('onNodeError', async (nodeId, error) => {
+  await notifyErrorService(error); // ✅ Executor waits
   console.error(`${nodeId} failed:`, error);
 });
 
-executor.on('afterExecute', (result) => {
+executor.on('afterExecute', async (result) => {
+  await saveExecutionResult(result); // ✅ Executor waits
   console.log(`Execution ${result.status}`);
 });
 
 const result = await executor.execute(workflow, options);
 ```
 
-**Important:** Event listeners are synchronous. Async listeners won't block execution (EventEmitter limitation).
+**Key Features:**
+- Both sync and async listeners are supported
+- Executor waits for all listeners to complete before continuing
+- Multiple listeners on the same event execute in parallel (via Promise.all)
+- If any listener throws/rejects, execution stops with that error
 
 ### ExecutionResult
 

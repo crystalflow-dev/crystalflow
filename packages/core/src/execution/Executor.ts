@@ -1,4 +1,3 @@
-import { EventEmitter } from 'events';
 import { Workflow } from '../workflow/Workflow';
 import { Node } from '../node/Node';
 import { ExecutionContext } from './ExecutionContext';
@@ -10,29 +9,36 @@ import {
   NodeExecutionResult,
   NodeState,
 } from '@reactflo/types';
+import { AsyncEventEmitter } from '../utils/AsyncEventEmitter';
 
 /**
  * Executor events
+ * All event listeners can be synchronous or asynchronous.
+ * The executor will wait for all listeners to complete before continuing.
  */
 export interface ExecutorEvents {
-  beforeExecute: (context: ExecutionContext) => void;
-  afterExecute: (result: ExecutionResult) => void;
-  onNodeStart: (nodeId: string, node: Node) => void;
-  onNodeComplete: (nodeId: string, result: NodeExecutionResult) => void;
-  onNodeError: (nodeId: string, error: Error) => void;
-  onError: (error: Error) => void;
+  [key: string]: (...args: any[]) => void | Promise<void>;
+  beforeExecute: (context: ExecutionContext) => void | Promise<void>;
+  afterExecute: (result: ExecutionResult) => void | Promise<void>;
+  onNodeStart: (nodeId: string, node: Node) => void | Promise<void>;
+  onNodeComplete: (nodeId: string, result: NodeExecutionResult) => void | Promise<void>;
+  onNodeError: (nodeId: string, error: Error) => void | Promise<void>;
+  onError: (error: Error) => void | Promise<void>;
 }
 
 /**
  * Executor orchestrates the execution of workflows.
  * It manages execution flow, data transfer, timing, and event emission.
  *
+ * All event listeners (both sync and async) will be awaited before continuing execution.
+ *
  * @example
  * ```typescript
  * const executor = new Executor();
  *
- * // Listen to events
- * executor.on('onNodeStart', (nodeId) => {
+ * // Listen to events (can be async!)
+ * executor.on('onNodeStart', async (nodeId) => {
+ *   await logToDatabase(nodeId);
  *   console.log(`Node ${nodeId} started`);
  * });
  *
@@ -43,7 +49,7 @@ export interface ExecutorEvents {
  * });
  * ```
  */
-export class Executor extends EventEmitter {
+export class Executor extends AsyncEventEmitter<ExecutorEvents> {
   /**
    * Execute a workflow
    * @param workflow - The workflow to execute
@@ -80,7 +86,7 @@ export class Executor extends EventEmitter {
 
       // Update status and emit event
       context.status = ExecutionStatus.Running;
-      this.emit('beforeExecute', context);
+      await this.emitAsync('beforeExecute', context);
 
       // Get execution order (topological sort)
       const executionOrder = workflow.getExecutionOrder();
@@ -113,7 +119,7 @@ export class Executor extends EventEmitter {
 
       // Build and return result
       const result = this.buildExecutionResult(context);
-      this.emit('afterExecute', result);
+      await this.emitAsync('afterExecute', result);
 
       return result;
     } catch (error) {
@@ -129,10 +135,10 @@ export class Executor extends EventEmitter {
 
       context.complete(ExecutionStatus.Failed);
 
-      this.emit('onError', executionError);
+      await this.emitAsync('onError', executionError);
 
       const result = this.buildExecutionResult(context, executionError);
-      this.emit('afterExecute', result);
+      await this.emitAsync('afterExecute', result);
 
       return result;
     } finally {
@@ -155,7 +161,7 @@ export class Executor extends EventEmitter {
 
     try {
       // Emit node start event
-      this.emit('onNodeStart', node.id, node);
+      await this.emitAsync('onNodeStart', node.id, node);
 
       // Transfer data from connected nodes
       this.transferNodeData(node.id, workflow);
@@ -178,7 +184,7 @@ export class Executor extends EventEmitter {
       context.setNodeResult(node.id, result);
 
       // Emit node complete event
-      this.emit('onNodeComplete', node.id, result);
+      await this.emitAsync('onNodeComplete', node.id, result);
     } catch (error) {
       // Record error result
       const nodeError = new NodeExecutionError(
@@ -205,7 +211,7 @@ export class Executor extends EventEmitter {
       context.setNodeResult(node.id, result);
 
       // Emit node error event
-      this.emit('onNodeError', node.id, nodeError);
+      await this.emitAsync('onNodeError', node.id, nodeError);
 
       // Re-throw to stop execution
       throw nodeError;
