@@ -8,6 +8,8 @@ import {
   ExecutionStatus,
   NodeExecutionResult,
   NodeState,
+  ExecutionId,
+  CancellationReason,
 } from '@reactflo/types';
 import { AsyncEventEmitter } from '../utils/AsyncEventEmitter';
 
@@ -50,6 +52,8 @@ export interface ExecutorEvents {
  * ```
  */
 export class Executor extends AsyncEventEmitter<ExecutorEvents> {
+  private _activeExecutions: Map<ExecutionId, ExecutionContext> = new Map();
+
   /**
    * Execute a workflow
    * @param workflow - The workflow to execute
@@ -62,6 +66,9 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
 
     // Create execution context
     const context = new ExecutionContext(executionId, workflow.id, options.variables);
+
+    // Track active execution
+    this._activeExecutions.set(executionId, context);
 
     let timeoutHandle: NodeJS.Timeout | undefined;
 
@@ -146,6 +153,9 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       if (timeoutHandle) {
         clearTimeout(timeoutHandle);
       }
+
+      // Remove from active executions
+      this._activeExecutions.delete(executionId);
     }
   }
 
@@ -264,6 +274,8 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       duration: context.duration,
       nodeResults: context.getNodeResults(),
       error,
+      cancellationReason: context.cancellationReason,
+      cancelledAt: context.cancelledAt,
     };
   }
 
@@ -272,5 +284,54 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
    */
   private generateExecutionId(): string {
     return `exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  /**
+   * Cancel a specific execution by ID
+   * @param executionId - The ID of the execution to cancel
+   * @param reason - The reason for cancellation (defaults to UserCancelled)
+   * @returns true if execution was found and cancelled, false otherwise
+   */
+  cancel(
+    executionId: ExecutionId,
+    reason: CancellationReason = CancellationReason.UserCancelled
+  ): boolean {
+    const context = this._activeExecutions.get(executionId);
+    if (context) {
+      context.cancel(reason);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Cancel all active executions
+   * @param reason - The reason for cancellation (defaults to UserCancelled)
+   * @returns Number of executions that were cancelled
+   */
+  cancelAll(reason: CancellationReason = CancellationReason.UserCancelled): number {
+    let count = 0;
+    for (const context of this._activeExecutions.values()) {
+      context.cancel(reason);
+      count++;
+    }
+    return count;
+  }
+
+  /**
+   * Check if an execution is currently active
+   * @param executionId - The ID of the execution to check
+   * @returns true if the execution is active, false otherwise
+   */
+  isExecutionActive(executionId: ExecutionId): boolean {
+    return this._activeExecutions.has(executionId);
+  }
+
+  /**
+   * Get the number of active executions
+   * @returns Number of currently running executions
+   */
+  getActiveExecutionCount(): number {
+    return this._activeExecutions.size;
   }
 }
