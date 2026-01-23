@@ -158,35 +158,3 @@ export class UserCancelledError extends CancellationError {
     this.name = 'UserCancelledError';
   }
 }
-
-/**
- * Error for resource limit cancellation
- */
-export class ResourceLimitError extends CancellationError {
-  public readonly limitType: string;
-  public readonly limitValue?: number;
-  public readonly currentValue?: number;
-
-  constructor(
-    message: string,
-    options: {
-      limitType: string;
-      limitValue?: number;
-      currentValue?: number;
-      executionId?: string;
-      workflowId?: string;
-      cancelledAt?: Date;
-    }
-  ) {
-    super(message, {
-      reason: CancellationReason.ResourceLimit,
-      executionId: options.executionId,
-      workflowId: options.workflowId,
-      cancelledAt: options.cancelledAt,
-    });
-    this.name = 'ResourceLimitError';
-    this.limitType = options.limitType;
-    this.limitValue = options.limitValue;
-    this.currentValue = options.currentValue;
-  }
-}

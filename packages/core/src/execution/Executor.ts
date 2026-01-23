@@ -1,7 +1,14 @@
 import { Workflow } from '../workflow/Workflow';
 import { Node } from '../node/Node';
 import { ExecutionContext } from './ExecutionContext';
-import { ExecutionError, NodeExecutionError, ValidationError, TimeoutError } from './errors';
+import {
+  ExecutionError,
+  NodeExecutionError,
+  ValidationError,
+  TimeoutError,
+  CancellationError,
+  UserCancelledError,
+} from './errors';
 import {
   ExecutionOptions,
   ExecutionResult,
@@ -71,6 +78,7 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
     this._activeExecutions.set(executionId, context);
 
     let timeoutHandle: NodeJS.Timeout | undefined;
+    let abortListener: (() => void) | undefined;
 
     try {
       // Validate workflow
@@ -84,10 +92,28 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
         });
       }
 
+      // Set up external abort signal listener if provided
+      if (options.abortSignal) {
+        // Check if already aborted
+        if (options.abortSignal.aborted) {
+          throw new CancellationError('Execution aborted before start', {
+            reason: CancellationReason.ExternalSignal,
+            executionId,
+            workflowId: workflow.id,
+          });
+        }
+
+        // Listen for abort event
+        abortListener = () => {
+          context.cancel(CancellationReason.ExternalSignal);
+        };
+        options.abortSignal.addEventListener('abort', abortListener);
+      }
+
       // Set up timeout if specified
       if (options.timeout && options.timeout > 0) {
         timeoutHandle = setTimeout(() => {
-          context.cancel();
+          context.cancel(CancellationReason.Timeout);
         }, options.timeout);
       }
 
@@ -102,11 +128,41 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       for (const nodeId of executionOrder) {
         // Check if execution was cancelled
         if (context.isCancelled()) {
-          throw new TimeoutError('Workflow execution timed out', {
-            timeoutMs: options.timeout || 0,
-            executionId,
-            workflowId: workflow.id,
-          });
+          // Throw appropriate error based on cancellation reason
+          const reason = context.cancellationReason;
+
+          switch (reason) {
+            case CancellationReason.Timeout:
+              throw new TimeoutError('Workflow execution timed out', {
+                timeoutMs: options.timeout || 0,
+                executionId,
+                workflowId: workflow.id,
+              });
+
+            case CancellationReason.UserCancelled:
+              throw new UserCancelledError('Workflow execution was cancelled by user', {
+                executionId,
+                workflowId: workflow.id,
+                cancelledAt: context.cancelledAt,
+              });
+
+            case CancellationReason.ExternalSignal:
+              throw new CancellationError('Workflow execution was cancelled by external signal', {
+                reason: CancellationReason.ExternalSignal,
+                executionId,
+                workflowId: workflow.id,
+                cancelledAt: context.cancelledAt,
+              });
+
+            default:
+              // Fallback for any unhandled cancellation reason
+              throw new CancellationError('Workflow execution was cancelled', {
+                reason: reason || CancellationReason.UserCancelled,
+                executionId,
+                workflowId: workflow.id,
+                cancelledAt: context.cancelledAt,
+              });
+          }
         }
 
         const node = workflow.nodes.get(nodeId);
@@ -152,6 +208,11 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       // Clear timeout
       if (timeoutHandle) {
         clearTimeout(timeoutHandle);
+      }
+
+      // Remove abort signal listener
+      if (abortListener && options.abortSignal) {
+        options.abortSignal.removeEventListener('abort', abortListener);
       }
 
       // Remove from active executions

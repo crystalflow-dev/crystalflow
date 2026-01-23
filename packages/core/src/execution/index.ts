@@ -11,5 +11,4 @@ export {
   CancellationError,
   TimeoutError,
   UserCancelledError,
-  ResourceLimitError,
 } from './errors';

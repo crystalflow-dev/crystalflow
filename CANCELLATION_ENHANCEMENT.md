@@ -46,15 +46,16 @@ Enhance the ReactFlo execution engine's cancellation system to support multiple 
 - [x] Update `buildExecutionResult()` to include cancellation metadata
 
 ### 2.2 External AbortSignal Support
-- [ ] Accept `options.abortSignal` in `execute()`
-- [ ] Listen to abort events
-- [ ] Cancel on abort signal
-- [ ] Clean up listeners
+- [x] Accept `options.abortSignal` in `execute()`
+- [x] Listen to abort events
+- [x] Cancel on abort signal
+- [x] Clean up listeners
 
 ### 2.3 Throw Appropriate Errors
-- [ ] Check cancellation reason in execution loop
-- [ ] Throw correct error type based on reason
-- [ ] Update `buildExecutionResult()` for metadata
+- [x] Check cancellation reason in execution loop
+- [x] Throw correct error type based on reason
+- [x] Update `buildExecutionResult()` for metadata (already done in 2.1)
+- [x] Remove unused cancellation reasons (NodeError, ResourceLimit)
 
 ---
 
@@ -113,5 +114,7 @@ Enhance the ReactFlo execution engine's cancellation system to support multiple 
 
 ---
 
-**Status**: Ready to begin Phase 1.1
+**Status**: Phase 2.1 Complete - Ready for Phase 2.2
 **Started**: January 23, 2026
+**Branch**: `feature/enhanced-cancellation`
+**Commit**: `8948481` - Phase 1 & 2.1 complete

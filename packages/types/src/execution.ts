@@ -30,10 +30,6 @@ export enum CancellationReason {
   Timeout = 'timeout',
   /** User explicitly cancelled the execution */
   UserCancelled = 'user-cancelled',
-  /** Cancelled due to a node execution error */
-  NodeError = 'node-error',
-  /** Cancelled due to resource constraints (memory, CPU, etc.) */
-  ResourceLimit = 'resource-limit',
   /** Cancelled by an external AbortSignal */
   ExternalSignal = 'external-signal',
 }
