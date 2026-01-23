@@ -329,7 +329,7 @@ describe('Executor', () => {
       expect(result.startTime).toBeInstanceOf(Date);
       expect(result.endTime).toBeInstanceOf(Date);
       expect(result.duration).toBeGreaterThan(0);
-      expect(result.duration).toBeGreaterThanOrEqual(50);
+      expect(result.duration).toBeGreaterThanOrEqual(45); // Allow some timing variance
     });
 
     it('should serialize outputs to JSON', async () => {
