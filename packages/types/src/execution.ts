@@ -87,3 +87,144 @@ export interface ExecutionOptions {
   /** External AbortSignal to cancel execution */
   abortSignal?: AbortSignal;
 }
+
+// ============================================================================
+// Execution Plan Types
+// ============================================================================
+
+/**
+ * Step type discriminator for execution plan steps
+ */
+export enum ExecutionStepType {
+  /** Execute a single node */
+  NodeExecution = 'node-execution',
+  /** Conditional branching (if/else, switch/case) */
+  Conditional = 'conditional',
+  /** Loop execution (for, while, forEach) */
+  Loop = 'loop',
+  /** Parallel execution of multiple branches */
+  Parallel = 'parallel',
+  /** Merge point for parallel branches */
+  Merge = 'merge',
+}
+
+/**
+ * Base interface for all execution plan steps
+ */
+export interface BaseExecutionStep {
+  /** Unique identifier for this step */
+  id: string;
+  /** Type discriminator */
+  type: ExecutionStepType;
+  /** Optional metadata for debugging/visualization */
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Step that executes a single node in the workflow
+ */
+export interface NodeExecutionStep extends BaseExecutionStep {
+  type: ExecutionStepType.NodeExecution;
+  /** ID of the node to execute */
+  nodeId: NodeId;
+  /** Node type for debugging */
+  nodeType: string;
+}
+
+/**
+ * Conditional branch definition
+ */
+export interface ConditionalBranch {
+  /** Branch identifier (e.g., 'then', 'else', 'case-1') */
+  id: string;
+  /** Condition expression or key to evaluate */
+  condition: string;
+  /** Steps to execute if condition is true */
+  steps: ExecutionPlanStep[];
+  /** Optional label for debugging */
+  label?: string;
+}
+
+/**
+ * Step that executes conditional branching (if/else, switch/case)
+ * Phase 2 implementation
+ */
+export interface ConditionalStep extends BaseExecutionStep {
+  type: ExecutionStepType.Conditional;
+  /** ID of the conditional node */
+  nodeId: NodeId;
+  /** Type of conditional ('if-else', 'switch') */
+  conditionalType: 'if-else' | 'switch';
+  /** Input port to evaluate for condition */
+  conditionInput: string;
+  /** All possible branches */
+  branches: ConditionalBranch[];
+  /** Default branch if no conditions match (optional) */
+  defaultBranch?: ConditionalBranch;
+}
+
+/**
+ * Step that executes a loop (for, while, forEach)
+ * Phase 3 implementation
+ */
+export interface LoopStep extends BaseExecutionStep {
+  type: ExecutionStepType.Loop;
+  /** ID of the loop node */
+  nodeId: NodeId;
+  /** Type of loop ('for', 'while', 'forEach') */
+  loopType: 'for' | 'while' | 'forEach';
+  /** Input port for loop condition/array */
+  conditionInput: string;
+  /** Steps to execute in loop body */
+  bodySteps: ExecutionPlanStep[];
+  /** Maximum iterations (safety limit) */
+  maxIterations: number;
+}
+
+/**
+ * Parallel branch definition
+ */
+export interface ParallelBranch {
+  /** Branch identifier */
+  id: string;
+  /** Steps to execute in this branch */
+  steps: ExecutionPlanStep[];
+  /** Optional label for debugging */
+  label?: string;
+}
+
+/**
+ * Step that executes multiple branches in parallel
+ * Phase 4 implementation
+ */
+export interface ParallelStep extends BaseExecutionStep {
+  type: ExecutionStepType.Parallel;
+  /** ID of the parallel node (if any) */
+  nodeId?: NodeId;
+  /** All parallel branches */
+  branches: ParallelBranch[];
+  /** Merge strategy ('all', 'race', 'any') */
+  mergeStrategy: 'all' | 'race' | 'any';
+}
+
+/**
+ * Step that merges parallel branches back into single execution path
+ * Phase 4 implementation
+ */
+export interface MergeStep extends BaseExecutionStep {
+  type: ExecutionStepType.Merge;
+  /** IDs of branches being merged */
+  branchIds: string[];
+  /** Merge strategy */
+  strategy: 'all' | 'race' | 'any';
+}
+
+/**
+ * Union type for all execution plan steps
+ */
+export type ExecutionPlanStep =
+  | NodeExecutionStep
+  | ConditionalStep
+  | LoopStep
+  | ParallelStep
+  | MergeStep;
