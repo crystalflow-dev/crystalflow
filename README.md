@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Fladeed/reactflo/main/assets/logo/reactflo-logo-blue.svg" alt="ReactFlo Logo" width="500" />
+  <img src="assets/logo/reactflo-logo-blue.png" alt="ReactFlo Logo" width="500" />
 </div>
 
 <br/>
