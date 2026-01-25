@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Fladeed/reactflo/main/assets/logo/reactflo-logo-blue.svg" alt="ReactFlo Logo" width="500" />
+</div>
+
+<br/>
+
 # ReactFlo
 
 **A declarative workflow builder framework that lets you focus on "what to do" instead of "how to do it".**
