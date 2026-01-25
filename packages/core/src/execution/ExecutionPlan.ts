@@ -204,7 +204,30 @@ export class ExecutionPlan {
 
   /**
    * Validate the execution plan structure
-   * Checks for cycles, invalid references, etc.
+   * 
+   * Checks for:
+   * - Duplicate step IDs across the entire plan
+   * - Empty branches in conditional steps
+   * - Empty body steps in loop steps
+   * - Invalid maxIterations values in loop steps
+   * - Empty branches in parallel steps
+   * 
+   * Note on Cycles:
+   * Cycles are structurally impossible in ExecutionPlan by design because
+   * steps are organized in a tree structure where each step directly contains
+   * its nested steps (not references to them). You cannot create a circular
+   * reference in a tree - a step cannot contain itself directly or indirectly
+   * because that would require infinite nesting at creation time.
+   * 
+   * Note on Node References:
+   * This method does NOT validate whether nodeId values reference actual nodes
+   * that exist in the workflow. That validation must be performed by the
+   * ExecutionPlanBuilder during plan construction, where it has access to the
+   * Workflow object. ExecutionPlan is intentionally decoupled from Workflow
+   * to maintain separation of concerns.
+   * 
+   * TODO: Add node reference validation in ExecutionPlanBuilder.build() to
+   * ensure all nodeId values in NodeExecutionSteps reference existing nodes.
    * 
    * @throws Error if validation fails
    */
