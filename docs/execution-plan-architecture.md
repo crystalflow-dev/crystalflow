@@ -948,13 +948,18 @@ interface ExecutorEvents {
    - For now, only handle regular nodes (NodeExecutionStep)
    - Use workflow.getExecutionOrder() as guide
    - Add graph traversal utilities (getDownstreamNodes)
-   - **CRITICAL**: Handle multiple entry points (nodes with no incoming edges)
-     * Option 1 (Recommended): Wrap in virtual ParallelStep for true parallelism
-     * Option 2: Execute sequentially in topological order
-     * Make strategy configurable via build options
+   - **CRITICAL**: Handle SIMPLE multiple entry points (all merge at same point)
+     * Detect entry nodes (nodes with no incoming edges)
+     * Find common merge point for all entry branches
+     * If found: Wrap in virtual ParallelStep for true parallelism
+     * If not found: Throw descriptive error (complex patterns deferred to Phase 4)
+     * Make strategy configurable via build options ('parallel' | 'sequential')
    - Validate that all nodeIds reference existing nodes in workflow
    - Write unit tests with simple linear workflows
-   - Write tests for multiple entry point scenarios
+   - Write tests for simple multiple entry point scenarios (all merge at same point)
+   - Write tests that verify error handling for complex merge patterns
+   - **Note**: Advanced merge patterns (intermediate merges, progressive merges) 
+     will be implemented in Phase 4 with full dependency graph analysis
 
 4. **Add plan builder to Executor** [3 hours]
    - File: `packages/core/src/execution/Executor.ts`
