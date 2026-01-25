@@ -1,0 +1,570 @@
+
+> @reactflo/core@0.1.0 test:benchmark
+> cd ../.. && npm test -- --testPathPatterns=packages/core/src/__tests__/benchmarks --testTimeout=60000
+
+
+> reactflo-monorepo@0.1.0 test
+> jest --testPathPatterns=packages/core/src/__tests__/benchmarks --testTimeout=60000
+
+  console.log
+    
+    📊 Linear: 10 Fast Nodes
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 100
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    0.474 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     0.441 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        0.407 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        0.697 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.074 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      47.405 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    📊 Linear: 50 Fast Nodes
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 50
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    0.981 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     0.897 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        0.774 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        1.619 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.216 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      49.052 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    📊 Linear: 100 Fast Nodes
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 20
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    1.842 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     1.796 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        1.674 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        2.175 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.151 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      36.835 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    📊 Linear: 20 Medium Nodes
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 50
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    1.210 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     1.189 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        1.116 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        1.665 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.093 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      60.507 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    📊 Linear: 10 Slow Nodes
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 20
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    8.941 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     8.916 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        8.668 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        9.370 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.180 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      178.811 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    📊 Fan-Out: 10 Branches
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 50
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    0.622 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     0.601 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        0.582 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        0.812 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.048 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      31.124 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    📊 Fan-Out: 50 Branches
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 30
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    1.089 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     0.928 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        0.817 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        4.761 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.693 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      32.671 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    📊 Diamond: 5 Middle Nodes
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 50
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    0.412 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     0.386 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        0.343 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        0.607 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.074 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      20.621 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    📊 Complex: 50 Nodes Mixed
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 20
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    1.647 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     1.599 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        1.476 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        2.142 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.181 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      32.949 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    📊 Async: 20 Nodes Sequential
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 30
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    23.549 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     23.638 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        21.187 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        24.679 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.703 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      706.471 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    📊 Events: 20 Nodes with Listeners
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 50
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    0.805 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     0.812 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        0.405 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        1.590 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.225 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      40.229 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    📊 Validation: 100 Nodes Complex
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:78:11)
+
+  console.log
+       Iterations: 100
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:79:11)
+
+  console.log
+       Average:    0.160 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:80:11)
+
+  console.log
+       Median:     0.158 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:81:11)
+
+  console.log
+       Min:        0.088 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:82:11)
+
+  console.log
+       Max:        0.280 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:83:11)
+
+  console.log
+       Std Dev:    0.042 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:84:11)
+
+  console.log
+       Total:      15.975 ms
+
+      at printBenchmarkResult (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:85:11)
+
+  console.log
+    
+    ======================================================================
+
+      at Object.<anonymous> (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:692:13)
+
+  console.log
+    📈 BENCHMARK SUMMARY
+
+      at Object.<anonymous> (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:693:13)
+
+  console.log
+    ======================================================================
+
+      at Object.<anonymous> (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:694:13)
+
+  console.log
+    All benchmarks completed successfully!
+
+      at Object.<anonymous> (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:695:13)
+
+  console.log
+    These results establish baseline performance for the current executor.
+
+      at Object.<anonymous> (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:696:13)
+
+  console.log
+    After implementing the execution plan architecture, run these benchmarks
+
+      at Object.<anonymous> (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:697:13)
+
+  console.log
+    again to compare performance and ensure no regressions.
+
+      at Object.<anonymous> (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:698:13)
+
+  console.log
+    ======================================================================
+
+      at Object.<anonymous> (packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts:699:13)
+
+PASS packages/core/src/__tests__/benchmarks/executor.benchmark.test.ts (6.416 s)
+  Executor Performance Benchmarks
+    Scenario 1: Linear Fast Nodes
+      ✓ should benchmark 10 sequential fast nodes (168 ms)
+      ✓ should benchmark 50 sequential fast nodes (68 ms)
+      ✓ should benchmark 100 sequential fast nodes (56 ms)
+    Scenario 2: Linear Medium Nodes
+      ✓ should benchmark 20 sequential medium nodes (78 ms)
+    Scenario 3: Linear Slow Nodes
+      ✓ should benchmark 10 sequential slow nodes (233 ms)
+    Scenario 4: Fan-Out Pattern
+      ✓ should benchmark fan-out with 10 branches (39 ms)
+      ✓ should benchmark fan-out with 50 branches (45 ms)
+    Scenario 5: Diamond Pattern
+      ✓ should benchmark diamond pattern with 5 middle nodes (31 ms)
+    Scenario 6: Complex Graph
+      ✓ should benchmark complex workflow (50 nodes, mixed connections) (48 ms)
+    Scenario 7: Async Operations
+      ✓ should benchmark 20 sequential async nodes (840 ms)
+    Scenario 8: Event System Overhead
+      ✓ should benchmark with event listeners attached (50 ms)
+    Scenario 9: Validation Overhead
+      ✓ should benchmark validation of complex workflow (25 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       12 passed, 12 total
+Snapshots:   0 total
+Time:        6.897 s
+Ran all test suites matching packages/core/src/__tests__/benchmarks.

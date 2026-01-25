@@ -12,6 +12,7 @@
     "dev": "tsc -p tsconfig.build.json --watch",
     "test": "cd ../.. && npm test -- --testPathPatterns=packages/core",
     "test:watch": "cd ../.. && npm test -- --testPathPatterns=packages/core --watch",
+    "test:benchmark": "cd ../.. && npm test -- --testPathPatterns=packages/core/src/__tests__/benchmarks --testTimeout=60000",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
   },
