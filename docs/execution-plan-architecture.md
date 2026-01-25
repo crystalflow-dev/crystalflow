@@ -948,7 +948,13 @@ interface ExecutorEvents {
    - For now, only handle regular nodes (NodeExecutionStep)
    - Use workflow.getExecutionOrder() as guide
    - Add graph traversal utilities (getDownstreamNodes)
+   - **CRITICAL**: Handle multiple entry points (nodes with no incoming edges)
+     * Option 1 (Recommended): Wrap in virtual ParallelStep for true parallelism
+     * Option 2: Execute sequentially in topological order
+     * Make strategy configurable via build options
+   - Validate that all nodeIds reference existing nodes in workflow
    - Write unit tests with simple linear workflows
+   - Write tests for multiple entry point scenarios
 
 4. **Add plan builder to Executor** [3 hours]
    - File: `packages/core/src/execution/Executor.ts`

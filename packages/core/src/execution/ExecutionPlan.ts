@@ -4,6 +4,27 @@
  * The execution plan is a tree structure containing steps that define
  * how a workflow should be executed. It's built by the ExecutionPlanBuilder
  * and executed by the PlanExecutor.
+ * 
+ * IMPORTANT - Multiple Entry Points:
+ * Workflows can have multiple entry points (nodes with no incoming connections).
+ * The ExecutionPlan enforces a single linear sequence at the top level, so the
+ * ExecutionPlanBuilder must handle multiple entry points by:
+ * 
+ * Option 1 (Recommended): Wrap entry points in a virtual ParallelStep
+ *   - Create a ParallelStep at the beginning with one branch per entry point
+ *   - Add MergeStep after to synchronize before continuing
+ *   - This allows true parallel execution of independent entry paths
+ * 
+ * Option 2: Sequential execution in topological order
+ *   - Execute entry points one by one in dependency order
+ *   - Simpler but loses parallelism opportunities
+ * 
+ * Option 3: Virtual root step (not recommended)
+ *   - Create a virtual "start" step that doesn't correspond to a real node
+ *   - Adds complexity and makes debugging harder
+ * 
+ * TODO: Implement multiple entry point handling in ExecutionPlanBuilder.build()
+ * with configurable strategy (parallel vs sequential).
  */
 
 import {
