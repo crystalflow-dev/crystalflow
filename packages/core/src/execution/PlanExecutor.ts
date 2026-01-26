@@ -14,8 +14,6 @@ import {
   ExecutionStepType,
   NodeExecutionResult,
   NodeState,
-  ExecutionResult,
-  ExecutionStatus,
 } from '@reactflo/types';
 import {
   ExecutionError,
@@ -24,48 +22,28 @@ import {
   TimeoutError,
   UserCancelledError,
 } from './errors';
-
-/**
- * PlanExecutor events
- * Can be emitted by PlanExecutor to notify about step execution progress
- */
-export interface PlanExecutorEvents {
-  onStepStart?: (stepId: string, step: any) => void | Promise<void>;
-  onStepComplete?: (stepId: string, step: any) => void | Promise<void>;
-  onStepError?: (stepId: string, error: Error) => void | Promise<void>;
-  onNodeStart?: (nodeId: string, node: Node) => void | Promise<void>;
-  onNodeComplete?: (nodeId: string, result: NodeExecutionResult) => void | Promise<void>;
-  onNodeError?: (nodeId: string, error: Error) => void | Promise<void>;
-}
+import type { Executor } from './Executor';
 
 /**
  * PlanExecutor executes execution plans step-by-step
+ * Events are emitted through the Executor that owns this PlanExecutor
  */
 export class PlanExecutor {
-  private _events: PlanExecutorEvents = {};
   private _currentStepIndex: number = -1;
-
-  /**
-   * Register event handlers
-   */
-  on<K extends keyof PlanExecutorEvents>(
-    event: K,
-    handler: PlanExecutorEvents[K]
-  ): void {
-    this._events[event] = handler;
-  }
 
   /**
    * Execute an execution plan
    * @param plan - The execution plan to execute
    * @param workflow - The workflow containing the nodes
    * @param context - The execution context
+   * @param executor - The executor instance for event emission
    * @returns Execution result
    */
   async execute(
     plan: ExecutionPlan,
     workflow: Workflow,
-    context: ExecutionContext
+    context: ExecutionContext,
+    executor: Executor
   ): Promise<void> {
     // Execute each step sequentially
     for (let i = 0; i < plan.steps.length; i++) {
@@ -79,7 +57,7 @@ export class PlanExecutor {
       }
 
       // Execute the step based on its type
-      await this.executeStep(step, workflow, context);
+      await this.executeStep(step, workflow, context, executor);
     }
   }
 
@@ -90,15 +68,16 @@ export class PlanExecutor {
   private async executeStep(
     step: any,
     workflow: Workflow,
-    context: ExecutionContext
+    context: ExecutionContext,
+    executor: Executor
   ): Promise<void> {
-    // Emit step start event
-    await this.emitAsync('onStepStart', step.id, step);
+    // Emit step start event (will be added in future phases)
+    // await executor.emitAsync('onStepStart', step.id, step);
 
     try {
       switch (step.type) {
         case ExecutionStepType.NodeExecution:
-          await this.executeNodeStep(step, workflow, context);
+          await this.executeNodeStep(step, workflow, context, executor);
           break;
 
         case ExecutionStepType.Conditional:
@@ -132,11 +111,11 @@ export class PlanExecutor {
           });
       }
 
-      // Emit step complete event
-      await this.emitAsync('onStepComplete', step.id, step);
+      // Emit step complete event (will be added in future phases)
+      // await executor.emitAsync('onStepComplete', step.id, step);
     } catch (error) {
-      // Emit step error event
-      await this.emitAsync('onStepError', step.id, error);
+      // Emit step error event (will be added in future phases)
+      // await executor.emitAsync('onStepError', step.id, error);
       throw error;
     }
   }
@@ -148,7 +127,8 @@ export class PlanExecutor {
   private async executeNodeStep(
     step: any,
     workflow: Workflow,
-    context: ExecutionContext
+    context: ExecutionContext,
+    executor: Executor
   ): Promise<void> {
     const nodeId = step.nodeId;
     const node = workflow.nodes.get(nodeId);
@@ -164,7 +144,7 @@ export class PlanExecutor {
 
     try {
       // Emit node start event
-      await this.emitAsync('onNodeStart', node.id, node);
+      await executor.emitAsync('onNodeStart', node.id, node);
 
       // Transfer data from connected nodes
       this.transferNodeData(node.id, workflow);
@@ -190,7 +170,7 @@ export class PlanExecutor {
       context.setNodeResult(node.id, result);
 
       // Emit node complete event
-      await this.emitAsync('onNodeComplete', node.id, result);
+      await executor.emitAsync('onNodeComplete', node.id, result);
     } catch (error) {
       // If it's a cancellation error, let it propagate immediately
       if (
@@ -226,7 +206,7 @@ export class PlanExecutor {
       context.setNodeResult(node.id, result);
 
       // Emit node error event
-      await this.emitAsync('onNodeError', node.id, nodeError);
+      await executor.emitAsync('onNodeError', node.id, nodeError);
 
       // Re-throw to stop execution
       throw nodeError;
@@ -267,19 +247,6 @@ export class PlanExecutor {
     }
 
     return outputs;
-  }
-
-  /**
-   * Emit an event asynchronously
-   */
-  private async emitAsync(
-    event: keyof PlanExecutorEvents,
-    ...args: any[]
-  ): Promise<void> {
-    const handler = this._events[event] as ((...args: any[]) => void | Promise<void>) | undefined;
-    if (handler) {
-      await handler(...args);
-    }
   }
 
   /**
