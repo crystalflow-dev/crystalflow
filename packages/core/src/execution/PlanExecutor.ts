@@ -14,6 +14,7 @@ import {
   ExecutionStepType,
   NodeExecutionResult,
   NodeState,
+  CancellationReason,
 } from '@reactflo/types';
 import {
   ExecutionError,
@@ -52,8 +53,44 @@ export class PlanExecutor {
 
       // Check cancellation before each step
       if (context.isCancelled()) {
-        // Cancellation error will be thrown by the caller
-        return;
+        // Throw appropriate error based on cancellation reason
+        const reason = context.cancellationReason || CancellationReason.Timeout;
+        const cancelledAt = context.cancelledAt || new Date();
+
+        // Emit cancellation event
+        await executor.emitAsync('onCancellation', context.executionId, reason, cancelledAt);
+
+        switch (reason) {
+          case CancellationReason.Timeout:
+            throw new TimeoutError('Workflow execution timed out', {
+              timeoutMs: 0, // Will be set by Executor
+              executionId: context.executionId,
+              workflowId: context.workflowId,
+            });
+
+          case CancellationReason.UserCancelled:
+            throw new UserCancelledError('Workflow execution was cancelled by user', {
+              executionId: context.executionId,
+              workflowId: context.workflowId,
+              cancelledAt: context.cancelledAt,
+            });
+
+          case CancellationReason.ExternalSignal:
+            throw new CancellationError('Workflow execution was cancelled by external signal', {
+              reason: CancellationReason.ExternalSignal,
+              executionId: context.executionId,
+              workflowId: context.workflowId,
+              cancelledAt: context.cancelledAt,
+            });
+
+          default:
+            throw new CancellationError('Workflow execution was cancelled', {
+              reason: reason || CancellationReason.UserCancelled,
+              executionId: context.executionId,
+              workflowId: context.workflowId,
+              cancelledAt: context.cancelledAt,
+            });
+        }
       }
 
       // Execute the step based on its type
