@@ -11,8 +11,34 @@
 
 #### Week 1: Plan Structure & Builder - 🚧 IN PROGRESS
 - ✅ **Task 1**: Create ExecutionPlanStep type definitions (COMPLETED)
+  - ✅ Created ExecutionStepType enum with 5 types
+  - ✅ Implemented BaseExecutionStep interface
+  - ✅ Defined NodeExecutionStep, ConditionalStep, LoopStep, ParallelStep, MergeStep
+  - ✅ All steps composable (can nest infinitely via ExecutionPlanStep[])
+  - ✅ Exported from @reactflo/types
+  
 - ✅ **Task 2**: Create ExecutionPlan class (COMPLETED)
-- ⏳ **Task 3**: Create ExecutionPlanBuilder class (basic)
+  - ✅ Tree structure with steps: ExecutionPlanStep[]
+  - ✅ Implemented flatten() method (depth-first traversal)
+  - ✅ Implemented validate() method (structural checks)
+  - ✅ Implemented serialize() method (JSON export)
+  - ✅ Implemented getBreakpoints() method (returns all node IDs)
+  - ✅ Metadata tracking (node count, step count, flags)
+  - ✅ 28 unit tests passing
+  
+- ✅ **Task 3**: Create ExecutionPlanBuilder class (basic) (COMPLETED)
+  - ✅ Implemented build(workflow) method
+  - ✅ Validates workflow before building
+  - ✅ Gets topological order from workflow
+  - ✅ Creates NodeExecutionStep for each node
+  - ✅ Generates unique step IDs with custom prefix
+  - ✅ Includes node type and metadata in steps
+  - ✅ Handles empty workflows and cycles with errors
+  - ✅ Options: entryPointStrategy, stepIdPrefix
+  - ✅ Phase 1 scope: Sequential execution only
+  - ✅ 21 unit tests passing
+  - ✅ Exported from @reactflo/core
+  
 - ⏳ **Task 4**: Add plan builder to Executor
 
 #### Week 2: Plan Executor - ⏳ PENDING
