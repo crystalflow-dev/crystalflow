@@ -6,6 +6,9 @@
 export { WorkflowBuilder } from './WorkflowBuilder';
 export type { WorkflowBuilderProps } from './WorkflowBuilder';
 
+// Workflow canvas
+export { WorkflowCanvas } from './WorkflowCanvas';
+
 // Node components
 export { CustomNode } from './Node';
 export type { CustomNodeData } from './Node';

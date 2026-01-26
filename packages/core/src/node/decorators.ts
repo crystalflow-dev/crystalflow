@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { NodeMetadata, PortDefinition } from '@reactflo/types';
+import { NodeMetadata, PortDefinition, PropertyDefinition } from '@reactflo/types';
 import { NodeRegistry, NodeConstructor } from './NodeRegistry';
 
 /**
@@ -50,6 +50,29 @@ export interface OutputOptions {
   label?: string;
   /** Optional description */
   description?: string;
+}
+
+/**
+ * Options for defining a node property
+ */
+export interface PropertyOptions {
+  /** Property type (string, number, boolean, select, etc.) */
+  type: string;
+  /** Human-readable label */
+  label?: string;
+  /** Default value for the property */
+  defaultValue?: unknown;
+  /** Optional description */
+  description?: string;
+  /** Options for select/enum types */
+  options?: Array<{ value: string; label: string }>;
+  /** Min/max values for numeric types */
+  min?: number;
+  max?: number;
+  /** Step value for numeric types */
+  step?: number;
+  /** Whether this property is required */
+  required?: boolean;
 }
 
 /**
@@ -185,6 +208,69 @@ export function Output(options: OutputOptions): PropertyDecorator {
 
     // Store updated outputs
     Reflect.defineMetadata('node:outputs', outputs, (target as object).constructor);
+  } as PropertyDecorator;
+}
+
+/**
+ * Property decorator for defining a node property
+ *
+ * Properties are configuration values that can be set in the UI properties panel
+ * but are not part of the workflow's data flow (not inputs or outputs).
+ *
+ * @example
+ * ```typescript
+ * class MyNode extends Node {
+ *   @Property({ type: 'string', label: 'API Endpoint', defaultValue: 'https://api.example.com' })
+ *   endpoint: string = 'https://api.example.com';
+ *
+ *   @Property({
+ *     type: 'select',
+ *     label: 'Method',
+ *     defaultValue: 'GET',
+ *     options: [
+ *       { value: 'GET', label: 'GET' },
+ *       { value: 'POST', label: 'POST' }
+ *     ]
+ *   })
+ *   method: string = 'GET';
+ *
+ *   @Property({ type: 'number', label: 'Timeout (ms)', defaultValue: 5000, min: 1000, max: 30000 })
+ *   timeout: number = 5000;
+ * }
+ * ```
+ */
+export function Property(options: PropertyOptions): PropertyDecorator {
+  return function (target: unknown, propertyKey: string | symbol): void {
+    if (!target || typeof target !== 'object') return;
+
+    const key = String(propertyKey);
+    // Get existing properties or create new array
+    const properties: PropertyDefinition[] =
+      Reflect.getMetadata('node:properties', (target as object).constructor) || [];
+
+    // Add this property to the list
+    const propertyDefinition: PropertyDefinition = {
+      id: key,
+      label: options.label || key,
+      type: options.type,
+      defaultValue: options.defaultValue,
+      description: options.description,
+      options: options.options,
+      min: options.min,
+      max: options.max,
+      step: options.step,
+      required: options.required,
+    };
+
+    properties.push(propertyDefinition);
+
+    // Store updated properties
+    Reflect.defineMetadata('node:properties', properties, (target as object).constructor);
+
+    // Set default value if provided
+    if (options.defaultValue !== undefined) {
+      (target as Record<string, unknown>)[key] = options.defaultValue;
+    }
   } as PropertyDecorator;
 }
 

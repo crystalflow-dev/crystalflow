@@ -59,12 +59,33 @@ export interface PortDefinition {
 }
 
 /**
+ * Property definition for node configuration
+ */
+export interface PropertyDefinition {
+  id: string;
+  label: string;
+  type: string;
+  defaultValue?: unknown;
+  description?: string;
+  /** Options for select/enum types */
+  options?: Array<{ value: string; label: string }>;
+  /** Min/max values for numeric types */
+  min?: number;
+  max?: number;
+  /** Step value for numeric types */
+  step?: number;
+  /** Whether this property is required */
+  required?: boolean;
+}
+
+/**
  * Node definition
  */
 export interface NodeDefinition {
   metadata: NodeMetadata;
   inputs: PortDefinition[];
   outputs: PortDefinition[];
+  properties: PropertyDefinition[];
 }
 
 /**

@@ -13,8 +13,9 @@ import {
   MultiplyNode,
   SubtractNode,
   DisplayNode,
+  ConfigDemoNode,
 } from '../nodes';
-import 'reactflow/dist/style.css';
+import '../styles/reactflow.css';
 
 /**
  * Simple Workflow Example Component
@@ -25,10 +26,11 @@ function SimpleWorkflow() {
       <div className="example-info">
         <h2>Simple Workflow Builder</h2>
         <p>
-          Drag nodes from the palette onto the canvas. Start with Number nodes to provide input
-          values, then connect them to Math operations (Add, Multiply, Subtract), and finally to a
-          Display node to see the result. Connect nodes by dragging from output handles (right side)
-          to input handles (left side).
+          Drag nodes from the palette onto the canvas. Start with Number or String nodes to provide
+          input values, then connect them to Math operations (Add, Multiply, Subtract) or try the
+          Configuration Demo node to see how properties work. Finally connect to a Display node to
+          see the result. Connect nodes by dragging from output handles (right side) to input
+          handles (left side).
         </p>
       </div>
       <div className="workflow-container">
@@ -40,6 +42,7 @@ function SimpleWorkflow() {
             MultiplyNode,
             SubtractNode,
             DisplayNode,
+            ConfigDemoNode,
           ]}
           showPalette={true}
           showProperties={true}

@@ -1,4 +1,4 @@
-import { defineNode, Input, Output, Node } from '@reactflo/core';
+import { defineNode, Property, Output, Node } from '@reactflo/core';
 
 /**
  * Number Input Node
@@ -12,7 +12,7 @@ import { defineNode, Input, Output, Node } from '@reactflo/core';
   color: '#9C27B0',
 })
 export class NumberInputNode extends Node {
-  @Input({ type: 'number', label: 'Value', defaultValue: 0 })
+  @Property({ type: 'number', label: 'Value', defaultValue: 0 })
   inputValue: number = 0;
 
   @Output({ type: 'number', label: 'Value' })

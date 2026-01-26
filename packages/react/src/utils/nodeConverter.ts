@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Node as ReactFlowNode } from 'reactflow';
-import { NodeMetadata, PortDefinition } from '@reactflo/types';
+import { NodeMetadata, PortDefinition, PropertyDefinition } from '@reactflo/types';
 import { NodeConstructor } from '@reactflo/core';
 import { CustomNodeData } from '../components/Node/CustomNode';
 
@@ -33,11 +33,16 @@ export function convertNodeToReactFlow(
   // Get output ports metadata
   const outputPorts: PortDefinition[] = Reflect.getMetadata('node:outputs', nodeClass) || [];
 
+  // Get properties metadata
+  const propertyDefinitions: PropertyDefinition[] =
+    Reflect.getMetadata('node:properties', nodeClass) || [];
+
   console.log('convertNodeToReactFlow:', {
     nodeClass: nodeClass.name,
     metadata,
     inputPorts,
     outputPorts,
+    propertyDefinitions,
   });
 
   // Convert ports to object format
@@ -56,6 +61,17 @@ export function convertNodeToReactFlow(
     outputs[port.id] = port;
   });
 
+  // Convert properties to object format
+  const properties: Record<string, PropertyDefinition> = {};
+  const propertyValues: Record<string, unknown> = {};
+  propertyDefinitions.forEach((prop) => {
+    properties[prop.id] = prop;
+    // Initialize with default value
+    if (prop.defaultValue !== undefined) {
+      propertyValues[prop.id] = prop.defaultValue;
+    }
+  });
+
   // Create React Flow node
   return {
     id: nodeId,
@@ -70,8 +86,10 @@ export function convertNodeToReactFlow(
       color: metadata.color,
       inputs,
       outputs,
+      properties,
       nodeClass, // Store reference to the original class
-      ...inputValues, // Add default values as properties
+      ...inputValues, // Add default input values as properties
+      ...propertyValues, // Add default property values
     },
   };
 }

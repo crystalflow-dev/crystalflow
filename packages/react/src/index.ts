@@ -3,9 +3,6 @@
  * React components for workflow builder (built on React Flow)
  */
 
-// Types
-export * from './types';
-
 // Components
 export * from './components';
 
