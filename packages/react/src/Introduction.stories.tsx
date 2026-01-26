@@ -66,7 +66,7 @@ export default meta;
  *
  * ## Resources
  *
- * - [ReactFlo Documentation](https://github.com/reactflo/reactflo)
+ * - [ReactFlo Documentation](https://github.com/fladeed/reactflo)
  * - [React Flow Documentation](https://reactflow.dev/)
  * - [Monaco Editor Documentation](https://microsoft.github.io/monaco-editor/)
  *
