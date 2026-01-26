@@ -37,6 +37,9 @@ jobs:
       - name: Build react package
         run: npm run build --workspace=@reactflo/react
 
+      - name: Build landing package
+        run: npm run build --workspace=@reactflo/landing
+
       - name: Run type check
         run: npm run typecheck
 

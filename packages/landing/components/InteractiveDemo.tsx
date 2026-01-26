@@ -10,7 +10,14 @@ import type { NodeConstructor } from '@reactflo/core';
 // Dynamically import WorkflowBuilder to avoid SSR issues
 const WorkflowBuilder = dynamic(
   () => import('@reactflo/react').then((mod) => mod.WorkflowBuilder),
-  { ssr: false, loading: () => <div className="flex items-center justify-center h-full text-light-grey">Loading workflow builder...</div> }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-full text-light-grey">
+        Loading workflow builder...
+      </div>
+    ),
+  }
 );
 
 export default function InteractiveDemo() {
@@ -105,9 +112,7 @@ export class DisplayNode extends Node {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">
-            See It In Action
-          </h2>
+          <h2 className="text-5xl md:text-6xl font-bold mb-6">See It In Action</h2>
           <p className="text-xl text-light-grey max-w-2xl mx-auto">
             Define your nodes with decorators, then build workflows visually.
           </p>
@@ -118,9 +123,7 @@ export class DisplayNode extends Node {
           <button
             onClick={() => setShowCode(true)}
             className={`px-8 py-3 font-semibold transition-all duration-300 relative ${
-              showCode
-                ? 'text-primary'
-                : 'text-light-grey hover:text-white'
+              showCode ? 'text-primary' : 'text-light-grey hover:text-white'
             }`}
           >
             Node Definitions
@@ -134,9 +137,7 @@ export class DisplayNode extends Node {
               loadNodes();
             }}
             className={`px-8 py-3 font-semibold transition-all duration-300 relative ${
-              !showCode
-                ? 'text-primary'
-                : 'text-light-grey hover:text-white'
+              !showCode ? 'text-primary' : 'text-light-grey hover:text-white'
             }`}
           >
             Live Workflow Builder
@@ -153,18 +154,9 @@ export class DisplayNode extends Node {
           className="bg-dark-grey border border-primary/20 rounded-2xl overflow-hidden"
         >
           {showCode ? (
-            <SandpackProvider
-              theme="dark"
-              template="static"
-              files={files}
-            >
+            <SandpackProvider theme="dark" template="static" files={files}>
               <SandpackLayout>
-                <SandpackCodeEditor 
-                  showLineNumbers 
-                  showTabs 
-                  style={{ height: '600px' }}
-                  readOnly
-                />
+                <SandpackCodeEditor showLineNumbers showTabs style={{ height: '600px' }} readOnly />
               </SandpackLayout>
             </SandpackProvider>
           ) : (
@@ -193,8 +185,9 @@ export class DisplayNode extends Node {
           className="text-center mt-8"
         >
           <p className="text-sm text-light-grey">
-            💡 {showCode 
-              ? 'Edit the code to see how ReactFlo nodes are defined, then switch to the builder!' 
+            💡{' '}
+            {showCode
+              ? 'Edit the code to see how ReactFlo nodes are defined, then switch to the builder!'
               : 'Drag nodes from the palette and connect them to build your workflow!'}
           </p>
         </motion.div>

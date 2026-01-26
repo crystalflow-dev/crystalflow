@@ -52,9 +52,7 @@ function MyApp() {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">
-            Simple Yet Powerful
-          </h2>
+          <h2 className="text-5xl md:text-6xl font-bold mb-6">Simple Yet Powerful</h2>
           <p className="text-xl text-light-grey max-w-2xl mx-auto">
             Define nodes with decorators, build workflows visually, execute anywhere.
           </p>

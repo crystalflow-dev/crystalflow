@@ -22,7 +22,7 @@ export default function GettingStarted() {
       number: '02',
       title: 'Define Your Nodes',
       description: 'Use decorators to define workflow nodes',
-      code: '@defineNode({ type: \'custom.node\' })\nclass MyNode extends Node { ... }',
+      code: "@defineNode({ type: 'custom.node' })\nclass MyNode extends Node { ... }",
     },
     {
       number: '03',
@@ -33,7 +33,11 @@ export default function GettingStarted() {
   ];
 
   return (
-    <section id="getting-started" className="py-32 px-6 bg-linear-to-b from-dark-grey to-black" ref={ref}>
+    <section
+      id="getting-started"
+      className="py-32 px-6 bg-linear-to-b from-dark-grey to-black"
+      ref={ref}
+    >
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -41,9 +45,7 @@ export default function GettingStarted() {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">
-            Get Started in Minutes
-          </h2>
+          <h2 className="text-5xl md:text-6xl font-bold mb-6">Get Started in Minutes</h2>
           <p className="text-xl text-light-grey max-w-2xl mx-auto">
             Three simple steps to build your first workflow application.
           </p>

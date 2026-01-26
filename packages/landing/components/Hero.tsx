@@ -1,9 +1,16 @@
-/* eslint-disable react-hooks/purity */
 'use client';
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FaBolt } from 'react-icons/fa';
+
+// Generate stable particle positions outside component to avoid re-computation
+const particles = Array.from({ length: 20 }, () => ({
+  left: Math.random() * 100,
+  top: Math.random() * 100,
+  duration: 3 + Math.random() * 2,
+  delay: Math.random() * 2,
+}));
 
 export default function Hero() {
   return (
@@ -15,22 +22,22 @@ export default function Hero() {
 
       {/* Animated dots/particles background */}
       <div className="absolute inset-0">
-        {[...Array(20)].map((_, i) => (
+        {particles.map((particle, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-primary rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${particle.left}%`,
+              top: `${particle.top}%`,
             }}
             animate={{
               opacity: [0.2, 0.8, 0.2],
               scale: [1, 1.5, 1],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: particle.duration,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: particle.delay,
             }}
           />
         ))}
@@ -72,7 +79,8 @@ export default function Hero() {
 
           {/* Subheading */}
           <p className="text-xl md:text-2xl text-light-grey max-w-3xl mx-auto leading-relaxed">
-            A declarative workflow builder framework that lets you focus on &quot;what to do&quot; instead of &quot;how to do it&quot;.
+            A declarative workflow builder framework that lets you focus on &quot;what to do&quot;
+            instead of &quot;how to do it&quot;.
           </p>
 
           {/* CTA Buttons */}

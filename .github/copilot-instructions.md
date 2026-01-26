@@ -524,6 +524,7 @@ interface NodeExecutionResult {
 ReactFlo provides comprehensive cancellation support:
 
 **Cancellation Mechanisms:**
+
 - ✅ **Timeout-based** - Set `timeout` in execution options
 - ✅ **User-initiated** - Call `executor.cancel(executionId, reason)`
 - ✅ **External signal** - Pass `abortSignal` in execution options
@@ -531,12 +532,14 @@ ReactFlo provides comprehensive cancellation support:
 - ✅ **Mid-node checks** - Nodes call `this.checkCancellation()`
 
 **Cancellation Reasons:**
+
 - `timeout` - Execution exceeded timeout limit
 - `user-cancelled` - User explicitly cancelled via API
 - `external-signal` - Cancelled via AbortController/AbortSignal
 - `resource-limit` - Resource constraints (reserved for future)
 
 **Error Hierarchy:**
+
 ```typescript
 CancellationError (base)
 ├── TimeoutError
@@ -544,6 +547,7 @@ CancellationError (base)
 ```
 
 **Cancellation API:**
+
 ```typescript
 // Cancel specific execution
 executor.cancel(executionId, CancellationReason.UserCancelled);
@@ -563,6 +567,7 @@ executor.on('onCancellation', (executionId, reason, cancelledAt) => {
 ```
 
 **Mid-Node Cancellation:**
+
 ```typescript
 class LongRunningNode extends Node {
   async execute() {
@@ -575,6 +580,7 @@ class LongRunningNode extends Node {
 ```
 
 **ExecutionResult with Cancellation:**
+
 ```typescript
 interface ExecutionResult {
   status: 'success' | 'failed' | 'cancelled';

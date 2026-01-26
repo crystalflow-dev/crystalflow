@@ -3,13 +3,21 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { FaPaintBrush, FaProjectDiagram, FaFileCode, FaFeatherAlt, FaShieldAlt, FaRocket } from 'react-icons/fa';
+import {
+  FaPaintBrush,
+  FaProjectDiagram,
+  FaFileCode,
+  FaFeatherAlt,
+  FaShieldAlt,
+  FaRocket,
+} from 'react-icons/fa';
 
 const features = [
   {
     icon: FaPaintBrush,
     title: 'Decorator-Based Definitions',
-    description: 'Define workflow nodes using TypeScript decorators. Clean, declarative, and intuitive.',
+    description:
+      'Define workflow nodes using TypeScript decorators. Clean, declarative, and intuitive.',
   },
   {
     icon: FaProjectDiagram,
@@ -19,12 +27,14 @@ const features = [
   {
     icon: FaFileCode,
     title: 'JSON Serialization',
-    description: 'Every workflow is fully serializable to JSON. Save, load, and version control your workflows.',
+    description:
+      'Every workflow is fully serializable to JSON. Save, load, and version control your workflows.',
   },
   {
     icon: FaFeatherAlt,
     title: 'Zero Dependencies',
-    description: 'Core engine has zero dependencies. Only reflect-metadata required for decorators.',
+    description:
+      'Core engine has zero dependencies. Only reflect-metadata required for decorators.',
   },
   {
     icon: FaShieldAlt,
@@ -72,11 +82,10 @@ export default function Features() {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">
-            Everything You Need
-          </h2>
+          <h2 className="text-5xl md:text-6xl font-bold mb-6">Everything You Need</h2>
           <p className="text-xl text-light-grey max-w-2xl mx-auto">
-            A complete workflow framework that handles the complex parts, so you can focus on building.
+            A complete workflow framework that handles the complex parts, so you can focus on
+            building.
           </p>
         </motion.div>
 
@@ -99,7 +108,7 @@ export default function Features() {
                 </div>
                 <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
                 <p className="text-light-grey leading-relaxed">{feature.description}</p>
-                
+
                 {/* Hover effect gradient */}
                 <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none" />
               </motion.div>

@@ -241,11 +241,7 @@ ReactFlo tracks why execution was cancelled:
 ### Error Handling with Cancellation
 
 ```typescript
-import {
-  CancellationError,
-  TimeoutError,
-  UserCancelledError,
-} from '@reactflo/core';
+import { CancellationError, TimeoutError, UserCancelledError } from '@reactflo/core';
 
 try {
   const result = await executor.execute(workflow, { timeout: 5000 });
