@@ -39,7 +39,17 @@
   - ✅ 21 unit tests passing
   - ✅ Exported from @reactflo/core
   
-- ⏳ **Task 4**: Add plan builder to Executor
+- ✅ **Task 4**: Add plan builder to Executor (COMPLETED)
+  - ✅ Added ExecutionPlanBuilder as private property to Executor
+  - ✅ Integrated plan building into execute() method
+  - ✅ Builds execution plan after validation, before execution loop
+  - ✅ Stores plan in ExecutionContext via executionPlan property
+  - ✅ Added onPlanBuilt event to ExecutorEvents interface
+  - ✅ Emits onPlanBuilt event with ExecutionPlan after building
+  - ✅ Event fires after beforeExecute, before onNodeStart
+  - ✅ Supports async event listeners (awaits completion)
+  - ✅ 10 integration tests passing
+  - ✅ All 338 existing tests still passing
 
 #### Week 2: Plan Executor - ⏳ PENDING
 - ⏳ **Task 1**: Create PlanExecutor class

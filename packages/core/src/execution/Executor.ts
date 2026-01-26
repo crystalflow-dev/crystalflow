@@ -19,6 +19,8 @@ import {
   CancellationReason,
 } from '@reactflo/types';
 import { AsyncEventEmitter } from '../utils/AsyncEventEmitter';
+import { ExecutionPlan } from './ExecutionPlan';
+import { ExecutionPlanBuilder } from './ExecutionPlanBuilder';
 
 /**
  * Executor events
@@ -29,6 +31,7 @@ export interface ExecutorEvents {
   [key: string]: (...args: any[]) => void | Promise<void>;
   beforeExecute: (context: ExecutionContext) => void | Promise<void>;
   afterExecute: (result: ExecutionResult) => void | Promise<void>;
+  onPlanBuilt: (plan: ExecutionPlan) => void | Promise<void>;
   onNodeStart: (nodeId: string, node: Node) => void | Promise<void>;
   onNodeComplete: (nodeId: string, result: NodeExecutionResult) => void | Promise<void>;
   onNodeError: (nodeId: string, error: Error) => void | Promise<void>;
@@ -65,6 +68,7 @@ export interface ExecutorEvents {
  */
 export class Executor extends AsyncEventEmitter<ExecutorEvents> {
   private _activeExecutions: Map<ExecutionId, ExecutionContext> = new Map();
+  private _planBuilder: ExecutionPlanBuilder = new ExecutionPlanBuilder();
 
   /**
    * Execute a workflow
@@ -125,6 +129,11 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       // Update status and emit event
       context.status = ExecutionStatus.Running;
       await this.emitAsync('beforeExecute', context);
+
+      // Build execution plan
+      const executionPlan = this._planBuilder.build(workflow);
+      context.executionPlan = executionPlan;
+      await this.emitAsync('onPlanBuilt', executionPlan);
 
       // Get execution order (topological sort)
       const executionOrder = workflow.getExecutionOrder();
