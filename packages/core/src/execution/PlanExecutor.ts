@@ -159,7 +159,7 @@ export class PlanExecutor {
 
   /**
    * Execute a NodeExecutionStep
-   * Executes a single node from the workflow
+   * Delegates to Executor's executeNode method
    */
   private async executeNodeStep(
     step: any,
@@ -177,113 +177,8 @@ export class PlanExecutor {
       });
     }
 
-    const startTime = new Date();
-
-    try {
-      // Emit node start event
-      await executor.emitAsync('onNodeStart', node.id, node);
-
-      // Transfer data from connected nodes
-      this.transferNodeData(node.id, workflow);
-
-      // Inject execution context into node for cancellation support
-      node._executionContext = context;
-
-      // Execute the node (calls validate + execute + state management)
-      await node.run();
-
-      // Record execution result
-      const endTime = new Date();
-
-      const result: NodeExecutionResult = {
-        nodeId: node.id,
-        state: node.state,
-        outputs: this.extractNodeOutputs(node),
-        startTime,
-        endTime,
-        duration: endTime.getTime() - startTime.getTime(),
-      };
-
-      context.setNodeResult(node.id, result);
-
-      // Emit node complete event
-      await executor.emitAsync('onNodeComplete', node.id, result);
-    } catch (error) {
-      // If it's a cancellation error, let it propagate immediately
-      if (
-        error instanceof CancellationError ||
-        error instanceof TimeoutError ||
-        error instanceof UserCancelledError
-      ) {
-        throw error;
-      }
-
-      // Record error result for non-cancellation errors
-      const nodeError = new NodeExecutionError(
-        `Node execution failed: ${error instanceof Error ? error.message : String(error)}`,
-        {
-          nodeId: node.id,
-          nodeType: node.type,
-          executionId: context.executionId,
-          workflowId: context.workflowId,
-          cause: error instanceof Error ? error : undefined,
-        }
-      );
-
-      const result: NodeExecutionResult = {
-        nodeId: node.id,
-        state: NodeState.Error,
-        outputs: {},
-        error: nodeError,
-        startTime,
-        endTime: new Date(),
-        duration: Date.now() - startTime.getTime(),
-      };
-
-      context.setNodeResult(node.id, result);
-
-      // Emit node error event
-      await executor.emitAsync('onNodeError', node.id, nodeError);
-
-      // Re-throw to stop execution
-      throw nodeError;
-    } finally {
-      // Clear execution context from node
-      node._executionContext = undefined;
-    }
-  }
-
-  /**
-   * Transfer data from connected nodes to the target node
-   */
-  private transferNodeData(targetNodeId: string, workflow: Workflow): void {
-    for (const connection of workflow.connections.values()) {
-      if (connection.targetNodeId === targetNodeId) {
-        const sourceNode = workflow.nodes.get(connection.sourceNodeId);
-        const targetNode = workflow.nodes.get(connection.targetNodeId);
-
-        if (sourceNode && targetNode) {
-          connection.transferData(sourceNode, targetNode);
-        }
-      }
-    }
-  }
-
-  /**
-   * Extract output values from a node
-   */
-  private extractNodeOutputs(node: Node): Record<string, unknown> {
-    const outputs: Record<string, unknown> = {};
-    const outputPorts = node.getOutputs();
-
-    for (const output of outputPorts) {
-      const value = node.getOutput(output.id);
-      if (value !== undefined) {
-        outputs[output.id] = value;
-      }
-    }
-
-    return outputs;
+    // Delegate to Executor's executeNode method
+    await (executor as any).executeNode(node, workflow, context);
   }
 
   /**
