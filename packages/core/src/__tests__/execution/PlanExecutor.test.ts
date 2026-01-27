@@ -279,7 +279,9 @@ describe('PlanExecutor', () => {
       const planExecutor = new PlanExecutor();
       const workflowExecutor = new Executor();
 
-      await expect(planExecutor.execute(plan, workflow, context, workflowExecutor)).rejects.toThrow();
+      await expect(
+        planExecutor.execute(plan, workflow, context, workflowExecutor)
+      ).rejects.toThrow();
 
       // node1 should have result
       expect(context.getNodeResult(node1.id)).toBeDefined();
@@ -351,7 +353,6 @@ describe('PlanExecutor', () => {
       const planExecutor = new PlanExecutor();
       const workflowExecutor = new Executor();
 
-      const events: string[] = [];
       // Note: Step events will be implemented in future phases
       // workflowExecutor.on('onStepStart', (stepId: string) => {
       //   events.push(`stepStart:${stepId}`);
@@ -416,7 +417,9 @@ describe('PlanExecutor', () => {
         errorEmitted = true;
       });
 
-      await expect(planExecutor.execute(plan, workflow, context, workflowExecutor)).rejects.toThrow();
+      await expect(
+        planExecutor.execute(plan, workflow, context, workflowExecutor)
+      ).rejects.toThrow();
       expect(errorEmitted).toBe(true);
     });
   });
@@ -507,37 +510,31 @@ describe('PlanExecutor', () => {
   describe('debugging method stubs', () => {
     it('should throw error for pause()', () => {
       const planExecutor = new PlanExecutor();
-      const workflowExecutor = new Executor();
       expect(() => planExecutor.pause()).toThrow('pause() not yet implemented (Phase 5)');
     });
 
     it('should throw error for resume()', () => {
       const planExecutor = new PlanExecutor();
-      const workflowExecutor = new Executor();
       expect(() => planExecutor.resume()).toThrow('resume() not yet implemented (Phase 5)');
     });
 
     it('should throw error for stepOver()', () => {
       const planExecutor = new PlanExecutor();
-      const workflowExecutor = new Executor();
       expect(() => planExecutor.stepOver()).toThrow('stepOver() not yet implemented (Phase 5)');
     });
 
     it('should throw error for stepInto()', () => {
       const planExecutor = new PlanExecutor();
-      const workflowExecutor = new Executor();
       expect(() => planExecutor.stepInto()).toThrow('stepInto() not yet implemented (Phase 5)');
     });
 
     it('should throw error for stepOut()', () => {
       const planExecutor = new PlanExecutor();
-      const workflowExecutor = new Executor();
       expect(() => planExecutor.stepOut()).toThrow('stepOut() not yet implemented (Phase 5)');
     });
 
     it('should throw error for setBreakpoint()', () => {
       const planExecutor = new PlanExecutor();
-      const workflowExecutor = new Executor();
       expect(() => planExecutor.setBreakpoint('node-1')).toThrow(
         'setBreakpoint() not yet implemented (Phase 5)'
       );
@@ -545,7 +542,6 @@ describe('PlanExecutor', () => {
 
     it('should throw error for removeBreakpoint()', () => {
       const planExecutor = new PlanExecutor();
-      const workflowExecutor = new Executor();
       expect(() => planExecutor.removeBreakpoint('node-1')).toThrow(
         'removeBreakpoint() not yet implemented (Phase 5)'
       );

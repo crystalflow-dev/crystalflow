@@ -52,7 +52,7 @@ describe('ExecutionPlanBuilder', () => {
 
   beforeAll(() => {
     registry = NodeRegistry.getInstance();
-    
+
     // Register nodes only if not already registered
     if (!registry.has('test.simple')) {
       registry.register(SimpleTestNode);
@@ -102,7 +102,7 @@ describe('ExecutionPlanBuilder', () => {
 
     it('should include node type in step', () => {
       const workflow = new Workflow('wf-1', 'Single Node');
-      const node = workflow.addNode('test.simple');
+      workflow.addNode('test.simple');
 
       const builder = new ExecutionPlanBuilder();
       const plan = builder.build(workflow);
@@ -115,7 +115,7 @@ describe('ExecutionPlanBuilder', () => {
 
     it('should include metadata in step', () => {
       const workflow = new Workflow('wf-1', 'Single Node');
-      const node = workflow.addNode('test.simple');
+      workflow.addNode('test.simple');
 
       const builder = new ExecutionPlanBuilder();
       const plan = builder.build(workflow);

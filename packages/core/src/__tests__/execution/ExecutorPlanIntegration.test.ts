@@ -188,12 +188,11 @@ describe('Executor + ExecutionPlanBuilder Integration', () => {
 
       const executor = new Executor();
 
-      let contextPlan: ExecutionPlan | undefined;
-      executor.on('beforeExecute', (context) => {
+      executor.on('beforeExecute', (_context) => {
         // Plan is set after beforeExecute, so check in onNodeStart
       });
 
-      executor.on('onNodeStart', (nodeId, node) => {
+      executor.on('onNodeStart', (_nodeId, _node) => {
         // Context is available via the node, but we can't access it directly in this test
         // This is tested implicitly by the fact that execution succeeds
       });
@@ -250,7 +249,7 @@ describe('Executor + ExecutionPlanBuilder Integration', () => {
 
       const executionOrder: string[] = [];
 
-      executor.on('onPlanBuilt', async (plan) => {
+      executor.on('onPlanBuilt', async (_plan) => {
         executionOrder.push('onPlanBuilt-start');
         await new Promise((resolve) => setTimeout(resolve, 10));
         executionOrder.push('onPlanBuilt-end');

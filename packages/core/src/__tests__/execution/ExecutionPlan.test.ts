@@ -3,15 +3,7 @@
  */
 
 import { ExecutionPlan, SerializedExecutionPlan } from '../../execution/ExecutionPlan';
-import {
-  ExecutionPlanStep,
-  ExecutionStepType,
-  NodeExecutionStep,
-  ConditionalStep,
-  LoopStep,
-  ParallelStep,
-  MergeStep,
-} from '@reactflo/types';
+import { ExecutionPlanStep, ExecutionStepType } from '@reactflo/types';
 
 describe('ExecutionPlan', () => {
   describe('constructor', () => {
@@ -32,9 +24,7 @@ describe('ExecutionPlan', () => {
     });
 
     it('should throw error if steps array is empty', () => {
-      expect(() => new ExecutionPlan([])).toThrow(
-        'ExecutionPlan requires at least one step'
-      );
+      expect(() => new ExecutionPlan([])).toThrow('ExecutionPlan requires at least one step');
     });
 
     it('should throw error if steps is null', () => {
@@ -478,9 +468,7 @@ describe('ExecutionPlan', () => {
       };
 
       const plan = new ExecutionPlan([loopStep]);
-      expect(() => plan.validate()).toThrow(
-        'Loop step step-loop must have at least one body step'
-      );
+      expect(() => plan.validate()).toThrow('Loop step step-loop must have at least one body step');
     });
 
     it('should throw error for loop with invalid maxIterations', () => {
@@ -502,9 +490,7 @@ describe('ExecutionPlan', () => {
       };
 
       const plan = new ExecutionPlan([loopStep]);
-      expect(() => plan.validate()).toThrow(
-        'Loop step step-loop maxIterations must be positive'
-      );
+      expect(() => plan.validate()).toThrow('Loop step step-loop maxIterations must be positive');
     });
 
     it('should throw error for parallel with no branches', () => {

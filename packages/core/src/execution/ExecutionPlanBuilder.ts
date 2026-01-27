@@ -1,6 +1,6 @@
 /**
  * ExecutionPlanBuilder - Builds execution plans from workflows
- * 
+ *
  * Analyzes workflow structure and generates an ExecutionPlan that represents
  * how the workflow should be executed. Phase 1 handles simple linear workflows
  * and basic multiple entry points (all merging at same point).
@@ -8,12 +8,7 @@
 
 import { Workflow } from '../workflow/Workflow';
 import { ExecutionPlan } from './ExecutionPlan';
-import {
-  ExecutionPlanStep,
-  ExecutionStepType,
-  NodeExecutionStep,
-  NodeId,
-} from '@reactflo/types';
+import { ExecutionPlanStep, ExecutionStepType, NodeExecutionStep, NodeId } from '@reactflo/types';
 
 /**
  * Options for building execution plans
@@ -23,7 +18,7 @@ export interface ExecutionPlanBuilderOptions {
    * Strategy for handling multiple entry points
    * - 'parallel': Wrap in ParallelStep (default, better performance)
    * - 'sequential': Execute in topological order (simpler, Phase 1 only)
-   * 
+   *
    * Note: Phase 1 only supports simple patterns where all entry branches
    * merge at the same point. Complex patterns will throw an error.
    */
@@ -37,14 +32,14 @@ export interface ExecutionPlanBuilderOptions {
 
 /**
  * ExecutionPlanBuilder
- * 
+ *
  * Phase 1 Scope:
  * - Build plans for linear workflows (simple topological order)
  * - Handle single entry point
  * - Handle multiple entry points (sequential strategy only in Phase 1)
  * - Generate NodeExecutionStep for each node
  * - Validate node references
- * 
+ *
  * Phase 4 Scope (Future):
  * - Parallel entry point wrapper
  * - Detect common merge points
@@ -64,7 +59,7 @@ export class ExecutionPlanBuilder {
 
   /**
    * Build an execution plan from a workflow
-   * 
+   *
    * @param workflow - The workflow to build a plan for
    * @returns ExecutionPlan ready for execution
    * @throws Error if workflow is invalid or contains unsupported patterns
@@ -100,9 +95,7 @@ export class ExecutionPlanBuilder {
       // Validate node exists
       const node = workflow.nodes.get(nodeId);
       if (!node) {
-        throw new Error(
-          `Cannot build execution plan: node ${nodeId} not found in workflow`
-        );
+        throw new Error(`Cannot build execution plan: node ${nodeId} not found in workflow`);
       }
 
       // Create NodeExecutionStep

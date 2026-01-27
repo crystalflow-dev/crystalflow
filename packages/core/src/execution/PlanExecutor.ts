@@ -1,6 +1,6 @@
 /**
  * PlanExecutor executes an ExecutionPlan step-by-step.
- * 
+ *
  * Phase 1: Supports NodeExecutionStep only (serial execution)
  * Phase 2-4: Will add ConditionalStep, LoopStep, ParallelStep support
  * Phase 5: Will add debugging (pause, resume, step-over, breakpoints)
@@ -9,20 +9,8 @@
 import { ExecutionPlan } from './ExecutionPlan';
 import { ExecutionContext } from './ExecutionContext';
 import { Workflow } from '../workflow/Workflow';
-import { Node } from '../node/Node';
-import {
-  ExecutionStepType,
-  NodeExecutionResult,
-  NodeState,
-  CancellationReason,
-} from '@reactflo/types';
-import {
-  ExecutionError,
-  NodeExecutionError,
-  CancellationError,
-  TimeoutError,
-  UserCancelledError,
-} from './errors';
+import { ExecutionStepType, CancellationReason } from '@reactflo/types';
+import { ExecutionError, CancellationError, TimeoutError, UserCancelledError } from './errors';
 import type { Executor } from './Executor';
 
 /**
@@ -111,50 +99,44 @@ export class PlanExecutor {
     // Emit step start event (will be added in future phases)
     // await executor.emitAsync('onStepStart', step.id, step);
 
-    try {
-      switch (step.type) {
-        case ExecutionStepType.NodeExecution:
-          await this.executeNodeStep(step, workflow, context, executor);
-          break;
+    switch (step.type) {
+      case ExecutionStepType.NodeExecution:
+        await this.executeNodeStep(step, workflow, context, executor);
+        break;
 
-        case ExecutionStepType.Conditional:
-          throw new ExecutionError('ConditionalStep not yet implemented (Phase 2)', {
-            executionId: context.executionId,
-            workflowId: context.workflowId,
-          });
+      case ExecutionStepType.Conditional:
+        throw new ExecutionError('ConditionalStep not yet implemented (Phase 2)', {
+          executionId: context.executionId,
+          workflowId: context.workflowId,
+        });
 
-        case ExecutionStepType.Loop:
-          throw new ExecutionError('LoopStep not yet implemented (Phase 3)', {
-            executionId: context.executionId,
-            workflowId: context.workflowId,
-          });
+      case ExecutionStepType.Loop:
+        throw new ExecutionError('LoopStep not yet implemented (Phase 3)', {
+          executionId: context.executionId,
+          workflowId: context.workflowId,
+        });
 
-        case ExecutionStepType.Parallel:
-          throw new ExecutionError('ParallelStep not yet implemented (Phase 4)', {
-            executionId: context.executionId,
-            workflowId: context.workflowId,
-          });
+      case ExecutionStepType.Parallel:
+        throw new ExecutionError('ParallelStep not yet implemented (Phase 4)', {
+          executionId: context.executionId,
+          workflowId: context.workflowId,
+        });
 
-        case ExecutionStepType.Merge:
-          throw new ExecutionError('MergeStep not yet implemented (Phase 4)', {
-            executionId: context.executionId,
-            workflowId: context.workflowId,
-          });
+      case ExecutionStepType.Merge:
+        throw new ExecutionError('MergeStep not yet implemented (Phase 4)', {
+          executionId: context.executionId,
+          workflowId: context.workflowId,
+        });
 
-        default:
-          throw new ExecutionError(`Unknown step type: ${(step as any).type}`, {
-            executionId: context.executionId,
-            workflowId: context.workflowId,
-          });
-      }
-
-      // Emit step complete event (will be added in future phases)
-      // await executor.emitAsync('onStepComplete', step.id, step);
-    } catch (error) {
-      // Emit step error event (will be added in future phases)
-      // await executor.emitAsync('onStepError', step.id, error);
-      throw error;
+      default:
+        throw new ExecutionError(`Unknown step type: ${(step as any).type}`, {
+          executionId: context.executionId,
+          workflowId: context.workflowId,
+        });
     }
+
+    // Emit step complete event (will be added in future phases)
+    // await executor.emitAsync('onStepComplete', step.id, step);
   }
 
   /**
@@ -236,7 +218,7 @@ export class PlanExecutor {
    * Set a breakpoint at a specific node
    * @stub Phase 5 - Advanced Debugging
    */
-  setBreakpoint(nodeId: string): void {
+  setBreakpoint(_nodeId: string): void {
     throw new Error('setBreakpoint() not yet implemented (Phase 5)');
   }
 
@@ -244,7 +226,7 @@ export class PlanExecutor {
    * Remove a breakpoint from a node
    * @stub Phase 5 - Advanced Debugging
    */
-  removeBreakpoint(nodeId: string): void {
+  removeBreakpoint(_nodeId: string): void {
     throw new Error('removeBreakpoint() not yet implemented (Phase 5)');
   }
 }

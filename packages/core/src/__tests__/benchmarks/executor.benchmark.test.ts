@@ -1,9 +1,9 @@
 /**
  * Executor Performance Benchmarks
- * 
+ *
  * These benchmarks measure execution time for various workflow scenarios
  * to ensure the new execution plan architecture doesn't introduce performance regressions.
- * 
+ *
  * Run with: npm run test:benchmark
  */
 
@@ -34,12 +34,12 @@ async function benchmark(
   iterations: number = 100
 ): Promise<BenchmarkResult> {
   const times: number[] = [];
-  
+
   // Warm-up runs (not counted)
   for (let i = 0; i < 5; i++) {
     await fn();
   }
-  
+
   // Actual benchmark runs
   for (let i = 0; i < iterations; i++) {
     const start = performance.now();
@@ -47,21 +47,21 @@ async function benchmark(
     const end = performance.now();
     times.push(end - start);
   }
-  
+
   // Calculate statistics
   const totalTime = times.reduce((sum, t) => sum + t, 0);
   const averageTime = totalTime / iterations;
   const minTime = Math.min(...times);
   const maxTime = Math.max(...times);
-  
+
   // Calculate median
   const sorted = [...times].sort((a, b) => a - b);
   const median = sorted[Math.floor(sorted.length / 2)];
-  
+
   // Calculate standard deviation
   const variance = times.reduce((sum, t) => sum + Math.pow(t - averageTime, 2), 0) / iterations;
   const stdDev = Math.sqrt(variance);
-  
+
   return {
     scenario: name,
     iterations,
@@ -70,7 +70,7 @@ async function benchmark(
     minTime,
     maxTime,
     median,
-    stdDev
+    stdDev,
   };
 }
 
@@ -95,7 +95,7 @@ function printBenchmarkResult(result: BenchmarkResult): void {
 @defineNode({
   type: 'benchmark.fast',
   label: 'Fast Node',
-  category: 'Benchmark'
+  category: 'Benchmark',
 })
 class FastNode extends Node {
   @Input({ type: 'number', label: 'Input' })
@@ -115,7 +115,7 @@ class FastNode extends Node {
 @defineNode({
   type: 'benchmark.medium',
   label: 'Medium Node',
-  category: 'Benchmark'
+  category: 'Benchmark',
 })
 class MediumNode extends Node {
   @Input({ type: 'number', label: 'Input' })
@@ -140,7 +140,7 @@ class MediumNode extends Node {
 @defineNode({
   type: 'benchmark.slow',
   label: 'Slow Node',
-  category: 'Benchmark'
+  category: 'Benchmark',
 })
 class SlowNode extends Node {
   @Input({ type: 'number', label: 'Input' })
@@ -165,7 +165,7 @@ class SlowNode extends Node {
 @defineNode({
   type: 'benchmark.async',
   label: 'Async Node',
-  category: 'Benchmark'
+  category: 'Benchmark',
 })
 class AsyncNode extends Node {
   @Input({ type: 'number', label: 'Input' })
@@ -176,7 +176,7 @@ class AsyncNode extends Node {
 
   async execute(): Promise<void> {
     // Simulate async I/O (1ms delay)
-    await new Promise(resolve => setTimeout(resolve, 1));
+    await new Promise((resolve) => setTimeout(resolve, 1));
     this.output = this.input + 1;
   }
 }
@@ -191,7 +191,7 @@ describe('Executor Performance Benchmarks', () => {
   // Register benchmark nodes once before all tests
   beforeAll(() => {
     const registry = NodeRegistry.getInstance();
-    
+
     // Only register if not already registered
     if (!registry.has('benchmark.fast')) {
       registry.register(FastNode);
@@ -215,18 +215,18 @@ describe('Executor Performance Benchmarks', () => {
     it('should benchmark 10 sequential fast nodes', async () => {
       const createWorkflow = () => {
         const workflow = new Workflow('linear-fast-10', 'Linear Fast 10');
-        
+
         let prevNodeId: string | null = null;
         for (let i = 0; i < 10; i++) {
           const node = workflow.addNode('benchmark.fast');
-          
+
           if (prevNodeId) {
             workflow.connect(prevNodeId, 'output', node.id, 'input');
           }
-          
+
           prevNodeId = node.id;
         }
-        
+
         return workflow;
       };
 
@@ -240,7 +240,7 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       // Performance assertion (should be very fast)
       expect(result.averageTime).toBeLessThan(10); // < 10ms average
     });
@@ -248,18 +248,18 @@ describe('Executor Performance Benchmarks', () => {
     it('should benchmark 50 sequential fast nodes', async () => {
       const createWorkflow = () => {
         const workflow = new Workflow('linear-fast-50', 'Linear Fast 50');
-        
+
         let prevNodeId: string | null = null;
         for (let i = 0; i < 50; i++) {
           const node = workflow.addNode('benchmark.fast');
-          
+
           if (prevNodeId) {
             workflow.connect(prevNodeId, 'output', node.id, 'input');
           }
-          
+
           prevNodeId = node.id;
         }
-        
+
         return workflow;
       };
 
@@ -273,25 +273,25 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       expect(result.averageTime).toBeLessThan(50); // < 50ms average
     });
 
     it('should benchmark 100 sequential fast nodes', async () => {
       const createWorkflow = () => {
         const workflow = new Workflow('linear-fast-100', 'Linear Fast 100');
-        
+
         let prevNodeId: string | null = null;
         for (let i = 0; i < 100; i++) {
           const node = workflow.addNode('benchmark.fast');
-          
+
           if (prevNodeId) {
             workflow.connect(prevNodeId, 'output', node.id, 'input');
           }
-          
+
           prevNodeId = node.id;
         }
-        
+
         return workflow;
       };
 
@@ -305,7 +305,7 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       expect(result.averageTime).toBeLessThan(100); // < 100ms average
     });
   });
@@ -318,18 +318,18 @@ describe('Executor Performance Benchmarks', () => {
     it('should benchmark 20 sequential medium nodes', async () => {
       const createWorkflow = () => {
         const workflow = new Workflow('linear-medium-20', 'Linear Medium 20');
-        
+
         let prevNodeId: string | null = null;
         for (let i = 0; i < 20; i++) {
           const node = workflow.addNode('benchmark.medium');
-          
+
           if (prevNodeId) {
             workflow.connect(prevNodeId, 'output', node.id, 'input');
           }
-          
+
           prevNodeId = node.id;
         }
-        
+
         return workflow;
       };
 
@@ -343,7 +343,7 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       expect(result.averageTime).toBeLessThan(50); // < 50ms average
     });
   });
@@ -356,18 +356,18 @@ describe('Executor Performance Benchmarks', () => {
     it('should benchmark 10 sequential slow nodes', async () => {
       const createWorkflow = () => {
         const workflow = new Workflow('linear-slow-10', 'Linear Slow 10');
-        
+
         let prevNodeId: string | null = null;
         for (let i = 0; i < 10; i++) {
           const node = workflow.addNode('benchmark.slow');
-          
+
           if (prevNodeId) {
             workflow.connect(prevNodeId, 'output', node.id, 'input');
           }
-          
+
           prevNodeId = node.id;
         }
-        
+
         return workflow;
       };
 
@@ -381,7 +381,7 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       expect(result.averageTime).toBeLessThan(500); // < 500ms average
     });
   });
@@ -394,15 +394,15 @@ describe('Executor Performance Benchmarks', () => {
     it('should benchmark fan-out with 10 branches', async () => {
       const createWorkflow = () => {
         const workflow = new Workflow('fan-out-10', 'Fan-Out 10');
-        
+
         const source = workflow.addNode('benchmark.fast');
-        
+
         // Create 10 branches
         for (let i = 0; i < 10; i++) {
           const branch = workflow.addNode('benchmark.medium');
           workflow.connect(source.id, 'output', branch.id, 'input');
         }
-        
+
         return workflow;
       };
 
@@ -416,22 +416,22 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       expect(result.averageTime).toBeLessThan(100); // < 100ms average
     });
 
     it('should benchmark fan-out with 50 branches', async () => {
       const createWorkflow = () => {
         const workflow = new Workflow('fan-out-50', 'Fan-Out 50');
-        
+
         const source = workflow.addNode('benchmark.fast');
-        
+
         // Create 50 branches
         for (let i = 0; i < 50; i++) {
           const branch = workflow.addNode('benchmark.fast');
           workflow.connect(source.id, 'output', branch.id, 'input');
         }
-        
+
         return workflow;
       };
 
@@ -445,7 +445,7 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       expect(result.averageTime).toBeLessThan(200); // < 200ms average
     });
   });
@@ -458,17 +458,17 @@ describe('Executor Performance Benchmarks', () => {
     it('should benchmark diamond pattern with 5 middle nodes', async () => {
       const createWorkflow = () => {
         const workflow = new Workflow('diamond-5', 'Diamond 5');
-        
+
         const source = workflow.addNode('benchmark.fast');
         const sink = workflow.addNode('benchmark.fast');
-        
+
         // Create 5 middle nodes (diamond pattern)
         for (let i = 0; i < 5; i++) {
           const middle = workflow.addNode('benchmark.medium');
           workflow.connect(source.id, 'output', middle.id, 'input');
           workflow.connect(middle.id, 'output', sink.id, 'input');
         }
-        
+
         return workflow;
       };
 
@@ -482,7 +482,7 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       expect(result.averageTime).toBeLessThan(50); // < 50ms average
     });
   });
@@ -495,16 +495,16 @@ describe('Executor Performance Benchmarks', () => {
     it('should benchmark complex workflow (50 nodes, mixed connections)', async () => {
       const createWorkflow = () => {
         const workflow = new Workflow('complex-50', 'Complex 50');
-        
+
         // Create a complex graph structure
         const nodes: string[] = [];
-        
+
         // Layer 1: 5 source nodes
         for (let i = 0; i < 5; i++) {
           const node = workflow.addNode('benchmark.fast');
           nodes.push(node.id);
         }
-        
+
         // Layer 2: 15 processing nodes (connect to random layer 1 nodes)
         const layer1End = nodes.length;
         for (let i = 0; i < 15; i++) {
@@ -513,7 +513,7 @@ describe('Executor Performance Benchmarks', () => {
           workflow.connect(nodes[sourceIdx], 'output', node.id, 'input');
           nodes.push(node.id);
         }
-        
+
         // Layer 3: 20 more processing nodes (connect to layer 2)
         const layer2End = nodes.length;
         for (let i = 0; i < 20; i++) {
@@ -522,7 +522,7 @@ describe('Executor Performance Benchmarks', () => {
           workflow.connect(nodes[sourceIdx], 'output', node.id, 'input');
           nodes.push(node.id);
         }
-        
+
         // Layer 4: 10 sink nodes (connect to layer 3)
         const layer3End = nodes.length;
         for (let i = 0; i < 10; i++) {
@@ -531,7 +531,7 @@ describe('Executor Performance Benchmarks', () => {
           workflow.connect(nodes[sourceIdx], 'output', node.id, 'input');
           nodes.push(node.id);
         }
-        
+
         return workflow;
       };
 
@@ -545,7 +545,7 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       expect(result.averageTime).toBeLessThan(200); // < 200ms average
     });
   });
@@ -558,18 +558,18 @@ describe('Executor Performance Benchmarks', () => {
     it('should benchmark 20 sequential async nodes', async () => {
       const createWorkflow = () => {
         const workflow = new Workflow('async-20', 'Async 20');
-        
+
         let prevNodeId: string | null = null;
         for (let i = 0; i < 20; i++) {
           const node = workflow.addNode('benchmark.async');
-          
+
           if (prevNodeId) {
             workflow.connect(prevNodeId, 'output', node.id, 'input');
           }
-          
+
           prevNodeId = node.id;
         }
-        
+
         return workflow;
       };
 
@@ -583,7 +583,7 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       // Should be ~20ms (20 nodes * 1ms each) + overhead
       expect(result.averageTime).toBeLessThan(100); // < 100ms average
     });
@@ -596,39 +596,39 @@ describe('Executor Performance Benchmarks', () => {
   describe('Scenario 8: Event System Overhead', () => {
     it('should benchmark with event listeners attached', async () => {
       const executorWithEvents = new Executor();
-      
+
       // Attach event listeners
       executorWithEvents.on('beforeExecute', async () => {
         // Simulate some work
         await Promise.resolve();
       });
-      
+
       executorWithEvents.on('onNodeStart', async () => {
         await Promise.resolve();
       });
-      
+
       executorWithEvents.on('onNodeComplete', async () => {
         await Promise.resolve();
       });
-      
+
       executorWithEvents.on('afterExecute', async () => {
         await Promise.resolve();
       });
 
       const createWorkflow = () => {
         const workflow = new Workflow('events-20', 'Events 20');
-        
+
         let prevNodeId: string | null = null;
         for (let i = 0; i < 20; i++) {
           const node = workflow.addNode('benchmark.fast');
-          
+
           if (prevNodeId) {
             workflow.connect(prevNodeId, 'output', node.id, 'input');
           }
-          
+
           prevNodeId = node.id;
         }
-        
+
         return workflow;
       };
 
@@ -642,7 +642,7 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       expect(result.averageTime).toBeLessThan(50); // < 50ms average
     });
   });
@@ -654,13 +654,13 @@ describe('Executor Performance Benchmarks', () => {
   describe('Scenario 9: Validation Overhead', () => {
     it('should benchmark validation of complex workflow', async () => {
       const workflow = new Workflow('validation-test', 'Validation Test');
-      
+
       // Create complex graph
       const nodes: string[] = [];
       for (let i = 0; i < 100; i++) {
         const node = workflow.addNode('benchmark.fast');
         nodes.push(node.id);
-        
+
         // Connect to 2-3 previous nodes randomly
         if (i > 0) {
           const numConnections = Math.min(i, 1 + Math.floor(Math.random() * 2));
@@ -680,7 +680,7 @@ describe('Executor Performance Benchmarks', () => {
       );
 
       printBenchmarkResult(result);
-      
+
       expect(result.averageTime).toBeLessThan(10); // < 10ms average
     });
   });
