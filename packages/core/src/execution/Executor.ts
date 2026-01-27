@@ -21,6 +21,7 @@ import {
 import { AsyncEventEmitter } from '../utils/AsyncEventEmitter';
 import { ExecutionPlan } from './ExecutionPlan';
 import { ExecutionPlanBuilder } from './ExecutionPlanBuilder';
+import { PlanExecutor } from './PlanExecutor';
 
 /**
  * Executor events
@@ -69,6 +70,7 @@ export interface ExecutorEvents {
 export class Executor extends AsyncEventEmitter<ExecutorEvents> {
   private _activeExecutions: Map<ExecutionId, ExecutionContext> = new Map();
   private _planBuilder: ExecutionPlanBuilder = new ExecutionPlanBuilder();
+  private _planExecutor: PlanExecutor = new PlanExecutor();
 
   /**
    * Execute a workflow
@@ -135,65 +137,8 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       context.executionPlan = executionPlan;
       await this.emitAsync('onPlanBuilt', executionPlan);
 
-      // Get execution order (topological sort)
-      const executionOrder = workflow.getExecutionOrder();
-
-      // Execute nodes sequentially
-      for (const nodeId of executionOrder) {
-        // Check if execution was cancelled
-        if (context.isCancelled()) {
-          // Throw appropriate error based on cancellation reason
-          const reason = context.cancellationReason || CancellationReason.Timeout;
-          const cancelledAt = context.cancelledAt || new Date();
-
-          // Emit cancellation event
-          await this.emitAsync('onCancellation', executionId, reason, cancelledAt);
-
-          switch (reason) {
-            case CancellationReason.Timeout:
-              throw new TimeoutError('Workflow execution timed out', {
-                timeoutMs: options.timeout || 0,
-                executionId,
-                workflowId: workflow.id,
-              });
-
-            case CancellationReason.UserCancelled:
-              throw new UserCancelledError('Workflow execution was cancelled by user', {
-                executionId,
-                workflowId: workflow.id,
-                cancelledAt: context.cancelledAt,
-              });
-
-            case CancellationReason.ExternalSignal:
-              throw new CancellationError('Workflow execution was cancelled by external signal', {
-                reason: CancellationReason.ExternalSignal,
-                executionId,
-                workflowId: workflow.id,
-                cancelledAt: context.cancelledAt,
-              });
-
-            default:
-              // Fallback for any unhandled cancellation reason
-              throw new CancellationError('Workflow execution was cancelled', {
-                reason: reason || CancellationReason.UserCancelled,
-                executionId,
-                workflowId: workflow.id,
-                cancelledAt: context.cancelledAt,
-              });
-          }
-        }
-
-        const node = workflow.nodes.get(nodeId);
-        if (!node) {
-          throw new ExecutionError(`Node ${nodeId} not found in workflow`, {
-            executionId,
-            workflowId: workflow.id,
-          });
-        }
-
-        // Execute the node
-        await this.executeNode(node, workflow, context);
-      }
+      // Execute the plan
+      await this._planExecutor.execute(executionPlan, workflow, context, this);
 
       // Mark as successful
       context.complete(ExecutionStatus.Success);
