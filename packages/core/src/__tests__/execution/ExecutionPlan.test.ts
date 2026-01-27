@@ -3,7 +3,13 @@
  */
 
 import { ExecutionPlan, SerializedExecutionPlan } from '../../execution/ExecutionPlan';
-import { ExecutionPlanStep, ExecutionStepType } from '@reactflo/types';
+import {
+  ExecutionPlanStep,
+  ExecutionStepType,
+  ConditionalStep,
+  LoopStep,
+  ParallelStep,
+} from '@reactflo/types';
 
 describe('ExecutionPlan', () => {
   describe('constructor', () => {
