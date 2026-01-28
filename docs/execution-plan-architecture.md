@@ -1,9 +1,10 @@
 # Execution Plan Architecture
 
-**Status**: In Progress - Phase 1 (Week 1)  
+**Status**: In Progress - Phase 2 (Conditional Flow)  
 **Version**: 1.0  
-**Date**: January 24, 2026  
-**Epic**: REACTFLO-83 (Control Flow & Advanced Execution)
+**Date**: January 28, 2026  
+**Epic**: REACTFLO-83 (Control Flow & Advanced Execution)  
+**Branch**: `feature/conditional-flow-execution`
 
 ## Implementation Progress
 
@@ -49,7 +50,211 @@
   - ✅ No performance regression detected
   - ✅ Plan-based execution performs well across all scenarios
 
-### Phase 2: Conditional Flow (Week 3-4) - ⏳ PENDING
+### Phase 2: Conditional Flow (Week 3-4) - 🚧 IN PROGRESS
+
+**Branch**: `feature/conditional-flow-execution`  
+**Focus**: Core package only (`packages/core`)  
+**Start Date**: January 28, 2026
+
+#### Week 3: Conditional Infrastructure - 🚧 IN PROGRESS
+
+**Task 2.1: Define IConditionalNode Interface** [2 hours] - ⏳ PENDING
+- [ ] File: `packages/types/src/node.ts`
+- [ ] Add `IConditionalNode` interface extending base Node
+- [ ] Add `evaluateCondition(): string` method signature
+- [ ] Add JSDoc documentation with usage examples
+- [ ] Export interface from `packages/types/src/index.ts`
+- [ ] Run lint: `npm run lint -w @reactflo/types`
+- [ ] Run tests: `npm test -w @reactflo/types`
+- [ ] Commit: "feat(types): add IConditionalNode interface for conditional flow nodes"
+
+**Task 2.2: Add Conditional Node Type Checking** [2 hours] - ⏳ PENDING
+- [ ] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
+- [ ] Add `isConditionalNode(node: Node): node is IConditionalNode` method
+- [ ] Check if node implements IConditionalNode interface
+- [ ] Add unit tests for type checking in `packages/core/src/__tests__/ExecutionPlanBuilder.test.ts`
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "feat(core): add conditional node type checking in ExecutionPlanBuilder"
+
+**Task 2.3: Implement ConditionalStep Building - Part 1 (Graph Analysis)** [4 hours] - ⏳ PENDING
+- [ ] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
+- [ ] Add `getDownstreamNodesForPort(nodeId, portId, workflow): NodeId[]` helper
+- [ ] Add `buildConditionalStep(node, workflow, visited): ConditionalStep` method stub
+- [ ] Implement logic to detect output ports of conditional node
+- [ ] For each output port, find connected downstream nodes
+- [ ] Add unit tests for graph analysis logic
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "feat(core): implement graph analysis for conditional step building"
+
+**Task 2.4: Implement ConditionalStep Building - Part 2 (Recursive Branch Building)** [4 hours] - ⏳ PENDING
+- [ ] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
+- [ ] Complete `buildConditionalStep()` implementation
+- [ ] For each branch, recursively call `buildStepsForNode()` on downstream nodes
+- [ ] Create `ConditionalBranch` objects with condition and steps
+- [ ] Handle visited nodes to prevent infinite recursion
+- [ ] Add comprehensive unit tests with mock workflows
+- [ ] Test nested conditional scenarios
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "feat(core): complete recursive branch building for conditional steps"
+
+**Task 2.5: Integrate Conditional Building into Main Build Flow** [2 hours] - ⏳ PENDING
+- [ ] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
+- [ ] Update `build()` method to detect conditional nodes
+- [ ] Call `buildConditionalStep()` when conditional node is encountered
+- [ ] Update `buildStepsForNode()` to handle conditional nodes
+- [ ] Add integration tests with simple conditional workflows
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "feat(core): integrate conditional step building into main execution plan builder"
+
+**Task 2.6: Implement ConditionalStep Execution** [6 hours] - ⏳ PENDING
+- [ ] File: `packages/core/src/execution/PlanExecutor.ts`
+- [ ] Add `executeConditionalStep(step, workflow, context, executor): Promise<void>` method
+- [ ] Execute the conditional node first to get its state
+- [ ] Call `node.evaluateCondition()` to determine active branch
+- [ ] Find matching branch in `step.branches` array
+- [ ] Recursively execute the matching branch's steps
+- [ ] Handle case where no branch matches (throw error or use default)
+- [ ] Add proper error handling with context
+- [ ] Add unit tests for conditional step execution
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "feat(core): implement conditional step execution in PlanExecutor"
+
+**Task 2.7: Add Branch Execution Events** [2 hours] - ⏳ PENDING
+- [ ] File: `packages/types/src/execution.ts`
+- [ ] Add `onBranchEnter` event to `ExecutorEvents` interface
+- [ ] Add `onBranchExit` event to `ExecutorEvents` interface
+- [ ] File: `packages/core/src/execution/PlanExecutor.ts`
+- [ ] Emit `onBranchEnter` when entering a branch
+- [ ] Emit `onBranchExit` when exiting a branch
+- [ ] Add event tests
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "feat(core): add branch execution events for conditional flow"
+
+**Task 2.8: Wire Conditional Execution to Main Loop** [1 hour] - ⏳ PENDING
+- [ ] File: `packages/core/src/execution/PlanExecutor.ts`
+- [ ] Add case for `ExecutionStepType.Conditional` in `executeStep()` switch
+- [ ] Route to `executeConditionalStep()` method
+- [ ] Add integration test with end-to-end conditional workflow
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "feat(core): wire conditional step execution into main execution loop"
+
+#### Week 4: Conditional Nodes - ⏳ PENDING
+
+**Task 2.9: Create Flow Nodes Directory Structure** [1 hour] - ⏳ PENDING
+- [ ] Create directory: `packages/core/src/nodes/flow/`
+- [ ] Create file: `packages/core/src/nodes/flow/index.ts` (empty for now)
+- [ ] Create file: `packages/core/src/nodes/index.ts` (export flow nodes)
+- [ ] Update `packages/core/src/index.ts` to export from nodes
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Commit: "feat(core): create flow nodes directory structure"
+
+**Task 2.10: Implement IfNode** [4 hours] - ⏳ PENDING
+- [ ] File: `packages/core/src/nodes/flow/IfNode.ts`
+- [ ] Create `IfNode` class extending `Node` and implementing `IConditionalNode`
+- [ ] Add `@defineNode` decorator with metadata
+- [ ] Add `@Input` for `condition` (boolean, required)
+- [ ] Add `@Input` for `value` (any, optional) - passthrough data
+- [ ] Add `@Output` for `thenOutput` (any)
+- [ ] Add `@Output` for `elseOutput` (any)
+- [ ] Implement `execute()` method (set outputs based on inputs)
+- [ ] Implement `evaluateCondition()` method (return 'thenOutput' or 'elseOutput')
+- [ ] Add JSDoc documentation
+- [ ] Export from `packages/core/src/nodes/flow/index.ts`
+- [ ] Create test file: `packages/core/src/__tests__/IfNode.test.ts`
+- [ ] Write comprehensive unit tests (condition true/false, data passthrough)
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "feat(core): implement IfNode for if/else conditional flow"
+
+**Task 2.11: Implement SwitchNode** [4 hours] - ⏳ PENDING
+- [ ] File: `packages/core/src/nodes/flow/SwitchNode.ts`
+- [ ] Create `SwitchNode` class extending `Node` and implementing `IConditionalNode`
+- [ ] Add `@defineNode` decorator with metadata
+- [ ] Add `@Input` for `value` (any, required)
+- [ ] Add `@Input` for `cases` (array, optional) - array of case values
+- [ ] Add `@Output` for `case0Output`, `case1Output`, `case2Output` (any)
+- [ ] Add `@Output` for `defaultOutput` (any)
+- [ ] Implement `execute()` method (set all outputs)
+- [ ] Implement `evaluateCondition()` method (return matching case output name or 'defaultOutput')
+- [ ] Add JSDoc documentation
+- [ ] Export from `packages/core/src/nodes/flow/index.ts`
+- [ ] Create test file: `packages/core/src/__tests__/SwitchNode.test.ts`
+- [ ] Write comprehensive unit tests (matching cases, default, edge cases)
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "feat(core): implement SwitchNode for switch/case conditional flow"
+
+**Task 2.12: Integration Testing - Simple Conditionals** [3 hours] - ⏳ PENDING
+- [ ] File: `packages/core/src/__tests__/ConditionalIntegration.test.ts`
+- [ ] Create test workflow with IfNode (condition true path)
+- [ ] Create test workflow with IfNode (condition false path)
+- [ ] Create test workflow with SwitchNode (case match)
+- [ ] Create test workflow with SwitchNode (default case)
+- [ ] Verify only active branch executes
+- [ ] Verify data flows correctly through branches
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "test(core): add integration tests for simple conditional workflows"
+
+**Task 2.13: Integration Testing - Nested Conditionals** [3 hours] - ⏳ PENDING
+- [ ] File: `packages/core/src/__tests__/ConditionalIntegration.test.ts`
+- [ ] Create test workflow with nested IfNode (if inside then branch)
+- [ ] Create test workflow with nested IfNode (if inside else branch)
+- [ ] Create test workflow with IfNode inside SwitchNode case
+- [ ] Verify nested execution works correctly
+- [ ] Verify execution plan is built correctly for nested cases
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "test(core): add integration tests for nested conditional workflows"
+
+**Task 2.14: Error Handling & Edge Cases** [2 hours] - ⏳ PENDING
+- [ ] File: `packages/core/src/__tests__/ConditionalErrors.test.ts`
+- [ ] Test conditional node without evaluateCondition method (should error)
+- [ ] Test evaluateCondition returning invalid branch name (should error)
+- [ ] Test conditional node with no matching branch (should error or use default)
+- [ ] Test error propagation from within conditional branches
+- [ ] Add proper error messages and context
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Run tests: `npm test -w @reactflo/core`
+- [ ] Commit: "test(core): add error handling tests for conditional flow"
+
+**Task 2.15: Update Documentation** [2 hours] - ⏳ PENDING
+- [ ] File: `packages/core/README.md`
+- [ ] Add section on conditional flow nodes
+- [ ] Document IfNode with usage example
+- [ ] Document SwitchNode with usage example
+- [ ] Document IConditionalNode interface for custom implementations
+- [ ] File: `docs/execution-plan-architecture.md`
+- [ ] Update Phase 2 status to COMPLETE
+- [ ] Add completion date
+- [ ] Run lint: `npm run lint -w @reactflo/core`
+- [ ] Commit: "docs: update documentation for Phase 2 conditional flow implementation"
+
+**Task 2.16: Final Phase 2 Validation** [2 hours] - ⏳ PENDING
+- [ ] Run full test suite: `npm test -w @reactflo/core`
+- [ ] Run full test suite: `npm test -w @reactflo/types`
+- [ ] Verify all tests pass (expect 380+ tests)
+- [ ] Run lint on all packages: `npm run lint`
+- [ ] Build all packages: `npm run build`
+- [ ] Review all commits for this phase
+- [ ] Create summary of changes
+- [ ] Commit: "chore: Phase 2 conditional flow implementation complete"
+
+#### Phase 2 Summary
+- **Total Tasks**: 16
+- **Estimated Time**: 38 hours
+- **Files Created**: 6 new files
+- **Files Modified**: 8 existing files
+- **Tests Added**: 50+ new tests
+- **Features**: If/Else conditionals, Switch/Case conditionals, Branch execution
+
 
 ### Phase 3: Loop Execution (Week 5-6) - ⏳ PENDING
 
