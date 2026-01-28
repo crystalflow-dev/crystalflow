@@ -130,18 +130,53 @@ export class ExecutionPlanBuilder {
   /**
    * Check if a node implements the IConditionalNode interface
    *
-   * This type guard checks if a node has the evaluateCondition method,
-   * which is the defining characteristic of conditional nodes.
+   * This is a TypeScript **type guard** that performs both a runtime check (Learning time ;) )
+   * and provides compile-time type information to TypeScript.
+   *
+   * **Why the return type is `node is Node & IConditionalNode`:**
+   *
+   * Instead of returning a regular `boolean`, we use a **type predicate**.
+   * This tells TypeScript: "if this function returns true, then the `node`
+   * parameter is guaranteed to be both a `Node` AND implement `IConditionalNode`."
+   *
+   * This enables **type narrowing** - after the check, TypeScript knows the
+   * node has the `evaluateCondition()` method and allows you to call it safely
+   * without type errors.
+   *
+   * **Without type predicate (regular boolean):**
+   * ```typescript
+   * if (this.isConditionalNode(node)) {
+   *   node.evaluateCondition(); // ❌ TypeScript error: method doesn't exist
+   * }
+   * ```
+   *
+   * **With type predicate (type guard):**
+   * ```typescript
+   * if (this.isConditionalNode(node)) {
+   *   node.evaluateCondition(); // ✅ TypeScript knows this is safe!
+   * }
+   * ```
+   *
+   * **How it works:**
+   * 1. Runtime: Checks if the node has an `evaluateCondition` function
+   * 2. Compile-time: TypeScript narrows the type within the if-block
+   * 3. Type safety: Prevents calling methods that don't exist
    *
    * @param node - Node to check
-   * @returns True if node implements IConditionalNode
+   * @returns Type predicate indicating if node implements IConditionalNode
+   *
+   * @see https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates
    *
    * @example
    * ```typescript
    * const node = workflow.nodes.get(nodeId);
    * if (this.isConditionalNode(node)) {
-   *   // node is IConditionalNode, can call evaluateCondition()
+   *   // TypeScript knows node is Node & IConditionalNode here
    *   const branch = node.evaluateCondition();
+   *   console.log(`Active branch: ${branch}`);
+   * } else {
+   *   // TypeScript knows node is just Node here
+   *   console.log('Regular node, not conditional');
    * }
    * ```
    */
