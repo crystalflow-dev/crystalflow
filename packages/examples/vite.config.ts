@@ -21,4 +21,7 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['@reactflo/core', '@reactflo/types', '@reactflo/react'],
   },
+  build: {
+    cssMinify: 'lightningcss',
+  },
 });

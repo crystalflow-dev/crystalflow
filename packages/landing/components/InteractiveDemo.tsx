@@ -6,6 +6,20 @@ import { useRef, useState } from 'react';
 import { SandpackProvider, SandpackCodeEditor, SandpackLayout } from '@codesandbox/sandpack-react';
 import dynamic from 'next/dynamic';
 import type { NodeConstructor } from '@reactflo/core';
+import {
+  MockAPINode,
+  ExtractFieldNode,
+  FormatTextNode,
+  DisplayNode,
+} from '@reactflo/examples/src/nodes';
+
+// Import node source code strings (embedded for Next.js compatibility)
+import {
+  MockAPINodeCode,
+  ExtractFieldNodeCode,
+  FormatTextNodeCode,
+  DisplayNodeCode,
+} from '../lib/nodeSourceCode';
 
 // Dynamically import WorkflowBuilder to avoid SSR issues
 const WorkflowBuilder = dynamic(
@@ -27,79 +41,25 @@ export default function InteractiveDemo() {
   const [nodes, setNodes] = useState<NodeConstructor[]>([]);
 
   // Load nodes when switching to builder view
-  const loadNodes = async () => {
+  const loadNodes = () => {
     if (nodes.length === 0) {
-      const { AddNode } = await import('@reactflo/examples/src/nodes/math/AddNode');
-      const { MultiplyNode } = await import('@reactflo/examples/src/nodes/math/MultiplyNode');
-      const { DisplayNode } = await import('@reactflo/examples/src/nodes/output/DisplayNode');
-      setNodes([AddNode, MultiplyNode, DisplayNode]);
+      setNodes([MockAPINode, ExtractFieldNode, FormatTextNode, DisplayNode]);
     }
   };
 
   const files = {
-    '/AddNode.ts': {
-      code: `import { Node, Input, Output, defineNode } from '@reactflo/core';
-
-@defineNode({
-  type: 'math.add',
-  label: 'Add Numbers',
-  category: 'Math',
-})
-export class AddNode extends Node {
-  @Input({ type: 'number', label: 'A' })
-  a: number = 0;
-
-  @Input({ type: 'number', label: 'B' })
-  b: number = 0;
-
-  @Output({ type: 'number', label: 'Result' })
-  result: number;
-
-  execute() {
-    this.result = this.a + this.b;
-  }
-}`,
+    '/MockAPINode.ts': {
+      code: MockAPINodeCode,
       active: true,
     },
-    '/MultiplyNode.ts': {
-      code: `import { Node, Input, Output, defineNode } from '@reactflo/core';
-
-@defineNode({
-  type: 'math.multiply',
-  label: 'Multiply Numbers',
-  category: 'Math',
-})
-export class MultiplyNode extends Node {
-  @Input({ type: 'number', label: 'A' })
-  a: number = 1;
-
-  @Input({ type: 'number', label: 'B' })
-  b: number = 1;
-
-  @Output({ type: 'number', label: 'Result' })
-  result: number;
-
-  execute() {
-    this.result = this.a * this.b;
-  }
-}`,
+    '/ExtractFieldNode.ts': {
+      code: ExtractFieldNodeCode,
+    },
+    '/FormatTextNode.ts': {
+      code: FormatTextNodeCode,
     },
     '/DisplayNode.ts': {
-      code: `import { Node, Input, defineNode } from '@reactflo/core';
-
-@defineNode({
-  type: 'output.display',
-  label: 'Display Value',
-  category: 'Output',
-})
-export class DisplayNode extends Node {
-  @Input({ type: 'any', label: 'Value' })
-  value: any;
-
-  execute() {
-    console.log('Output:', this.value);
-  }
-}`,
+      code: DisplayNodeCode,
     },
   };
 
@@ -114,7 +74,7 @@ export class DisplayNode extends Node {
         >
           <h2 className="text-5xl md:text-6xl font-bold mb-6">See It In Action</h2>
           <p className="text-xl text-light-grey max-w-2xl mx-auto">
-            Define your nodes with decorators, then build workflows visually.
+            Build real-world data workflows: fetch from APIs, extract fields, and process results.
           </p>
         </motion.div>
 
@@ -163,7 +123,9 @@ export class DisplayNode extends Node {
             <div style={{ height: '600px', width: '100%', background: '#1E1E1E' }}>
               {nodes.length > 0 ? (
                 <WorkflowBuilder
+                  // @ts-expect-error - TypeScript sees src/ and dist/ as different types in monorepo
                   nodes={nodes}
+                  theme="dark"
                   showJsonEditor={false}
                   onWorkflowChange={(workflow) => {
                     console.log('Workflow updated:', workflow);
@@ -187,8 +149,8 @@ export class DisplayNode extends Node {
           <p className="text-sm text-light-grey">
             💡{' '}
             {showCode
-              ? 'Edit the code to see how ReactFlo nodes are defined, then switch to the builder!'
-              : 'Drag nodes from the palette and connect them to build your workflow!'}
+              ? 'These nodes demonstrate data extraction from API responses with custom properties!'
+              : 'Try it: Drag Mock API → Extract Field → Format Text → Display to build a data pipeline!'}
           </p>
         </motion.div>
       </div>

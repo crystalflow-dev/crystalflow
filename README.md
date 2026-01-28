@@ -20,9 +20,10 @@ ReactFlo is a framework, not a finished product. It provides everything you need
 
 ## ✨ Key Features
 
-- **Declarative Node Definition** - Define nodes using decorators (@defineNode, @Input, @Output)
+- **Declarative Node Definition** - Define nodes using decorators (@defineNode, @Input, @Output, @Property)
 - **Automatic Discovery** - Nodes are automatically detected and registered
 - **Type-Safe Connections** - Built-in validation for node inputs and outputs
+- **Flexible Styling System** - Comprehensive customization with classNames, styles, and ReactFlow props
 - **JSON Workflow Format** - Import/export workflows as well-structured JSON
 - **Dual-Mode Editing** - Visual builder + JSON editor with real-time sync
 - **Visual Workflow Builder** - Built on React Flow for production-ready UI

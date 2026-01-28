@@ -2,14 +2,23 @@
   "name": "@reactflo/react",
   "version": "0.1.0",
   "description": "React components for ReactFlo workflow builder",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./dist/react.css": "./dist/react.css"
+  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "dev": "tsc -p tsconfig.build.json --watch",
+    "build": "vite build",
+    "dev": "vite build --watch",
     "test": "jest",
     "test:watch": "jest --watch",
     "clean": "rm -rf dist",
@@ -53,11 +62,12 @@
     "playwright": "^1.58.0",
     "storybook": "^10.2.0",
     "typescript": "^5.3.0",
+    "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.0.18"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^18.3.1 || ^19.0.0",
+    "react-dom": "^18.3.1 || ^19.0.0"
   },
   "publishConfig": {
     "access": "public"

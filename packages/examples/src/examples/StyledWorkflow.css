@@ -1,0 +1,426 @@
+/**
+ * Custom CSS for Styled Workflow Example
+ * 
+ * Shows how className overrides can be used with external CSS
+ */
+
+/* Workflow Root */
+.styled-workflow-root {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Toolbar */
+.styled-toolbar {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.custom-toolbar-button {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: #374151 !important;
+  color: white !important;
+  transition: all 0.2s ease !important;
+}
+
+.custom-toolbar-button:hover:not(:disabled) {
+  background: #4b5563 !important;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.custom-toolbar-button:active:not(:disabled) {
+  background: #374151 !important;
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.custom-toolbar-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Node Palette */
+.styled-palette {
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.styled-palette h3 {
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.custom-palette-search {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.custom-palette-search:focus {
+  border-color: #4b5563;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.custom-palette-search::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.custom-palette-item {
+  cursor: grab;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Category-specific palette item styling */
+.custom-palette-item[data-category="Input"] {
+  background: #0f4c75 !important;
+  border: 2px solid #3282b8 !important;
+  box-shadow: 0 2px 8px rgba(50, 130, 184, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.custom-palette-item[data-category="Input"]:hover {
+  transform: translateX(8px) scale(1.05) !important;
+  box-shadow: 0 4px 16px rgba(50, 130, 184, 0.5) !important;
+  border-color: #3282b8 !important;
+}
+
+.custom-palette-item[data-category="Math"] {
+  background: #92400e !important;
+  border: 2px solid #b45309 !important;
+  box-shadow: 0 2px 8px rgba(180, 83, 9, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.custom-palette-item[data-category="Math"]:hover {
+  transform: translateX(8px) scale(1.05) !important;
+  box-shadow: 0 4px 16px rgba(180, 83, 9, 0.5) !important;
+  border-color: #d97706 !important;
+}
+
+.custom-palette-item[data-category="Output"] {
+  background: #059669 !important;
+  border: 2px solid #10b981 !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.custom-palette-item[data-category="Output"]:hover {
+  transform: translateX(8px) scale(1.05) !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5) !important;
+  border-color: #34d399 !important;
+}
+
+.custom-palette-item[data-category="Examples"] {
+  background: #7c3aed !important;
+  border: 2px solid #a78bfa !important;
+  box-shadow: 0 2px 8px rgba(167, 139, 250, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.custom-palette-item[data-category="Examples"]:hover {
+  transform: translateX(8px) scale(1.05) !important;
+  box-shadow: 0 4px 16px rgba(167, 139, 250, 0.5) !important;
+  border-color: #c4b5fd !important;
+}
+
+/* Ensure all text in palette items is white */
+.custom-palette-item[data-category] div {
+  color: #ffffff !important;
+}
+
+.custom-palette-item:hover {
+  transform: translateX(8px) scale(1.05) !important;
+}
+
+.custom-palette-item:active {
+  cursor: grabbing;
+}
+
+.custom-palette-category {
+  letter-spacing: 1.5px;
+}
+
+/* Property Panel */
+.styled-properties {
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.styled-properties h3 {
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.custom-properties-input {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.custom-properties-input:focus {
+  outline: none;
+  border-color: #4b5563;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.custom-properties-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Canvas */
+.styled-canvas {
+  background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0a0a15 100%);
+}
+
+/* React Flow nodes - Additional styling */
+.styled-canvas .react-flow__node {
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+/* Add borders based on category */
+.styled-canvas .react-flow__node:has(.node-content[data-category="Input"]) {
+  border: 2px solid #3282b8;
+}
+
+.styled-canvas .react-flow__node:has(.node-content[data-category="Math"]) {
+  border: 2px solid #b45309;
+}
+
+.styled-canvas .react-flow__node:has(.node-content[data-category="Output"]) {
+  border: 2px solid #10b981;
+}
+
+.styled-canvas .react-flow__node:has(.node-content[data-category="Examples"]) {
+  border: 2px solid #a78bfa;
+}
+
+.styled-canvas .react-flow__node:hover {
+  transform: scale(1.02);
+}
+
+.styled-canvas .react-flow__node.selected {
+  border: 2px solid #6b7280;
+  box-shadow: 0 4px 20px rgba(107, 114, 128, 0.5);
+}
+
+.styled-canvas .react-flow__node-custom {
+  color: #ffffff;
+}
+
+.styled-canvas .react-flow__node-custom strong {
+  color: #e94560;
+  text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+}
+
+/* React Flow edges */
+.styled-canvas .react-flow__edge-path {
+  stroke: #6b7280;
+  stroke-width: 2;
+}
+
+.styled-canvas .react-flow__edge.selected .react-flow__edge-path {
+  stroke: #9ca3af;
+  stroke-width: 3;
+}
+
+/* React Flow controls */
+.styled-canvas .react-flow__controls {
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.styled-canvas .react-flow__controls-button {
+  background: #374151;
+  border: 1px solid #4b5563;
+  transition: all 0.3s;
+}
+
+.styled-canvas .react-flow__controls-button svg {
+  fill: #9ca3af;
+}
+
+.styled-canvas .react-flow__controls-button:hover {
+  background: #4b5563;
+  border-color: #6b7280;
+  transform: scale(1.05);
+}
+
+.styled-canvas .react-flow__controls-button:hover svg {
+  fill: #e5e7eb;
+}
+
+/* React Flow minimap */
+.styled-canvas .react-flow__minimap {
+  background: #1f2937;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border: 1px solid #374151;
+  border-radius: 8px;
+}
+
+/* Category-specific node styling */
+
+/* Input nodes - Blue/Cyan theme */
+.styled-canvas .react-flow__node-custom .node-content[data-category="Input"] {
+  background: #0f4c75;
+  border: none;
+}
+
+.styled-canvas .react-flow__node-custom .node-content[data-category="Input"] .node-header {
+  background: #1b262c;
+  color: #3282b8;
+  box-shadow: 0 2px 8px rgba(50, 130, 184, 0.3);
+}
+
+.styled-canvas .react-flow__node-custom:hover .node-content[data-category="Input"] {
+  box-shadow: 0 4px 16px rgba(50, 130, 184, 0.5);
+}
+
+/* Math nodes - Orange/Amber theme */
+.styled-canvas .react-flow__node-custom .node-content[data-category="Math"] {
+  background: #92400e;
+  border: none;
+}
+
+.styled-canvas .react-flow__node-custom .node-content[data-category="Math"] .node-header {
+  background: #78350f;
+  color: #fbbf24;
+  box-shadow: 0 2px 8px rgba(180, 83, 9, 0.3);
+}
+
+.styled-canvas .react-flow__node-custom:hover .node-content[data-category="Math"] {
+  box-shadow: 0 4px 16px rgba(180, 83, 9, 0.5);
+}
+
+/* Output nodes - Green/Emerald theme */
+.styled-canvas .react-flow__node-custom .node-content[data-category="Output"] {
+  background: #059669;
+  border: none;
+}
+
+.styled-canvas .react-flow__node-custom .node-content[data-category="Output"] .node-header {
+  background: #064e3b;
+  color: #34d399;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.styled-canvas .react-flow__node-custom:hover .node-content[data-category="Output"] {
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5);
+}
+
+/* Examples nodes - Purple/Magenta theme */
+.styled-canvas .react-flow__node-custom .node-content[data-category="Examples"] {
+  background: #7c3aed;
+  border: none;
+}
+
+.styled-canvas .react-flow__node-custom .node-content[data-category="Examples"] .node-header {
+  background: #4c1d95;
+  color: #c4b5fd;
+  box-shadow: 0 2px 8px rgba(167, 139, 250, 0.3);
+}
+
+.styled-canvas .react-flow__node-custom:hover .node-content[data-category="Examples"] {
+  box-shadow: 0 4px 16px rgba(167, 139, 250, 0.5);
+}
+
+/* Node content styling */
+.styled-canvas .react-flow__node-custom .node-content {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.styled-canvas .react-flow__node-custom .node-header {
+  padding: 10px 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.styled-canvas .react-flow__node-custom .node-label {
+  font-size: 14px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.styled-canvas .react-flow__node-custom .node-type {
+  padding: 8px 15px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.styled-canvas .react-flow__node-custom .node-ports {
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.styled-canvas .react-flow__node-custom .port-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 4px 0;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.styled-canvas .react-flow__node-custom .port-label:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.styled-canvas .react-flow__node-custom .port-value {
+  color: #9ca3af;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+/* Connection handles */
+.styled-canvas .react-flow__handle {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #4b5563;
+  background: #6b7280;
+  transition: all 0.3s ease;
+}
+
+.styled-canvas .react-flow__handle:hover {
+  width: 12px;
+  height: 12px;
+  background: #9ca3af;
+  border-color: #9ca3af;
+  transform: scale(1.1);
+}
+
+.styled-canvas .react-flow__handle-left {
+  border-color: #05bfdb;
+  background: #088395;
+}
+
+.styled-canvas .react-flow__handle-right {
+  border-color: #2ecc71;
+  background: #27ae60;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-palette-item {
+  animation: fadeIn 0.3s ease;
+}

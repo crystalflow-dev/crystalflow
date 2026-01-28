@@ -16,6 +16,8 @@ Welcome to ReactFlo! This index will help you navigate all project documentation
 
 - **[docs/getting-started.md](docs/getting-started.md)** - How to use ReactFlo in your project
 - **[docs/core-concepts.md](docs/core-concepts.md)** - Understanding nodes, workflows, and execution
+- **[docs/node-properties.md](docs/node-properties.md)** - Using @Property decorator for node configuration
+- **[docs/styling-customization.md](docs/styling-customization.md)** - Complete guide to styling and UI customization
 - **[docs/json-schema.md](docs/json-schema.md)** - Workflow JSON format and serialization
 - **[docs/json-editor.md](docs/json-editor.md)** - Using the integrated JSON editor
 - **[docs/decorators-in-react.md](docs/decorators-in-react.md)** - How decorators work with React
@@ -90,6 +92,9 @@ See **[PROJECT_STATUS.md](PROJECT_STATUS.md)** for detailed progress.
 
 **...understand the architecture**
 → Read [docs/core-concepts.md](docs/core-concepts.md) and [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
+
+**...customize the UI appearance**
+→ Read [docs/styling-customization.md](docs/styling-customization.md)
 
 **...set up development environment**
 → Read [SETUP_SUMMARY.md](SETUP_SUMMARY.md) and run `./scripts/setup.sh`

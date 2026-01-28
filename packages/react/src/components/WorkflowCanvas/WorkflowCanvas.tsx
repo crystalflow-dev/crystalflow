@@ -2,6 +2,7 @@ import React from 'react';
 import {
   ReactFlow,
   Background,
+  BackgroundVariant,
   Controls,
   MiniMap,
   Node as ReactFlowNode,
@@ -12,6 +13,8 @@ import {
   Connection,
 } from 'reactflow';
 import { CustomNode } from '../Node/CustomNode';
+import { ReactFlowCustomization } from '../../types/styling';
+import { mergeStyles } from '../../utils/styling';
 
 // Register CustomNode with React Flow
 const nodeTypes = {
@@ -28,6 +31,21 @@ export interface WorkflowCanvasProps {
   onPaneClick: () => void;
   onDrop: (event: React.DragEvent) => void;
   onDragOver: (event: React.DragEvent) => void;
+
+  /**
+   * ReactFlow customization (props for ReactFlow and its sub-components)
+   */
+  reactFlowCustomization?: ReactFlowCustomization;
+
+  /**
+   * Custom className for canvas container
+   */
+  className?: string;
+
+  /**
+   * Custom styles for canvas container
+   */
+  style?: React.CSSProperties;
 }
 
 /**
@@ -44,9 +62,33 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   onPaneClick,
   onDrop,
   onDragOver,
+  reactFlowCustomization,
+  className,
+  style,
 }) => {
+  const {
+    reactFlowProps = {},
+    backgroundProps,
+    controlsProps,
+    miniMapProps,
+    showBackground = true,
+    showControls = true,
+    showMiniMap = true,
+  } = reactFlowCustomization || {};
+
+  const defaultReactFlowProps = {
+    connectionMode: ConnectionMode.Loose,
+    fitView: true,
+    proOptions: { hideAttribution: true },
+  };
+
   return (
-    <div style={{ flex: 1, position: 'relative' }} onDrop={onDrop} onDragOver={onDragOver}>
+    <div
+      className={className}
+      style={mergeStyles({ flex: 1, position: 'relative' }, style)}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -56,12 +98,41 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         onConnect={onConnect}
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
-        connectionMode={ConnectionMode.Loose}
-        fitView
+        {...defaultReactFlowProps}
+        {...reactFlowProps}
       >
-        <Background />
-        <Controls />
-        <MiniMap />
+        {showBackground && (
+          <Background
+            variant={(backgroundProps?.variant || BackgroundVariant.Dots) as BackgroundVariant}
+            gap={backgroundProps?.gap || 20}
+            size={backgroundProps?.size || 1.5}
+            color={backgroundProps?.color}
+            className={backgroundProps?.className}
+            style={backgroundProps?.style}
+          />
+        )}
+        {showControls && (
+          <Controls
+            showZoom={controlsProps?.showZoom}
+            showFitView={controlsProps?.showFitView}
+            showInteractive={controlsProps?.showInteractive}
+            position={controlsProps?.position}
+            className={controlsProps?.className}
+            style={controlsProps?.style}
+          />
+        )}
+        {showMiniMap && (
+          <MiniMap
+            nodeColor={miniMapProps?.nodeColor}
+            nodeStrokeColor={miniMapProps?.nodeStrokeColor}
+            nodeBorderRadius={miniMapProps?.nodeBorderRadius}
+            nodeClassName={miniMapProps?.nodeClassName}
+            maskColor={miniMapProps?.maskColor}
+            position={miniMapProps?.position}
+            className={miniMapProps?.className}
+            style={miniMapProps?.style}
+          />
+        )}
       </ReactFlow>
     </div>
   );

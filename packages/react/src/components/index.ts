@@ -23,7 +23,7 @@ export type { PropertyPanelProps } from './PropertyPanel';
 
 // Toolbar
 export { Toolbar } from './Toolbar';
-export type { ToolbarProps } from './Toolbar';
+export type { ToolbarProps, ToolbarOptions, ToolbarIcons } from './Toolbar';
 
 // Connection
 export { ConnectionLine } from './Connection';
