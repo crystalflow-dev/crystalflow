@@ -7,7 +7,7 @@ import { Workflow } from '../../workflow/Workflow';
 import { Node } from '../../node/Node';
 import { NodeRegistry } from '../../node/NodeRegistry';
 import { defineNode, Input, Output } from '../../node/decorators';
-import { ExecutionStepType } from '@reactflo/types';
+import { ExecutionStepType, IConditionalNode } from '@reactflo/types';
 
 // Test node classes
 @defineNode({
@@ -47,6 +47,31 @@ class AddNode extends Node {
   }
 }
 
+// Test conditional node
+@defineNode({
+  type: 'test.conditional',
+  label: 'Test Conditional',
+  category: 'Test',
+})
+class TestConditionalNode extends Node implements IConditionalNode {
+  @Input({ type: 'boolean', label: 'Condition' })
+  condition: boolean = false;
+
+  @Output({ type: 'any', label: 'Then' })
+  thenOutput: any;
+
+  @Output({ type: 'any', label: 'Else' })
+  elseOutput: any;
+
+  execute() {
+    // Set outputs based on condition
+  }
+
+  evaluateCondition(): string {
+    return this.condition ? 'thenOutput' : 'elseOutput';
+  }
+}
+
 describe('ExecutionPlanBuilder', () => {
   let registry: NodeRegistry;
 
@@ -59,6 +84,9 @@ describe('ExecutionPlanBuilder', () => {
     }
     if (!registry.has('test.math-add')) {
       registry.register(AddNode);
+    }
+    if (!registry.has('test.conditional')) {
+      registry.register(TestConditionalNode);
     }
   });
 
@@ -445,6 +473,73 @@ describe('ExecutionPlanBuilder', () => {
       expect(breakpoints).toContain(node1.id);
       expect(breakpoints).toContain(node2.id);
       expect(breakpoints).toContain(node3.id);
+    });
+  });
+
+  describe('isConditionalNode', () => {
+    it('should return true for nodes implementing IConditionalNode', () => {
+      const workflow = new Workflow('wf-1', 'Conditional Test');
+      const conditionalNode = workflow.addNode('test.conditional');
+
+      const builder = new ExecutionPlanBuilder();
+      const node = workflow.nodes.get(conditionalNode.id);
+
+      expect(node).toBeDefined();
+      expect(builder.isConditionalNode(node!)).toBe(true);
+    });
+
+    it('should return false for regular nodes', () => {
+      const workflow = new Workflow('wf-1', 'Regular Test');
+      const regularNode = workflow.addNode('test.simple');
+
+      const builder = new ExecutionPlanBuilder();
+      const node = workflow.nodes.get(regularNode.id);
+
+      expect(node).toBeDefined();
+      expect(builder.isConditionalNode(node!)).toBe(false);
+    });
+
+    it('should return false for nodes without evaluateCondition method', () => {
+      const workflow = new Workflow('wf-1', 'Math Test');
+      const mathNode = workflow.addNode('test.math-add');
+
+      const builder = new ExecutionPlanBuilder();
+      const node = workflow.nodes.get(mathNode.id);
+
+      expect(node).toBeDefined();
+      expect(builder.isConditionalNode(node!)).toBe(false);
+    });
+
+    it('should allow type narrowing when true', () => {
+      const workflow = new Workflow('wf-1', 'Type Guard Test');
+      const conditionalNode = workflow.addNode('test.conditional');
+
+      const builder = new ExecutionPlanBuilder();
+      const node = workflow.nodes.get(conditionalNode.id);
+
+      if (node && builder.isConditionalNode(node)) {
+        // TypeScript should recognize this as IConditionalNode
+        const result = node.evaluateCondition();
+        expect(typeof result).toBe('string');
+        expect(['thenOutput', 'elseOutput']).toContain(result);
+      }
+    });
+
+    it('should correctly identify mixed workflow nodes', () => {
+      const workflow = new Workflow('wf-1', 'Mixed Test');
+      const simpleNode = workflow.addNode('test.simple');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const mathNode = workflow.addNode('test.math-add');
+
+      const builder = new ExecutionPlanBuilder();
+
+      const simple = workflow.nodes.get(simpleNode.id);
+      const conditional = workflow.nodes.get(conditionalNode.id);
+      const math = workflow.nodes.get(mathNode.id);
+
+      expect(builder.isConditionalNode(simple!)).toBe(false);
+      expect(builder.isConditionalNode(conditional!)).toBe(true);
+      expect(builder.isConditionalNode(math!)).toBe(false);
     });
   });
 });

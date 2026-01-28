@@ -8,7 +8,14 @@
 
 import { Workflow } from '../workflow/Workflow';
 import { ExecutionPlan } from './ExecutionPlan';
-import { ExecutionPlanStep, ExecutionStepType, NodeExecutionStep, NodeId } from '@reactflo/types';
+import {
+  ExecutionPlanStep,
+  ExecutionStepType,
+  NodeExecutionStep,
+  NodeId,
+  IConditionalNode,
+} from '@reactflo/types';
+import { Node } from '../node/Node';
 
 /**
  * Options for building execution plans
@@ -118,6 +125,28 @@ export class ExecutionPlanBuilder {
     plan.validate();
 
     return plan;
+  }
+
+  /**
+   * Check if a node implements the IConditionalNode interface
+   *
+   * This type guard checks if a node has the evaluateCondition method,
+   * which is the defining characteristic of conditional nodes.
+   *
+   * @param node - Node to check
+   * @returns True if node implements IConditionalNode
+   *
+   * @example
+   * ```typescript
+   * const node = workflow.nodes.get(nodeId);
+   * if (this.isConditionalNode(node)) {
+   *   // node is IConditionalNode, can call evaluateCondition()
+   *   const branch = node.evaluateCondition();
+   * }
+   * ```
+   */
+  public isConditionalNode(node: Node): node is Node & IConditionalNode {
+    return typeof (node as any).evaluateCondition === 'function';
   }
 
   /**
