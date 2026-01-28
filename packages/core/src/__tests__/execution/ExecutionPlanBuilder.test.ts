@@ -631,9 +631,9 @@ describe('ExecutionPlanBuilder', () => {
     });
   });
 
-  describe('buildConditionalStep (stub)', () => {
-    it('should create stub structure for conditional node', () => {
-      const workflow = new Workflow('wf-1', 'Conditional Stub Test');
+  describe('buildConditionalStep', () => {
+    it('should create ConditionalStep structure for conditional node', () => {
+      const workflow = new Workflow('wf-1', 'Conditional Test');
       const conditionalNode = workflow.addNode('test.conditional');
       const thenNode = workflow.addNode('test.simple');
       const elseNode = workflow.addNode('test.math-add');
@@ -648,13 +648,14 @@ describe('ExecutionPlanBuilder', () => {
       const step = buildConditional(node, workflow, new Set());
 
       expect(step).toBeDefined();
-      expect(step.type).toBe('conditional-stub');
+      expect(step.type).toBe(ExecutionStepType.Conditional);
       expect(step.nodeId).toBe(conditionalNode.id);
+      expect(step.conditionalType).toBe('if-else'); // 2 branches = if-else
       expect(step.branches).toHaveLength(2); // thenOutput and elseOutput
     });
 
-    it('should identify downstream nodes for each branch', () => {
-      const workflow = new Workflow('wf-1', 'Branch Analysis Test');
+    it('should build execution steps for each branch', () => {
+      const workflow = new Workflow('wf-1', 'Branch Steps Test');
       const conditionalNode = workflow.addNode('test.conditional');
       const thenNode = workflow.addNode('test.simple');
       const elseNode = workflow.addNode('test.math-add');
@@ -669,14 +670,18 @@ describe('ExecutionPlanBuilder', () => {
       const step = buildConditional(node, workflow, new Set());
 
       // Find the branches
-      const thenBranch = step.branches.find((b: any) => b.condition === 'thenOutput');
-      const elseBranch = step.branches.find((b: any) => b.condition === 'elseOutput');
+      const thenBranch = step.branches.find((b: any) => b.id === 'thenOutput');
+      const elseBranch = step.branches.find((b: any) => b.id === 'elseOutput');
 
       expect(thenBranch).toBeDefined();
-      expect(thenBranch.downstreamNodes).toContain(thenNode.id);
+      expect(thenBranch.steps).toHaveLength(1);
+      expect(thenBranch.steps[0].type).toBe(ExecutionStepType.NodeExecution);
+      expect(thenBranch.steps[0].nodeId).toBe(thenNode.id);
 
       expect(elseBranch).toBeDefined();
-      expect(elseBranch.downstreamNodes).toContain(elseNode.id);
+      expect(elseBranch.steps).toHaveLength(1);
+      expect(elseBranch.steps[0].type).toBe(ExecutionStepType.NodeExecution);
+      expect(elseBranch.steps[0].nodeId).toBe(elseNode.id);
     });
 
     it('should handle branches with no downstream nodes', () => {
@@ -691,8 +696,199 @@ describe('ExecutionPlanBuilder', () => {
 
       expect(step.branches).toHaveLength(2);
       step.branches.forEach((branch: any) => {
-        expect(branch.downstreamNodes).toEqual([]);
+        expect(branch.steps).toEqual([]);
       });
+    });
+
+    it('should handle nested conditional nodes (recursive building)', () => {
+      const workflow = new Workflow('wf-1', 'Nested Conditional Test');
+      const outerConditional = workflow.addNode('test.conditional');
+      const innerConditional = workflow.addNode('test.conditional');
+      const leafNode = workflow.addNode('test.simple');
+
+      // Outer then -> Inner conditional
+      workflow.connect(outerConditional.id, 'thenOutput', innerConditional.id, 'condition');
+      // Inner then -> Leaf node
+      workflow.connect(innerConditional.id, 'thenOutput', leafNode.id, 'input');
+
+      const builder = new ExecutionPlanBuilder();
+      const buildConditional = (builder as any).buildConditionalStep.bind(builder);
+
+      const node = workflow.nodes.get(outerConditional.id);
+      const step = buildConditional(node, workflow, new Set());
+
+      // Outer conditional should have branches
+      const thenBranch = step.branches.find((b: any) => b.id === 'thenOutput');
+      expect(thenBranch).toBeDefined();
+      expect(thenBranch.steps).toHaveLength(1);
+
+      // The branch should contain another ConditionalStep (nested)
+      const innerStep = thenBranch.steps[0];
+      expect(innerStep.type).toBe(ExecutionStepType.Conditional);
+      expect(innerStep.nodeId).toBe(innerConditional.id);
+      expect(innerStep.branches).toHaveLength(2);
+
+      // Inner conditional's then branch should have the leaf node
+      const innerThenBranch = innerStep.branches.find((b: any) => b.id === 'thenOutput');
+      expect(innerThenBranch.steps).toHaveLength(1);
+      expect(innerThenBranch.steps[0].type).toBe(ExecutionStepType.NodeExecution);
+      expect(innerThenBranch.steps[0].nodeId).toBe(leafNode.id);
+    });
+
+    it('should throw error if conditional node has no outputs', () => {
+      // Create a mock conditional node with no outputs
+      const workflow = new Workflow('wf-1', 'No Outputs Test');
+      const node = workflow.addNode('test.simple'); // Regular node, not conditional
+
+      // Manually make it conditional but with no outputs (invalid)
+      (node as any).evaluateCondition = () => 'branch';
+      (node as any).getOutputs = () => [];
+
+      const builder = new ExecutionPlanBuilder();
+      const buildConditional = (builder as any).buildConditionalStep.bind(builder);
+
+      expect(() => {
+        buildConditional(node, workflow, new Set());
+      }).toThrow('has no output ports - cannot build branches');
+    });
+
+    it('should include branch labels from output port labels', () => {
+      const workflow = new Workflow('wf-1', 'Branch Label Test');
+      const conditionalNode = workflow.addNode('test.conditional');
+
+      const builder = new ExecutionPlanBuilder();
+      const buildConditional = (builder as any).buildConditionalStep.bind(builder);
+
+      const node = workflow.nodes.get(conditionalNode.id);
+      const step = buildConditional(node, workflow, new Set());
+
+      const thenBranch = step.branches.find((b: any) => b.id === 'thenOutput');
+      const elseBranch = step.branches.find((b: any) => b.id === 'elseOutput');
+
+      expect(thenBranch.label).toBe('Then');
+      expect(elseBranch.label).toBe('Else');
+    });
+
+    it('should detect conditional type based on output count', () => {
+      const workflow = new Workflow('wf-1', 'Conditional Type Test');
+      const conditionalNode = workflow.addNode('test.conditional');
+
+      const builder = new ExecutionPlanBuilder();
+      const buildConditional = (builder as any).buildConditionalStep.bind(builder);
+
+      const node = workflow.nodes.get(conditionalNode.id);
+      const step = buildConditional(node, workflow, new Set());
+
+      // 2 outputs = if-else
+      expect(step.conditionalType).toBe('if-else');
+    });
+  });
+
+  describe('buildStepsForNode', () => {
+    it('should build steps for a single node', () => {
+      const workflow = new Workflow('wf-1', 'Single Node Steps');
+      const node = workflow.addNode('test.simple');
+
+      const builder = new ExecutionPlanBuilder();
+      const buildSteps = (builder as any).buildStepsForNode.bind(builder);
+
+      const steps = buildSteps(node.id, workflow, new Set());
+
+      expect(steps).toHaveLength(1);
+      expect(steps[0].type).toBe(ExecutionStepType.NodeExecution);
+      expect(steps[0].nodeId).toBe(node.id);
+    });
+
+    it('should recursively build steps for connected nodes', () => {
+      const workflow = new Workflow('wf-1', 'Connected Nodes');
+      const node1 = workflow.addNode('test.simple');
+      const node2 = workflow.addNode('test.math-add');
+      const node3 = workflow.addNode('test.simple');
+
+      workflow.connect(node1.id, 'output', node2.id, 'a');
+      workflow.connect(node2.id, 'result', node3.id, 'input');
+
+      const builder = new ExecutionPlanBuilder();
+      const buildSteps = (builder as any).buildStepsForNode.bind(builder);
+
+      const steps = buildSteps(node1.id, workflow, new Set());
+
+      expect(steps).toHaveLength(3);
+      expect(steps[0].nodeId).toBe(node1.id);
+      expect(steps[1].nodeId).toBe(node2.id);
+      expect(steps[2].nodeId).toBe(node3.id);
+    });
+
+    it('should handle conditional nodes by building ConditionalStep', () => {
+      const workflow = new Workflow('wf-1', 'Conditional Node Steps');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const thenNode = workflow.addNode('test.simple');
+
+      workflow.connect(conditionalNode.id, 'thenOutput', thenNode.id, 'input');
+
+      const builder = new ExecutionPlanBuilder();
+      const buildSteps = (builder as any).buildStepsForNode.bind(builder);
+
+      const steps = buildSteps(conditionalNode.id, workflow, new Set());
+
+      expect(steps).toHaveLength(1);
+      expect(steps[0].type).toBe(ExecutionStepType.Conditional);
+      expect(steps[0].nodeId).toBe(conditionalNode.id);
+      expect(steps[0].branches).toHaveLength(2);
+
+      // Check that the then branch has the downstream node
+      const thenBranch = steps[0].branches.find((b: any) => b.id === 'thenOutput');
+      expect(thenBranch.steps).toHaveLength(1);
+      expect(thenBranch.steps[0].nodeId).toBe(thenNode.id);
+    });
+
+    it('should prevent infinite recursion with cycle detection', () => {
+      const workflow = new Workflow('wf-1', 'Cycle Detection');
+      const node1 = workflow.addNode('test.simple');
+      const visited = new Set<string>();
+      visited.add(node1.id);
+
+      const builder = new ExecutionPlanBuilder();
+      const buildSteps = (builder as any).buildStepsForNode.bind(builder);
+
+      const steps = buildSteps(node1.id, workflow, visited);
+
+      // Should return empty array since node is already visited
+      expect(steps).toEqual([]);
+    });
+
+    it('should throw error if node not found', () => {
+      const workflow = new Workflow('wf-1', 'Missing Node');
+
+      const builder = new ExecutionPlanBuilder();
+      const buildSteps = (builder as any).buildStepsForNode.bind(builder);
+
+      expect(() => {
+        buildSteps('non-existent-node', workflow, new Set());
+      }).toThrow('Node non-existent-node not found in workflow');
+    });
+
+    it('should handle multiple downstream nodes from different output ports', () => {
+      const workflow = new Workflow('wf-1', 'Multiple Outputs');
+      const node1 = workflow.addNode('test.simple');
+      const node2 = workflow.addNode('test.simple');
+      const node3 = workflow.addNode('test.simple');
+
+      // Add a second output to node1 for testing
+      const outputs = node1.getOutputs();
+      if (outputs.length > 0) {
+        workflow.connect(node1.id, outputs[0].id, node2.id, 'input');
+        workflow.connect(node1.id, outputs[0].id, node3.id, 'input');
+      }
+
+      const builder = new ExecutionPlanBuilder();
+      const buildSteps = (builder as any).buildStepsForNode.bind(builder);
+
+      const steps = buildSteps(node1.id, workflow, new Set());
+
+      // Should have node1 + both downstream nodes
+      expect(steps.length).toBeGreaterThan(1);
+      expect(steps[0].nodeId).toBe(node1.id);
     });
   });
 });

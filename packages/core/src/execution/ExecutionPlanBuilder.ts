@@ -14,6 +14,8 @@ import {
   NodeExecutionStep,
   NodeId,
   IConditionalNode,
+  ConditionalStep,
+  ConditionalBranch,
 } from '@reactflo/types';
 import { Node } from '../node/Node';
 
@@ -216,8 +218,97 @@ export class ExecutionPlanBuilder {
         downstreamNodes.push(connection.targetNodeId);
       }
     }
- 
+
     return downstreamNodes;
+  }
+
+  /**
+   * Build execution steps for a specific node and its downstream nodes
+   *
+   * This is a recursive helper that builds a chain of execution steps starting
+   * from a given node. It handles:
+   * - Regular nodes: Creates NodeExecutionStep and recurses on downstream nodes
+   * - Conditional nodes: Creates ConditionalStep with nested branches
+   * - Cycle detection: Uses visited set to prevent infinite recursion
+   * - Multiple downstream nodes: Builds steps for all connected nodes
+   *
+   * The recursion stops when:
+   * - Node has already been visited (cycle detection)
+   * - Node has no downstream connections (leaf node)
+   *
+   * @param nodeId - ID of the node to build steps for
+   * @param workflow - The workflow containing the nodes
+   * @param visited - Set of already visited node IDs to prevent cycles
+   * @returns Array of execution plan steps for this node and downstream nodes
+   * @throws Error if node not found in workflow
+   *
+   * @example
+   * ```typescript
+   * // Build steps starting from a specific node
+   * const steps = this.buildStepsForNode('add-node-1', workflow, new Set());
+   * // Returns: [NodeExecutionStep, NodeExecutionStep, ...]
+   *
+   * // With conditional node:
+   * const steps = this.buildStepsForNode('if-node-1', workflow, new Set());
+   * // Returns: [ConditionalStep with nested branch steps]
+   * ```
+   */
+  private buildStepsForNode(
+    nodeId: NodeId,
+    workflow: Workflow,
+    visited: Set<NodeId>
+  ): ExecutionPlanStep[] {
+    // Cycle detection: if we've already visited this node, stop recursion
+    if (visited.has(nodeId)) {
+      return [];
+    }
+
+    // Mark node as visited
+    visited.add(nodeId);
+
+    // Get the node from workflow
+    const node = workflow.nodes.get(nodeId);
+    if (!node) {
+      throw new Error(`Node ${nodeId} not found in workflow`);
+    }
+
+    const steps: ExecutionPlanStep[] = [];
+
+    // Check if this is a conditional node
+    if (this.isConditionalNode(node)) {
+      // Build ConditionalStep with all branches
+      const conditionalStep = this.buildConditionalStep(node, workflow, visited);
+      steps.push(conditionalStep);
+    } else {
+      // Regular node: create NodeExecutionStep
+      const step: NodeExecutionStep = {
+        id: this._generateStepId(),
+        type: ExecutionStepType.NodeExecution,
+        nodeId: nodeId,
+        nodeType: node.type,
+        metadata: {
+          nodeName: node.label || nodeId,
+        },
+      };
+      steps.push(step);
+
+      // Find all downstream nodes from all output ports
+      const outputs = node.getOutputs();
+      const downstreamNodeIds = new Set<NodeId>();
+
+      for (const output of outputs) {
+        const connectedNodes = this.getDownstreamNodesForPort(node.id, output.id, workflow);
+        connectedNodes.forEach((id) => downstreamNodeIds.add(id));
+      }
+
+      // Recursively build steps for all downstream nodes
+      for (const downstreamId of downstreamNodeIds) {
+        const downstreamSteps = this.buildStepsForNode(downstreamId, workflow, visited);
+        steps.push(...downstreamSteps);
+      }
+    }
+
+    return steps;
   }
 
   /**
@@ -227,60 +318,96 @@ export class ExecutionPlanBuilder {
    * that represents all possible execution branches. Each output port of
    * the conditional node becomes a separate branch in the step.
    *
-   * Phase 2 Scope:
+   * Phase 2 Implementation:
    * - Detect all output ports of the conditional node
    * - For each output port, find connected downstream nodes
-   * - Build branch structure (recursive step building in Task 2.4)
-   * - Handle nested conditionals
+   * - Recursively build execution steps for each branch
+   * - Handle nested conditionals through recursion
+   * - Support both if-else and switch-case patterns
+   *
+   * Branch Building:
+   * - Each output port = one branch
+   * - Branch steps are built recursively using buildStepsForNode()
+   * - Visited set shared across all branches for cycle detection
+   * - Empty branches allowed (no downstream connections)
    *
    * @param node - The conditional node implementing IConditionalNode
    * @param workflow - The workflow containing the node
    * @param visited - Set of already visited nodes to prevent cycles
-   * @returns ConditionalStep representing all branches
-   * @throws Error if node is not a conditional node or has invalid structure
+   * @returns ConditionalStep with all branches fully built
+   * @throws Error if node has no outputs or invalid structure
    *
    * @example
    * ```typescript
    * const ifNode = workflow.nodes.get(ifNodeId);
    * if (this.isConditionalNode(ifNode)) {
    *   const step = this.buildConditionalStep(ifNode, workflow, new Set());
-   *   // step.branches = [
-   *   //   { condition: 'thenOutput', steps: [...] },
-   *   //   { condition: 'elseOutput', steps: [...] }
-   *   // ]
+   *   // step = {
+   *   //   type: ExecutionStepType.Conditional,
+   *   //   branches: [
+   *   //     { id: 'thenOutput', condition: 'thenOutput', steps: [NodeExecutionStep, ...] },
+   *   //     { id: 'elseOutput', condition: 'elseOutput', steps: [NodeExecutionStep, ...] }
+   *   //   ]
+   *   // }
    * }
    * ```
    */
   private buildConditionalStep(
     node: Node & IConditionalNode,
     workflow: Workflow,
-    _visited: Set<NodeId>
-  ): any {
-    // TODO: Task 2.4 will implement the full logic
-    // For now, this is a stub that will be completed in the next task
-
+    visited: Set<NodeId>
+  ): ConditionalStep {
     // Get all output ports of the conditional node
     const outputs = node.getOutputs();
 
-    // For each output port, find downstream nodes
-    const branches: any[] = [];
-    for (const output of outputs) {
-      const downstreamNodes = this.getDownstreamNodesForPort(node.id, output.id, workflow);
-
-      // Create branch structure (will be completed in Task 2.4)
-      branches.push({
-        condition: output.id,
-        downstreamNodes, // Temporary - will become 'steps' array
-      });
+    if (outputs.length === 0) {
+      throw new Error(`Conditional node ${node.id} has no output ports - cannot build branches`);
     }
 
-    // Return stub structure (will be replaced with proper ConditionalStep in Task 2.4)
-    return {
+    // Build branches for each output port
+    const branches: ConditionalBranch[] = [];
+
+    for (const output of outputs) {
+      // Find all nodes connected to this output port
+      const downstreamNodeIds = this.getDownstreamNodesForPort(node.id, output.id, workflow);
+
+      // Recursively build steps for all downstream nodes in this branch
+      const branchSteps: ExecutionPlanStep[] = [];
+      for (const downstreamId of downstreamNodeIds) {
+        const steps = this.buildStepsForNode(downstreamId, workflow, visited);
+        branchSteps.push(...steps);
+      }
+
+      // Create branch structure
+      const branch: ConditionalBranch = {
+        id: output.id,
+        condition: output.id,
+        steps: branchSteps,
+        label: output.label,
+      };
+
+      branches.push(branch);
+    }
+
+    // Determine conditional type based on output ports
+    // Convention: if/else has 2 branches, switch can have many
+    const conditionalType = outputs.length === 2 ? 'if-else' : 'switch';
+
+    // Create ConditionalStep
+    const step: ConditionalStep = {
       id: this._generateStepId(),
-      type: 'conditional-stub',
+      type: ExecutionStepType.Conditional,
       nodeId: node.id,
-      branches,
+      conditionalType: conditionalType,
+      conditionInput: 'condition', // Default input port name
+      branches: branches,
+      metadata: {
+        nodeName: node.label || node.id,
+        nodeType: node.type,
+      },
     };
+
+    return step;
   }
 
   /**
