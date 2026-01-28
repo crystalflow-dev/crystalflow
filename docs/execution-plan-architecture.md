@@ -10,12 +10,14 @@
 ### Phase 1: Core Infrastructure (Week 1-2) - ✅ COMPLETE
 
 #### Week 1: Plan Structure & Builder - ✅ COMPLETE
+
 - ✅ **Task 1**: Create ExecutionPlanStep type definitions (COMPLETED)
 - ✅ **Task 2**: Create ExecutionPlan class (COMPLETED)
 - ✅ **Task 3**: Create ExecutionPlanBuilder class (basic) (COMPLETED)
 - ✅ **Task 4**: Add plan builder to Executor (COMPLETED)
 
 #### Week 2: Plan Executor - ✅ COMPLETE
+
 - ✅ **Task 1**: Create PlanExecutor class (COMPLETED)
   - ✅ Implemented execute(plan, workflow, context, executor) method
   - ✅ Implemented executeStep() router (routes by step type)
@@ -29,11 +31,10 @@
   - ✅ Debugging method stubs for Phase 5 (pause, resume, stepOver, etc.)
   - ✅ 20 unit tests passing
   - ✅ Exported from @reactflo/core
-  
 - ✅ **Task 2**: Implement NodeExecutionStep execution (COMPLETED - part of Task 1)
 - ✅ **Task 3**: Add debugging support (stub methods) (COMPLETED - part of Task 1)
 - ✅ **Task 4**: Switch Executor to use PlanExecutor (COMPLETED)
-  - ✅ Added _planExecutor instance to Executor
+  - ✅ Added \_planExecutor instance to Executor
   - ✅ Replaced topological sort loop with plan execution
   - ✅ Removed 60+ lines of duplicate execution logic
   - ✅ Single execution path through PlanExecutor
@@ -49,9 +50,13 @@
   - ✅ Plan-based execution performs well across all scenarios
 
 ### Phase 2: Conditional Flow (Week 3-4) - ⏳ PENDING
+
 ### Phase 3: Loop Execution (Week 5-6) - ⏳ PENDING
+
 ### Phase 4: Parallel Execution (Week 7-8) - ⏳ PENDING
+
 ### Phase 5: Advanced Debugging (Week 9-10) - ⏳ PENDING
+
 ### Phase 6: Testing & Documentation (Week 11-12) - ⏳ PENDING
 
 ---
@@ -107,20 +112,20 @@ This approach makes debugging native, loops natural, and parallel execution stra
 
 These benchmarks establish baseline performance for the current serial executor implementation. After implementing the execution plan architecture (Phase 1), we will re-run these tests to ensure no performance regression.
 
-| Scenario | Nodes | Iterations | Average | Median | Min | Max | Std Dev | Status |
-|----------|-------|------------|---------|--------|-----|-----|---------|--------|
-| **Linear Fast Nodes** | 10 | 100 | 0.474 ms | 0.441 ms | 0.407 ms | 0.697 ms | 0.074 ms | ✅ Pass |
-| **Linear Fast Nodes** | 50 | 50 | 0.981 ms | 0.897 ms | 0.774 ms | 1.619 ms | 0.216 ms | ✅ Pass |
-| **Linear Fast Nodes** | 100 | 20 | 1.842 ms | 1.796 ms | 1.674 ms | 2.175 ms | 0.151 ms | ✅ Pass |
-| **Linear Medium Nodes** | 20 | 50 | 1.210 ms | 1.189 ms | 1.116 ms | 1.665 ms | 0.093 ms | ✅ Pass |
-| **Linear Slow Nodes** | 10 | 20 | 8.941 ms | 8.916 ms | 8.668 ms | 9.370 ms | 0.180 ms | ✅ Pass |
-| **Fan-Out Pattern** | 10 | 50 | 0.622 ms | 0.601 ms | 0.582 ms | 0.812 ms | 0.048 ms | ✅ Pass |
-| **Fan-Out Pattern** | 50 | 30 | 1.089 ms | 0.928 ms | 0.817 ms | 4.761 ms | 0.693 ms | ✅ Pass |
-| **Diamond Pattern** | 5 | 50 | 0.412 ms | 0.386 ms | 0.343 ms | 0.607 ms | 0.074 ms | ✅ Pass |
-| **Complex Graph** | 50 | 20 | 1.647 ms | 1.599 ms | 1.476 ms | 2.142 ms | 0.181 ms | ✅ Pass |
-| **Async Operations** | 20 | 30 | 23.549 ms | 23.638 ms | 21.187 ms | 24.679 ms | 0.703 ms | ✅ Pass |
-| **Event System** | 20 | 50 | 0.805 ms | 0.812 ms | 0.405 ms | 1.590 ms | 0.225 ms | ✅ Pass |
-| **Validation** | 100 | 100 | 0.160 ms | 0.158 ms | 0.088 ms | 0.280 ms | 0.042 ms | ✅ Pass |
+| Scenario                | Nodes | Iterations | Average   | Median    | Min       | Max       | Std Dev  | Status  |
+| ----------------------- | ----- | ---------- | --------- | --------- | --------- | --------- | -------- | ------- |
+| **Linear Fast Nodes**   | 10    | 100        | 0.474 ms  | 0.441 ms  | 0.407 ms  | 0.697 ms  | 0.074 ms | ✅ Pass |
+| **Linear Fast Nodes**   | 50    | 50         | 0.981 ms  | 0.897 ms  | 0.774 ms  | 1.619 ms  | 0.216 ms | ✅ Pass |
+| **Linear Fast Nodes**   | 100   | 20         | 1.842 ms  | 1.796 ms  | 1.674 ms  | 2.175 ms  | 0.151 ms | ✅ Pass |
+| **Linear Medium Nodes** | 20    | 50         | 1.210 ms  | 1.189 ms  | 1.116 ms  | 1.665 ms  | 0.093 ms | ✅ Pass |
+| **Linear Slow Nodes**   | 10    | 20         | 8.941 ms  | 8.916 ms  | 8.668 ms  | 9.370 ms  | 0.180 ms | ✅ Pass |
+| **Fan-Out Pattern**     | 10    | 50         | 0.622 ms  | 0.601 ms  | 0.582 ms  | 0.812 ms  | 0.048 ms | ✅ Pass |
+| **Fan-Out Pattern**     | 50    | 30         | 1.089 ms  | 0.928 ms  | 0.817 ms  | 4.761 ms  | 0.693 ms | ✅ Pass |
+| **Diamond Pattern**     | 5     | 50         | 0.412 ms  | 0.386 ms  | 0.343 ms  | 0.607 ms  | 0.074 ms | ✅ Pass |
+| **Complex Graph**       | 50    | 20         | 1.647 ms  | 1.599 ms  | 1.476 ms  | 2.142 ms  | 0.181 ms | ✅ Pass |
+| **Async Operations**    | 20    | 30         | 23.549 ms | 23.638 ms | 21.187 ms | 24.679 ms | 0.703 ms | ✅ Pass |
+| **Event System**        | 20    | 50         | 0.805 ms  | 0.812 ms  | 0.405 ms  | 1.590 ms  | 0.225 ms | ✅ Pass |
+| **Validation**          | 100   | 100        | 0.160 ms  | 0.158 ms  | 0.088 ms  | 0.280 ms  | 0.042 ms | ✅ Pass |
 
 ### Key Observations
 
@@ -146,25 +151,26 @@ After implementing the execution plan architecture, we should maintain:
 **Implementation**: Plan-Based Execution with PlanExecutor  
 **Status**: ✅ Complete - All benchmarks passed
 
-| Scenario | Baseline Avg | Phase 1 Avg | Difference | % Change | Status |
-|----------|--------------|-------------|------------|----------|--------|
-| Linear: 10 Fast | 0.474 ms | 0.523 ms | +0.049 ms | +10.3% | ✅ Pass |
-| Linear: 50 Fast | 0.981 ms | 1.092 ms | +0.111 ms | +11.3% | ⚠️ Pass |
-| Linear: 100 Fast | 1.842 ms | 2.106 ms | +0.264 ms | +14.3% | ⚠️ Pass |
-| Linear: 20 Medium | 1.210 ms | 1.567 ms | +0.357 ms | +29.5% | ⚠️ Pass |
-| Linear: 10 Slow | 8.941 ms | 9.171 ms | +0.230 ms | +2.6% | ✅ Pass |
-| Fan-Out: 10 | 0.622 ms | 0.669 ms | +0.047 ms | +7.6% | ✅ Pass |
-| Fan-Out: 50 | 1.089 ms | 1.048 ms | -0.041 ms | -3.8% | ✅ Improved |
-| Diamond: 5 | 0.412 ms | 0.419 ms | +0.007 ms | +1.7% | ✅ Pass |
-| Complex: 50 | 1.647 ms | 1.756 ms | +0.109 ms | +6.6% | ✅ Pass |
-| Async: 20 | 23.549 ms | 23.167 ms | -0.382 ms | -1.6% | ✅ Improved |
-| Events: 20 | 0.805 ms | 0.549 ms | -0.256 ms | -31.8% | ✅ Improved |
-| Validation: 100 | 0.160 ms | 0.074 ms | -0.086 ms | -53.8% | ✅ Improved |
-| **Overall Average** | **3.477 ms** | **3.512 ms** | **+0.035 ms** | **+1.0%** | ✅ Pass |
+| Scenario            | Baseline Avg | Phase 1 Avg  | Difference    | % Change  | Status      |
+| ------------------- | ------------ | ------------ | ------------- | --------- | ----------- |
+| Linear: 10 Fast     | 0.474 ms     | 0.523 ms     | +0.049 ms     | +10.3%    | ✅ Pass     |
+| Linear: 50 Fast     | 0.981 ms     | 1.092 ms     | +0.111 ms     | +11.3%    | ⚠️ Pass     |
+| Linear: 100 Fast    | 1.842 ms     | 2.106 ms     | +0.264 ms     | +14.3%    | ⚠️ Pass     |
+| Linear: 20 Medium   | 1.210 ms     | 1.567 ms     | +0.357 ms     | +29.5%    | ⚠️ Pass     |
+| Linear: 10 Slow     | 8.941 ms     | 9.171 ms     | +0.230 ms     | +2.6%     | ✅ Pass     |
+| Fan-Out: 10         | 0.622 ms     | 0.669 ms     | +0.047 ms     | +7.6%     | ✅ Pass     |
+| Fan-Out: 50         | 1.089 ms     | 1.048 ms     | -0.041 ms     | -3.8%     | ✅ Improved |
+| Diamond: 5          | 0.412 ms     | 0.419 ms     | +0.007 ms     | +1.7%     | ✅ Pass     |
+| Complex: 50         | 1.647 ms     | 1.756 ms     | +0.109 ms     | +6.6%     | ✅ Pass     |
+| Async: 20           | 23.549 ms    | 23.167 ms    | -0.382 ms     | -1.6%     | ✅ Improved |
+| Events: 20          | 0.805 ms     | 0.549 ms     | -0.256 ms     | -31.8%    | ✅ Improved |
+| Validation: 100     | 0.160 ms     | 0.074 ms     | -0.086 ms     | -53.8%    | ✅ Improved |
+| **Overall Average** | **3.477 ms** | **3.512 ms** | **+0.035 ms** | **+1.0%** | ✅ Pass     |
 
 ### Performance Analysis
 
 **✅ Excellent Results:**
+
 - **Overall impact**: Only +1.0% average overhead from plan-based execution
 - **Improved scenarios**: 4 out of 12 scenarios show performance improvements
 - **Fast operations**: Minimal impact on high-speed scenarios (<15% on fast nodes)
@@ -173,10 +179,12 @@ After implementing the execution plan architecture, we should maintain:
 - **Validation**: 54% improvement in validation speed
 
 **⚠️ Areas of Note:**
+
 - Linear 20 Medium (+29.5%): Higher than target but acceptable given small absolute time (1.567ms)
 - Linear 50-100 Fast: Slightly above 10% target but within acceptable range for Phase 1
 
 **Key Findings:**
+
 1. **Plan building overhead is minimal**: Adds ~0.01-0.05ms per workflow
 2. **Scales well**: Performance impact decreases as workflow complexity increases
 3. **Event efficiency improved**: Likely due to cleaner event delegation pattern
@@ -228,12 +236,14 @@ npm run test:benchmark > benchmark-results.txt 2>&1
 ### Why This Approach?
 
 **Current Serial Executor Issues:**
+
 - ❌ Can't skip nodes based on runtime conditions
 - ❌ Can't repeat nodes (loops)
 - ❌ Can't execute nodes in parallel
 - ❌ No natural pause points for debugging
 
 **Execution Plan Benefits:**
+
 - ✅ Explicit control flow representation
 - ✅ Runtime path determination
 - ✅ Natural debugging checkpoints
@@ -250,11 +260,11 @@ An **Execution Plan** is a tree structure representing the complete execution fl
 ```typescript
 class ExecutionPlan {
   steps: ExecutionPlanStep[];
-  
+
   // Methods
-  flatten(): ExecutionPlanStep[]
-  getBreakpoints(): NodeId[]
-  serialize(): SerializedPlan
+  flatten(): ExecutionPlanStep[];
+  getBreakpoints(): NodeId[];
+  serialize(): SerializedPlan;
 }
 ```
 
@@ -262,13 +272,13 @@ class ExecutionPlan {
 
 Steps are the atomic units of execution. Each step type represents a different execution pattern:
 
-| Step Type | Purpose | Example |
-|-----------|---------|---------|
-| `NodeExecutionStep` | Execute a regular node | Math.Add, HTTP.Request |
-| `ConditionalStep` | Branch based on condition | If/Else, Switch/Case |
-| `LoopStep` | Repeat execution | For, While, ForEach |
-| `ParallelStep` | Execute branches concurrently | Promise.all, Promise.race |
-| `MergeStep` | Synchronize parallel branches | Join, Wait |
+| Step Type           | Purpose                       | Example                   |
+| ------------------- | ----------------------------- | ------------------------- |
+| `NodeExecutionStep` | Execute a regular node        | Math.Add, HTTP.Request    |
+| `ConditionalStep`   | Branch based on condition     | If/Else, Switch/Case      |
+| `LoopStep`          | Repeat execution              | For, While, ForEach       |
+| `ParallelStep`      | Execute branches concurrently | Promise.all, Promise.race |
+| `MergeStep`         | Synchronize parallel branches | Join, Wait                |
 
 ### Control Flow Nodes
 
@@ -287,6 +297,7 @@ Special node types that influence execution flow:
 **Responsibility**: Analyze workflow graph and build execution plan.
 
 **Key Methods**:
+
 - `build(workflow: Workflow): ExecutionPlan`
 - `buildStepsForNode(nodeId: NodeId): ExecutionPlanStep[]`
 - `buildConditionalStep(node: IConditionalNode): ConditionalStep`
@@ -294,6 +305,7 @@ Special node types that influence execution flow:
 - `buildParallelStep(node: IParallelNode): ParallelStep`
 
 **Algorithm**:
+
 1. Start from entry nodes (nodes with no incoming edges)
 2. Traverse graph in topological order
 3. When encountering control flow node:
@@ -303,6 +315,7 @@ Special node types that influence execution flow:
 4. Return completed plan
 
 **Example**:
+
 ```
 Workflow:
   Input → If → [Then → Add, Else → Multiply] → Output
@@ -323,6 +336,7 @@ Execution Plan:
 **Responsibility**: Execute the plan step-by-step with full control.
 
 **Key Methods**:
+
 - `execute(plan: ExecutionPlan, workflow: Workflow, context: ExecutionContext): Promise<ExecutionResult>`
 - `executeStep(step: ExecutionPlanStep): Promise<void>`
 - `executeNodeStep(step: NodeExecutionStep): Promise<void>`
@@ -331,6 +345,7 @@ Execution Plan:
 - `executeParallelStep(step: ParallelStep): Promise<void>`
 
 **Debugging Methods**:
+
 - `pause(): void`
 - `resume(): void`
 - `stepOver(): void`
@@ -340,19 +355,20 @@ Execution Plan:
 - `removeBreakpoint(nodeId: NodeId): void`
 
 **Execution Loop**:
+
 ```typescript
 for (let i = 0; i < plan.steps.length; i++) {
   this._currentStep = i;
   const step = plan.steps[i];
-  
+
   // Check pause/breakpoints
   await this.checkPause();
-  
+
   // Check cancellation
   if (context.isCancelled()) {
     throw new CancellationError(/*...*/);
   }
-  
+
   // Execute step
   await this.executeStep(step, workflow, context);
 }
@@ -363,33 +379,36 @@ for (let i = 0; i < plan.steps.length; i++) {
 **Responsibility**: Orchestrate plan building and execution with event system.
 
 **Changes from Current**:
+
 - Replace topological sort execution with plan execution
 - Add plan builder and plan executor
 - Expose debugging API (pause, resume, step, breakpoint)
 - Emit new events (onPlanBuilt, onStepStart, onStepComplete)
 
 **API**:
+
 ```typescript
 class Executor extends AsyncEventEmitter<ExecutorEvents> {
   // Existing
-  execute(workflow: Workflow, options: ExecutionOptions): Promise<ExecutionResult>
-  cancel(executionId: ExecutionId): boolean
-  
+  execute(workflow: Workflow, options: ExecutionOptions): Promise<ExecutionResult>;
+  cancel(executionId: ExecutionId): boolean;
+
   // New - Debugging
-  pause(): void
-  resume(): void
-  stepOver(): void
-  stepInto(): void
-  stepOut(): void
-  setBreakpoint(nodeId: NodeId): void
-  removeBreakpoint(nodeId: NodeId): void
-  getExecutionState(): ExecutionState
+  pause(): void;
+  resume(): void;
+  stepOver(): void;
+  stepInto(): void;
+  stepOut(): void;
+  setBreakpoint(nodeId: NodeId): void;
+  removeBreakpoint(nodeId: NodeId): void;
+  getExecutionState(): ExecutionState;
 }
 ```
 
 ### 4. Control Flow Node Interfaces
 
 **IConditionalNode**:
+
 ```typescript
 interface IConditionalNode extends Node {
   evaluateCondition(): string; // Returns active branch identifier
@@ -397,20 +416,19 @@ interface IConditionalNode extends Node {
 ```
 
 **ILoopNode**:
+
 ```typescript
 interface ILoopNode extends Node {
   loopType: 'for' | 'while' | 'forEach';
   condition: string;
   maxIterations?: number;
-  
-  evaluateLoopCondition(
-    iteration: number, 
-    context: ExecutionContext
-  ): Promise<boolean>;
+
+  evaluateLoopCondition(iteration: number, context: ExecutionContext): Promise<boolean>;
 }
 ```
 
 **IParallelNode**:
+
 ```typescript
 interface IParallelNode extends Node {
   getBranches(): string[]; // Returns output port IDs to execute in parallel
@@ -457,6 +475,7 @@ interface IParallelNode extends Node {
 ### Step Execution Details
 
 **NodeExecutionStep**:
+
 ```
 1. Check breakpoint
 2. Transfer data from connected nodes
@@ -468,6 +487,7 @@ interface IParallelNode extends Node {
 ```
 
 **ConditionalStep**:
+
 ```
 1. Execute control node to evaluate condition
 2. Call node.evaluateCondition() to get active branch
@@ -477,6 +497,7 @@ interface IParallelNode extends Node {
 ```
 
 **LoopStep**:
+
 ```
 1. Initialize iteration counter
 2. Loop:
@@ -490,6 +511,7 @@ interface IParallelNode extends Node {
 ```
 
 **ParallelStep**:
+
 ```
 1. Create promise for each branch
 2. Each promise executes its steps sequentially
@@ -506,11 +528,13 @@ interface IParallelNode extends Node {
 ### 1. Conditional Execution (If/Else)
 
 **Workflow Structure**:
+
 ```
 Input → If(condition) → [Then Branch, Else Branch] → Merge → Output
 ```
 
 **Execution Plan**:
+
 ```typescript
 {
   type: 'conditional',
@@ -534,16 +558,18 @@ Input → If(condition) → [Then Branch, Else Branch] → Merge → Output
 ```
 
 **Runtime Behavior**:
+
 - If condition is true → Execute Then Branch steps
 - If condition is false → Execute Else Branch steps
 - Other branch steps are never executed
 
 **Node Implementation**:
+
 ```typescript
 @defineNode({
   type: 'flow.if',
   label: 'If/Else',
-  category: 'Flow Control'
+  category: 'Flow Control',
 })
 export class IfNode extends Node implements IConditionalNode {
   @Input({ type: 'boolean', label: 'Condition', required: true })
@@ -568,11 +594,13 @@ export class IfNode extends Node implements IConditionalNode {
 ### 2. Switch/Case
 
 **Workflow Structure**:
+
 ```
 Input → Switch(value) → [Case 1, Case 2, Case 3, Default] → Merge → Output
 ```
 
 **Execution Plan**:
+
 ```typescript
 {
   type: 'conditional',
@@ -587,11 +615,12 @@ Input → Switch(value) → [Case 1, Case 2, Case 3, Default] → Merge → Outp
 ```
 
 **Node Implementation**:
+
 ```typescript
 @defineNode({
   type: 'flow.switch',
   label: 'Switch/Case',
-  category: 'Flow Control'
+  category: 'Flow Control',
 })
 export class SwitchNode extends Node implements IConditionalNode {
   @Input({ type: 'any', label: 'Value', required: true })
@@ -614,7 +643,7 @@ export class SwitchNode extends Node implements IConditionalNode {
   }
 
   evaluateCondition(): string {
-    const matchingCase = this.cases.findIndex(c => c === this.value);
+    const matchingCase = this.cases.findIndex((c) => c === this.value);
     if (matchingCase >= 0) {
       return `case${matchingCase + 1}`;
     }
@@ -626,11 +655,13 @@ export class SwitchNode extends Node implements IConditionalNode {
 ### 3. For Loop
 
 **Workflow Structure**:
+
 ```
 Input → ForLoop(start, end, step) → [Body Nodes] → Loop Back or Continue → Output
 ```
 
 **Execution Plan**:
+
 ```typescript
 {
   type: 'loop',
@@ -646,6 +677,7 @@ Input → ForLoop(start, end, step) → [Body Nodes] → Loop Back or Continue �
 ```
 
 **Runtime Behavior**:
+
 - Initialize loop counter
 - Each iteration:
   - Evaluate condition
@@ -655,11 +687,12 @@ Input → ForLoop(start, end, step) → [Body Nodes] → Loop Back or Continue �
 - After loop completes, continue to next step
 
 **Node Implementation**:
+
 ```typescript
 @defineNode({
   type: 'flow.for',
   label: 'For Loop',
-  category: 'Flow Control'
+  category: 'Flow Control',
 })
 export class ForLoopNode extends Node implements ILoopNode {
   loopType: 'for' = 'for';
@@ -686,11 +719,8 @@ export class ForLoopNode extends Node implements ILoopNode {
     this.body = this.index;
   }
 
-  async evaluateLoopCondition(
-    iteration: number,
-    context: ExecutionContext
-  ): Promise<boolean> {
-    this.index = this.start + (iteration * this.step);
+  async evaluateLoopCondition(iteration: number, context: ExecutionContext): Promise<boolean> {
+    this.index = this.start + iteration * this.step;
     return this.index < this.end;
   }
 }
@@ -699,16 +729,18 @@ export class ForLoopNode extends Node implements ILoopNode {
 ### 4. While Loop
 
 **Workflow Structure**:
+
 ```
 Input → WhileLoop(condition) → [Body Nodes] → Evaluate Condition → Loop or Continue → Output
 ```
 
 **Node Implementation**:
+
 ```typescript
 @defineNode({
   type: 'flow.while',
   label: 'While Loop',
-  category: 'Flow Control'
+  category: 'Flow Control',
 })
 export class WhileLoopNode extends Node implements ILoopNode {
   loopType: 'while' = 'while';
@@ -725,10 +757,7 @@ export class WhileLoopNode extends Node implements ILoopNode {
     // Condition is evaluated before each iteration
   }
 
-  async evaluateLoopCondition(
-    iteration: number,
-    context: ExecutionContext
-  ): Promise<boolean> {
+  async evaluateLoopCondition(iteration: number, context: ExecutionContext): Promise<boolean> {
     return this.condition;
   }
 }
@@ -737,16 +766,18 @@ export class WhileLoopNode extends Node implements ILoopNode {
 ### 5. ForEach Loop
 
 **Workflow Structure**:
+
 ```
 Input → ForEach(array) → [Body Nodes with current item] → Next Item or Continue → Output
 ```
 
 **Node Implementation**:
+
 ```typescript
 @defineNode({
   type: 'flow.forEach',
   label: 'ForEach Loop',
-  category: 'Flow Control'
+  category: 'Flow Control',
 })
 export class ForEachLoopNode extends Node implements ILoopNode {
   loopType: 'forEach' = 'forEach';
@@ -770,10 +801,7 @@ export class ForEachLoopNode extends Node implements ILoopNode {
     this.body = this.currentItem;
   }
 
-  async evaluateLoopCondition(
-    iteration: number,
-    context: ExecutionContext
-  ): Promise<boolean> {
+  async evaluateLoopCondition(iteration: number, context: ExecutionContext): Promise<boolean> {
     this.index = iteration;
     if (iteration < this.array.length) {
       this.currentItem = this.array[iteration];
@@ -787,11 +815,13 @@ export class ForEachLoopNode extends Node implements ILoopNode {
 ### 6. Parallel Execution
 
 **Workflow Structure**:
+
 ```
 Input → Parallel → [Branch A, Branch B, Branch C] → Merge → Output
 ```
 
 **Execution Plan**:
+
 ```typescript
 {
   type: 'parallel',
@@ -805,6 +835,7 @@ Input → Parallel → [Branch A, Branch B, Branch C] → Merge → Output
 ```
 
 **Runtime Behavior**:
+
 - Create Promise for each branch
 - Execute all branches concurrently
 - If waitForAll=true: Wait for all (Promise.all)
@@ -812,11 +843,12 @@ Input → Parallel → [Branch A, Branch B, Branch C] → Merge → Output
 - Continue with next step
 
 **Node Implementation**:
+
 ```typescript
 @defineNode({
   type: 'flow.parallel',
   label: 'Parallel Execution',
-  category: 'Flow Control'
+  category: 'Flow Control',
 })
 export class ParallelNode extends Node implements IParallelNode {
   @Input({ type: 'any', label: 'Input' })
@@ -853,16 +885,19 @@ export class ParallelNode extends Node implements IParallelNode {
 ### Breakpoints
 
 **Set Breakpoint**:
+
 ```typescript
 executor.setBreakpoint('node-id-123');
 ```
 
 **Remove Breakpoint**:
+
 ```typescript
 executor.removeBreakpoint('node-id-123');
 ```
 
 **Execution Flow**:
+
 1. Executor reaches step with breakpoint
 2. Executor pauses before executing step
 3. Emits 'onBreakpoint' event
@@ -872,11 +907,13 @@ executor.removeBreakpoint('node-id-123');
 ### Pause/Resume
 
 **Pause Execution**:
+
 ```typescript
 executor.pause();
 ```
 
 **Resume Execution**:
+
 ```typescript
 executor.resume();
 ```
@@ -886,30 +923,37 @@ executor.resume();
 ### Step Operations
 
 **Step Over**:
+
 ```typescript
 executor.stepOver();
 ```
+
 - Execute current step
 - Pause before next step
 - If current step is conditional/loop, execute entire block
 
 **Step Into**:
+
 ```typescript
 executor.stepInto();
 ```
+
 - If current step is conditional/loop, pause at first child step
 - Otherwise, same as step over
 
 **Step Out**:
+
 ```typescript
 executor.stepOut();
 ```
+
 - Continue execution until current conditional/loop completes
 - Pause at next step after block
 
 ### Execution State Introspection
 
 **Get Current Execution State**:
+
 ```typescript
 interface ExecutionState {
   executionId: string;
@@ -927,6 +971,7 @@ const state = executor.getExecutionState();
 ```
 
 **Use Cases**:
+
 - Display current execution position in UI
 - Show which node is currently executing
 - Display variable values
@@ -945,7 +990,11 @@ interface ExecutorEvents {
   onNodeComplete: (nodeId: string, result: NodeExecutionResult) => void | Promise<void>;
   onNodeError: (nodeId: string, error: Error) => void | Promise<void>;
   onError: (error: Error) => void | Promise<void>;
-  onCancellation: (executionId: string, reason: CancellationReason, cancelledAt: Date) => void | Promise<void>;
+  onCancellation: (
+    executionId: string,
+    reason: CancellationReason,
+    cancelledAt: Date
+  ) => void | Promise<void>;
 
   // New
   onPlanBuilt: (plan: ExecutionPlan) => void | Promise<void>;
@@ -999,16 +1048,16 @@ interface ExecutorEvents {
    - Use workflow.getExecutionOrder() as guide
    - Add graph traversal utilities (getDownstreamNodes)
    - **CRITICAL**: Handle SIMPLE multiple entry points (all merge at same point)
-     * Detect entry nodes (nodes with no incoming edges)
-     * Find common merge point for all entry branches
-     * If found: Wrap in virtual ParallelStep for true parallelism
-     * If not found: Throw descriptive error (complex patterns deferred to Phase 4)
-     * Make strategy configurable via build options ('parallel' | 'sequential')
+     - Detect entry nodes (nodes with no incoming edges)
+     - Find common merge point for all entry branches
+     - If found: Wrap in virtual ParallelStep for true parallelism
+     - If not found: Throw descriptive error (complex patterns deferred to Phase 4)
+     - Make strategy configurable via build options ('parallel' | 'sequential')
    - Validate that all nodeIds reference existing nodes in workflow
    - Write unit tests with simple linear workflows
    - Write tests for simple multiple entry point scenarios (all merge at same point)
    - Write tests that verify error handling for complex merge patterns
-   - **Note**: Advanced merge patterns (intermediate merges, progressive merges) 
+   - **Note**: Advanced merge patterns (intermediate merges, progressive merges)
      will be implemented in Phase 4 with full dependency graph analysis
 
 4. **Add plan builder to Executor** [3 hours]
@@ -1021,6 +1070,7 @@ interface ExecutorEvents {
    - Write integration test
 
 **Deliverables**:
+
 - ✅ ExecutionPlanStep types defined
 - ✅ ExecutionPlan class with tests
 - ✅ ExecutionPlanBuilder (basic) with tests
@@ -1069,6 +1119,7 @@ interface ExecutorEvents {
    - Write event tests
 
 **Deliverables**:
+
 - ✅ PlanExecutor class with tests
 - ✅ NodeExecutionStep execution working
 - ✅ Serial execution replaced with plan execution
@@ -1076,6 +1127,7 @@ interface ExecutorEvents {
 - ✅ 30+ new tests
 
 **Validation**:
+
 - Run full test suite: `npm test`
 - Verify examples still work: `npm run dev` and test examples
 - No breaking changes to existing API
@@ -1128,6 +1180,7 @@ interface ExecutorEvents {
    - Write integration tests
 
 **Deliverables**:
+
 - ✅ IConditionalNode interface defined
 - ✅ ConditionalStep building implemented
 - ✅ ConditionalStep execution implemented
@@ -1184,6 +1237,7 @@ interface ExecutorEvents {
    - Write end-to-end tests
 
 **Deliverables**:
+
 - ✅ IfNode implemented and tested
 - ✅ SwitchNode implemented and tested
 - ✅ Flow nodes directory structure
@@ -1192,6 +1246,7 @@ interface ExecutorEvents {
 - ✅ Documentation updated
 
 **Validation**:
+
 - Create workflow with IfNode in examples app
 - Verify only one branch executes
 - Verify data flows correctly through branches
@@ -1264,6 +1319,7 @@ interface ExecutorEvents {
    - Write integration tests
 
 **Deliverables**:
+
 - ✅ ILoopNode interface defined
 - ✅ ExecutionContext enhanced for loop tracking
 - ✅ LoopStep building implemented
@@ -1335,6 +1391,7 @@ interface ExecutorEvents {
    - Write end-to-end tests
 
 **Deliverables**:
+
 - ✅ ForLoopNode implemented and tested
 - ✅ WhileLoopNode implemented and tested
 - ✅ ForEachLoopNode implemented and tested
@@ -1343,6 +1400,7 @@ interface ExecutorEvents {
 - ✅ Documentation updated
 
 **Validation**:
+
 - Create workflow with ForLoopNode that runs 10 iterations
 - Verify loop body executes correct number of times
 - Verify loop variables (index) update correctly
@@ -1416,6 +1474,7 @@ interface ExecutorEvents {
    - Write unit tests
 
 **Deliverables**:
+
 - ✅ IParallelNode interface defined
 - ✅ ParallelStep building implemented
 - ✅ ParallelStep execution implemented
@@ -1483,6 +1542,7 @@ interface ExecutorEvents {
    - Performance testing with many parallel branches
 
 **Deliverables**:
+
 - ✅ ParallelNode implemented and tested
 - ✅ RaceNode implemented and tested
 - ✅ MergeNode implemented and tested
@@ -1491,6 +1551,7 @@ interface ExecutorEvents {
 - ✅ Documentation updated
 
 **Validation**:
+
 - Create workflow with ParallelNode that executes 3 branches
 - Verify all branches execute concurrently
 - Measure execution time (should be ~max branch time, not sum)
@@ -1520,8 +1581,8 @@ interface ExecutorEvents {
 
 2. **Implement pause/resume mechanism** [4 hours]
    - File: `packages/core/src/execution/PlanExecutor.ts`
-   - Implement `pause(): void` - Sets _paused flag
-   - Implement `resume(): void` - Clears _paused flag
+   - Implement `pause(): void` - Sets \_paused flag
+   - Implement `resume(): void` - Clears \_paused flag
    - Implement `checkPause(): Promise<void>` - Polls pause state
    - Call checkPause() before each step execution
    - Emit 'onPause' and 'onResume' events
@@ -1581,6 +1642,7 @@ interface ExecutorEvents {
    - Write unit tests
 
 **Deliverables**:
+
 - ✅ Pause/resume implemented
 - ✅ Breakpoint system implemented
 - ✅ Step operations implemented
@@ -1657,6 +1719,7 @@ interface ExecutorEvents {
    - Update main README with debugging section
 
 **Deliverables**:
+
 - ✅ Debugging events defined and tested
 - ✅ DebugPanel component implemented
 - ✅ Breakpoint support in CustomNode
@@ -1665,6 +1728,7 @@ interface ExecutorEvents {
 - ✅ Comprehensive debugging documentation
 
 **Validation**:
+
 - Set breakpoint on node in workflow
 - Execute workflow
 - Verify execution pauses at breakpoint
@@ -1728,6 +1792,7 @@ interface ExecutorEvents {
    - Test workflow serialization/deserialization
 
 **Deliverables**:
+
 - ✅ 90%+ code coverage
 - ✅ Comprehensive integration tests
 - ✅ Performance benchmarks
@@ -1787,6 +1852,7 @@ interface ExecutorEvents {
    - Add Phase 4 details (React package completion)
 
 **Deliverables**:
+
 - ✅ Polished APIs with full documentation
 - ✅ Improved error messages
 - ✅ Updated documentation (all files)
@@ -1795,6 +1861,7 @@ interface ExecutorEvents {
 - ✅ Updated project status
 
 **Validation**:
+
 - Review all documentation for accuracy
 - Test all code examples in documentation
 - Verify all tutorials work end-to-end
@@ -1823,11 +1890,7 @@ class ExecutionPlanBuilder {
    * @param visited - Set of already visited nodes
    * @returns Array of execution steps
    */
-  buildStepsForNode(
-    nodeId: NodeId,
-    workflow: Workflow,
-    visited: Set<NodeId>
-  ): ExecutionPlanStep[];
+  buildStepsForNode(nodeId: NodeId, workflow: Workflow, visited: Set<NodeId>): ExecutionPlanStep[];
 
   /**
    * Build conditional step for branching
@@ -1849,11 +1912,7 @@ class ExecutionPlanBuilder {
    * @param visited - Set of already visited nodes
    * @returns Loop step
    */
-  buildLoopStep(
-    node: ILoopNode,
-    workflow: Workflow,
-    visited: Set<NodeId>
-  ): LoopStep;
+  buildLoopStep(node: ILoopNode, workflow: Workflow, visited: Set<NodeId>): LoopStep;
 
   /**
    * Build parallel step for concurrent execution
@@ -1862,11 +1921,7 @@ class ExecutionPlanBuilder {
    * @param visited - Set of already visited nodes
    * @returns Parallel step
    */
-  buildParallelStep(
-    node: IParallelNode,
-    workflow: Workflow,
-    visited: Set<NodeId>
-  ): ParallelStep;
+  buildParallelStep(node: IParallelNode, workflow: Workflow, visited: Set<NodeId>): ParallelStep;
 }
 ```
 
@@ -1944,10 +1999,7 @@ class Executor extends AsyncEventEmitter<ExecutorEvents> {
    * @param options - Execution options
    * @returns Execution result
    */
-  execute(
-    workflow: Workflow,
-    options?: ExecutionOptions
-  ): Promise<ExecutionResult>;
+  execute(workflow: Workflow, options?: ExecutionOptions): Promise<ExecutionResult>;
 
   // Debugging API
   pause(): void;
@@ -2013,7 +2065,7 @@ const workflow = new Workflow('for-loop-example', 'For Loop Example');
 
 // Add nodes
 const forLoop = workflow.addNode('flow.for', {
-  data: { start: 0, end: 10, step: 1 }
+  data: { start: 0, end: 10, step: 1 },
 });
 const add = workflow.addNode('math.add', { data: { b: 1 } });
 const display = workflow.addNode('output.display');
@@ -2044,13 +2096,13 @@ const workflow = new Workflow('parallel-example', 'Parallel Example');
 // Add nodes
 const parallel = workflow.addNode('flow.parallel');
 const request1 = workflow.addNode('http.request', {
-  data: { url: 'https://api.example.com/data1' }
+  data: { url: 'https://api.example.com/data1' },
 });
 const request2 = workflow.addNode('http.request', {
-  data: { url: 'https://api.example.com/data2' }
+  data: { url: 'https://api.example.com/data2' },
 });
 const request3 = workflow.addNode('http.request', {
-  data: { url: 'https://api.example.com/data3' }
+  data: { url: 'https://api.example.com/data3' },
 });
 const merge = workflow.addNode('flow.merge');
 const display = workflow.addNode('output.display');
@@ -2089,10 +2141,10 @@ executor.setBreakpoint('node-id-123');
 executor.on('onBreakpoint', (nodeId, state) => {
   console.log('Breakpoint hit at node:', nodeId);
   console.log('Current state:', state);
-  
+
   // Inspect variables
   console.log('Variables:', state.variables);
-  
+
   // Resume after inspection
   setTimeout(() => executor.resume(), 2000);
 });
@@ -2121,6 +2173,7 @@ The phased implementation approach ensures steady progress with working features
 **Impact**: Transformational for ReactFlo
 
 **Next Steps**:
+
 1. Review and approve this architecture
 2. Set up project tracking (GitHub issues/milestones)
 3. Begin Phase 1 implementation

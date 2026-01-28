@@ -9,7 +9,7 @@
  * ```typescript
  * interface MyEvents {
  *   start: (id: string) => void | Promise<void>;
- *   complete: (result: any) => void | Promise<void>;
+ *   complete: (result: unknown) => void | Promise<void>;
  * }
  *
  * const emitter = new AsyncEventEmitter<MyEvents>();
@@ -24,7 +24,7 @@
  * ```
  */
 
-type EventListener<T extends any[] = any[]> = (...args: T) => void | Promise<void>;
+type EventListener<T extends unknown[] = unknown[]> = (...args: T) => void | Promise<void>;
 
 type EventMap = {
   [key: string]: EventListener;
@@ -52,7 +52,7 @@ export class AsyncEventEmitter<TEvents extends EventMap = EventMap> {
    * @param listener - Event listener function (can be sync or async)
    */
   once<K extends keyof TEvents>(event: K, listener: TEvents[K]): this {
-    const onceWrapper: EventListener = async (...args: any[]) => {
+    const onceWrapper: EventListener = async (...args: unknown[]) => {
       this.off(event, onceWrapper as TEvents[K]);
       await Promise.resolve((listener as EventListener)(...args));
     };
@@ -107,7 +107,7 @@ export class AsyncEventEmitter<TEvents extends EventMap = EventMap> {
     const promises: Promise<void>[] = [];
     for (const listener of eventListeners) {
       try {
-        const result = listener(...(args as any[]));
+        const result = listener(...(args as unknown[]));
         // Wrap both sync and async results in Promise.resolve
         promises.push(Promise.resolve(result));
       } catch (error) {

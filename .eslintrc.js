@@ -34,4 +34,21 @@ module.exports = {
     ],
     'no-console': ['warn', { allow: ['warn', 'error'] }],
   },
+  overrides: [
+    {
+      // Allow any types and console statements in test files
+      files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx', '**/__tests__/**'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+        'no-console': 'off',
+      },
+    },
+    {
+      // Allow console statements in landing package
+      files: ['packages/landing/**/*.{ts,tsx,js,jsx}'],
+      rules: {
+        'no-console': 'off',
+      },
+    },
+  ],
 };

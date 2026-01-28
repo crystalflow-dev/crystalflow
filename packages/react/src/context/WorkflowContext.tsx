@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Workflow } from '@reactflo/core';
-import type { WorkflowData } from '@reactflo/types';
+import { Workflow, Node } from '@reactflo/core';
+import type { WorkflowData, ExecutionResult } from '@reactflo/types';
 
 /**
  * Workflow context state
@@ -19,7 +19,7 @@ export interface WorkflowContextState {
   /**
    * Add node to workflow
    */
-  addNode: (nodeClass: any, options?: any) => string;
+  addNode: (nodeType: string, options?: { position?: { x: number; y: number } }) => string;
 
   /**
    * Remove node from workflow
@@ -29,7 +29,7 @@ export interface WorkflowContextState {
   /**
    * Update node data
    */
-  updateNode: (nodeId: string, data: any) => void;
+  updateNode: (nodeId: string, data: Partial<Node>) => void;
 
   /**
    * Connect two nodes
@@ -49,7 +49,7 @@ export interface WorkflowContextState {
   /**
    * Execute workflow
    */
-  executeWorkflow: () => Promise<any>;
+  executeWorkflow: () => Promise<ExecutionResult>;
 
   /**
    * Clear workflow
@@ -99,12 +99,11 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
   const [workflow, setWorkflow] = useState<Workflow | null>(initialWorkflow || null);
 
   const addNode = useCallback(
-    (nodeClass: any, options?: any): string => {
-      // TODO: Implement addNode
+    (nodeType: string, options?: { position?: { x: number; y: number } }): string => {
       if (!workflow) {
         throw new Error('No workflow instance');
       }
-      const node = workflow.addNode(nodeClass, options);
+      const node = workflow.addNode(nodeType, options);
       return node.id;
     },
     [workflow]
@@ -112,7 +111,6 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
 
   const removeNode = useCallback(
     (nodeId: string) => {
-      // TODO: Implement removeNode
       if (!workflow) {
         throw new Error('No workflow instance');
       }
@@ -122,8 +120,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
   );
 
   const updateNode = useCallback(
-    (nodeId: string, data: any) => {
-      // TODO: Implement updateNode
+    (nodeId: string, data: Partial<Node>) => {
       if (!workflow) {
         throw new Error('No workflow instance');
       }
@@ -137,7 +134,6 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
 
   const connectNodes = useCallback(
     (sourceNodeId: string, sourcePort: string, targetNodeId: string, targetPort: string) => {
-      // TODO: Implement connectNodes
       if (!workflow) {
         throw new Error('No workflow instance');
       }
@@ -148,7 +144,6 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
 
   const disconnectNodes = useCallback(
     (connectionId: string) => {
-      // TODO: Implement disconnectNodes
       if (!workflow) {
         throw new Error('No workflow instance');
       }
@@ -158,7 +153,6 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
   );
 
   const executeWorkflow = useCallback(async () => {
-    // TODO: Implement executeWorkflow
     if (!workflow) {
       throw new Error('No workflow instance');
     }
@@ -166,12 +160,10 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
   }, [workflow]);
 
   const clearWorkflow = useCallback(() => {
-    // TODO: Implement clearWorkflow
     setWorkflow(null);
   }, []);
 
   const exportWorkflow = useCallback((): WorkflowData | null => {
-    // TODO: Implement exportWorkflow
     if (!workflow) {
       return null;
     }
@@ -179,7 +171,6 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
   }, [workflow]);
 
   const importWorkflow = useCallback((json: WorkflowData) => {
-    // TODO: Implement importWorkflow
     const newWorkflow = Workflow.fromJSON(json);
     setWorkflow(newWorkflow);
   }, []);

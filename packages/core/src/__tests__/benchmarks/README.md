@@ -12,17 +12,20 @@ These benchmarks serve two critical purposes:
 ## Running Benchmarks
 
 ### Run all benchmarks:
+
 ```bash
 cd packages/core
 npm run test:benchmark
 ```
 
 ### Run from project root:
+
 ```bash
 npm run test:benchmark -w @reactflo/core
 ```
 
 ### Run specific scenario:
+
 ```bash
 npm test -- --testPathPatterns=benchmarks --testNamePattern="Linear Fast"
 ```
@@ -30,46 +33,55 @@ npm test -- --testPathPatterns=benchmarks --testNamePattern="Linear Fast"
 ## Benchmark Scenarios
 
 ### Scenario 1: Linear Fast Nodes
+
 - **Purpose**: Test basic execution overhead with minimal computation
 - **Configurations**: 10, 50, 100 nodes
 - **Expected**: Very low overhead, should scale linearly
 
 ### Scenario 2: Linear Medium Nodes
+
 - **Purpose**: Test execution with moderate computation
 - **Configurations**: 20 nodes
 - **Expected**: Node computation should dominate, minimal executor overhead
 
 ### Scenario 3: Linear Slow Nodes
+
 - **Purpose**: Test execution with heavy computation
 - **Configurations**: 10 nodes
 - **Expected**: Node computation dominates completely
 
 ### Scenario 4: Fan-Out Pattern
+
 - **Purpose**: Test execution with multiple independent branches
 - **Configurations**: 10, 50 branches
 - **Expected**: All branches execute sequentially in current implementation
 
 ### Scenario 5: Diamond Pattern
+
 - **Purpose**: Test execution with branching and merging
 - **Configurations**: 5 middle nodes
 - **Expected**: Tests data propagation through multiple paths
 
 ### Scenario 6: Complex Graph
+
 - **Purpose**: Realistic complex workflow structure
 - **Configurations**: 50 nodes with mixed connections
 - **Expected**: Tests topological sort and data flow efficiency
 
 ### Scenario 7: Async Operations
+
 - **Purpose**: Test execution with async nodes (simulating I/O)
 - **Configurations**: 20 async nodes
 - **Expected**: Should handle promises efficiently
 
 ### Scenario 8: Event System Overhead
+
 - **Purpose**: Measure overhead of event system with listeners
 - **Configurations**: 20 nodes with 4 event listeners
 - **Expected**: Async event handling should have minimal overhead
 
 ### Scenario 9: Validation Overhead
+
 - **Purpose**: Measure workflow validation performance
 - **Configurations**: 100 nodes complex graph
 - **Expected**: Cycle detection should be fast even on large graphs
@@ -77,6 +89,7 @@ npm test -- --testPathPatterns=benchmarks --testNamePattern="Linear Fast"
 ## Interpreting Results
 
 Each benchmark reports:
+
 - **Average**: Mean execution time (most important metric)
 - **Median**: Middle value (less affected by outliers)
 - **Min/Max**: Best and worst case times
@@ -85,26 +98,27 @@ Each benchmark reports:
 
 ### Expected Performance Ranges (Current Implementation)
 
-| Scenario | Expected Average | Notes |
-|----------|------------------|-------|
-| 10 Fast Nodes | < 10ms | Mostly executor overhead |
-| 50 Fast Nodes | < 50ms | Should scale linearly |
-| 100 Fast Nodes | < 100ms | Should scale linearly |
-| 20 Medium Nodes | < 50ms | Node computation dominates |
-| 10 Slow Nodes | < 500ms | Heavy computation |
-| Fan-Out 10 | < 100ms | Sequential execution |
-| Fan-Out 50 | < 200ms | Sequential execution |
-| Diamond 5 | < 50ms | Data propagation test |
-| Complex 50 | < 200ms | Realistic workload |
-| 20 Async Nodes | < 100ms | ~20ms + overhead |
-| Events 20 | < 50ms | Event overhead minimal |
-| Validation 100 | < 10ms | Graph algorithms efficient |
+| Scenario        | Expected Average | Notes                      |
+| --------------- | ---------------- | -------------------------- |
+| 10 Fast Nodes   | < 10ms           | Mostly executor overhead   |
+| 50 Fast Nodes   | < 50ms           | Should scale linearly      |
+| 100 Fast Nodes  | < 100ms          | Should scale linearly      |
+| 20 Medium Nodes | < 50ms           | Node computation dominates |
+| 10 Slow Nodes   | < 500ms          | Heavy computation          |
+| Fan-Out 10      | < 100ms          | Sequential execution       |
+| Fan-Out 50      | < 200ms          | Sequential execution       |
+| Diamond 5       | < 50ms           | Data propagation test      |
+| Complex 50      | < 200ms          | Realistic workload         |
+| 20 Async Nodes  | < 100ms          | ~20ms + overhead           |
+| Events 20       | < 50ms           | Event overhead minimal     |
+| Validation 100  | < 10ms           | Graph algorithms efficient |
 
 ## Comparison Methodology
 
 After implementing the execution plan architecture:
 
 1. **Run Current Benchmarks**:
+
    ```bash
    npm run test:benchmark > benchmarks-current.txt
    ```
@@ -112,6 +126,7 @@ After implementing the execution plan architecture:
 2. **Implement Execution Plan Architecture** (Phase 1)
 
 3. **Run New Benchmarks**:
+
    ```bash
    npm run test:benchmark > benchmarks-plan.txt
    ```
@@ -124,6 +139,7 @@ After implementing the execution plan architecture:
 ### Acceptance Criteria
 
 The execution plan implementation should:
+
 - ✅ **No scenario regresses** by more than 20%
 - ✅ **Average across all scenarios** within ±10%
 - ✅ **Complex scenarios** (50+ nodes) maintain performance
@@ -137,7 +153,6 @@ If benchmarks show regressions:
 1. **Plan Building**: Check if building the plan is expensive
    - Profile `ExecutionPlanBuilder.build()`
    - Consider caching plans for static workflows
-   
 2. **Step Execution**: Check step dispatch overhead
    - Profile `executeStep()` dispatch logic
    - Consider optimizing step type checks
@@ -170,6 +185,7 @@ These custom nodes are used for benchmarking:
 ## Future Benchmarks
 
 After control flow implementation, add:
+
 - **Conditional branches**: If/else execution paths
 - **Loop iterations**: For/while loop performance
 - **Parallel execution**: Concurrent branch execution

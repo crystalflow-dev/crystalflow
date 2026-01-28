@@ -1,14 +1,14 @@
 import { useState, useCallback } from 'react';
-import { Executor } from '@reactflo/core';
-import type { Workflow } from '@reactflo/core';
-import type { ExecutionResult } from '@reactflo/types';
+import { Executor, Node } from '@reactflo/core';
+import type { Workflow, ExecutionContext } from '@reactflo/core';
+import type { ExecutionResult, NodeExecutionResult } from '@reactflo/types';
 
 /**
  * Execution options
  */
 export interface ExecutionOptions {
   timeout?: number;
-  variables?: Record<string, any>;
+  variables?: Record<string, unknown>;
   signal?: AbortSignal;
 }
 
@@ -26,10 +26,10 @@ export interface ExecutionOptions {
  * ```
  */
 export const useExecution = (eventHandlers?: {
-  onBeforeExecute?: (context: any) => void;
+  onBeforeExecute?: (context: ExecutionContext) => void;
   onAfterExecute?: (result: ExecutionResult) => void;
-  onNodeStart?: (nodeId: string, node: any) => void;
-  onNodeComplete?: (nodeId: string, result: any) => void;
+  onNodeStart?: (nodeId: string, node: Node) => void;
+  onNodeComplete?: (nodeId: string, result: NodeExecutionResult) => void;
   onNodeError?: (nodeId: string, error: Error) => void;
   onError?: (error: Error) => void;
 }) => {

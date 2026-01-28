@@ -22,8 +22,6 @@ export function cn(...classes: (string | undefined | null | false)[]): string {
  * mergeStyles({ color: 'red' }, { fontSize: 14 }) // { color: 'red', fontSize: 14 }
  * mergeStyles({ color: 'red' }, { color: 'blue' }) // { color: 'blue' }
  */
-export function mergeStyles(
-  ...styles: (React.CSSProperties | undefined)[]
-): React.CSSProperties {
+export function mergeStyles(...styles: (React.CSSProperties | undefined)[]): React.CSSProperties {
   return Object.assign({}, ...styles.filter(Boolean));
 }

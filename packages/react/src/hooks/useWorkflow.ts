@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { Workflow } from '@reactflo/core';
-import type { WorkflowData } from '@reactflo/types';
+import { Workflow, Node } from '@reactflo/core';
+import type { WorkflowData, ExecutionResult, ExecutionOptions } from '@reactflo/types';
 
 /**
  * Hook for managing workflow state
@@ -21,7 +21,7 @@ import type { WorkflowData } from '@reactflo/types';
 export const useWorkflow = (initialWorkflow?: Workflow) => {
   const [workflow, setWorkflow] = useState<Workflow | null>(initialWorkflow || null);
   const [isExecuting, setIsExecuting] = useState(false);
-  const [executionResult, setExecutionResult] = useState<any>(null);
+  const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
   const createWorkflow = useCallback(() => {
@@ -31,13 +31,13 @@ export const useWorkflow = (initialWorkflow?: Workflow) => {
   }, []);
 
   const addNode = useCallback(
-    (nodeClass: any, options?: any): string => {
+    (nodeType: string, options?: { position?: { x: number; y: number } }): string => {
       if (!workflow) {
         const newWorkflow = createWorkflow();
-        const node = newWorkflow.addNode(nodeClass, options);
+        const node = newWorkflow.addNode(nodeType, options);
         return node.id;
       }
-      const node = workflow.addNode(nodeClass, options);
+      const node = workflow.addNode(nodeType, options);
       return node.id;
     },
     [workflow, createWorkflow]
@@ -52,7 +52,7 @@ export const useWorkflow = (initialWorkflow?: Workflow) => {
   );
 
   const updateNode = useCallback(
-    (nodeId: string, data: any) => {
+    (nodeId: string, data: Partial<Node>) => {
       if (!workflow) return;
       const node = workflow.getNode(nodeId);
       if (node) {
@@ -79,7 +79,7 @@ export const useWorkflow = (initialWorkflow?: Workflow) => {
   );
 
   const execute = useCallback(
-    async (options?: any) => {
+    async (options?: ExecutionOptions) => {
       if (!workflow) {
         throw new Error('No workflow to execute');
       }

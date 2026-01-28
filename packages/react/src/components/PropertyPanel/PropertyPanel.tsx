@@ -193,7 +193,13 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
           </div>
         )}
         {data.description && (
-          <div style={{ marginTop: '8px', fontSize: '12px', color: 'var(--reactflo-text-secondary, #666)' }}>
+          <div
+            style={{
+              marginTop: '8px',
+              fontSize: '12px',
+              color: 'var(--reactflo-text-secondary, #666)',
+            }}
+          >
             {data.description}
           </div>
         )}
@@ -302,7 +308,13 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
               )}
 
               {propDef.description && (
-                <div style={{ fontSize: '11px', color: 'var(--reactflo-text-secondary, #666)', marginTop: '2px' }}>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: 'var(--reactflo-text-secondary, #666)',
+                    marginTop: '2px',
+                  }}
+                >
                   {propDef.description}
                 </div>
               )}
@@ -327,9 +339,17 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
               }}
             >
               <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{port.label || key}</div>
-              <div style={{ fontSize: '11px', color: 'var(--reactflo-text-secondary, #666)' }}>Type: {port.type}</div>
+              <div style={{ fontSize: '11px', color: 'var(--reactflo-text-secondary, #666)' }}>
+                Type: {port.type}
+              </div>
               {port.description && (
-                <div style={{ fontSize: '11px', color: 'var(--reactflo-text-secondary, #666)', marginTop: '2px' }}>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: 'var(--reactflo-text-secondary, #666)',
+                    marginTop: '2px',
+                  }}
+                >
                   {port.description}
                 </div>
               )}

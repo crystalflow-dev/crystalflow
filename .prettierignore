@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.d.ts
+.next/
+out/
+
+# Coverage
+coverage/
+
+# Cache
+.eslintcache
+
+# Lock files
+package-lock.json

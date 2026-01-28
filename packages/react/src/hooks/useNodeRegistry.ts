@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { NodeRegistry } from '@reactflo/core';
+import { NodeConstructor, NodeRegistry } from '@reactflo/core';
 import type { NodeMetadata, NodeDefinition } from '@reactflo/types';
 
 /**
@@ -12,12 +12,12 @@ import type { NodeMetadata, NodeDefinition } from '@reactflo/types';
  * const { registry, nodes, register } = useNodeRegistry();
  * ```
  */
-export const useNodeRegistry = (nodeClasses?: any[]) => {
+export const useNodeRegistry = (nodeClasses?: NodeConstructor[]) => {
   const [registry] = useState(() => NodeRegistry.getInstance());
   const [nodes, setNodes] = useState<NodeDefinition[]>([]);
 
   const register = useCallback(
-    (nodeClass: any) => {
+    (nodeClass: NodeConstructor) => {
       registry.register(nodeClass);
       // Refresh nodes list
       setNodes(registry.getAllDefinitions());
@@ -47,7 +47,7 @@ export const useNodeRegistry = (nodeClasses?: any[]) => {
   );
 
   const getNodeClass = useCallback(
-    (nodeType: string): any => {
+    (nodeType: string): NodeConstructor | undefined => {
       return registry.get(nodeType);
     },
     [registry]

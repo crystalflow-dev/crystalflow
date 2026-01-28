@@ -58,7 +58,7 @@ export interface NodePaletteProps {
   /**
    * Custom renderer for palette items
    * Allows complete control over how nodes appear in the palette
-   * 
+   *
    * @example
    * ```tsx
    * renderPaletteItem={(item) => (
@@ -243,14 +243,10 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       ))}
 
       {filteredNodes.length === 0 && (
-        <div
-          className={classes?.empty}
-          style={mergeStyles(defaultEmptyStyle, styles?.empty)}
-        >
+        <div className={classes?.empty} style={mergeStyles(defaultEmptyStyle, styles?.empty)}>
           No nodes found
         </div>
       )}
     </div>
   );
 };
-
