@@ -230,7 +230,7 @@ describe('ExecutionContext', () => {
       const endTime = Date.now();
       const expectedDuration = endTime - startTime;
 
-      expect(context.duration).toBeGreaterThanOrEqual(50);
+      expect(context.duration).toBeGreaterThanOrEqual(40); // Allow 10ms margin for timer precision
       expect(context.duration).toBeLessThanOrEqual(expectedDuration + 50); // Allow some margin
     });
 
