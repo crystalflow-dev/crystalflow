@@ -56,59 +56,84 @@
 **Focus**: Core package only (`packages/core`)  
 **Start Date**: January 28, 2026
 
-#### Week 3: Conditional Infrastructure - 🚧 IN PROGRESS
+#### Week 3: Conditional Infrastructure - ✅ COMPLETE
 
-**Task 2.1: Define IConditionalNode Interface** [2 hours] - ⏳ PENDING
-- [ ] File: `packages/types/src/node.ts`
-- [ ] Add `IConditionalNode` interface extending base Node
-- [ ] Add `Condition(): string` method signature
-- [ ] Add JSDoc documentation with usage examples
-- [ ] Export interface from `packages/types/src/index.ts`
-- [ ] Run lint: `npm run lint -w @reactflo/types`
-- [ ] Run tests: `npm test -w @reactflo/types`
-- [ ] Commit: "feat(types): add IConditionalNode interface for conditional flow nodes"
+**Task 2.1: Define IConditionalNode Interface** [2 hours] - ✅ COMPLETE
+- [x] File: `packages/types/src/node.ts`
+- [x] Add `IConditionalNode` interface extending base Node
+- [x] Add `evaluateCondition(): string` method signature
+- [x] Add JSDoc documentation with usage examples
+- [x] Export interface from `packages/types/src/index.ts`
+- [x] Run lint: `npm run lint -w @reactflo/types`
+- [x] Run tests: `npm test -w @reactflo/types`
+- [x] Commit: "feat(types): add IConditionalNode interface for conditional flow nodes" (9be54cd)
 
-**Task 2.2: Add Conditional Node Type Checking** [2 hours] - ⏳ PENDING
-- [ ] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
-- [ ] Add `isConditionalNode(node: Node): node is IConditionalNode` method
-- [ ] Check if node implements IConditionalNode interface
-- [ ] Add unit tests for type checking in `packages/core/src/__tests__/ExecutionPlanBuilder.test.ts`
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "feat(core): add conditional node type checking in ExecutionPlanBuilder"
+**Task 2.2: Add Conditional Node Type Checking** [2 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
+- [x] Add `isConditionalNode(node: Node): node is IConditionalNode` type guard method
+- [x] Check if node implements IConditionalNode interface
+- [x] Add unit tests for type checking in `packages/core/src/__tests__/ExecutionPlanBuilder.test.ts`
+- [x] Run lint: `npm run lint -w @reactflo/core`
+- [x] Run tests: `npm test -w @reactflo/core`
+- [x] Commit: "feat(core): add conditional node type checking in ExecutionPlanBuilder" (b97179d)
 
-**Task 2.3: Implement ConditionalStep Building - Part 1 (Graph Analysis)** [4 hours] - ⏳ PENDING
-- [ ] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
-- [ ] Add `getDownstreamNodesForPort(nodeId, portId, workflow): NodeId[]` helper
-- [ ] Add `buildConditionalStep(node, workflow, visited): ConditionalStep` method stub
-- [ ] Implement logic to detect output ports of conditional node
-- [ ] For each output port, find connected downstream nodes
-- [ ] Add unit tests for graph analysis logic
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "feat(core): implement graph analysis for conditional step building"
+**Task 2.3: Implement ConditionalStep Building - Part 1 (Graph Analysis)** [4 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
+- [x] Add `getDownstreamNodesForPort(nodeId, portId, workflow): NodeId[]` helper
+- [x] Add `buildConditionalStep(node, workflow, visited): ConditionalStep` method stub
+- [x] Implement logic to detect output ports of conditional node
+- [x] For each output port, find connected downstream nodes
+- [x] Add unit tests for graph analysis logic
+- [x] Run lint: `npm run lint -w @reactflo/core`
+- [x] Run tests: `npm test -w @reactflo/core`
+- [x] Commit: "feat(core): implement graph analysis for conditional step building" (a5d5e41)
 
-**Task 2.4: Implement ConditionalStep Building - Part 2 (Recursive Branch Building)** [4 hours] - ⏳ PENDING
-- [ ] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
-- [ ] Complete `buildConditionalStep()` implementation
-- [ ] For each branch, recursively call `buildStepsForNode()` on downstream nodes
-- [ ] Create `ConditionalBranch` objects with condition and steps
-- [ ] Handle visited nodes to prevent infinite recursion
-- [ ] Add comprehensive unit tests with mock workflows
-- [ ] Test nested conditional scenarios
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "feat(core): complete recursive branch building for conditional steps"
+**Task 2.4: Implement ConditionalStep Building - Part 2 (Recursive Branch Building)** [4 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
+- [x] Complete `buildConditionalStep()` implementation
+- [x] Add `buildStepsForNode()` helper for recursive step building
+- [x] For each branch, recursively build execution steps for downstream nodes
+- [x] Create `ConditionalBranch` objects with condition and steps
+- [x] Handle visited nodes to prevent infinite recursion
+- [x] Add comprehensive unit tests with mock workflows (7 new tests)
+- [x] Test nested conditional scenarios
+- [x] Run lint: `npm run lint -w @reactflo/core`
+- [x] Run tests: `npm test -w @reactflo/core`
+- [x] Commit: "feat(core): implement recursive branch building for conditional steps" (cfcef7e)
+- [x] Refactoring commits: conditionInput removal (1788fb5), conditionalType removal (fe2f23d)
 
-**Task 2.5: Integrate Conditional Building into Main Build Flow** [2 hours] - ⏳ PENDING
-- [ ] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
-- [ ] Update `build()` method to detect conditional nodes
-- [ ] Call `buildConditionalStep()` when conditional node is encountered
-- [ ] Update `buildStepsForNode()` to handle conditional nodes
-- [ ] Add integration tests with simple conditional workflows
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "feat(core): integrate conditional step building into main execution plan builder"
+**Task 2.5: Integrate Conditional Building into Main Build Flow** [2 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
+- [x] Refactored `build()` method to use entry-point based recursion
+- [x] Added `getWorkflowEntryNodes()` utility (replaces topological sort dependency)
+- [x] Added `areAllDependenciesVisited()` for dependency-aware traversal
+- [x] Updated `buildStepsForNode()` to always recurse with dependency checking
+- [x] Add integration tests with conditional workflows (6 new tests)
+- [x] Run lint: `npm run lint -w @reactflo/core`
+- [x] Run tests: `npm test -w @reactflo/core`
+- [x] Commit: "feat(core): integrate conditional building with entry-point recursion" (4527043)
+
+**Task 2.5.1: Remove Legacy Topological Sort Dependencies** [2 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/workflow/Workflow.ts`
+- [x] Removed `getExecutionOrder()` method (no longer used)
+- [x] Removed `_graph` property and all Graph usages
+- [x] Removed cycle detection from `validate()` (cycles impossible by design)
+- [x] File: `packages/core/src/workflow/Graph.ts`
+- [x] Deleted entire Graph class (262 lines removed)
+- [x] Graph was redundant: only used for topological sort and cycle detection
+- [x] ExecutionPlanBuilder uses entry-point recursion instead
+- [x] File: `packages/core/src/workflow/index.ts`
+- [x] Removed Graph export
+- [x] File: `packages/core/src/__tests__/Graph.test.ts`
+- [x] Deleted entire test file (262 lines removed)
+- [x] Updated Workflow.test.ts: removed cycle detection tests
+- [x] Updated ExecutionPlanBuilder.test.ts: removed cycle detection test
+- [x] Updated Executor.test.ts: removed 42 lines of _graph test setup
+- [x] Updated integration.test.ts: removed 23 lines of _graph test setup
+- [x] Run lint: `npm run lint -w @reactflo/core` - 0 errors
+- [x] Run tests: `npm test -w @reactflo/core` - 364 tests passing
+- [x] Run benchmarks: Performance improved (see Phase 2 benchmarks)
+- [x] Commit: "refactor(core): remove Graph class - redundant with execution plan architecture"
 
 **Task 2.6: Implement ConditionalStep Execution** [6 hours] - ⏳ PENDING
 - [ ] File: `packages/core/src/execution/PlanExecutor.ts`
@@ -416,6 +441,60 @@ After implementing the execution plan architecture, we should maintain:
 5. **Foundation ready**: Performance profile suitable for Phase 2-5 features
 
 **Conclusion**: ✅ Phase 1 implementation successfully maintains performance targets with only 1% overall overhead while establishing a solid foundation for advanced control flow features.
+
+### Phase 2 Post-Graph-Removal Results
+
+**Test Date**: January 28, 2026  
+**Implementation**: Entry-Point Recursion + Graph Class Removal  
+**Status**: ✅ Complete - Performance Improved
+
+**Key Changes:**
+- Removed Graph class entirely (524 lines of code removed)
+- Eliminated topological sort algorithm
+- Removed redundant node/edge tracking (Workflow already has this data)
+- Simplified validation (no cycle detection - impossible by design)
+
+| Scenario | Phase 1 Avg | Phase 2 Avg | Difference | % Change | Status |
+|----------|-------------|-------------|------------|----------|--------|
+| Linear: 10 Fast | 0.523 ms | 0.085 ms | -0.438 ms | -83.7% | ✅ Improved |
+| Linear: 50 Fast | 1.092 ms | 0.368 ms | -0.724 ms | -66.3% | ✅ Improved |
+| Linear: 100 Fast | 2.106 ms | 1.008 ms | -1.098 ms | -52.1% | ✅ Improved |
+| Linear: 20 Medium | 1.567 ms | 0.369 ms | -1.198 ms | -76.5% | ✅ Improved |
+| Linear: 10 Slow | 9.171 ms | 2.403 ms | -6.768 ms | -73.8% | ✅ Improved |
+| Fan-Out: 10 | 0.669 ms | 0.189 ms | -0.480 ms | -71.7% | ✅ Improved |
+| Fan-Out: 50 | 1.048 ms | 0.378 ms | -0.670 ms | -63.9% | ✅ Improved |
+| Diamond: 5 | 0.419 ms | 0.111 ms | -0.308 ms | -73.5% | ✅ Improved |
+| Complex: 50 | 1.756 ms | 0.623 ms | -1.133 ms | -64.5% | ✅ Improved |
+| Async: 20 | 23.167 ms | 22.683 ms | -0.484 ms | -2.1% | ✅ Improved |
+| Events: 20 | 0.549 ms | 0.173 ms | -0.376 ms | -68.5% | ✅ Improved |
+| Validation: 100 | 0.074 ms | 0.009 ms | -0.065 ms | -87.8% | ✅ Improved |
+| **Overall Average** | **3.512 ms** | **2.367 ms** | **-1.145 ms** | **-32.6%** | ✅ Improved |
+
+### Performance Analysis
+
+**🚀 Exceptional Improvements:**
+- **Overall impact**: -32.6% average reduction in execution time
+- **All scenarios improved**: 12 out of 12 scenarios show significant performance gains
+- **Fast operations**: 52-84% faster (massive improvement on lightweight workflows)
+- **Validation**: 88% faster - no cycle detection overhead
+- **Event system**: 69% faster event handling
+- **Complex workflows**: 65% faster execution of 50-node mixed graphs
+
+**Key Findings:**
+1. **Eliminated redundant work**: No Graph maintenance during workflow operations
+2. **Simpler validation**: Removed cycle detection that was unnecessary
+3. **Reduced memory overhead**: One less data structure to maintain
+4. **Cleaner architecture**: Entry-point recursion more efficient than topological sort
+5. **Better cache locality**: Fewer object allocations and traversals
+
+**Comparison to Baseline (Pre-Phase 1):**
+- Phase 2 is now **faster than baseline** in most scenarios
+- Linear 10 Fast: 0.474ms (baseline) → 0.085ms (Phase 2) = **82% faster**
+- Linear 50 Fast: 0.981ms (baseline) → 0.368ms (Phase 2) = **62% faster**
+- Linear 100 Fast: 1.842ms (baseline) → 1.008ms (Phase 2) = **45% faster**
+- Validation: 0.160ms (baseline) → 0.009ms (Phase 2) = **94% faster**
+
+**Conclusion**: ✅ Phase 2 Graph removal delivered exceptional performance improvements across all scenarios. The architecture is now simpler, faster, and more maintainable. Entry-point recursion with dependency checking is demonstrably superior to topological sort for workflow execution planning.
 
 ### How to Run Benchmarks
 

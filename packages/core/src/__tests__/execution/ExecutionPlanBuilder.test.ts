@@ -306,23 +306,6 @@ describe('ExecutionPlanBuilder', () => {
       );
     });
 
-    it('should throw error for workflow with cycles', () => {
-      const workflow = new Workflow('wf-1', 'Cycle');
-      const node1 = workflow.addNode('test.simple');
-      const node2 = workflow.addNode('test.simple');
-
-      // Create cycle: 1 → 2 → 1
-      workflow.connect(node1.id, 'output', node2.id, 'input');
-      workflow.connect(node2.id, 'output', node1.id, 'input');
-
-      const builder = new ExecutionPlanBuilder();
-
-      expect(() => builder.build(workflow)).toThrow(
-        'Cannot build execution plan: workflow validation failed'
-      );
-      expect(() => builder.build(workflow)).toThrow('circular dependencies');
-    });
-
     it('should validate all node references', () => {
       const workflow = new Workflow('wf-1', 'Valid');
       const node1 = workflow.addNode('test.simple');

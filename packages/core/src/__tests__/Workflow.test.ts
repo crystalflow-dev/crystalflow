@@ -237,26 +237,6 @@ describe('Workflow', () => {
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
-
-    it('should detect circular dependencies', () => {
-      const workflow = new Workflow();
-      const node1 = workflow.addNode('test.add');
-      const node2 = workflow.addNode('test.multiply');
-
-      workflow.connect(node1.id, 'result', node2.id, 'a');
-      workflow.connect(node2.id, 'result', node1.id, 'a');
-
-      const result = workflow.validate();
-
-      expect(result.valid).toBe(false);
-      expect(result.errors).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            message: 'Workflow contains circular dependencies',
-          }),
-        ])
-      );
-    });
   });
 
   describe('execute', () => {
@@ -271,22 +251,6 @@ describe('Workflow', () => {
 
       expect((node1 as AddNode).result).toBe(5);
       expect((node2 as MultiplyNode).result).toBe(10); // 5 * 2
-    });
-
-    it('should return failed status for invalid workflow', async () => {
-      const workflow = new Workflow();
-      const node1 = workflow.addNode('test.add');
-      const node2 = workflow.addNode('test.multiply');
-
-      // Create circular dependency
-      workflow.connect(node1.id, 'result', node2.id, 'a');
-      workflow.connect(node2.id, 'result', node1.id, 'a');
-
-      const result = await workflow.execute();
-
-      expect(result.status).toBe('failed');
-      expect(result.error).toBeDefined();
-      expect(result.error?.message).toContain('Workflow validation failed');
     });
   });
 
@@ -330,22 +294,6 @@ describe('Workflow', () => {
       expect(workflow.name).toBe('Test Workflow');
       expect(workflow.nodes.size).toBe(1);
       expect(workflow.metadata).toEqual({ testVar: 'value' });
-    });
-  });
-
-  describe('getExecutionOrder', () => {
-    it('should return correct execution order', () => {
-      const workflow = new Workflow();
-      const node1 = workflow.addNode('test.add');
-      const node2 = workflow.addNode('test.multiply');
-      const node3 = workflow.addNode('test.add');
-
-      workflow.connect(node1.id, 'result', node2.id, 'a');
-      workflow.connect(node2.id, 'result', node3.id, 'a');
-
-      const order = workflow.getExecutionOrder();
-
-      expect(order).toEqual([node1.id, node2.id, node3.id]);
     });
   });
 

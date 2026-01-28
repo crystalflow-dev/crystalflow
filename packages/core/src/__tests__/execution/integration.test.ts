@@ -152,11 +152,6 @@ describe('Integration Tests - Workflow Execution', () => {
       workflow['_nodes'].set('multiply', multiply);
       workflow['_nodes'].set('format', format);
 
-      workflow['_graph'].addNode('input');
-      workflow['_graph'].addNode('add');
-      workflow['_graph'].addNode('multiply');
-      workflow['_graph'].addNode('format');
-
       workflow.connect('input', 'output', 'add', 'a');
       workflow.connect('add', 'sum', 'multiply', 'a');
       workflow.connect('multiply', 'product', 'format', 'number');
@@ -198,11 +193,6 @@ describe('Integration Tests - Workflow Execution', () => {
       workflow['_nodes'].set('add', add);
       workflow['_nodes'].set('multiply', multiply);
       workflow['_nodes'].set('divide', divide);
-
-      workflow['_graph'].addNode('input');
-      workflow['_graph'].addNode('add');
-      workflow['_graph'].addNode('multiply');
-      workflow['_graph'].addNode('divide');
 
       workflow.connect('input', 'output', 'add', 'a');
       workflow.connect('input', 'output', 'multiply', 'a');
@@ -249,12 +239,6 @@ describe('Integration Tests - Workflow Execution', () => {
       workflow['_nodes'].set('multiply', multiply);
       workflow['_nodes'].set('divide', divide);
 
-      workflow['_graph'].addNode('input1');
-      workflow['_graph'].addNode('input2');
-      workflow['_graph'].addNode('add');
-      workflow['_graph'].addNode('multiply');
-      workflow['_graph'].addNode('divide');
-
       workflow.connect('input1', 'output', 'add', 'a');
       workflow.connect('input2', 'output', 'add', 'b');
       workflow.connect('input2', 'output', 'multiply', 'a');
@@ -290,10 +274,6 @@ describe('Integration Tests - Workflow Execution', () => {
       workflow['_nodes'].set('divide', divide);
       workflow['_nodes'].set('format', format);
 
-      workflow['_graph'].addNode('input');
-      workflow['_graph'].addNode('divide');
-      workflow['_graph'].addNode('format');
-
       workflow.connect('input', 'output', 'divide', 'dividend');
       workflow.connect('divide', 'quotient', 'format', 'number');
 
@@ -322,8 +302,6 @@ describe('Integration Tests - Workflow Execution', () => {
 
       workflow['_nodes'].set('input', input);
       workflow['_nodes'].set('add', add);
-      workflow['_graph'].addNode('input');
-      workflow['_graph'].addNode('add');
 
       workflow.connect('input', 'output', 'add', 'a');
 
@@ -352,7 +330,6 @@ describe('Integration Tests - Workflow Execution', () => {
       add.b = 10;
 
       workflow['_nodes'].set('add', add);
-      workflow['_graph'].addNode('add');
 
       const result = await workflow.execute({
         variables: {
@@ -377,10 +354,6 @@ describe('Integration Tests - Workflow Execution', () => {
       workflow['_nodes'].set('input', input);
       workflow['_nodes'].set('add', add);
       workflow['_nodes'].set('multiply', multiply);
-
-      workflow['_graph'].addNode('input');
-      workflow['_graph'].addNode('add');
-      workflow['_graph'].addNode('multiply');
 
       workflow.connect('input', 'output', 'add', 'a');
       workflow.connect('add', 'sum', 'multiply', 'a');

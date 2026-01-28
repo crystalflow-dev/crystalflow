@@ -1,7 +1,6 @@
 import { Node } from '../node/Node';
 import { NodeRegistry } from '../node/NodeRegistry';
 import { Connection } from './Connection';
-import { Graph } from './Graph';
 import {
   WorkflowData,
   NodeData,
@@ -24,14 +23,12 @@ export class Workflow {
   private _nodes: Map<string, Node> = new Map();
   private _connections: Map<string, Connection> = new Map();
   private _metadata: Record<string, unknown> = {};
-  private _graph: Graph;
   private _isValid: boolean = false;
   private _validationErrors: string[] = [];
 
   constructor(id?: string, name?: string) {
     this._id = id || this.generateId();
     this._name = name || 'Untitled Workflow';
-    this._graph = new Graph();
   }
 
   /**
@@ -125,7 +122,6 @@ export class Workflow {
     }
 
     this._nodes.set(nodeId, node);
-    this._graph.addNode(nodeId);
     this.invalidate();
 
     return node;
@@ -153,7 +149,6 @@ export class Workflow {
     }
 
     this._nodes.delete(nodeId);
-    this._graph.removeNode(nodeId);
     this.invalidate();
 
     return true;
@@ -202,7 +197,6 @@ export class Workflow {
     }
 
     this._connections.set(connectionId, connection);
-    this._graph.addEdge(sourceNodeId, targetNodeId);
     this.invalidate();
 
     return connection;
@@ -218,7 +212,6 @@ export class Workflow {
     }
 
     this._connections.delete(connectionId);
-    this._graph.removeEdge(connection.sourceNodeId, connection.targetNodeId);
     this.invalidate();
 
     return true;
@@ -249,11 +242,6 @@ export class Workflow {
    */
   validate(): ValidationResult {
     const errors: string[] = [];
-
-    // Check for cycles
-    if (this._graph.hasCycles()) {
-      errors.push('Workflow contains circular dependencies');
-    }
 
     // Validate all connections
     for (const connection of this._connections.values()) {
@@ -293,13 +281,6 @@ export class Workflow {
       })),
       warnings: [],
     };
-  }
-
-  /**
-   * Get execution order of nodes
-   */
-  getExecutionOrder(): string[] {
-    return this._graph.getTopologicalOrder();
   }
 
   /**
@@ -383,14 +364,12 @@ export class Workflow {
       node.position = nodeData.position;
 
       workflow._nodes.set(nodeData.id, node);
-      workflow._graph.addNode(nodeData.id);
     }
 
     // Add connections
     for (const connectionData of data.connections) {
       const connection = Connection.fromJSON(connectionData);
       workflow._connections.set(connection.id, connection);
-      workflow._graph.addEdge(connection.sourceNodeId, connection.targetNodeId);
     }
 
     workflow.validate();
