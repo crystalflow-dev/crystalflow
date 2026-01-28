@@ -1,0 +1,471 @@
+---
+title: "Workflow"
+description: "Workflow class API reference"
+---
+
+The `Workflow` class manages nodes and connections in a workflow.
+
+## Class: Workflow
+
+```typescript
+class Workflow {
+  // Properties
+  id: string;
+  name: string;
+  nodes: Map<NodeId, Node>;
+  graph: Graph;
+  
+  // Methods
+  constructor(id?: string, name?: string);
+  addNode(nodeClass: typeof Node, options?: AddNodeOptions): Node;
+  removeNode(nodeId: string): void;
+  getNode(nodeId: string): Node | undefined;
+  connect(sourceId: string, sourcePort: string, targetId: string, targetPort: string): Connection;
+  disconnect(connectionId: string): void;
+  validate(): ValidationResult;
+  execute(options?: ExecutionOptions): Promise<ExecutionResult>;
+  toJSON(): WorkflowJSON;
+  static fromJSON(json: WorkflowJSON): Workflow;
+}
+```
+
+## Constructor
+
+```typescript
+constructor(id?: string, name?: string);
+```
+
+<ParamField path="id" type="string">
+  Optional unique identifier. Auto-generated if not provided.
+</ParamField>
+
+<ParamField path="name" type="string">
+  Optional workflow name. Defaults to `'Untitled Workflow'`.
+</ParamField>
+
+**Example:**
+
+```typescript
+import { Workflow } from '@reactflo/core';
+
+const workflow = new Workflow();
+// or
+const workflow = new Workflow('workflow-1', 'My Workflow');
+```
+
+## Properties
+
+<ParamField path="id" type="string">
+  Unique workflow identifier.
+</ParamField>
+
+<ParamField path="name" type="string">
+  Workflow name for display.
+</ParamField>
+
+<ParamField path="nodes" type="Map<NodeId, Node>">
+  Map of node IDs to node instances.
+</ParamField>
+
+<ParamField path="graph" type="Graph">
+  Internal graph structure managing connections.
+</ParamField>
+
+## Methods
+
+### addNode()
+
+Add a node to the workflow.
+
+```typescript
+addNode(nodeClass: typeof Node, options?: AddNodeOptions): Node;
+```
+
+<ParamField path="nodeClass" type="typeof Node">
+  Node class constructor (must be registered).
+</ParamField>
+
+<ParamField path="options" type="AddNodeOptions">
+  Optional configuration:
+  - `id?: string` - Custom node ID
+  - `position?: { x: number; y: number }` - Visual position
+  - `data?: Record<string, any>` - Initial property values
+</ParamField>
+
+**Returns:** Created node instance.
+
+**Example:**
+
+```typescript
+import { AddNode } from './nodes/AddNode';
+
+const node = workflow.addNode(AddNode, {
+  id: 'add-1',
+  position: { x: 100, y: 100 },
+  data: { a: 5, b: 3 }
+});
+```
+
+---
+
+### removeNode()
+
+Remove a node from the workflow.
+
+```typescript
+removeNode(nodeId: string): void;
+```
+
+<ParamField path="nodeId" type="string">
+  ID of the node to remove.
+</ParamField>
+
+**Example:**
+
+```typescript
+workflow.removeNode('add-1');
+```
+
+---
+
+### getNode()
+
+Get a node by ID.
+
+```typescript
+getNode(nodeId: string): Node | undefined;
+```
+
+<ParamField path="nodeId" type="string">
+  ID of the node to retrieve.
+</ParamField>
+
+**Returns:** Node instance or `undefined` if not found.
+
+**Example:**
+
+```typescript
+const node = workflow.getNode('add-1');
+if (node) {
+  console.log(node.type);
+}
+```
+
+---
+
+### connect()
+
+Create a connection between two nodes.
+
+```typescript
+connect(
+  sourceId: string,
+  sourcePort: string,
+  targetId: string,
+  targetPort: string
+): Connection;
+```
+
+<ParamField path="sourceId" type="string">
+  Source node ID.
+</ParamField>
+
+<ParamField path="sourcePort" type="string">
+  Output port name on source node.
+</ParamField>
+
+<ParamField path="targetId" type="string">
+  Target node ID.
+</ParamField>
+
+<ParamField path="targetPort" type="string">
+  Input port name on target node.
+</ParamField>
+
+**Returns:** Created `Connection` object.
+
+**Example:**
+
+```typescript
+workflow.connect('add-1', 'result', 'display-1', 'value');
+```
+
+---
+
+### disconnect()
+
+Remove a connection.
+
+```typescript
+disconnect(connectionId: string): void;
+```
+
+<ParamField path="connectionId" type="string">
+  ID of the connection to remove.
+</ParamField>
+
+**Example:**
+
+```typescript
+workflow.disconnect('conn-123');
+```
+
+---
+
+### validate()
+
+Validate the workflow structure.
+
+```typescript
+validate(): ValidationResult;
+```
+
+**Returns:** `ValidationResult` with validation status and errors.
+
+**Checks:**
+- No cycles in the graph
+- All connections are valid
+- All required inputs are connected or have default values
+- All nodes are valid
+
+**Example:**
+
+```typescript
+const result = workflow.validate();
+if (!result.isValid) {
+  console.error('Validation errors:', result.errors);
+}
+```
+
+---
+
+### execute()
+
+Execute the workflow.
+
+```typescript
+execute(options?: ExecutionOptions): Promise<ExecutionResult>;
+```
+
+<ParamField path="options" type="ExecutionOptions">
+  Optional execution configuration:
+  - `timeout?: number` - Maximum execution time (ms)
+  - `variables?: Record<string, any>` - Workflow variables
+  - `abortSignal?: AbortSignal` - Cancellation signal
+</ParamField>
+
+**Returns:** Promise resolving to `ExecutionResult`.
+
+**Example:**
+
+```typescript
+const result = await workflow.execute({
+  timeout: 30000,
+  variables: { apiKey: 'xxx' }
+});
+
+console.log(result.status); // 'success'
+console.log(result.duration); // 1523 (ms)
+```
+
+---
+
+### toJSON()
+
+Serialize workflow to JSON.
+
+```typescript
+toJSON(): WorkflowJSON;
+```
+
+**Returns:** JSON representation of the workflow.
+
+**Example:**
+
+```typescript
+const json = workflow.toJSON();
+console.log(json);
+// {
+//   version: '1.0.0',
+//   id: 'workflow-1',
+//   name: 'My Workflow',
+//   nodes: [...],
+//   connections: [...],
+//   variables: {}
+// }
+```
+
+---
+
+### fromJSON()
+
+Deserialize workflow from JSON.
+
+```typescript
+static fromJSON(json: WorkflowJSON): Workflow;
+```
+
+<ParamField path="json" type="WorkflowJSON">
+  JSON representation of the workflow.
+</ParamField>
+
+**Returns:** New `Workflow` instance.
+
+**Example:**
+
+```typescript
+const json = { version: '1.0.0', id: 'workflow-1', nodes: [...], connections: [...] };
+const workflow = Workflow.fromJSON(json);
+```
+
+## Types
+
+### AddNodeOptions
+
+```typescript
+interface AddNodeOptions {
+  id?: string;
+  position?: { x: number; y: number };
+  data?: Record<string, any>;
+}
+```
+
+### ExecutionOptions
+
+```typescript
+interface ExecutionOptions {
+  timeout?: number;
+  variables?: Record<string, any>;
+  abortSignal?: AbortSignal;
+}
+```
+
+### ExecutionResult
+
+```typescript
+interface ExecutionResult {
+  id: string;
+  workflowId: string;
+  status: 'success' | 'failed' | 'cancelled';
+  startTime: Date;
+  endTime?: Date;
+  duration?: number;
+  nodeResults: Map<string, NodeExecutionResult>;
+  error?: Error;
+  cancellationReason?: CancellationReason;
+  cancelledAt?: Date;
+}
+```
+
+### WorkflowJSON
+
+```typescript
+interface WorkflowJSON {
+  version: string;
+  id: string;
+  name: string;
+  nodes: NodeJSON[];
+  connections: ConnectionJSON[];
+  variables: Record<string, any>;
+}
+```
+
+## Usage Examples
+
+### Basic Workflow
+
+```typescript
+import { Workflow } from '@reactflo/core';
+import { NumberInputNode, AddNode, DisplayNode } from './nodes';
+
+// Create workflow
+const workflow = new Workflow('calc-workflow', 'Calculator');
+
+// Add nodes
+const num1 = workflow.addNode(NumberInputNode, {
+  position: { x: 100, y: 100 },
+  data: { value: 5 }
+});
+
+const num2 = workflow.addNode(NumberInputNode, {
+  position: { x: 100, y: 200 },
+  data: { value: 3 }
+});
+
+const add = workflow.addNode(AddNode, {
+  position: { x: 300, y: 150 }
+});
+
+const display = workflow.addNode(DisplayNode, {
+  position: { x: 500, y: 150 }
+});
+
+// Connect nodes
+workflow.connect(num1.id, 'value', add.id, 'a');
+workflow.connect(num2.id, 'value', add.id, 'b');
+workflow.connect(add.id, 'result', display.id, 'value');
+
+// Execute
+const result = await workflow.execute();
+console.log(result.status); // 'success'
+```
+
+### Save and Load
+
+```typescript
+// Save workflow
+const json = workflow.toJSON();
+const jsonString = JSON.stringify(json, null, 2);
+await fs.writeFile('workflow.json', jsonString);
+
+// Load workflow
+const loaded = JSON.parse(await fs.readFile('workflow.json', 'utf-8'));
+const workflow = Workflow.fromJSON(loaded);
+```
+
+### Validation Before Execute
+
+```typescript
+const validation = workflow.validate();
+
+if (!validation.isValid) {
+  console.error('Workflow is invalid:');
+  validation.errors?.forEach(error => console.error(`- ${error}`));
+  return;
+}
+
+const result = await workflow.execute();
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card
+    title="Workflows Guide"
+    icon="diagram-project"
+    href="/core-concepts/workflows"
+  >
+    Learn workflow concepts
+  </Card>
+  <Card
+    title="Node API"
+    icon="cube"
+    href="/api-reference/core/node"
+  >
+    Node class reference
+  </Card>
+  <Card
+    title="Executor API"
+    icon="bolt"
+    href="/api-reference/core/executor"
+  >
+    Executor class reference
+  </Card>
+  <Card
+    title="JSON Schema"
+    icon="file-code"
+    href="/core-concepts/json-schema"
+  >
+    Workflow JSON format
+  </Card>
+</CardGroup>

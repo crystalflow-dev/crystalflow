@@ -1,0 +1,406 @@
+---
+title: "Basic Math Workflow"
+description: "Complete example of a simple math workflow"
+icon: "calculator"
+---
+
+This example demonstrates building a basic calculator workflow with number inputs, math operations, and result display.
+
+## Overview
+
+We'll create a workflow that:
+1. Takes two number inputs
+2. Performs addition and multiplication
+3. Displays the results
+
+## Node Definitions
+
+### NumberInputNode
+
+```typescript
+import { Node, defineNode, Property, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'input.number',
+  label: 'Number Input',
+  category: 'Input'
+})
+export class NumberInputNode extends Node {
+  @Property({
+    type: 'number',
+    label: 'Value',
+    defaultValue: 0,
+    step: 1
+  })
+  value: number = 0;
+
+  @Output({ type: 'number', label: 'Value' })
+  output: number;
+
+  execute() {
+    this.output = this.value;
+  }
+}
+```
+
+---
+
+### AddNode
+
+```typescript
+import { Node, defineNode, Input, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'math.add',
+  label: 'Add',
+  category: 'Math'
+})
+export class AddNode extends Node {
+  @Input({ type: 'number', label: 'A' })
+  a: number = 0;
+
+  @Input({ type: 'number', label: 'B' })
+  b: number = 0;
+
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+
+  execute() {
+    this.result = this.a + this.b;
+  }
+}
+```
+
+---
+
+### MultiplyNode
+
+```typescript
+import { Node, defineNode, Input, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'math.multiply',
+  label: 'Multiply',
+  category: 'Math'
+})
+export class MultiplyNode extends Node {
+  @Input({ type: 'number', label: 'A' })
+  a: number = 0;
+
+  @Input({ type: 'number', label: 'B' })
+  b: number = 0;
+
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+
+  execute() {
+    this.result = this.a * this.b;
+  }
+}
+```
+
+---
+
+### DisplayNode
+
+```typescript
+import { Node, defineNode, Input } from '@reactflo/core';
+
+@defineNode({
+  type: 'output.display',
+  label: 'Display',
+  category: 'Output'
+})
+export class DisplayNode extends Node {
+  @Input({ type: 'any', label: 'Value' })
+  value: any = null;
+
+  execute() {
+    console.log('Display:', this.value);
+  }
+}
+```
+
+## Building the Workflow
+
+### Programmatic Creation
+
+```typescript
+import { Workflow } from '@reactflo/core';
+import { NumberInputNode, AddNode, MultiplyNode, DisplayNode } from './nodes';
+
+// Create workflow
+const workflow = new Workflow('math-workflow', 'Math Calculator');
+
+// Add number inputs
+const num1 = workflow.addNode(NumberInputNode, {
+  position: { x: 100, y: 100 },
+  data: { value: 5 }
+});
+
+const num2 = workflow.addNode(NumberInputNode, {
+  position: { x: 100, y: 250 },
+  data: { value: 3 }
+});
+
+// Add math operations
+const add = workflow.addNode(AddNode, {
+  position: { x: 350, y: 100 }
+});
+
+const multiply = workflow.addNode(MultiplyNode, {
+  position: { x: 350, y: 250 }
+});
+
+// Add displays
+const display1 = workflow.addNode(DisplayNode, {
+  position: { x: 600, y: 100 }
+});
+
+const display2 = workflow.addNode(DisplayNode, {
+  position: { x: 600, y: 250 }
+});
+
+// Connect nodes
+workflow.connect(num1.id, 'output', add.id, 'a');
+workflow.connect(num2.id, 'output', add.id, 'b');
+workflow.connect(add.id, 'result', display1.id, 'value');
+
+workflow.connect(num1.id, 'output', multiply.id, 'a');
+workflow.connect(num2.id, 'output', multiply.id, 'b');
+workflow.connect(multiply.id, 'result', display2.id, 'value');
+
+// Execute workflow
+const result = await workflow.execute();
+
+console.log('Execution status:', result.status);
+console.log('Duration:', result.duration, 'ms');
+
+// Get results
+result.nodeResults.forEach((nodeResult, nodeId) => {
+  console.log(`Node ${nodeId}:`, nodeResult.outputs);
+});
+```
+
+**Output:**
+```
+Display: 8
+Display: 15
+Execution status: success
+Duration: 5 ms
+Node add-1: { result: 8 }
+Node multiply-1: { result: 15 }
+```
+
+---
+
+### React Component
+
+```tsx
+import React from 'react';
+import { WorkflowBuilder } from '@reactflo/react';
+import { NumberInputNode, AddNode, MultiplyNode, DisplayNode } from './nodes';
+
+function MathCalculator() {
+  const nodes = [NumberInputNode, AddNode, MultiplyNode, DisplayNode];
+
+  const handleExecute = (result) => {
+    console.log('Workflow executed:', result);
+    
+    // Extract results
+    result.nodeResults.forEach((nodeResult, nodeId) => {
+      if (nodeResult.outputs.result !== undefined) {
+        console.log('Result:', nodeResult.outputs.result);
+      }
+    });
+  };
+
+  return (
+    <div className="calculator">
+      <h1>Math Calculator</h1>
+      <WorkflowBuilder
+        nodes={nodes}
+        onExecute={handleExecute}
+        showNodePalette={true}
+        showPropertyPanel={true}
+        showToolbar={true}
+        style={{ height: '600px' }}
+      />
+    </div>
+  );
+}
+
+export default MathCalculator;
+```
+
+## JSON Workflow
+
+Save the workflow as JSON:
+
+```json
+{
+  "version": "1.0.0",
+  "id": "math-workflow",
+  "name": "Math Calculator",
+  "nodes": [
+    {
+      "id": "num1",
+      "type": "input.number",
+      "position": { "x": 100, "y": 100 },
+      "data": {
+        "properties": { "value": 5 },
+        "inputs": {},
+        "outputs": {}
+      }
+    },
+    {
+      "id": "num2",
+      "type": "input.number",
+      "position": { "x": 100, "y": 250 },
+      "data": {
+        "properties": { "value": 3 },
+        "inputs": {},
+        "outputs": {}
+      }
+    },
+    {
+      "id": "add",
+      "type": "math.add",
+      "position": { "x": 350, "y": 100 },
+      "data": {
+        "properties": {},
+        "inputs": {},
+        "outputs": {}
+      }
+    },
+    {
+      "id": "multiply",
+      "type": "math.multiply",
+      "position": { "x": 350, "y": 250 },
+      "data": {
+        "properties": {},
+        "inputs": {},
+        "outputs": {}
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn1",
+      "source": "num1",
+      "sourcePort": "output",
+      "target": "add",
+      "targetPort": "a"
+    },
+    {
+      "id": "conn2",
+      "source": "num2",
+      "sourcePort": "output",
+      "target": "add",
+      "targetPort": "b"
+    },
+    {
+      "id": "conn3",
+      "source": "num1",
+      "sourcePort": "output",
+      "target": "multiply",
+      "targetPort": "a"
+    },
+    {
+      "id": "conn4",
+      "source": "num2",
+      "sourcePort": "output",
+      "target": "multiply",
+      "targetPort": "b"
+    }
+  ],
+  "variables": {}
+}
+```
+
+## With Event Handlers
+
+Add detailed event tracking:
+
+```typescript
+import { Executor } from '@reactflo/core';
+
+const executor = new Executor();
+
+// Track node execution
+executor.on('onNodeStart', (nodeId, node) => {
+  console.log(`⚙️  Executing ${node.metadata.label} (${nodeId})`);
+});
+
+executor.on('onNodeComplete', (nodeId, result) => {
+  console.log(`✅ ${nodeId} completed:`, result.outputs);
+});
+
+// Execute
+await executor.execute(workflow);
+```
+
+**Output:**
+```
+⚙️  Executing Number Input (num1)
+✅ num1 completed: { output: 5 }
+⚙️  Executing Number Input (num2)
+✅ num2 completed: { output: 3 }
+⚙️  Executing Add (add)
+✅ add completed: { result: 8 }
+⚙️  Executing Multiply (multiply)
+✅ multiply completed: { result: 15 }
+```
+
+## Key Concepts
+
+<AccordionGroup>
+  <Accordion title="Number Input Node" icon="keyboard">
+    Uses `@Property` decorator for static configuration. The value is set in the property panel, not connected from another node.
+  </Accordion>
+
+  <Accordion title="Math Operations" icon="calculator">
+    Use `@Input` decorators for dynamic data flow. Values come from connected nodes via handles.
+  </Accordion>
+
+  <Accordion title="Node Connections" icon="link">
+    Connect output ports to input ports. Data flows automatically during execution.
+  </Accordion>
+
+  <Accordion title="Execution Order" icon="list-ol">
+    Nodes execute in topological order. `num1` and `num2` first, then `add` and `multiply`.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Data Processing"
+    icon="database"
+    href="/examples/data-processing"
+  >
+    Work with arrays and data transformation
+  </Card>
+  <Card
+    title="Conditional Logic"
+    icon="code-branch"
+    href="/examples/conditional-logic"
+  >
+    Add branching and conditions
+  </Card>
+  <Card
+    title="Creating Custom Nodes"
+    icon="wand-magic-sparkles"
+    href="/guides/creating-custom-nodes"
+  >
+    Build your own nodes
+  </Card>
+  <Card
+    title="Quick Start"
+    icon="rocket"
+    href="/getting-started/quick-start"
+  >
+    5-minute tutorial
+  </Card>
+</CardGroup>

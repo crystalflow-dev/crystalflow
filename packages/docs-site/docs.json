@@ -1,0 +1,138 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "ReactFlo",
+  "colors": {
+    "primary": "#3B82F6",
+    "light": "#60A5FA",
+    "dark": "#2563EB"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "index",
+              "getting-started/which-package",
+              "getting-started/installation",
+              "getting-started/visual-builder-quickstart",
+              "getting-started/your-first-workflow-builder",
+              "getting-started/core-only-quickstart"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "core-concepts/nodes",
+              "core-concepts/workflows",
+              "core-concepts/execution-engine",
+              "core-concepts/decorators",
+              "core-concepts/json-schema"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/creating-custom-nodes",
+              "guides/workflow-builder",
+              "guides/execution-and-events",
+              "guides/serialization"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "advanced/property-system",
+              "advanced/inheritance",
+              "advanced/error-handling",
+              "advanced/cancellation"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Core Package",
+            "pages": [
+              "api-reference/core/node",
+              "api-reference/core/workflow",
+              "api-reference/core/executor",
+              "api-reference/core/decorators"
+            ]
+          },
+          {
+            "group": "React Package",
+            "pages": [
+              "api-reference/react/workflow-builder",
+              "api-reference/react/hooks",
+              "api-reference/react/components"
+            ]
+          },
+          {
+            "group": "Types Package",
+            "pages": ["api-reference/types/index"]
+          }
+        ]
+      },
+      {
+        "tab": "Examples",
+        "groups": [
+          {
+            "group": "Workflow Examples",
+            "pages": [
+              "examples/basic-math",
+              "examples/data-processing",
+              "examples/conditional-logic"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/Fladeed/reactflo",
+          "icon": "github"
+        },
+        {
+          "anchor": "Community",
+          "href": "https://github.com/Fladeed/reactflo/discussions",
+          "icon": "comments"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/Fladeed/reactflo"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Get Started",
+      "href": "/getting-started/installation"
+    }
+  },
+  "contextual": {
+    "options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp", "cursor", "vscode"]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/Fladeed/reactflo",
+      "twitter": "https://twitter.com/reactflo"
+    }
+  }
+}

@@ -1,0 +1,486 @@
+---
+title: "Serialization"
+description: "Save, load, and share workflows as JSON"
+---
+
+ReactFlo workflows are fully serializable to JSON, enabling persistent storage, version control, and sharing.
+
+## Why Serialization?
+
+<CardGroup cols={2}>
+  <Card title="Persistence" icon="floppy-disk">
+    Save workflows to files or databases
+  </Card>
+  <Card title="Version Control" icon="code-branch">
+    Track changes with Git
+  </Card>
+  <Card title="Sharing" icon="share-nodes">
+    Share workflows across teams
+  </Card>
+  <Card title="Templates" icon="file-copy">
+    Create reusable workflow templates
+  </Card>
+</CardGroup>
+
+## Serialization API
+
+### To JSON
+
+Convert a workflow to JSON:
+
+```typescript
+import { serializeWorkflow } from '@reactflo/core';
+
+// Get workflow data
+const workflowData = workflow.toJSON();
+
+// Serialize to JSON string
+const json = serializeWorkflow(workflowData);
+
+// Save to file
+import fs from 'fs';
+fs.writeFileSync('my-workflow.json', json);
+```
+
+### From JSON
+
+Load a workflow from JSON:
+
+```typescript
+import { deserializeWorkflow, Workflow } from '@reactflo/core';
+import fs from 'fs';
+
+// Read JSON file
+const json = fs.readFileSync('my-workflow.json', 'utf-8');
+
+// Deserialize
+const workflowData = deserializeWorkflow(json);
+
+// Create workflow instance
+const workflow = Workflow.fromJSON(workflowData);
+```
+
+## JSON Format
+
+Workflows serialize to this format:
+
+```json
+{
+  "version": "1.0.0",
+  "id": "workflow-123",
+  "name": "My Workflow",
+  "description": "Optional description",
+  "nodes": [
+    {
+      "id": "node-1",
+      "type": "math.add",
+      "position": { "x": 100, "y": 100 },
+      "inputs": { "a": 10, "b": 20 },
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn-1",
+      "source": "node-1",
+      "sourceOutput": "result",
+      "target": "node-2",
+      "targetInput": "value"
+    }
+  ],
+  "variables": {
+    "apiKey": "your-key"
+  }
+}
+```
+
+## Save to File
+
+### Node.js
+
+```typescript
+import fs from 'fs';
+import { serializeWorkflow } from '@reactflo/core';
+
+function saveWorkflow(workflow, filename) {
+  const json = serializeWorkflow(workflow.toJSON());
+  fs.writeFileSync(filename, json);
+  console.log(`Workflow saved to ${filename}`);
+}
+
+saveWorkflow(workflow, 'workflows/my-workflow.json');
+```
+
+### Browser
+
+```typescript
+import { serializeWorkflow } from '@reactflo/core';
+
+function downloadWorkflow(workflow, filename) {
+  const json = serializeWorkflow(workflow.toJSON());
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  
+  URL.revokeObjectURL(url);
+}
+
+downloadWorkflow(workflow, 'my-workflow.json');
+```
+
+## Load from File
+
+### Node.js
+
+```typescript
+import fs from 'fs';
+import { deserializeWorkflow, Workflow } from '@reactflo/core';
+
+function loadWorkflow(filename) {
+  const json = fs.readFileSync(filename, 'utf-8');
+  const workflowData = deserializeWorkflow(json);
+  return Workflow.fromJSON(workflowData);
+}
+
+const workflow = loadWorkflow('workflows/my-workflow.json');
+```
+
+### Browser
+
+```typescript
+import { deserializeWorkflow, Workflow } from '@reactflo/core';
+
+function uploadWorkflow(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      try {
+        const json = e.target.result;
+        const workflowData = deserializeWorkflow(json);
+        const workflow = Workflow.fromJSON(workflowData);
+        resolve(workflow);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    
+    reader.onerror = reject;
+    reader.readAsText(file);
+  });
+}
+
+// Usage with file input
+const fileInput = document.getElementById('file-input');
+fileInput.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  const workflow = await uploadWorkflow(file);
+  console.log('Workflow loaded:', workflow);
+});
+```
+
+## React Integration
+
+### Save Button
+
+```tsx
+import { serializeWorkflow } from '@reactflo/core';
+
+function SaveButton({ workflow }) {
+  const handleSave = () => {
+    const json = serializeWorkflow(workflow.toJSON());
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `workflow-${workflow.id}.json`;
+    a.click();
+    
+    URL.revokeObjectURL(url);
+  };
+  
+  return <button onClick={handleSave}>Save Workflow</button>;
+}
+```
+
+### Load Button
+
+```tsx
+import { deserializeWorkflow, Workflow } from '@reactflo/core';
+import { useRef } from 'react';
+
+function LoadButton({ onWorkflowLoad }) {
+  const fileInputRef = useRef(null);
+  
+  const handleLoad = () => {
+    fileInputRef.current?.click();
+  };
+  
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const json = e.target.result;
+      const workflowData = deserializeWorkflow(json);
+      const workflow = Workflow.fromJSON(workflowData);
+      onWorkflowLoad(workflow);
+    };
+    reader.readAsText(file);
+  };
+  
+  return (
+    <>
+      <button onClick={handleLoad}>Load Workflow</button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+    </>
+  );
+}
+```
+
+## LocalStorage
+
+### Save to LocalStorage
+
+```typescript
+function saveToLocalStorage(workflow) {
+  const json = serializeWorkflow(workflow.toJSON());
+  localStorage.setItem('workflow', json);
+}
+```
+
+### Load from LocalStorage
+
+```typescript
+function loadFromLocalStorage() {
+  const json = localStorage.getItem('workflow');
+  if (!json) return null;
+  
+  const workflowData = deserializeWorkflow(json);
+  return Workflow.fromJSON(workflowData);
+}
+```
+
+### Auto-Save Hook
+
+```tsx
+import { useEffect } from 'react';
+import { serializeWorkflow } from '@reactflo/core';
+
+function useAutoSave(workflow, interval = 30000) {
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (workflow) {
+        const json = serializeWorkflow(workflow.toJSON());
+        localStorage.setItem('workflow-autosave', json);
+        console.log('Workflow auto-saved');
+      }
+    }, interval);
+    
+    return () => clearInterval(timer);
+  }, [workflow, interval]);
+}
+```
+
+## Validation
+
+Validate JSON before deserializing:
+
+```typescript
+import { validateWorkflowJSON } from '@reactflo/core';
+
+const json = fs.readFileSync('workflow.json', 'utf-8');
+const errors = validateWorkflowJSON(json);
+
+if (errors.length > 0) {
+  console.error('Validation errors:', errors);
+  errors.forEach(error => {
+    console.error(`- ${error.message}`);
+  });
+} else {
+  const workflowData = deserializeWorkflow(json);
+  const workflow = Workflow.fromJSON(workflowData);
+}
+```
+
+## Version Control with Git
+
+### Initialize Repository
+
+```bash
+mkdir workflows
+cd workflows
+git init
+```
+
+### Commit Workflows
+
+```bash
+git add my-workflow.json
+git commit -m "Add data processing workflow"
+```
+
+### View Changes
+
+```bash
+git diff my-workflow.json
+```
+
+### Track History
+
+```bash
+git log --oneline my-workflow.json
+```
+
+### Restore Previous Version
+
+```bash
+git checkout HEAD~1 my-workflow.json
+```
+
+## Export Formats
+
+### Pretty Print
+
+```typescript
+const json = serializeWorkflow(workflowData, {
+  pretty: true,
+  indent: 2
+});
+```
+
+### Minified
+
+```typescript
+const json = serializeWorkflow(workflowData, {
+  pretty: false
+});
+```
+
+## Database Storage
+
+### SQL Database
+
+```typescript
+import { serializeWorkflow, deserializeWorkflow, Workflow } from '@reactflo/core';
+import { db } from './database';
+
+async function saveWorkflowToDatabase(workflow) {
+  const json = serializeWorkflow(workflow.toJSON());
+  
+  await db.query(
+    'INSERT INTO workflows (id, name, data) VALUES (?, ?, ?)',
+    [workflow.id, workflow.name, json]
+  );
+}
+
+async function loadWorkflowFromDatabase(id) {
+  const result = await db.query(
+    'SELECT data FROM workflows WHERE id = ?',
+    [id]
+  );
+  
+  const workflowData = deserializeWorkflow(result.data);
+  return Workflow.fromJSON(workflowData);
+}
+```
+
+### MongoDB
+
+```typescript
+import { serializeWorkflow, deserializeWorkflow, Workflow } from '@reactflo/core';
+import { MongoClient } from 'mongodb';
+
+async function saveWorkflow(workflow) {
+  const client = await MongoClient.connect(process.env.MONGODB_URI);
+  const db = client.db('workflows');
+  
+  await db.collection('workflows').insertOne({
+    id: workflow.id,
+    name: workflow.name,
+    data: workflow.toJSON(),
+    createdAt: new Date()
+  });
+  
+  await client.close();
+}
+
+async function loadWorkflow(id) {
+  const client = await MongoClient.connect(process.env.MONGODB_URI);
+  const db = client.db('workflows');
+  
+  const doc = await db.collection('workflows').findOne({ id });
+  await client.close();
+  
+  return Workflow.fromJSON(doc.data);
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Validate Before Saving" icon="shield-check">
+    Always validate workflows before serialization to catch errors early.
+  </Accordion>
+
+  <Accordion title="Use Version Control" icon="code-branch">
+    Store workflows in Git for history tracking and collaboration.
+  </Accordion>
+
+  <Accordion title="Add Metadata" icon="tag">
+    Include name, description, and version in workflow JSON.
+  </Accordion>
+
+  <Accordion title="Handle Secrets Carefully" icon="key">
+    Never serialize sensitive data - use variables at runtime.
+  </Accordion>
+
+  <Accordion title="Auto-Save Regularly" icon="floppy-disk">
+    Implement auto-save to prevent data loss.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="JSON Schema"
+    icon="file-code"
+    href="/core-concepts/json-schema"
+  >
+    Understanding the JSON format
+  </Card>
+  <Card
+    title="Workflow API"
+    icon="code"
+    href="/api-reference/core/workflow"
+  >
+    Complete Workflow API
+  </Card>
+  <Card
+    title="Version Control Guide"
+    icon="code-branch"
+    href="/guides/version-control"
+  >
+    Git best practices (coming soon)
+  </Card>
+  <Card
+    title="Migration"
+    icon="arrows-rotate"
+    href="/advanced/migration"
+  >
+    Version migration (coming soon)
+  </Card>
+</CardGroup>

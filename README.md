@@ -83,6 +83,8 @@ ReactFlo is organized as a monorepo with multiple packages:
 - `@reactflo/types` ✅ - TypeScript type definitions (100% complete)
 - `@reactflo/react` 🚧 - React components bridging decorators to React Flow (80% complete)
 - `@reactflo/examples` 🚧 - Example applications and demos (in progress)
+- `@reactflo/landing` 🚧 - Marketing/landing page (Next.js)
+- `@reactflo/docs-site` ✅ - Official documentation site (Mintlify)
 - `@reactflo/cli` ⏳ - Command-line tools for scaffolding and development (planned)
 - `@reactflo/plugins` ⏳ - Official plugin collection (planned)
 

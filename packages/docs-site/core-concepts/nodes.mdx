@@ -1,0 +1,370 @@
+---
+title: "Nodes"
+description: "Understanding the fundamental building blocks of ReactFlo workflows"
+---
+
+Nodes are the fundamental building blocks of ReactFlo workflows. Each node represents a single operation or task in your workflow.
+
+## What is a Node?
+
+A **Node** is a TypeScript class that:
+- Extends the base `Node` class
+- Is decorated with `@defineNode` to provide metadata
+- Has inputs (data it receives) decorated with `@Input`
+- Has outputs (data it produces) decorated with `@Output`
+- Contains business logic in the `execute()` method
+
+## Anatomy of a Node
+
+```typescript
+import { Node, defineNode, Input, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'math.add',           // Unique identifier
+  label: 'Add Numbers',       // Display name
+  category: 'Math',           // Category for organization
+  description: 'Adds two numbers together'  // Optional description
+})
+class AddNode extends Node {
+  // Inputs - data the node receives
+  @Input({ type: 'number', label: 'A', defaultValue: 0 })
+  a: number = 0;
+
+  @Input({ type: 'number', label: 'B', defaultValue: 0 })
+  b: number = 0;
+
+  // Outputs - data the node produces
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+
+  // Business logic
+  execute() {
+    this.result = this.a + this.b;
+  }
+}
+```
+
+## Node Metadata
+
+The `@defineNode` decorator provides metadata about the node:
+
+<ParamField path="type" type="string" required>
+  Unique identifier for the node type (e.g., `'math.add'`, `'http.request'`)
+</ParamField>
+
+<ParamField path="label" type="string" required>
+  Human-readable name displayed in the UI
+</ParamField>
+
+<ParamField path="category" type="string" required>
+  Category for organizing nodes in the palette
+</ParamField>
+
+<ParamField path="description" type="string">
+  Optional description of what the node does
+</ParamField>
+
+## Inputs
+
+Inputs are defined using the `@Input` decorator:
+
+```typescript
+@Input({
+  type: 'string',              // Data type
+  label: 'Message',            // Display label
+  defaultValue: 'Hello',       // Default value
+  required: false,             // Is this input required?
+  description: 'Input message' // Optional description
+})
+message: string = 'Hello';
+```
+
+### Input Options
+
+<ParamField path="type" type="string" required>
+  The data type: `'string'`, `'number'`, `'boolean'`, `'any'`, or custom types
+</ParamField>
+
+<ParamField path="label" type="string" required>
+  Display name for the input port
+</ParamField>
+
+<ParamField path="defaultValue" type="any">
+  Default value if no connection is made
+</ParamField>
+
+<ParamField path="required" type="boolean" default="false">
+  Whether this input must be connected
+</ParamField>
+
+<ParamField path="description" type="string">
+  Description of the input's purpose
+</ParamField>
+
+## Outputs
+
+Outputs are defined using the `@Output` decorator:
+
+```typescript
+@Output({
+  type: 'string',              // Data type
+  label: 'Result',             // Display label
+  description: 'The result'    // Optional description
+})
+result: string;
+```
+
+### Output Options
+
+<ParamField path="type" type="string" required>
+  The data type being output
+</ParamField>
+
+<ParamField path="label" type="string" required>
+  Display name for the output port
+</ParamField>
+
+<ParamField path="description" type="string">
+  Description of the output
+</ParamField>
+
+## Properties
+
+Properties are static configuration values (not connected to other nodes):
+
+```typescript
+@Property({
+  type: 'select',
+  label: 'Operation',
+  defaultValue: 'add',
+  options: [
+    { value: 'add', label: 'Add' },
+    { value: 'subtract', label: 'Subtract' }
+  ]
+})
+operation: string = 'add';
+```
+
+<Accordion title="Properties vs Inputs" icon="circle-question">
+  - **@Property**: Static configuration shown in properties panel (not connected)
+  - **@Input**: Dynamic data flow connections via handles
+  - **@Output**: Computed results generated during execution
+</Accordion>
+
+## The execute() Method
+
+The `execute()` method contains the node's business logic:
+
+```typescript
+execute() {
+  // Read inputs
+  const inputA = this.a;
+  const inputB = this.b;
+  
+  // Perform operations
+  const sum = inputA + inputB;
+  
+  // Set outputs
+  this.result = sum;
+}
+```
+
+### Execution Rules
+
+<Check>**Synchronous or Async** - `execute()` can be sync or async</Check>
+<Check>**Read from inputs** - Access input values as instance properties</Check>
+<Check>**Write to outputs** - Set output values before method returns</Check>
+<Check>**No side effects** - Avoid modifying external state when possible</Check>
+
+### Async Execution
+
+```typescript
+async execute() {
+  const response = await fetch(this.url);
+  const data = await response.json();
+  this.data = data;
+}
+```
+
+## Node Lifecycle
+
+1. **Validation** - Inputs are validated before execution
+2. **Execution** - The `execute()` method runs
+3. **State Update** - Node state is updated (Success/Error)
+4. **Output Propagation** - Outputs are passed to connected nodes
+
+## Node States
+
+<CardGroup cols={3}>
+  <Card title="Idle" icon="circle">
+    Initial state, not yet executed
+  </Card>
+  <Card title="Success" icon="circle-check">
+    Executed successfully
+  </Card>
+  <Card title="Error" icon="circle-exclamation">
+    Execution failed with an error
+  </Card>
+</CardGroup>
+
+## Type Safety
+
+ReactFlo uses TypeScript for type safety:
+
+```typescript
+// Type-safe inputs
+@Input({ type: 'number', label: 'Count' })
+count: number = 0;
+
+// Type-safe outputs
+@Output({ type: 'string', label: 'Message' })
+message: string;
+
+execute() {
+  // TypeScript ensures type correctness
+  this.message = `Count is ${this.count}`;
+}
+```
+
+## Node Categories
+
+Organize your nodes into logical categories:
+
+<CardGroup cols={3}>
+  <Card title="Input" icon="right-to-bracket">
+    Data sources (user input, files, APIs)
+  </Card>
+  <Card title="Processing" icon="gears">
+    Transform and manipulate data
+  </Card>
+  <Card title="Output" icon="right-from-bracket">
+    Display results, save files, send data
+  </Card>
+  <Card title="Logic" icon="code-branch">
+    Conditional flow and decision making
+  </Card>
+  <Card title="Math" icon="calculator">
+    Mathematical operations
+  </Card>
+  <Card title="String" icon="text">
+    String manipulation
+  </Card>
+</CardGroup>
+
+## Example Nodes
+
+### Data Processing Node
+
+```typescript
+@defineNode({
+  type: 'data.filter',
+  label: 'Filter Array',
+  category: 'Data',
+})
+class FilterNode extends Node {
+  @Input({ type: 'any[]', label: 'Array' })
+  array: any[] = [];
+
+  @Property({ type: 'string', label: 'Condition' })
+  condition: string = '';
+
+  @Output({ type: 'any[]', label: 'Filtered' })
+  filtered: any[];
+
+  execute() {
+    this.filtered = this.array.filter(item => {
+      // Evaluate condition
+      return eval(this.condition);
+    });
+  }
+}
+```
+
+### HTTP Request Node
+
+```typescript
+@defineNode({
+  type: 'http.request',
+  label: 'HTTP Request',
+  category: 'Network',
+})
+class HttpRequestNode extends Node {
+  @Property({ type: 'string', label: 'URL', required: true })
+  url: string = '';
+
+  @Property({
+    type: 'select',
+    label: 'Method',
+    options: [
+      { value: 'GET', label: 'GET' },
+      { value: 'POST', label: 'POST' }
+    ]
+  })
+  method: string = 'GET';
+
+  @Output({ type: 'any', label: 'Response' })
+  response: any;
+
+  async execute() {
+    const res = await fetch(this.url, { method: this.method });
+    this.response = await res.json();
+  }
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Keep nodes focused" icon="bullseye">
+    Each node should do one thing well. Split complex logic into multiple nodes.
+  </Accordion>
+
+  <Accordion title="Validate inputs" icon="shield-check">
+    Check input values in execute() and throw descriptive errors for invalid data.
+  </Accordion>
+
+  <Accordion title="Use descriptive names" icon="tag">
+    Use clear, descriptive names for types, labels, and variables.
+  </Accordion>
+
+  <Accordion title="Document with descriptions" icon="book">
+    Add description fields to explain what inputs, outputs, and properties do.
+  </Accordion>
+
+  <Accordion title="Handle errors gracefully" icon="life-ring">
+    Use try-catch blocks and throw meaningful errors.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Workflows"
+    icon="diagram-project"
+    href="/core-concepts/workflows"
+  >
+    Learn how nodes connect in workflows
+  </Card>
+  <Card
+    title="Creating Custom Nodes"
+    icon="hammer"
+    href="/guides/creating-custom-nodes"
+  >
+    Deep dive into node creation
+  </Card>
+  <Card
+    title="Property System"
+    icon="sliders"
+    href="/advanced/property-system"
+  >
+    Master the property system
+  </Card>
+  <Card
+    title="Node API Reference"
+    icon="code"
+    href="/api-reference/core/node"
+  >
+    Complete Node API docs
+  </Card>
+</CardGroup>

@@ -43,6 +43,11 @@ Welcome to ReactFlo! This index will help you navigate all project documentation
 ### @reactflo/types
 
 - **[packages/types/README.md](packages/types/README.md)** - TypeScript type definitions
+
+### @reactflo/docs-site
+
+- **[packages/docs-site/](packages/docs-site/)** - Official documentation site (Mintlify)
+- **Run locally:** `cd packages/docs-site && mint dev --port 3333`
 - **[packages/types/src/node.ts](packages/types/src/node.ts)** - Node types
 - **[packages/types/src/workflow.ts](packages/types/src/workflow.ts)** - Workflow types
 - **[packages/types/src/execution.ts](packages/types/src/execution.ts)** - Execution types

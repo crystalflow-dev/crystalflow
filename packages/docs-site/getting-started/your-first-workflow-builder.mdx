@@ -1,0 +1,576 @@
+---
+title: "Your First Workflow Builder App"
+description: "Build a complete visual workflow application with React - comprehensive tutorial"
+---
+
+<Info>
+  This is a comprehensive tutorial for building a **complete visual workflow application** with React. For a quick 5-minute intro, see [Visual Builder Quick Start](/getting-started/visual-builder-quickstart).
+</Info>
+
+In this tutorial, you'll build a fully-featured workflow builder application with:
+- Multiple custom nodes (input, math, display)
+- Visual drag-and-drop interface
+- Property editing panel
+- Save/load functionality
+- Execution with progress feedback
+- Error handling
+
+**Time Required:** 30-45 minutes
+
+## What We'll Build
+
+A calculator workflow app where users can:
+1. Add number input nodes and set values
+2. Drag math operation nodes (add, multiply, subtract)
+3. Connect nodes visually
+4. Execute the workflow and see results
+5. Save/load workflows as JSON
+
+<Frame>
+  <img src="/images/workflow-builder-complete.png" alt="Complete Workflow Builder" />
+</Frame>
+
+## Prerequisites
+
+- Node.js 18+ installed
+- Basic React knowledge
+- Familiarity with TypeScript
+
+## Step 1: Create React Project
+
+We'll use Vite for fast development:
+
+```bash
+npm create vite@latest my-workflow-app -- --template react-ts
+cd my-workflow-app
+npm install
+```
+
+## Step 2: Install ReactFlo
+
+```bash
+npm install @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+npm install reactflow
+```
+
+## Step 3: Configure TypeScript
+
+Update `tsconfig.json` to enable decorators:
+
+```json tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+```
+
+## Step 4: Create Custom Nodes
+
+Create a `src/nodes` directory for your workflow nodes.
+
+### Number Input Node
+
+```typescript src/nodes/NumberInputNode.ts
+import 'reflect-metadata';
+import { Node, defineNode, Property, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'input.number',
+  label: 'Number Input',
+  category: 'Input',
+  description: 'Provides a number value'
+})
+export class NumberInputNode extends Node {
+  @Property({
+    type: 'number',
+    label: 'Value',
+    defaultValue: 0,
+    step: 1
+  })
+  value: number = 0;
+
+  @Output({ type: 'number', label: 'Value' })
+  output: number;
+
+  execute() {
+    this.output = this.value;
+  }
+}
+```
+
+### Math Nodes
+
+```typescript src/nodes/MathNodes.ts
+import { Node, defineNode, Input, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'math.add',
+  label: 'Add',
+  category: 'Math',
+  description: 'Add two numbers'
+})
+export class AddNode extends Node {
+  @Input({ type: 'number', label: 'A' })
+  a: number = 0;
+
+  @Input({ type: 'number', label: 'B' })
+  b: number = 0;
+
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+
+  execute() {
+    this.result = this.a + this.b;
+  }
+}
+
+  category: 'Math',
+  description: 'Multiply two numbers'
+})
+export class MultiplyNode extends Node {
+  @Input({ type: 'number', label: 'A' })
+  a: number = 1;
+
+  @Input({ type: 'number', label: 'B' })
+  b: number = 1;
+
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+
+  execute() {
+    this.result = this.a * this.b;
+  }
+}
+
+@defineNode({
+  type: 'math.subtract',
+  label: 'Subtract',
+  category: 'Math',
+  description: 'Subtract B from A'
+})
+export class SubtractNode extends Node {
+  @Input({ type: 'number', label: 'A' })
+  a: number = 0;
+
+  @Input({ type: 'number', label: 'B' })
+  b: number = 0;
+
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+
+  execute() {
+    this.result = this.a - this.b;
+  }
+}
+```
+
+### Display Node
+
+```typescript src/nodes/DisplayNode.ts
+import { Node, defineNode, Input } from '@reactflo/core';
+
+@defineNode({
+  type: 'output.display',
+  label: 'Display',
+  category: 'Output',
+  description: 'Display a value'
+})
+export class DisplayNode extends Node {
+  @Input({ type: 'any', label: 'Value' })
+  value: any = null;
+
+  execute() {
+    console.log('📊 Result:', this.value);
+  }
+}
+```
+
+### Export All Nodes
+
+```typescript src/nodes/index.ts
+export { NumberInputNode } from './NumberInputNode';
+export { AddNode, MultiplyNode, SubtractNode } from './MathNodes';
+export { DisplayNode } from './DisplayNode';
+```
+
+## Step 5: Create the Main App Component
+
+Now let's create the React component that uses ReactFlo's visual builder:
+
+```tsx src/App.tsx
+import React, { useState } from 'react';
+import 'reflect-metadata';
+import { WorkflowBuilder } from '@reactflo/react';
+import { ExecutionResult } from '@reactflo/core';
+import {
+  NumberInputNode,
+  AddNode,
+  MultiplyNode,
+  SubtractNode,
+  DisplayNode
+} from './nodes';
+import 'reactflow/dist/style.css';
+import './App.css';
+
+function App() {
+  const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+
+  // Define available nodes
+  const nodes = [
+    NumberInputNode,
+    AddNode,
+    MultiplyNode,
+    SubtractNode,
+    DisplayNode
+  ];
+
+  const handleExecute = (result: ExecutionResult) => {
+    console.log('Workflow executed:', result);
+    setExecutionResult(result);
+    setError(null);
+
+    if (result.status === 'success') {
+      console.log('✅ Success! Duration:', result.duration, 'ms');
+    } else if (result.error) {
+      console.error('❌ Execution failed:', result.error);
+      setError(result.error);
+    }
+  };
+
+  const handleError = (err: Error) => {
+    console.error('Error:', err);
+    setError(err);
+  };
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <h1>🎯 Workflow Calculator</h1>
+        <p>Build workflows visually - drag, connect, and execute!</p>
+      </header>
+
+      <div className="workflow-container">
+        <WorkflowBuilder
+          nodes={nodes}
+          onExecute={handleExecute}
+          onError={handleError}
+          showNodePalette={true}
+          showPropertyPanel={true}
+          showToolbar={true}
+        />
+      </div>
+
+      {executionResult && (
+        <div className="results-panel">
+          <h3>Execution Result</h3>
+          <div className="result-status">
+            Status: <span className={`status-${executionResult.status}`}>
+              {executionResult.status}
+            </span>
+          </div>
+          <div className="result-duration">
+            Duration: {executionResult.duration}ms
+          </div>
+          {error && (
+            <div className="result-error">
+              Error: {error.message}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
+```
+
+## Step 6: Add Styling
+
+Create `src/App.css`:
+
+```css src/App.css
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.app-header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.app-header p {
+  opacity: 0.9;
+  font-size: 0.95rem;
+}
+
+.workflow-container {
+  flex: 1;
+  position: relative;
+  background: #f5f7fa;
+}
+
+.results-panel {
+  background: white;
+  border-top: 2px solid #e5e7eb;
+  padding: 1rem 2rem;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+}
+
+.results-panel h3 {
+  margin-bottom: 0.75rem;
+  color: #374151;
+}
+
+.result-status {
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
+
+.status-success {
+  color: #10b981;
+}
+
+.status-failed {
+  color: #ef4444;
+}
+
+.status-cancelled {
+  color: #f59e0b;
+}
+
+.result-duration {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.result-error {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: #fef2f2;
+  border-left: 3px solid #ef4444;
+  color: #991b1b;
+  border-radius: 4px;
+}
+```
+
+## Step 7: Update Main Entry Point
+
+Update `src/main.tsx`:
+
+```tsx src/main.tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
+```
+
+## Step 8: Run Your App
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser!
+
+## Using Your Workflow Builder
+
+<Steps>
+  <Step title="Add Nodes">
+    Drag nodes from the left palette onto the canvas. Try adding:
+    - Two **Number Input** nodes
+    - One **Add** node
+    - One **Display** node
+  </Step>
+
+  <Step title="Set Values">
+    Click a **Number Input** node to select it. In the right property panel, set its value (e.g., 5 and 3).
+  </Step>
+
+  <Step title="Connect Nodes">
+    Drag from the output handle (right side, blue dot) of Number Input to the input handle (left side) of the Add node. Connect both inputs.
+  </Step>
+
+  <Step title="Connect Display">
+    Connect the Add node's Result output to the Display node's Value input.
+  </Step>
+
+  <Step title="Execute">
+    Click the **▶️ Execute** button in the toolbar. Check the console and results panel!
+  </Step>
+</Steps>
+
+## Adding Features
+
+### Save and Load Workflows
+
+Add save/load handlers:
+
+```tsx
+const handleWorkflowChange = (workflow: Workflow) => {
+  // Auto-save to localStorage
+  localStorage.setItem('workflow', JSON.stringify(workflow.toJSON()));
+};
+
+// Load on mount
+useEffect(() => {
+  const saved = localStorage.getItem('workflow');
+  if (saved) {
+    const workflowData = JSON.parse(saved);
+    setInitialWorkflow(Workflow.fromJSON(workflowData));
+  }
+}, []);
+
+<WorkflowBuilder
+  initialWorkflow={initialWorkflow}
+  onWorkflowChange={handleWorkflowChange}
+  // ... other props
+/>
+```
+
+### Add Progress Tracking
+
+```tsx
+const [isExecuting, setIsExecuting] = useState(false);
+const [progress, setProgress] = useState(0);
+
+const handleExecute = (result: ExecutionResult) => {
+  setIsExecuting(false);
+  setProgress(100);
+  // ... rest of handler
+};
+
+// Show progress during execution
+{isExecuting && (
+  <div className="progress-bar">
+    <div className="progress" style={{ width: `${progress}%` }} />
+  </div>
+)}
+```
+
+### Display Node Results
+
+Show output values from each node:
+
+```tsx
+{executionResult && executionResult.nodeResults.size > 0 && (
+  <div className="node-results">
+    <h4>Node Outputs</h4>
+    {Array.from(executionResult.nodeResults.entries()).map(([nodeId, result]) => (
+      <div key={nodeId} className="node-result">
+        <strong>{nodeId}:</strong>
+        <pre>{JSON.stringify(result.outputs, null, 2)}</pre>
+      </div>
+    ))}
+  </div>
+)}
+```
+
+## What You've Built
+
+✅ Complete visual workflow builder UI  
+✅ Drag-and-drop node palette  
+✅ Visual node connections  
+✅ Property editing panel  
+✅ Workflow execution with feedback  
+✅ Custom math and display nodes  
+✅ Error handling and status display
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Creating Custom Nodes"
+    icon="wand-magic-sparkles"
+    href="/guides/creating-custom-nodes"
+  >
+    Build more powerful custom nodes
+  </Card>
+  <Card
+    title="Execution & Events"
+    icon="bolt"
+    href="/guides/execution-and-events"
+  >
+    Master workflow execution
+  </Card>
+  <Card
+    title="Serialization"
+    icon="floppy-disk"
+    href="/guides/serialization"
+  >
+    Save/load workflows properly
+  </Card>
+  <Card
+    title="Examples"
+    icon="code"
+    href="/examples/basic-math"
+  >
+    See more complete examples
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Nodes not showing in palette?" icon="question">
+    Make sure all node classes have the `@defineNode` decorator and are passed to the `nodes` prop.
+  </Accordion>
+
+  <Accordion title="Connections not working?" icon="link">
+    Verify port types match. An output of type `'number'` can only connect to an input of type `'number'` or `'any'`.
+  </Accordion>
+
+  <Accordion title="Properties not editable?" icon="sliders">
+    Properties use `@Property` decorator, not `@Input`. Inputs are for connections, properties are for configuration.
+  </Accordion>
+
+  <Accordion title="Execution fails silently?" icon="bug">
+    Check the browser console for errors. Add the `onError` callback to capture errors.
+  </Accordion>
+</AccordionGroup>

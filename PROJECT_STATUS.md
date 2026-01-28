@@ -41,6 +41,16 @@ reactflo/
     │   └── src/
     │       ├── index.ts             ✅
     │       ├── node/                ✅ Node system
+    │
+    ├── docs-site/                   ✅ Documentation site
+    │   ├── docs.json                ✅ Mintlify config
+    │   ├── index.mdx                ✅ Homepage
+    │   ├── getting-started/         ✅ Getting started guides
+    │   ├── core-concepts/           ✅ Core concepts docs
+    │   ├── guides/                  ✅ Usage guides
+    │   ├── advanced/                ✅ Advanced topics
+    │   ├── api-reference/           ✅ API documentation
+    │   └── examples/                ✅ Example workflows
     │       ├── workflow/            ✅ Workflow system
     │       ├── execution/           ✅ Execution engine
     │       └── utils/               ✅ Utilities

@@ -1,0 +1,558 @@
+---
+title: "Creating Custom Nodes"
+description: "Master the art of building custom workflow nodes"
+---
+
+Custom nodes are the building blocks of your workflow applications. This guide covers everything you need to know to create powerful, reusable nodes.
+
+## Node Anatomy
+
+Every custom node consists of:
+
+<Steps>
+  <Step title="Class Definition">
+    Extend the base `Node` class
+  </Step>
+  <Step title="Node Decorator">
+    Add `@defineNode` with metadata
+  </Step>
+  <Step title="Inputs & Outputs">
+    Define ports with `@Input` and `@Output`
+  </Step>
+  <Step title="Properties">
+    Add configuration with `@Property`
+  </Step>
+  <Step title="Business Logic">
+    Implement the `execute()` method
+  </Step>
+</Steps>
+
+## Basic Node Structure
+
+```typescript
+import { Node, defineNode, Input, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'category.operation',
+  label: 'Display Name',
+  category: 'Category'
+})
+class CustomNode extends Node {
+  @Input({ type: 'string', label: 'Input' })
+  input: string = '';
+
+  @Output({ type: 'string', label: 'Output' })
+  output: string;
+
+  execute() {
+    this.output = this.input.toUpperCase();
+  }
+}
+```
+
+## Input Patterns
+
+### Required Inputs
+
+```typescript
+@Input({ 
+  type: 'string', 
+  label: 'Required Field',
+  required: true 
+})
+requiredField: string = '';
+```
+
+### Optional Inputs with Defaults
+
+```typescript
+@Input({ 
+  type: 'number', 
+  label: 'Optional Value',
+  defaultValue: 100 
+})
+optionalValue: number = 100;
+```
+
+### Multiple Input Types
+
+```typescript
+@Input({ 
+  type: 'any', 
+  label: 'Flexible Input' 
+})
+flexibleInput: any;
+```
+
+### Array Inputs
+
+```typescript
+@Input({ 
+  type: 'any[]', 
+  label: 'Items' 
+})
+items: any[] = [];
+```
+
+## Output Patterns
+
+### Single Output
+
+```typescript
+@Output({ type: 'string', label: 'Result' })
+result: string;
+```
+
+### Multiple Outputs
+
+```typescript
+@Output({ type: 'string', label: 'Success' })
+success: string;
+
+@Output({ type: 'string', label: 'Error' })
+error: string;
+
+@Output({ type: 'number', label: 'Count' })
+count: number;
+```
+
+## Property Patterns
+
+### String Properties
+
+```typescript
+@Property({
+  type: 'string',
+  label: 'API Endpoint',
+  defaultValue: 'https://api.example.com',
+  required: true
+})
+endpoint: string = '';
+```
+
+### Number Properties with Constraints
+
+```typescript
+@Property({
+  type: 'number',
+  label: 'Timeout (seconds)',
+  defaultValue: 30,
+  min: 1,
+  max: 300,
+  step: 5
+})
+timeout: number = 30;
+```
+
+### Boolean Properties
+
+```typescript
+@Property({
+  type: 'boolean',
+  label: 'Enable Logging',
+  defaultValue: false
+})
+enableLogging: boolean = false;
+```
+
+### Select Properties
+
+```typescript
+@Property({
+  type: 'select',
+  label: 'Method',
+  defaultValue: 'GET',
+  options: [
+    { value: 'GET', label: 'GET' },
+    { value: 'POST', label: 'POST' },
+    { value: 'PUT', label: 'PUT' },
+    { value: 'DELETE', label: 'DELETE' }
+  ]
+})
+method: string = 'GET';
+```
+
+## Execution Patterns
+
+### Synchronous Execution
+
+```typescript
+execute() {
+  this.result = this.processData(this.input);
+}
+```
+
+### Asynchronous Execution
+
+```typescript
+async execute() {
+  const response = await fetch(this.url);
+  this.data = await response.json();
+}
+```
+
+### Error Handling
+
+```typescript
+execute() {
+  try {
+    this.result = this.processData(this.input);
+  } catch (error) {
+    throw new Error(`Processing failed: ${error.message}`);
+  }
+}
+```
+
+### Validation
+
+```typescript
+execute() {
+  if (!this.input) {
+    throw new Error('Input is required');
+  }
+  
+  if (this.input.length < 5) {
+    throw new Error('Input must be at least 5 characters');
+  }
+  
+  this.result = this.processData(this.input);
+}
+```
+
+## Real-World Examples
+
+### String Manipulation Node
+
+```typescript
+@defineNode({
+  type: 'string.manipulate',
+  label: 'Manipulate String',
+  category: 'String'
+})
+class StringManipulateNode extends Node {
+  @Property({
+    type: 'select',
+    label: 'Operation',
+    defaultValue: 'uppercase',
+    options: [
+      { value: 'uppercase', label: 'UPPERCASE' },
+      { value: 'lowercase', label: 'lowercase' },
+      { value: 'reverse', label: 'Reverse' },
+      { value: 'trim', label: 'Trim Whitespace' }
+    ]
+  })
+  operation: string = 'uppercase';
+
+  @Input({ 
+    type: 'string', 
+    label: 'Text',
+    required: true 
+  })
+  text: string = '';
+
+  @Output({ type: 'string', label: 'Result' })
+  result: string;
+
+  execute() {
+    switch (this.operation) {
+      case 'uppercase':
+        this.result = this.text.toUpperCase();
+        break;
+      case 'lowercase':
+        this.result = this.text.toLowerCase();
+        break;
+      case 'reverse':
+        this.result = this.text.split('').reverse().join('');
+        break;
+      case 'trim':
+        this.result = this.text.trim();
+        break;
+      default:
+        this.result = this.text;
+    }
+  }
+}
+```
+
+### HTTP Request Node
+
+```typescript
+@defineNode({
+  type: 'http.request',
+  label: 'HTTP Request',
+  category: 'Network'
+})
+class HttpRequestNode extends Node {
+  @Property({
+    type: 'string',
+    label: 'URL',
+    required: true
+  })
+  url: string = '';
+
+  @Property({
+    type: 'select',
+    label: 'Method',
+    defaultValue: 'GET',
+    options: [
+      { value: 'GET', label: 'GET' },
+      { value: 'POST', label: 'POST' }
+    ]
+  })
+  method: string = 'GET';
+
+  @Property({
+    type: 'number',
+    label: 'Timeout (ms)',
+    defaultValue: 30000,
+    min: 1000,
+    max: 120000
+  })
+  timeout: number = 30000;
+
+  @Input({ 
+    type: 'any', 
+    label: 'Body',
+    required: false 
+  })
+  body?: any;
+
+  @Output({ type: 'any', label: 'Response' })
+  response: any;
+
+  @Output({ type: 'number', label: 'Status' })
+  status: number;
+
+  async execute() {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+    try {
+      const res = await fetch(this.url, {
+        method: this.method,
+        body: this.body ? JSON.stringify(this.body) : undefined,
+        headers: this.body ? { 'Content-Type': 'application/json' } : {},
+        signal: controller.signal
+      });
+
+      this.status = res.status;
+      this.response = await res.json();
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error(`Request timed out after ${this.timeout}ms`);
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+```
+
+### Data Transformation Node
+
+```typescript
+@defineNode({
+  type: 'data.map',
+  label: 'Transform Array',
+  category: 'Data'
+})
+class MapNode extends Node {
+  @Property({
+    type: 'string',
+    label: 'Transform Expression',
+    defaultValue: 'item',
+    description: 'JavaScript expression to transform each item'
+  })
+  expression: string = 'item';
+
+  @Input({ 
+    type: 'any[]', 
+    label: 'Array',
+    required: true 
+  })
+  array: any[] = [];
+
+  @Output({ type: 'any[]', label: 'Transformed' })
+  transformed: any[];
+
+  execute() {
+    try {
+      // Create a function from the expression
+      const transformFn = new Function('item', `return ${this.expression}`);
+      this.transformed = this.array.map(transformFn);
+    } catch (error) {
+      throw new Error(`Invalid expression: ${error.message}`);
+    }
+  }
+}
+```
+
+## Advanced Patterns
+
+### Cancellable Long Operations
+
+```typescript
+async execute() {
+  for (let i = 0; i < 1000; i++) {
+    // Check for cancellation
+    this.checkCancellation();
+    
+    await this.processItem(i);
+  }
+}
+```
+
+### Progress Reporting
+
+<Warning>
+  **Work in Progress:** Progress reporting API is under development.
+</Warning>
+
+```typescript
+async execute() {
+  const total = this.items.length;
+  
+  for (let i = 0; i < total; i++) {
+    // Future API - not yet implemented
+    // this.reportProgress(i / total);
+    
+    await this.processItem(this.items[i]);
+  }
+}
+```
+
+### State Management
+
+```typescript
+private cache = new Map<string, any>();
+
+execute() {
+  // Use instance state for caching
+  if (this.cache.has(this.key)) {
+    this.result = this.cache.get(this.key);
+  } else {
+    this.result = this.computeValue(this.input);
+    this.cache.set(this.key, this.result);
+  }
+}
+```
+
+### Context Access
+
+```typescript
+execute() {
+  // Access execution context
+  const executionId = this.context.executionId;
+  const variables = this.context.variables;
+  
+  // Use global variables
+  const apiKey = variables.apiKey;
+  this.result = await this.callApi(apiKey);
+}
+```
+
+## Testing Custom Nodes
+
+```typescript
+import { describe, it, expect } from '@jest/globals';
+
+describe('StringManipulateNode', () => {
+  it('should uppercase text', () => {
+    const node = new StringManipulateNode();
+    node.operation = 'uppercase';
+    node.text = 'hello';
+    
+    node.execute();
+    
+    expect(node.result).toBe('HELLO');
+  });
+
+  it('should reverse text', () => {
+    const node = new StringManipulateNode();
+    node.operation = 'reverse';
+    node.text = 'hello';
+    
+    node.execute();
+    
+    expect(node.result).toBe('olleh');
+  });
+});
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Single Responsibility" icon="bullseye">
+    Each node should do one thing well. Split complex logic into multiple nodes.
+  </Accordion>
+
+  <Accordion title="Input Validation" icon="shield-check">
+    Always validate inputs in execute() and throw descriptive errors.
+  </Accordion>
+
+  <Accordion title="Meaningful Names" icon="tag">
+    Use clear, descriptive names for types, labels, inputs, and outputs.
+  </Accordion>
+
+  <Accordion title="Document Everything" icon="book">
+    Add descriptions to all decorators to help users understand your nodes.
+  </Accordion>
+
+  <Accordion title="Handle Errors Gracefully" icon="triangle-exclamation">
+    Use try-catch blocks and provide meaningful error messages.
+  </Accordion>
+
+  <Accordion title="Make Nodes Reusable" icon="recycle">
+    Design nodes to be generic and configurable rather than hardcoded.
+  </Accordion>
+</AccordionGroup>
+
+## Node Categories
+
+Organize your nodes into logical categories:
+
+- **Input** - Data sources (user input, files, APIs)
+- **Processing** - Data transformation and manipulation
+- **Output** - Results display and storage
+- **Logic** - Conditional flow and decisions
+- **Math** - Mathematical operations
+- **String** - Text manipulation
+- **Data** - Array and object operations
+- **Network** - HTTP requests and APIs
+- **File** - File system operations
+- **Database** - Database queries
+- **AI** - Machine learning and AI operations
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Node API Reference"
+    icon="code"
+    href="/api-reference/core/node"
+  >
+    Complete Node class API
+  </Card>
+  <Card
+    title="Decorators Reference"
+    icon="at"
+    href="/api-reference/core/decorators"
+  >
+    All decorator options
+  </Card>
+  <Card
+    title="Property System"
+    icon="sliders"
+    href="/advanced/property-system"
+  >
+    Advanced property patterns
+  </Card>
+  <Card
+    title="Workflow Builder"
+    icon="diagram-project"
+    href="/guides/workflow-builder"
+  >
+    Integrate nodes into UI
+  </Card>
+</CardGroup>

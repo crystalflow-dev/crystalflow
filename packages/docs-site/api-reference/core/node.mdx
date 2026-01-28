@@ -1,0 +1,404 @@
+---
+title: "Node"
+description: "Node base class API reference"
+---
+
+The `Node` class is the foundation of all workflow nodes in ReactFlo.
+
+## Class: Node
+
+```typescript
+abstract class Node {
+  // Properties
+  id: string;
+  type: string;
+  metadata: NodeMetadata;
+  state: NodeState;
+  
+  // Methods
+  abstract execute(): void | Promise<void>;
+  validate(): ValidationResult;
+  run(context?: ExecutionContext): Promise<void>;
+  reset(): void;
+  toJSON(): NodeJSON;
+  static fromJSON(json: NodeJSON): Node;
+  checkCancellation(): void;
+}
+```
+
+## Properties
+
+<ParamField path="id" type="string">
+  Unique identifier for the node instance. Auto-generated on creation.
+</ParamField>
+
+<ParamField path="type" type="string">
+  Node type identifier (e.g., `'math.add'`). Set via `@defineNode` decorator.
+</ParamField>
+
+<ParamField path="metadata" type="NodeMetadata">
+  Node metadata including label, category, description, and port definitions.
+</ParamField>
+
+<ParamField path="state" type="NodeState">
+  Current execution state: `'idle'`, `'executing'`, `'success'`, or `'error'`.
+</ParamField>
+
+## Methods
+
+### execute()
+
+Execute the node's business logic. Must be implemented by all nodes.
+
+```typescript
+abstract execute(): void | Promise<void>;
+```
+
+**Example:**
+
+```typescript
+@defineNode({ type: 'math.add', label: 'Add' })
+class AddNode extends Node {
+  @Input({ type: 'number', label: 'A' })
+  a: number = 0;
+
+  @Input({ type: 'number', label: 'B' })
+  b: number = 0;
+
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+
+  execute() {
+    this.result = this.a + this.b;
+  }
+}
+```
+
+**Async execution:**
+
+```typescript
+async execute() {
+  const response = await fetch(this.url);
+  this.data = await response.json();
+}
+```
+
+---
+
+### validate()
+
+Validate node configuration and inputs.
+
+```typescript
+validate(): ValidationResult;
+```
+
+**Returns:** `ValidationResult` with `isValid` boolean and optional `errors` array.
+
+**Example:**
+
+```typescript
+validate() {
+  const result = super.validate();
+  
+  if (this.url && !this.url.startsWith('http')) {
+    result.isValid = false;
+    result.errors = result.errors || [];
+    result.errors.push('URL must start with http:// or https://');
+  }
+  
+  return result;
+}
+```
+
+---
+
+### run()
+
+Execute the node with validation and state management. Called by the execution engine.
+
+```typescript
+run(context?: ExecutionContext): Promise<void>;
+```
+
+<ParamField path="context" type="ExecutionContext">
+  Optional execution context providing variables and timing info.
+</ParamField>
+
+**Flow:**
+1. Set state to `'executing'`
+2. Call `validate()`
+3. Call `execute()`
+4. Set state to `'success'` or `'error'`
+
+**Example:**
+
+```typescript
+// Usually called by executor
+await node.run(executionContext);
+
+// Direct execution (for testing)
+await node.run();
+```
+
+---
+
+### reset()
+
+Reset node state to idle and clear outputs.
+
+```typescript
+reset(): void;
+```
+
+**Example:**
+
+```typescript
+node.reset();
+console.log(node.state); // 'idle'
+```
+
+---
+
+### toJSON()
+
+Serialize node to JSON format.
+
+```typescript
+toJSON(): NodeJSON;
+```
+
+**Returns:** JSON representation with `id`, `type`, `position`, and `data` (inputs, outputs, properties).
+
+**Example:**
+
+```typescript
+const json = node.toJSON();
+console.log(json);
+// {
+//   id: '123',
+//   type: 'math.add',
+//   position: { x: 100, y: 100 },
+//   data: {
+//     inputs: { a: 5, b: 3 },
+//     outputs: { result: 8 },
+//     properties: {}
+//   }
+// }
+```
+
+---
+
+### fromJSON()
+
+Deserialize node from JSON format.
+
+```typescript
+static fromJSON(json: NodeJSON): Node;
+```
+
+<ParamField path="json" type="NodeJSON">
+  JSON representation of the node.
+</ParamField>
+
+**Returns:** New node instance with restored state.
+
+**Example:**
+
+```typescript
+const json = { id: '123', type: 'math.add', data: { inputs: { a: 5, b: 3 } } };
+const node = Node.fromJSON(json);
+```
+
+---
+
+### checkCancellation()
+
+Check if execution has been cancelled. Throws `CancellationError` if cancelled.
+
+```typescript
+checkCancellation(): void;
+```
+
+**Example:**
+
+```typescript
+async execute() {
+  for (let i = 0; i < 1000; i++) {
+    this.checkCancellation(); // Throws if cancelled
+    await processItem(i);
+  }
+}
+```
+
+## Types
+
+### NodeMetadata
+
+```typescript
+interface NodeMetadata {
+  type: string;
+  label: string;
+  category: string;
+  description?: string;
+  inputs: InputMetadata[];
+  outputs: OutputMetadata[];
+  properties: PropertyMetadata[];
+}
+```
+
+### NodeState
+
+```typescript
+type NodeState = 'idle' | 'executing' | 'success' | 'error';
+```
+
+### ValidationResult
+
+```typescript
+interface ValidationResult {
+  isValid: boolean;
+  errors?: string[];
+}
+```
+
+### NodeJSON
+
+```typescript
+interface NodeJSON {
+  id: string;
+  type: string;
+  position: { x: number; y: number };
+  data: {
+    inputs: Record<string, any>;
+    outputs: Record<string, any>;
+    properties: Record<string, any>;
+  };
+}
+```
+
+## Usage Examples
+
+### Basic Node
+
+```typescript
+@defineNode({
+  type: 'text.uppercase',
+  label: 'Uppercase',
+  category: 'Text'
+})
+class UppercaseNode extends Node {
+  @Input({ type: 'string', label: 'Text' })
+  text: string = '';
+
+  @Output({ type: 'string', label: 'Result' })
+  result: string;
+
+  execute() {
+    this.result = this.text.toUpperCase();
+  }
+}
+```
+
+### Async Node with Validation
+
+```typescript
+@defineNode({
+  type: 'http.get',
+  label: 'HTTP GET',
+  category: 'HTTP'
+})
+class HttpGetNode extends Node {
+  @Property({ type: 'string', label: 'URL', required: true })
+  url: string = '';
+
+  @Output({ type: 'any', label: 'Data' })
+  data: any;
+
+  validate() {
+    const result = super.validate();
+    
+    if (!this.url) {
+      result.isValid = false;
+      result.errors = ['URL is required'];
+    }
+    
+    return result;
+  }
+
+  async execute() {
+    const response = await fetch(this.url);
+    this.data = await response.json();
+  }
+}
+```
+
+### Long-Running Node with Cancellation
+
+```typescript
+@defineNode({
+  type: 'data.batch-process',
+  label: 'Batch Process',
+  category: 'Data'
+})
+class BatchProcessNode extends Node {
+  @Input({ type: 'any[]', label: 'Items' })
+  items: any[] = [];
+
+  @Output({ type: 'any[]', label: 'Results' })
+  results: any[];
+
+  async execute() {
+    const processed = [];
+    
+    for (let i = 0; i < this.items.length; i++) {
+      // Check if cancelled between items
+      this.checkCancellation();
+      
+      const result = await this.processItem(this.items[i]);
+      processed.push(result);
+    }
+    
+    this.results = processed;
+  }
+
+  private async processItem(item: any) {
+    // Simulate long operation
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return item * 2;
+  }
+}
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card
+    title="Creating Custom Nodes"
+    icon="wand-magic-sparkles"
+    href="/guides/creating-custom-nodes"
+  >
+    Learn to build custom nodes
+  </Card>
+  <Card
+    title="Decorators"
+    icon="at"
+    href="/api-reference/core/decorators"
+  >
+    Decorator API reference
+  </Card>
+  <Card
+    title="Workflow"
+    icon="diagram-project"
+    href="/api-reference/core/workflow"
+  >
+    Workflow class reference
+  </Card>
+  <Card
+    title="Executor"
+    icon="bolt"
+    href="/api-reference/core/executor"
+  >
+    Executor class reference
+  </Card>
+</CardGroup>

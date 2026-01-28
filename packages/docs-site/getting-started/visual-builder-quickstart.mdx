@@ -1,0 +1,326 @@
+---
+title: "Visual Builder Quick Start"
+description: "Build your first visual workflow in 5 minutes"
+---
+
+Get started with ReactFlo's visual workflow builder in 5 minutes.
+
+<Info>
+  This guide is for building **visual workflow applications** with React. For backend-only workflows, see [Core-Only Quick Start](/getting-started/core-only-quickstart).
+</Info>
+
+## Prerequisites
+
+- Node.js 18+ installed
+- React 18+ project set up
+- Basic React knowledge
+
+## Step 1: Install Packages
+
+<CodeGroup>
+```bash npm
+npm install @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+```
+
+```bash pnpm
+pnpm add @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+```
+
+```bash yarn
+yarn add @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+```
+</CodeGroup>
+
+## Step 2: Configure TypeScript
+
+Add to your `tsconfig.json`:
+
+```json tsconfig.json
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM"]
+  }
+}
+```
+
+## Step 3: Create Nodes
+
+Create a few simple nodes:
+
+```typescript src/nodes/AddNode.ts
+import { Node, defineNode, Input, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'math.add',
+  label: 'Add Numbers',
+  category: 'Math'
+})
+export class AddNode extends Node {
+  @Input({ type: 'number', label: 'A' })
+  a: number = 0;
+
+  @Input({ type: 'number', label: 'B' })
+  b: number = 0;
+
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+
+  execute() {
+    this.result = this.a + this.b;
+  }
+}
+```
+
+```typescript src/nodes/NumberInputNode.ts
+import { Node, defineNode, Property, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'input.number',
+  label: 'Number Input',
+  category: 'Input'
+})
+export class NumberInputNode extends Node {
+  @Property({
+    type: 'number',
+    label: 'Value',
+    defaultValue: 0
+  })
+  value: number = 0;
+
+  @Output({ type: 'number', label: 'Value' })
+  output: number;
+
+  execute() {
+    this.output = this.value;
+  }
+}
+```
+
+```typescript src/nodes/DisplayNode.ts
+import { Node, defineNode, Input } from '@reactflo/core';
+
+@defineNode({
+  type: 'output.display',
+  label: 'Display',
+  category: 'Output'
+})
+export class DisplayNode extends Node {
+  @Input({ type: 'any', label: 'Value' })
+  value: any = null;
+
+  execute() {
+    console.log('Result:', this.value);
+  }
+}
+```
+
+```typescript src/nodes/index.ts
+export { NumberInputNode } from './NumberInputNode';
+export { AddNode } from './AddNode';
+export { DisplayNode } from './DisplayNode';
+```
+
+## Step 4: Create Workflow Component
+
+```tsx src/App.tsx
+import React from 'react';
+import 'reflect-metadata';
+import { WorkflowBuilder } from '@reactflo/react';
+import { NumberInputNode, AddNode, DisplayNode } from './nodes';
+import 'reactflow/dist/style.css';
+
+function App() {
+  const nodes = [NumberInputNode, AddNode, DisplayNode];
+
+  const handleExecute = (result) => {
+    if (result.status === 'success') {
+      console.log('✅ Workflow executed successfully!');
+      console.log('Duration:', result.duration, 'ms');
+    } else {
+      console.error('❌ Workflow failed:', result.error);
+    }
+  };
+
+  return (
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <WorkflowBuilder
+        nodes={nodes}
+        onExecute={handleExecute}
+        showNodePalette={true}
+        showPropertyPanel={true}
+        showToolbar={true}
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+## Step 5: Run Your App
+
+```bash
+npm run dev
+```
+
+Open your browser and you should see:
+
+<Frame>
+  <img src="/images/workflow-builder.png" alt="Workflow Builder" />
+</Frame>
+
+## Using the Visual Builder
+
+<Steps>
+  <Step title="Add Nodes">
+    **Drag nodes** from the left palette onto the canvas, or click to add at center.
+  </Step>
+
+  <Step title="Connect Nodes">
+    **Drag from output handles** (right side) to input handles (left side) to create connections.
+  </Step>
+
+  <Step title="Configure Properties">
+    **Click a node** to select it, then edit its properties in the right panel.
+  </Step>
+
+  <Step title="Execute Workflow">
+    Click the **▶️ Execute** button in the toolbar to run your workflow.
+  </Step>
+
+  <Step title="View Results">
+    Check the browser console to see execution results.
+  </Step>
+</Steps>
+
+## Example Workflow
+
+Try building this simple calculator:
+
+1. **Add two Number Input nodes** (set values to 5 and 3)
+2. **Add one Add node**
+3. **Add one Display node**
+4. **Connect**: Number Input 1 → Add (port A)
+5. **Connect**: Number Input 2 → Add (port B)
+6. **Connect**: Add (Result) → Display (Value)
+7. **Click Execute** - Console shows: `Result: 8`
+
+## What You Get
+
+<CardGroup cols={2}>
+  <Card title="Node Palette" icon="palette">
+    Browse and add nodes by category with search
+  </Card>
+  <Card title="Visual Canvas" icon="diagram-project">
+    Drag, drop, and connect nodes visually
+  </Card>
+  <Card title="Property Panel" icon="sliders">
+    Edit node properties and configurations
+  </Card>
+  <Card title="Toolbar Actions" icon="wrench">
+    Execute, save, load, and clear workflows
+  </Card>
+</CardGroup>
+
+## Save & Load Workflows
+
+The toolbar provides save/load functionality:
+
+```tsx
+<WorkflowBuilder
+  nodes={nodes}
+  onWorkflowChange={(workflow) => {
+    // Auto-save to localStorage
+    localStorage.setItem('workflow', JSON.stringify(workflow.toJSON()));
+  }}
+  showToolbar={true}
+/>
+```
+
+Load on mount:
+
+```tsx
+const [initialWorkflow, setInitialWorkflow] = useState(null);
+
+useEffect(() => {
+  const saved = localStorage.getItem('workflow');
+  if (saved) {
+    const workflowData = JSON.parse(saved);
+    setInitialWorkflow(Workflow.fromJSON(workflowData));
+  }
+}, []);
+
+return <WorkflowBuilder initialWorkflow={initialWorkflow} nodes={nodes} />;
+```
+
+## Customize the Builder
+
+Control which panels are visible:
+
+```tsx
+<WorkflowBuilder
+  nodes={nodes}
+  showNodePalette={true}      // Show/hide left panel
+  showPropertyPanel={true}     // Show/hide right panel
+  showToolbar={true}           // Show/hide top toolbar
+  editorMode="visual"          // 'visual' | 'json' | 'split'
+  className="my-builder"       // Custom CSS class
+  style={{ height: '800px' }}  // Custom height
+/>
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Build Your First App"
+    icon="hammer"
+    href="/getting-started/your-first-workflow-builder"
+  >
+    Complete tutorial with custom nodes
+  </Card>
+  <Card
+    title="Creating Custom Nodes"
+    icon="wand-magic-sparkles"
+    href="/guides/creating-custom-nodes"
+  >
+    Learn to build powerful nodes
+  </Card>
+  <Card
+    title="Workflow Builder Guide"
+    icon="book"
+    href="/guides/workflow-builder"
+  >
+    Master the visual builder
+  </Card>
+  <Card
+    title="Examples"
+    icon="code"
+    href="/examples/basic-math"
+  >
+    See complete examples
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Decorators not working?" icon="exclamation">
+    Make sure `experimentalDecorators: true` is in your `tsconfig.json` and you've imported `'reflect-metadata'` at the top of your entry file.
+  </Accordion>
+
+  <Accordion title="Nodes not showing in palette?" icon="question">
+    Ensure all node classes are passed to the `nodes` prop and have the `@defineNode` decorator.
+  </Accordion>
+
+  <Accordion title="Styles not loading?" icon="palette">
+    Import React Flow styles: `import 'reactflow/dist/style.css'` in your component.
+  </Accordion>
+
+  <Accordion title="TypeScript errors?" icon="code">
+    Verify `target: "ES2020"` and `lib: ["ES2020", "DOM"]` in your tsconfig.json.
+  </Accordion>
+</AccordionGroup>

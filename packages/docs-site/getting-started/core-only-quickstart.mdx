@@ -1,0 +1,241 @@
+---
+title: "Core-Only Quick Start"
+description: "Use ReactFlo core package for backend workflows in 5 minutes"
+---
+
+Get up and running with ReactFlo's core package for backend workflows, automation, and CLI tools.
+
+<Info>
+  This guide is for using **@reactflo/core only** (no UI). For visual workflow builders with React, see [Visual Builder Quick Start](/getting-started/visual-builder-quickstart).
+</Info>
+
+## When to Use Core-Only
+
+- ✅ Backend automation and scheduled workflows
+- ✅ CLI tools with workflow execution
+- ✅ Node.js servers or serverless functions
+- ✅ Pre-defined workflows (not user-created)
+- ✅ Custom UI from scratch
+
+## Step 1: Create a Node
+
+Let's create a simple math node that adds two numbers:
+
+```typescript AddNode.ts
+import 'reflect-metadata';
+import { Node, defineNode, Input, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'math.add',
+  label: 'Add Numbers',
+  category: 'Math',
+  description: 'Adds two numbers together'
+})
+class AddNode extends Node {
+  @Input({ type: 'number', label: 'A', defaultValue: 0 })
+  a: number = 0;
+
+  @Input({ type: 'number', label: 'B', defaultValue: 0 })
+  b: number = 0;
+
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+
+  execute() {
+    this.result = this.a + this.b;
+  }
+}
+
+export default AddNode;
+```
+
+<Accordion title="Understanding the code" icon="book">
+  - **@defineNode**: Registers the node with metadata (type, label, category)
+  - **@Input**: Defines an input port that can receive data
+  - **@Output**: Defines an output port that produces data
+  - **execute()**: Contains the node's logic, runs when the workflow executes
+</Accordion>
+
+## Step 2: Register Nodes
+
+Before using nodes, register them with the NodeRegistry:
+
+```typescript registry.ts
+import { NodeRegistry } from '@reactflo/core';
+import AddNode from './AddNode';
+
+const registry = NodeRegistry.getInstance();
+registry.register(AddNode);
+
+export default registry;
+```
+
+## Step 3: Create a Workflow
+
+Now create a workflow and add nodes:
+
+```typescript workflow.ts
+import { Workflow } from '@reactflo/core';
+import './registry'; // Ensure nodes are registered
+import AddNode from './AddNode';
+
+// Create a new workflow
+const workflow = new Workflow();
+
+// Add nodes to the workflow
+const node1 = workflow.addNode(AddNode, {
+  position: { x: 100, y: 100 }
+});
+
+const node2 = workflow.addNode(AddNode, {
+  position: { x: 300, y: 100 }
+});
+
+// Set input values
+node1.setInputValue('a', 5);
+node1.setInputValue('b', 3);
+
+console.log('Workflow created successfully!');
+```
+
+## Step 4: Execute the Workflow
+
+Execute the workflow and get results:
+
+```typescript execute.ts
+import { Executor } from '@reactflo/core';
+import workflow from './workflow';
+
+const executor = new Executor();
+
+// Listen to execution events
+executor.on('onNodeComplete', (nodeId, result) => {
+  console.log(`Node ${nodeId} completed:`, result.outputs);
+});
+
+// Execute the workflow
+const result = await executor.execute(workflow);
+
+console.log('Workflow status:', result.status);
+console.log('Results:', result.nodeResults);
+```
+
+## Step 5: Serialize to JSON
+
+Save your workflow as JSON:
+
+```typescript serialize.ts
+import { serializeWorkflow } from '@reactflo/core';
+import workflow from './workflow';
+
+// Convert workflow to JSON
+const json = serializeWorkflow(workflow.toJSON());
+
+// Save to file
+import fs from 'fs';
+fs.writeFileSync('workflow.json', json);
+
+console.log('Workflow saved to workflow.json');
+```
+
+## Complete Example
+
+Here's everything together:
+
+```typescript index.ts
+import 'reflect-metadata';
+import { Node, defineNode, Input, Output, Workflow, Executor, NodeRegistry } from '@reactflo/core';
+
+// 1. Define a node
+@defineNode({
+  type: 'math.add',
+  label: 'Add Numbers',
+  category: 'Math',
+})
+class AddNode extends Node {
+  @Input({ type: 'number', label: 'A' })
+  a: number = 0;
+
+  @Input({ type: 'number', label: 'B' })
+  b: number = 0;
+
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+
+  execute() {
+    this.result = this.a + this.b;
+  }
+}
+
+// 2. Register the node
+const registry = NodeRegistry.getInstance();
+registry.register(AddNode);
+
+// 3. Create a workflow
+const workflow = new Workflow();
+const node = workflow.addNode(AddNode);
+node.setInputValue('a', 10);
+node.setInputValue('b', 20);
+
+// 4. Execute
+const executor = new Executor();
+executor.execute(workflow).then(result => {
+  console.log('Result:', result.nodeResults.get(node.id)?.outputs.result); // 30
+});
+```
+
+## With React UI
+
+If you're using `@reactflo/react`, you can create a visual workflow builder:
+
+```tsx App.tsx
+import React from 'react';
+import { WorkflowBuilder } from '@reactflo/react';
+import AddNode from './AddNode';
+
+function App() {
+  return (
+    <WorkflowBuilder
+      nodes={[AddNode]}
+      onWorkflowChange={(workflow) => {
+        console.log('Workflow updated:', workflow);
+      }}
+    />
+  );
+}
+
+export default App;
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Core Concepts"
+    icon="book"
+    href="/core-concepts/nodes"
+  >
+    Learn about nodes, workflows, and execution
+  </Card>
+  <Card
+    title="Creating Custom Nodes"
+    icon="code"
+    href="/guides/creating-custom-nodes"
+  >
+    Deep dive into node creation
+  </Card>
+  <Card
+    title="Workflow Builder"
+    icon="diagram-project"
+    href="/guides/workflow-builder"
+  >
+    Build visual workflow interfaces
+  </Card>
+  <Card
+    title="API Reference"
+    icon="terminal"
+    href="/api-reference/core/node"
+  >
+    Explore the complete API
+  </Card>
+</CardGroup>

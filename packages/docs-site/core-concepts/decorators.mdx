@@ -1,0 +1,586 @@
+---
+title: "Decorators"
+description: "Understanding ReactFlo's decorator system for defining nodes"
+---
+
+ReactFlo uses **TypeScript decorators** to define nodes declaratively. Decorators provide metadata about nodes, inputs, outputs, and properties without cluttering your business logic.
+
+## What are Decorators?
+
+Decorators are special annotations that add metadata to classes and properties:
+
+```typescript
+@defineNode({ type: 'math.add', label: 'Add' })
+class AddNode extends Node {
+  @Input({ type: 'number', label: 'A' })
+  a: number = 0;
+  
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+}
+```
+
+<Info>
+  Decorators are a TypeScript feature that requires `experimentalDecorators: true` in your tsconfig.json
+</Info>
+
+## @defineNode
+
+The `@defineNode` decorator registers a node class with ReactFlo:
+
+```typescript
+@defineNode({
+  type: 'category.nodename',
+  label: 'Display Name',
+  category: 'Category',
+  description: 'Optional description'
+})
+class MyNode extends Node {
+  // ...
+}
+```
+
+### Parameters
+
+<ParamField path="type" type="string" required>
+  Unique identifier for the node type (e.g., `'math.add'`, `'http.request'`)
+  
+  Convention: Use dot notation like `category.operation`
+</ParamField>
+
+<ParamField path="label" type="string" required>
+  Human-readable name shown in the UI
+</ParamField>
+
+<ParamField path="category" type="string" required>
+  Category for organizing nodes in the palette (e.g., `'Math'`, `'Data'`, `'Network'`)
+</ParamField>
+
+<ParamField path="description" type="string">
+  Optional description explaining what the node does
+</ParamField>
+
+### Example
+
+```typescript
+@defineNode({
+  type: 'string.uppercase',
+  label: 'To Uppercase',
+  category: 'String',
+  description: 'Converts a string to uppercase'
+})
+class UppercaseNode extends Node {
+  execute() {
+    this.output = this.input.toUpperCase();
+  }
+}
+```
+
+## @Input
+
+The `@Input` decorator defines an input port on a node:
+
+```typescript
+@Input({
+  type: 'string',
+  label: 'Message',
+  defaultValue: 'Hello',
+  required: false,
+  description: 'Input message'
+})
+message: string = 'Hello';
+```
+
+### Parameters
+
+<ParamField path="type" type="string" required>
+  Data type of the input: `'string'`, `'number'`, `'boolean'`, `'any'`, or custom types
+</ParamField>
+
+<ParamField path="label" type="string" required>
+  Display name for the input port in the UI
+</ParamField>
+
+<ParamField path="defaultValue" type="any">
+  Default value if no connection is made
+</ParamField>
+
+<ParamField path="required" type="boolean" default="false">
+  Whether this input must be connected or have a value
+</ParamField>
+
+<ParamField path="description" type="string">
+  Optional description of the input's purpose
+</ParamField>
+
+### Example
+
+```typescript
+@defineNode({
+  type: 'math.power',
+  label: 'Power',
+  category: 'Math'
+})
+class PowerNode extends Node {
+  @Input({ 
+    type: 'number', 
+    label: 'Base',
+    defaultValue: 2,
+    description: 'The base number'
+  })
+  base: number = 2;
+
+  @Input({ 
+    type: 'number', 
+    label: 'Exponent',
+    defaultValue: 2,
+    description: 'The power to raise to'
+  })
+  exponent: number = 2;
+
+  @Output({ type: 'number', label: 'Result' })
+  result: number;
+
+  execute() {
+    this.result = Math.pow(this.base, this.exponent);
+  }
+}
+```
+
+## @Output
+
+The `@Output` decorator defines an output port on a node:
+
+```typescript
+@Output({
+  type: 'string',
+  label: 'Result',
+  description: 'The processed result'
+})
+result: string;
+```
+
+### Parameters
+
+<ParamField path="type" type="string" required>
+  Data type of the output: `'string'`, `'number'`, `'boolean'`, `'any'`, or custom types
+</ParamField>
+
+<ParamField path="label" type="string" required>
+  Display name for the output port in the UI
+</ParamField>
+
+<ParamField path="description" type="string">
+  Optional description of what the output represents
+</ParamField>
+
+### Example
+
+```typescript
+@defineNode({
+  type: 'http.request',
+  label: 'HTTP Request',
+  category: 'Network'
+})
+class HttpRequestNode extends Node {
+  @Output({ 
+    type: 'any', 
+    label: 'Response',
+    description: 'HTTP response data'
+  })
+  response: any;
+
+  @Output({ 
+    type: 'number', 
+    label: 'Status Code',
+    description: 'HTTP status code'
+  })
+  statusCode: number;
+
+  @Output({ 
+    type: 'any', 
+    label: 'Headers',
+    description: 'Response headers'
+  })
+  headers: any;
+
+  async execute() {
+    const res = await fetch(this.url);
+    this.response = await res.json();
+    this.statusCode = res.status;
+    this.headers = Object.fromEntries(res.headers.entries());
+  }
+}
+```
+
+## @Property
+
+The `@Property` decorator defines a static configuration value (not connected to other nodes):
+
+```typescript
+@Property({
+  type: 'select',
+  label: 'Operation',
+  defaultValue: 'add',
+  options: [
+    { value: 'add', label: 'Add' },
+    { value: 'subtract', label: 'Subtract' }
+  ],
+  description: 'The operation to perform'
+})
+operation: string = 'add';
+```
+
+### Parameters
+
+<ParamField path="type" type="'string' | 'number' | 'boolean' | 'select'" required>
+  The property type
+</ParamField>
+
+<ParamField path="label" type="string" required>
+  Display label in the properties panel
+</ParamField>
+
+<ParamField path="defaultValue" type="any">
+  Default value for the property
+</ParamField>
+
+<ParamField path="required" type="boolean" default="false">
+  Whether the property is required
+</ParamField>
+
+<ParamField path="description" type="string">
+  Description shown in the UI
+</ParamField>
+
+<ParamField path="options" type="Array<{value: any, label: string}>">
+  Options for select type properties
+</ParamField>
+
+<ParamField path="min" type="number">
+  Minimum value for number properties
+</ParamField>
+
+<ParamField path="max" type="number">
+  Maximum value for number properties
+</ParamField>
+
+<ParamField path="step" type="number">
+  Step increment for number properties
+</ParamField>
+
+### Example
+
+```typescript
+@defineNode({
+  type: 'data.filter',
+  label: 'Filter Array',
+  category: 'Data'
+})
+class FilterNode extends Node {
+  @Property({
+    type: 'select',
+    label: 'Condition Type',
+    defaultValue: 'equals',
+    options: [
+      { value: 'equals', label: 'Equals' },
+      { value: 'contains', label: 'Contains' },
+      { value: 'greater', label: 'Greater Than' }
+    ]
+  })
+  conditionType: string = 'equals';
+
+  @Property({
+    type: 'string',
+    label: 'Field Name',
+    defaultValue: 'id',
+    description: 'The field to filter by'
+  })
+  fieldName: string = 'id';
+
+  @Property({
+    type: 'number',
+    label: 'Max Results',
+    defaultValue: 100,
+    min: 1,
+    max: 1000,
+    step: 10
+  })
+  maxResults: number = 100;
+
+  @Input({ type: 'any[]', label: 'Array' })
+  array: any[] = [];
+
+  @Output({ type: 'any[]', label: 'Filtered' })
+  filtered: any[];
+
+  execute() {
+    // Use properties in logic
+    this.filtered = this.array
+      .filter(item => this.applyCondition(item))
+      .slice(0, this.maxResults);
+  }
+}
+```
+
+## Property vs Input
+
+<Note>
+  **Key Difference:**
+  - `@Property` = Static configuration in properties panel (not connected)
+  - `@Input` = Dynamic data flow via connections
+  - `@Output` = Computed results during execution
+</Note>
+
+```typescript
+class ExampleNode extends Node {
+  // Property: Set once in UI, doesn't change
+  @Property({ type: 'string', label: 'API Endpoint' })
+  endpoint: string = 'https://api.example.com';
+
+  // Input: Receives data from other nodes
+  @Input({ type: 'string', label: 'Query' })
+  query: string = '';
+
+  // Output: Produces data for other nodes
+  @Output({ type: 'any', label: 'Data' })
+  data: any;
+
+  async execute() {
+    // Use property and input to produce output
+    const response = await fetch(`${this.endpoint}?q=${this.query}`);
+    this.data = await response.json();
+  }
+}
+```
+
+## Decorator Inheritance
+
+Properties and decorators are inherited from base classes:
+
+```typescript
+// Base class with common properties
+class BaseApiNode extends Node {
+  @Property({
+    type: 'boolean',
+    label: 'Enable Logging',
+    defaultValue: false
+  })
+  enableLogging: boolean = false;
+
+  @Property({
+    type: 'number',
+    label: 'Timeout (ms)',
+    defaultValue: 30000
+  })
+  timeout: number = 30000;
+}
+
+// Child class inherits properties
+@defineNode({
+  type: 'api.users',
+  label: 'Fetch Users',
+  category: 'API'
+})
+class FetchUsersNode extends BaseApiNode {
+  // Inherits enableLogging and timeout
+
+  @Output({ type: 'any[]', label: 'Users' })
+  users: any[];
+
+  async execute() {
+    if (this.enableLogging) {
+      console.log('Fetching users...');
+    }
+    // Use inherited timeout property
+    // ...
+  }
+}
+```
+
+## TypeScript Configuration
+
+To use decorators, configure your `tsconfig.json`:
+
+```json tsconfig.json
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "ES2020",
+    "module": "ESNext"
+  }
+}
+```
+
+<Warning>
+  **Don't forget reflect-metadata!**
+  
+  Import `reflect-metadata` at the top of your entry file:
+  ```typescript
+  import 'reflect-metadata';
+  ```
+</Warning>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use Descriptive Labels" icon="tag">
+    Labels should be clear and concise - they're shown to users in the UI.
+  </Accordion>
+
+  <Accordion title="Add Descriptions" icon="book">
+    Always add descriptions to help users understand what inputs, outputs, and properties do.
+  </Accordion>
+
+  <Accordion title="Set Sensible Defaults" icon="sliders">
+    Provide default values that work out of the box.
+  </Accordion>
+
+  <Accordion title="Use Type Prefixes" icon="circle-dot">
+    Name node types with category prefixes: `math.add`, `string.uppercase`, `http.request`
+  </Accordion>
+
+  <Accordion title="Group Related Nodes" icon="layer-group">
+    Use consistent category names to group related nodes together.
+  </Accordion>
+</AccordionGroup>
+
+## Complete Example
+
+Here's a complete node using all decorators:
+
+```typescript
+import 'reflect-metadata';
+import { Node, defineNode, Property, Input, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'text.replace',
+  label: 'Replace Text',
+  category: 'Text',
+  description: 'Replace occurrences of text in a string'
+})
+export class ReplaceTextNode extends Node {
+  // Property: Configuration
+  @Property({
+    type: 'boolean',
+    label: 'Case Sensitive',
+    defaultValue: true,
+    description: 'Whether matching should be case sensitive'
+  })
+  caseSensitive: boolean = true;
+
+  @Property({
+    type: 'boolean',
+    label: 'Replace All',
+    defaultValue: true,
+    description: 'Replace all occurrences or just the first'
+  })
+  replaceAll: boolean = true;
+
+  // Inputs: Dynamic data
+  @Input({
+    type: 'string',
+    label: 'Text',
+    required: true,
+    description: 'The text to search in'
+  })
+  text: string = '';
+
+  @Input({
+    type: 'string',
+    label: 'Find',
+    required: true,
+    description: 'The text to find'
+  })
+  find: string = '';
+
+  @Input({
+    type: 'string',
+    label: 'Replace',
+    defaultValue: '',
+    description: 'The replacement text'
+  })
+  replace: string = '';
+
+  // Outputs: Results
+  @Output({
+    type: 'string',
+    label: 'Result',
+    description: 'The text with replacements made'
+  })
+  result: string;
+
+  @Output({
+    type: 'number',
+    label: 'Count',
+    description: 'Number of replacements made'
+  })
+  count: number;
+
+  // Business logic
+  execute() {
+    let searchText = this.text;
+    let findText = this.find;
+
+    if (!this.caseSensitive) {
+      searchText = searchText.toLowerCase();
+      findText = findText.toLowerCase();
+    }
+
+    if (this.replaceAll) {
+      const regex = new RegExp(
+        findText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+        this.caseSensitive ? 'g' : 'gi'
+      );
+      this.result = this.text.replace(regex, this.replace);
+      this.count = (this.text.match(regex) || []).length;
+    } else {
+      const index = searchText.indexOf(findText);
+      if (index !== -1) {
+        this.result = 
+          this.text.slice(0, index) +
+          this.replace +
+          this.text.slice(index + this.find.length);
+        this.count = 1;
+      } else {
+        this.result = this.text;
+        this.count = 0;
+      }
+    }
+  }
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Creating Custom Nodes"
+    icon="hammer"
+    href="/guides/creating-custom-nodes"
+  >
+    Deep dive into building custom nodes
+  </Card>
+  <Card
+    title="Property System"
+    icon="sliders"
+    href="/advanced/property-system"
+  >
+    Master the property system
+  </Card>
+  <Card
+    title="Inheritance"
+    icon="sitemap"
+    href="/advanced/inheritance"
+  >
+    Learn about decorator inheritance
+  </Card>
+  <Card
+    title="Decorators API"
+    icon="code"
+    href="/api-reference/core/decorators"
+  >
+    Complete decorators API reference
+  </Card>
+</CardGroup>

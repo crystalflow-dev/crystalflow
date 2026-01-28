@@ -1,0 +1,199 @@
+---
+title: "Installation"
+description: "Install ReactFlo packages for visual builder or core-only use"
+---
+
+## Choose Your Path
+
+<CardGroup cols={2}>
+  <Card title="Visual Workflow Builder" icon="diagram-project" href="#visual-builder-installation">
+    **@reactflo/react + core** - For building visual workflow applications with React
+  </Card>
+  <Card title="Core Package Only" icon="cube" href="#core-only-installation">
+    **@reactflo/core** - For backend workflows, automation, and custom UIs
+  </Card>
+</CardGroup>
+
+<Note>
+  Not sure which to choose? See [Which Package Do I Need?](/getting-started/which-package)
+</Note>
+
+---
+
+## Visual Builder Installation
+
+**For building visual workflow applications with drag-and-drop UI.**
+
+### Prerequisites
+
+- **Node.js** v18 or higher
+- **React** v18 or higher
+- **npm**, **pnpm**, or **yarn** package manager
+
+### Install Packages
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm install @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+    ```
+  </Tab>
+  <Tab title="pnpm">
+    ```bash
+    pnpm add @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+    ```
+  </Tab>
+  <Tab title="yarn">
+    ```bash
+    yarn add @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Core-Only Installation
+
+**For backend workflows, automation, CLI tools, or custom UIs.**
+
+### Prerequisites
+
+- **Node.js** v18 or higher
+- **npm**, **pnpm**, or **yarn** package manager
+- **No React required**
+
+### Install Packages
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm install @reactflo/core @reactflo/types reflect-metadata
+    ```
+  </Tab>
+  <Tab title="pnpm">
+    ```bash
+    pnpm add @reactflo/core @reactflo/types reflect-metadata
+    ```
+  </Tab>
+  <Tab title="yarn">
+    ```bash
+    yarn add @reactflo/core @reactflo/types reflect-metadata
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## TypeScript Configuration
+
+**Required for both paths.**
+
+ReactFlo requires specific TypeScript compiler options. Update your `tsconfig.json`:
+
+```json tsconfig.json
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}
+```
+
+<Accordion title="Why these options?" icon="circle-question">
+  - **experimentalDecorators**: Enables decorator syntax (`@defineNode`, `@Input`, `@Output`)
+  - **emitDecoratorMetadata**: Required for reflect-metadata to work
+  - **moduleResolution: "bundler"**: Recommended for modern build tools (Vite, webpack)
+  - **strict**: Enables all strict type-checking options for better type safety
+</Accordion>
+
+## Import reflect-metadata
+
+Add this import at the very top of your application entry point:
+
+```typescript main.ts
+import 'reflect-metadata';
+import { Node, defineNode } from '@reactflo/core';
+
+// Rest of your code...
+```
+
+<Warning>
+  This import **must** come before any other ReactFlo imports to ensure decorators work correctly.
+</Warning>
+
+## Verify Installation
+
+Create a simple test to verify everything is working:
+
+```typescript test.ts
+import 'reflect-metadata';
+import { Node, defineNode, Input, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'test.hello',
+  label: 'Hello World',
+  category: 'Test',
+})
+class HelloNode extends Node {
+  @Input({ type: 'string', label: 'Name' })
+  name: string = 'World';
+
+  @Output({ type: 'string', label: 'Greeting' })
+  greeting: string;
+
+  execute() {
+    this.greeting = `Hello, ${this.name}!`;
+  }
+}
+
+console.log('ReactFlo installed successfully!');
+```
+
+Run the test:
+
+```bash
+npx tsx test.ts
+```
+
+If you see "ReactFlo installed successfully!", you're ready to go!
+
+## Next Steps
+
+Choose your path to continue:
+
+<CardGroup cols={2}>
+  <Card
+    title="Visual Builder Quick Start"
+    icon="diagram-project"
+    href="/getting-started/visual-builder-quickstart"
+  >
+    Build a visual workflow application with React (5 min)
+  </Card>
+  <Card
+    title="Core-Only Quick Start"
+    icon="cube"
+    href="/getting-started/core-only-quickstart"
+  >
+    Create backend workflows with core package (5 min)
+  </Card>
+  <Card
+    title="Your First Workflow Builder"
+    icon="rocket"
+    href="/getting-started/your-first-workflow-builder"
+  >
+    Complete tutorial for visual builder applications
+  </Card>
+  <Card
+    title="Which Package?"
+    icon="question"
+    href="/getting-started/which-package"
+  >
+    Still not sure? Learn which package to use
+  </Card>
+</CardGroup>

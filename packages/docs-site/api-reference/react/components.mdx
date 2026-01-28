@@ -1,0 +1,350 @@
+---
+title: "Components"
+description: "Individual React components API reference"
+---
+
+ReactFlo provides individual components that can be composed to build custom workflow UIs.
+
+## NodePalette
+
+Sidebar component displaying available node types.
+
+```typescript
+function NodePalette(props: NodePaletteProps): JSX.Element;
+```
+
+**Props:**
+
+<ParamField path="nodeTypes" type="Array<typeof Node>">
+  Array of node classes to display.
+</ParamField>
+
+<ParamField path="onNodeSelect" type="(nodeClass: typeof Node) => void">
+  Callback when a node is selected/added.
+</ParamField>
+
+<ParamField path="searchable" type="boolean" default="true">
+  Show search input to filter nodes.
+</ParamField>
+
+<ParamField path="groupByCategory" type="boolean" default="true">
+  Group nodes by category.
+</ParamField>
+
+**Example:**
+
+```tsx
+import { NodePalette } from '@reactflo/react';
+import { AddNode, MultiplyNode } from './nodes';
+
+<NodePalette
+  nodeTypes={[AddNode, MultiplyNode]}
+  onNodeSelect={(NodeClass) => {
+    console.log('Selected:', NodeClass);
+  }}
+  searchable={true}
+  groupByCategory={true}
+/>
+```
+
+---
+
+## PropertyPanel
+
+Sidebar component for editing node properties.
+
+```typescript
+function PropertyPanel(props: PropertyPanelProps): JSX.Element;
+```
+
+**Props:**
+
+<ParamField path="selectedNode" type="Node | null">
+  Currently selected node to display properties for.
+</ParamField>
+
+<ParamField path="onPropertyChange" type="(nodeId: string, property: string, value: any) => void">
+  Callback when a property value changes.
+</ParamField>
+
+**Example:**
+
+```tsx
+import { PropertyPanel } from '@reactflo/react';
+
+<PropertyPanel
+  selectedNode={selectedNode}
+  onPropertyChange={(nodeId, property, value) => {
+    console.log(`Node ${nodeId}.${property} = ${value}`);
+    updateNodeProperty(nodeId, property, value);
+  }}
+/>
+```
+
+---
+
+## WorkflowCanvas
+
+React Flow canvas component for rendering the workflow.
+
+```typescript
+function WorkflowCanvas(props: WorkflowCanvasProps): JSX.Element;
+```
+
+**Props:**
+
+<ParamField path="workflow" type="Workflow">
+  Workflow to render.
+</ParamField>
+
+<ParamField path="onNodeClick" type="(node: Node) => void">
+  Callback when a node is clicked.
+</ParamField>
+
+<ParamField path="onCanvasClick" type="() => void">
+  Callback when empty canvas area is clicked.
+</ParamField>
+
+**Example:**
+
+```tsx
+import { WorkflowCanvas } from '@reactflo/react';
+
+<WorkflowCanvas
+  workflow={workflow}
+  onNodeClick={(node) => {
+    console.log('Clicked node:', node.id);
+    setSelectedNode(node);
+  }}
+  onCanvasClick={() => {
+    setSelectedNode(null);
+  }}
+/>
+```
+
+---
+
+## Toolbar
+
+Toolbar component with common actions.
+
+```typescript
+function Toolbar(props: ToolbarProps): JSX.Element;
+```
+
+**Props:**
+
+<ParamField path="onExecute" type="() => void">
+  Execute button callback.
+</ParamField>
+
+<ParamField path="onSave" type="() => void">
+  Save button callback.
+</ParamField>
+
+<ParamField path="onLoad" type="(file: File) => void">
+  Load button callback.
+</ParamField>
+
+<ParamField path="onClear" type="() => void">
+  Clear button callback.
+</ParamField>
+
+<ParamField path="isExecuting" type="boolean">
+  Whether workflow is currently executing.
+</ParamField>
+
+**Example:**
+
+```tsx
+import { Toolbar } from '@reactflo/react';
+
+<Toolbar
+  onExecute={handleExecute}
+  onSave={handleSave}
+  onLoad={handleLoad}
+  onClear={handleClear}
+  isExecuting={isExecuting}
+/>
+```
+
+---
+
+## CustomNode
+
+Custom React Flow node renderer.
+
+```typescript
+function CustomNode(props: NodeProps): JSX.Element;
+```
+
+**Props:**
+
+<ParamField path="data" type="NodeData">
+  Node data including metadata and values.
+</ParamField>
+
+<ParamField path="selected" type="boolean">
+  Whether node is selected.
+</ParamField>
+
+This component is automatically used by WorkflowCanvas and typically doesn't need to be used directly.
+
+---
+
+## ExecutionProgress
+
+Component showing workflow execution progress.
+
+<Warning>
+  **Work in Progress:** This component is currently being implemented.
+</Warning>
+
+```tsx
+import { ExecutionProgress } from '@reactflo/react';
+
+<ExecutionProgress
+  isExecuting={isExecuting}
+  progress={progress}
+  currentNode={currentNode}
+/>
+```
+
+---
+
+## ErrorDisplay
+
+Component for displaying execution errors.
+
+<Warning>
+  **Work in Progress:** This component is currently being implemented.
+</Warning>
+
+```tsx
+import { ErrorDisplay } from '@reactflo/react';
+
+<ErrorDisplay error={error} onDismiss={() => setError(null)} />
+```
+
+## Complete Custom UI Example
+
+Build a custom workflow UI by composing components:
+
+```tsx
+import React, { useState } from 'react';
+import {
+  NodePalette,
+  PropertyPanel,
+  WorkflowCanvas,
+  Toolbar,
+  useWorkflow,
+  useExecution
+} from '@reactflo/react';
+import { AddNode, MultiplyNode, DisplayNode } from './nodes';
+
+function CustomWorkflowUI() {
+  const [selectedNode, setSelectedNode] = useState(null);
+  const { workflow, addNode, updateNodeData, clear } = useWorkflow();
+  const { execute, isExecuting, result } = useExecution();
+
+  const nodes = [AddNode, MultiplyNode, DisplayNode];
+
+  const handleNodeSelect = (NodeClass) => {
+    const node = addNode(NodeClass, {
+      position: { x: 300, y: 300 }
+    });
+    setSelectedNode(node);
+  };
+
+  const handlePropertyChange = (nodeId, property, value) => {
+    updateNodeData(nodeId, { [property]: value });
+  };
+
+  const handleExecute = async () => {
+    await execute(workflow);
+  };
+
+  return (
+    <div className="custom-ui">
+      <Toolbar
+        onExecute={handleExecute}
+        onClear={clear}
+        isExecuting={isExecuting}
+      />
+
+      <div className="main-area">
+        <NodePalette
+          nodeTypes={nodes}
+          onNodeSelect={handleNodeSelect}
+        />
+
+        <WorkflowCanvas
+          workflow={workflow}
+          onNodeClick={setSelectedNode}
+          onCanvasClick={() => setSelectedNode(null)}
+        />
+
+        <PropertyPanel
+          selectedNode={selectedNode}
+          onPropertyChange={handlePropertyChange}
+        />
+      </div>
+
+      {result && (
+        <div className="results">
+          <h3>Execution Result</h3>
+          <pre>{JSON.stringify(result, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default CustomWorkflowUI;
+```
+
+## Styling Components
+
+All components accept `className` and `style` props:
+
+```tsx
+<NodePalette
+  nodeTypes={nodes}
+  onNodeSelect={handleSelect}
+  className="my-palette"
+  style={{ width: '250px', backgroundColor: '#f5f5f5' }}
+/>
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card
+    title="WorkflowBuilder"
+    icon="diagram-project"
+    href="/api-reference/react/workflow-builder"
+  >
+    All-in-one component
+  </Card>
+  <Card
+    title="Hooks"
+    icon="hook"
+    href="/api-reference/react/hooks"
+  >
+    React hooks API
+  </Card>
+  <Card
+    title="Workflow Builder Guide"
+    icon="book"
+    href="/guides/workflow-builder"
+  >
+    Complete guide
+  </Card>
+  <Card
+    title="Styling Guide"
+    icon="palette"
+    href="/docs/styling-customization"
+  >
+    Customize appearance
+  </Card>
+</CardGroup>

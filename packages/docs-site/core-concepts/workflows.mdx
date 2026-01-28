@@ -1,0 +1,410 @@
+---
+title: "Workflows"
+description: "Understanding how nodes connect and execute together"
+---
+
+A **Workflow** is a collection of nodes connected together to perform a series of operations. Workflows define the flow of data between nodes and the execution order.
+
+## What is a Workflow?
+
+Think of a workflow as a graph where:
+- **Nodes** are the vertices (operations)
+- **Connections** are the edges (data flow)
+- **Execution** follows the topological order
+
+```
+┌──────────┐     ┌──────────┐     ┌──────────┐
+│  Input   │────▶│ Process  │────▶│  Output  │
+└──────────┘     └──────────┘     └──────────┘
+```
+
+## Creating a Workflow
+
+```typescript
+import { Workflow } from '@reactflo/core';
+import { AddNode, MultiplyNode } from './nodes';
+
+const workflow = new Workflow();
+
+// Add nodes
+const node1 = workflow.addNode(AddNode, {
+  position: { x: 100, y: 100 }
+});
+
+const node2 = workflow.addNode(MultiplyNode, {
+  position: { x: 300, y: 100 }
+});
+
+// Connect nodes
+workflow.connect(
+  node1.id,        // Source node ID
+  'result',        // Output port name
+  node2.id,        // Target node ID
+  'a'              // Input port name
+);
+```
+
+## Workflow Properties
+
+<ParamField path="id" type="string">
+  Unique identifier for the workflow
+</ParamField>
+
+<ParamField path="name" type="string">
+  Human-readable name for the workflow
+</ParamField>
+
+<ParamField path="nodes" type="Map<string, Node>">
+  Collection of all nodes in the workflow
+</ParamField>
+
+<ParamField path="connections" type="Connection[]">
+  Array of connections between nodes
+</ParamField>
+
+<ParamField path="variables" type="Record<string, any>">
+  Global variables accessible during execution
+</ParamField>
+
+## Adding Nodes
+
+There are several ways to add nodes to a workflow:
+
+### From Class
+
+```typescript
+const node = workflow.addNode(AddNode, {
+  position: { x: 100, y: 100 }
+});
+```
+
+### From Type String
+
+```typescript
+const node = workflow.addNodeByType('math.add', {
+  position: { x: 100, y: 100 }
+});
+```
+
+### Setting Initial Values
+
+```typescript
+const node = workflow.addNode(AddNode);
+node.setInputValue('a', 10);
+node.setInputValue('b', 20);
+```
+
+## Connecting Nodes
+
+Connections define how data flows between nodes:
+
+```typescript
+workflow.connect(
+  sourceNodeId,    // ID of the node producing data
+  outputPort,      // Name of the output port
+  targetNodeId,    // ID of the node receiving data
+  inputPort        // Name of the input port
+);
+```
+
+### Connection Example
+
+```typescript
+// Create nodes
+const inputNode = workflow.addNode(NumberInputNode);
+const addNode = workflow.addNode(AddNode);
+const displayNode = workflow.addNode(DisplayNode);
+
+// Connect: input -> add
+workflow.connect(
+  inputNode.id,
+  'output',
+  addNode.id,
+  'a'
+);
+
+// Connect: add -> display
+workflow.connect(
+  addNode.id,
+  'result',
+  displayNode.id,
+  'value'
+);
+```
+
+### Multiple Connections
+
+One output can connect to multiple inputs:
+
+```typescript
+const inputNode = workflow.addNode(NumberInputNode);
+const add1 = workflow.addNode(AddNode);
+const add2 = workflow.addNode(AddNode);
+
+// Fan out: one output to multiple inputs
+workflow.connect(inputNode.id, 'output', add1.id, 'a');
+workflow.connect(inputNode.id, 'output', add2.id, 'a');
+```
+
+## Disconnecting Nodes
+
+Remove connections between nodes:
+
+```typescript
+workflow.disconnect(
+  sourceNodeId,
+  outputPort,
+  targetNodeId,
+  inputPort
+);
+```
+
+## Removing Nodes
+
+Remove a node and all its connections:
+
+```typescript
+workflow.removeNode(nodeId);
+```
+
+## Workflow Validation
+
+Validate the workflow before execution:
+
+```typescript
+const errors = workflow.validate();
+
+if (errors.length > 0) {
+  console.error('Validation errors:', errors);
+} else {
+  console.log('Workflow is valid!');
+}
+```
+
+### Validation Checks
+
+<AccordionGroup>
+  <Accordion title="Cycle Detection" icon="arrows-rotate">
+    Ensures there are no circular dependencies in the workflow
+  </Accordion>
+
+  <Accordion title="Connection Validation" icon="link">
+    Verifies all connections are valid (ports exist, types compatible)
+  </Accordion>
+
+  <Accordion title="Required Inputs" icon="asterisk">
+    Checks that all required inputs are connected or have values
+  </Accordion>
+
+  <Accordion title="Type Compatibility" icon="check">
+    Ensures connected ports have compatible types
+  </Accordion>
+</AccordionGroup>
+
+## Execution Order
+
+Workflows execute nodes in **topological order**:
+
+1. Identify nodes with no dependencies (entry points)
+2. Execute those nodes
+3. Propagate data to connected nodes
+4. Repeat until all nodes are executed
+
+```typescript
+import { Executor } from '@reactflo/core';
+
+const executor = new Executor();
+const result = await executor.execute(workflow);
+
+console.log('Execution status:', result.status);
+```
+
+## Workflow Variables
+
+Global variables can be accessed by all nodes:
+
+```typescript
+const workflow = new Workflow({
+  variables: {
+    apiKey: 'your-api-key',
+    environment: 'production'
+  }
+});
+
+// Access in node execution
+class ApiNode extends Node {
+  execute() {
+    const apiKey = this.context.variables.apiKey;
+    // Use apiKey...
+  }
+}
+```
+
+## Serialization
+
+Workflows can be serialized to/from JSON:
+
+### To JSON
+
+```typescript
+import { serializeWorkflow } from '@reactflo/core';
+
+const json = serializeWorkflow(workflow.toJSON());
+console.log(json); // JSON string
+```
+
+### From JSON
+
+```typescript
+import { deserializeWorkflow, Workflow } from '@reactflo/core';
+
+const workflowData = deserializeWorkflow(json);
+const workflow = Workflow.fromJSON(workflowData);
+```
+
+### JSON Format
+
+```json
+{
+  "version": "1.0.0",
+  "id": "workflow-123",
+  "name": "My Workflow",
+  "nodes": [
+    {
+      "id": "node-1",
+      "type": "math.add",
+      "position": { "x": 100, "y": 100 },
+      "inputs": { "a": 10, "b": 20 }
+    }
+  ],
+  "connections": [
+    {
+      "source": "node-1",
+      "sourceOutput": "result",
+      "target": "node-2",
+      "targetInput": "value"
+    }
+  ],
+  "variables": {}
+}
+```
+
+## Workflow Lifecycle
+
+<Steps>
+  <Step title="Creation">
+    Create a new workflow instance
+  </Step>
+  <Step title="Building">
+    Add nodes and create connections
+  </Step>
+  <Step title="Validation">
+    Validate the workflow structure
+  </Step>
+  <Step title="Execution">
+    Execute nodes in topological order
+  </Step>
+  <Step title="Results">
+    Collect and process execution results
+  </Step>
+</Steps>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Validate Before Execution" icon="shield-check">
+    Always validate workflows before executing to catch structural issues early.
+  </Accordion>
+
+  <Accordion title="Use Meaningful IDs" icon="tag">
+    Consider using descriptive IDs for nodes to make debugging easier.
+  </Accordion>
+
+  <Accordion title="Handle Cycles" icon="arrows-rotate">
+    Design workflows without circular dependencies. ReactFlo will detect and reject cycles.
+  </Accordion>
+
+  <Accordion title="Test Incrementally" icon="vial">
+    Build and test workflows incrementally, adding nodes one at a time.
+  </Accordion>
+
+  <Accordion title="Document Workflows" icon="book">
+    Add names and descriptions to workflows for better maintainability.
+  </Accordion>
+</AccordionGroup>
+
+## Example: Data Processing Workflow
+
+```typescript
+import { Workflow } from '@reactflo/core';
+
+// Create workflow
+const workflow = new Workflow({ name: 'Data Processing' });
+
+// Add nodes
+const fetchNode = workflow.addNodeByType('http.request', {
+  position: { x: 100, y: 100 }
+});
+
+const filterNode = workflow.addNodeByType('data.filter', {
+  position: { x: 300, y: 100 }
+});
+
+const transformNode = workflow.addNodeByType('data.transform', {
+  position: { x: 500, y: 100 }
+});
+
+const saveNode = workflow.addNodeByType('file.write', {
+  position: { x: 700, y: 100 }
+});
+
+// Configure nodes
+fetchNode.setInputValue('url', 'https://api.example.com/data');
+filterNode.setInputValue('condition', 'item.active === true');
+
+// Connect nodes
+workflow.connect(fetchNode.id, 'response', filterNode.id, 'array');
+workflow.connect(filterNode.id, 'filtered', transformNode.id, 'input');
+workflow.connect(transformNode.id, 'output', saveNode.id, 'data');
+
+// Validate
+const errors = workflow.validate();
+if (errors.length === 0) {
+  // Execute
+  const executor = new Executor();
+  const result = await executor.execute(workflow);
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Execution Engine"
+    icon="gears"
+    href="/core-concepts/execution-engine"
+  >
+    Learn how workflows are executed
+  </Card>
+  <Card
+    title="Workflow Builder"
+    icon="diagram-project"
+    href="/guides/workflow-builder"
+  >
+    Build visual workflow interfaces
+  </Card>
+  <Card
+    title="Serialization"
+    icon="file-code"
+    href="/guides/serialization"
+  >
+    Save and load workflows as JSON
+  </Card>
+  <Card
+    title="API Reference"
+    icon="code"
+    href="/api-reference/core/workflow"
+  >
+    Complete Workflow API docs
+  </Card>
+</CardGroup>
