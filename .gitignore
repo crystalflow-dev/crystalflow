@@ -51,3 +51,7 @@ Thumbs.db
 
 *storybook.log
 storybook-static
+
+
+# Other
+packages/core/benchmark-baseline.txt
