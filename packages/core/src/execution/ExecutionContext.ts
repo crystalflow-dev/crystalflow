@@ -6,6 +6,7 @@ import {
   NodeExecutionResult,
   CancellationReason,
 } from '@reactflo/types';
+import { ExecutionPlan } from './ExecutionPlan';
 
 /**
  * Serialized execution context data
@@ -46,6 +47,7 @@ export class ExecutionContext {
   private _abortController?: AbortController;
   private _cancellationReason?: CancellationReason;
   private _cancelledAt?: Date;
+  private _executionPlan?: ExecutionPlan;
 
   constructor(
     executionId: ExecutionId,
@@ -132,6 +134,20 @@ export class ExecutionContext {
    */
   get cancelledAt(): Date | undefined {
     return this._cancelledAt;
+  }
+
+  /**
+   * Get execution plan
+   */
+  get executionPlan(): ExecutionPlan | undefined {
+    return this._executionPlan;
+  }
+
+  /**
+   * Set execution plan
+   */
+  set executionPlan(plan: ExecutionPlan | undefined) {
+    this._executionPlan = plan;
   }
 
   /**
