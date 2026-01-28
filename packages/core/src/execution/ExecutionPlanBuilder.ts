@@ -185,6 +185,105 @@ export class ExecutionPlanBuilder {
   }
 
   /**
+   * Get all downstream nodes connected to a specific output port
+   *
+   * Analyzes the workflow's connections to find all nodes that receive
+   * data from the specified output port of a node. This is essential for
+   * building conditional branches, as each output port represents a different
+   * execution path.
+   *
+   * @param nodeId - The source node ID
+   * @param portId - The output port ID to trace from
+   * @param workflow - The workflow containing the connections
+   * @returns Array of node IDs that are connected to this output port
+   *
+   * @example
+   * ```typescript
+   * // For an IfNode with outputs 'thenOutput' and 'elseOutput':
+   * const thenNodes = this.getDownstreamNodesForPort(ifNodeId, 'thenOutput', workflow);
+   * const elseNodes = this.getDownstreamNodesForPort(ifNodeId, 'elseOutput', workflow);
+   * // thenNodes = ['add-node-1', 'display-node-1']
+   * // elseNodes = ['multiply-node-1']
+   * ```
+   */
+  private getDownstreamNodesForPort(nodeId: NodeId, portId: string, workflow: Workflow): NodeId[] {
+    const downstreamNodes: NodeId[] = [];
+
+    // Iterate through all connections to find matches
+    for (const connection of workflow.connections.values()) {
+      // Check if this connection originates from the specified node and port
+      if (connection.sourceNodeId === nodeId && connection.sourcePort === portId) {
+        downstreamNodes.push(connection.targetNodeId);
+      }
+    }
+ 
+    return downstreamNodes;
+  }
+
+  /**
+   * Build a ConditionalStep for a conditional node
+   *
+   * This method analyzes a conditional node and creates a ConditionalStep
+   * that represents all possible execution branches. Each output port of
+   * the conditional node becomes a separate branch in the step.
+   *
+   * Phase 2 Scope:
+   * - Detect all output ports of the conditional node
+   * - For each output port, find connected downstream nodes
+   * - Build branch structure (recursive step building in Task 2.4)
+   * - Handle nested conditionals
+   *
+   * @param node - The conditional node implementing IConditionalNode
+   * @param workflow - The workflow containing the node
+   * @param visited - Set of already visited nodes to prevent cycles
+   * @returns ConditionalStep representing all branches
+   * @throws Error if node is not a conditional node or has invalid structure
+   *
+   * @example
+   * ```typescript
+   * const ifNode = workflow.nodes.get(ifNodeId);
+   * if (this.isConditionalNode(ifNode)) {
+   *   const step = this.buildConditionalStep(ifNode, workflow, new Set());
+   *   // step.branches = [
+   *   //   { condition: 'thenOutput', steps: [...] },
+   *   //   { condition: 'elseOutput', steps: [...] }
+   *   // ]
+   * }
+   * ```
+   */
+  private buildConditionalStep(
+    node: Node & IConditionalNode,
+    workflow: Workflow,
+    _visited: Set<NodeId>
+  ): any {
+    // TODO: Task 2.4 will implement the full logic
+    // For now, this is a stub that will be completed in the next task
+
+    // Get all output ports of the conditional node
+    const outputs = node.getOutputs();
+
+    // For each output port, find downstream nodes
+    const branches: any[] = [];
+    for (const output of outputs) {
+      const downstreamNodes = this.getDownstreamNodesForPort(node.id, output.id, workflow);
+
+      // Create branch structure (will be completed in Task 2.4)
+      branches.push({
+        condition: output.id,
+        downstreamNodes, // Temporary - will become 'steps' array
+      });
+    }
+
+    // Return stub structure (will be replaced with proper ConditionalStep in Task 2.4)
+    return {
+      id: this._generateStepId(),
+      type: 'conditional-stub',
+      nodeId: node.id,
+      branches,
+    };
+  }
+
+  /**
    * Generate a unique step ID
    */
   private _generateStepId(): string {

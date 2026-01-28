@@ -542,4 +542,157 @@ describe('ExecutionPlanBuilder', () => {
       expect(builder.isConditionalNode(math!)).toBe(false);
     });
   });
+
+  describe('getDownstreamNodesForPort (graph analysis)', () => {
+    it('should find downstream nodes connected to a specific port', () => {
+      const workflow = new Workflow('wf-1', 'Port Test');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const thenNode = workflow.addNode('test.simple');
+      const elseNode = workflow.addNode('test.math-add');
+
+      // Connect thenOutput to thenNode
+      workflow.connect(conditionalNode.id, 'thenOutput', thenNode.id, 'input');
+
+      // Connect elseOutput to elseNode
+      workflow.connect(conditionalNode.id, 'elseOutput', elseNode.id, 'a');
+
+      const builder = new ExecutionPlanBuilder();
+
+      // Access private method via any cast for testing
+      const getDownstream = (builder as any).getDownstreamNodesForPort.bind(builder);
+
+      const thenDownstream = getDownstream(conditionalNode.id, 'thenOutput', workflow);
+      const elseDownstream = getDownstream(conditionalNode.id, 'elseOutput', workflow);
+
+      expect(thenDownstream).toHaveLength(1);
+      expect(thenDownstream).toContain(thenNode.id);
+
+      expect(elseDownstream).toHaveLength(1);
+      expect(elseDownstream).toContain(elseNode.id);
+    });
+
+    it('should return empty array when no nodes connected to port', () => {
+      const workflow = new Workflow('wf-1', 'Empty Port Test');
+      const conditionalNode = workflow.addNode('test.conditional');
+
+      const builder = new ExecutionPlanBuilder();
+      const getDownstream = (builder as any).getDownstreamNodesForPort.bind(builder);
+
+      const downstream = getDownstream(conditionalNode.id, 'thenOutput', workflow);
+
+      expect(downstream).toHaveLength(0);
+      expect(downstream).toEqual([]);
+    });
+
+    it('should handle multiple nodes connected to same port', () => {
+      const workflow = new Workflow('wf-1', 'Multiple Connections Test');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const node1 = workflow.addNode('test.simple');
+      const node2 = workflow.addNode('test.simple');
+      const node3 = workflow.addNode('test.math-add');
+
+      // Connect thenOutput to multiple nodes
+      workflow.connect(conditionalNode.id, 'thenOutput', node1.id, 'input');
+      workflow.connect(conditionalNode.id, 'thenOutput', node2.id, 'input');
+      workflow.connect(conditionalNode.id, 'thenOutput', node3.id, 'a');
+
+      const builder = new ExecutionPlanBuilder();
+      const getDownstream = (builder as any).getDownstreamNodesForPort.bind(builder);
+
+      const downstream = getDownstream(conditionalNode.id, 'thenOutput', workflow);
+
+      expect(downstream).toHaveLength(3);
+      expect(downstream).toContain(node1.id);
+      expect(downstream).toContain(node2.id);
+      expect(downstream).toContain(node3.id);
+    });
+
+    it('should only return nodes for specified port, not other ports', () => {
+      const workflow = new Workflow('wf-1', 'Port Specificity Test');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const thenNode = workflow.addNode('test.simple');
+      const elseNode = workflow.addNode('test.math-add');
+
+      workflow.connect(conditionalNode.id, 'thenOutput', thenNode.id, 'input');
+      workflow.connect(conditionalNode.id, 'elseOutput', elseNode.id, 'a');
+
+      const builder = new ExecutionPlanBuilder();
+      const getDownstream = (builder as any).getDownstreamNodesForPort.bind(builder);
+
+      // Should only return thenNode, not elseNode
+      const thenDownstream = getDownstream(conditionalNode.id, 'thenOutput', workflow);
+      expect(thenDownstream).toEqual([thenNode.id]);
+      expect(thenDownstream).not.toContain(elseNode.id);
+
+      // Should only return elseNode, not thenNode
+      const elseDownstream = getDownstream(conditionalNode.id, 'elseOutput', workflow);
+      expect(elseDownstream).toEqual([elseNode.id]);
+      expect(elseDownstream).not.toContain(thenNode.id);
+    });
+  });
+
+  describe('buildConditionalStep (stub)', () => {
+    it('should create stub structure for conditional node', () => {
+      const workflow = new Workflow('wf-1', 'Conditional Stub Test');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const thenNode = workflow.addNode('test.simple');
+      const elseNode = workflow.addNode('test.math-add');
+
+      workflow.connect(conditionalNode.id, 'thenOutput', thenNode.id, 'input');
+      workflow.connect(conditionalNode.id, 'elseOutput', elseNode.id, 'a');
+
+      const builder = new ExecutionPlanBuilder();
+      const buildConditional = (builder as any).buildConditionalStep.bind(builder);
+
+      const node = workflow.nodes.get(conditionalNode.id);
+      const step = buildConditional(node, workflow, new Set());
+
+      expect(step).toBeDefined();
+      expect(step.type).toBe('conditional-stub');
+      expect(step.nodeId).toBe(conditionalNode.id);
+      expect(step.branches).toHaveLength(2); // thenOutput and elseOutput
+    });
+
+    it('should identify downstream nodes for each branch', () => {
+      const workflow = new Workflow('wf-1', 'Branch Analysis Test');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const thenNode = workflow.addNode('test.simple');
+      const elseNode = workflow.addNode('test.math-add');
+
+      workflow.connect(conditionalNode.id, 'thenOutput', thenNode.id, 'input');
+      workflow.connect(conditionalNode.id, 'elseOutput', elseNode.id, 'a');
+
+      const builder = new ExecutionPlanBuilder();
+      const buildConditional = (builder as any).buildConditionalStep.bind(builder);
+
+      const node = workflow.nodes.get(conditionalNode.id);
+      const step = buildConditional(node, workflow, new Set());
+
+      // Find the branches
+      const thenBranch = step.branches.find((b: any) => b.condition === 'thenOutput');
+      const elseBranch = step.branches.find((b: any) => b.condition === 'elseOutput');
+
+      expect(thenBranch).toBeDefined();
+      expect(thenBranch.downstreamNodes).toContain(thenNode.id);
+
+      expect(elseBranch).toBeDefined();
+      expect(elseBranch.downstreamNodes).toContain(elseNode.id);
+    });
+
+    it('should handle branches with no downstream nodes', () => {
+      const workflow = new Workflow('wf-1', 'Empty Branch Test');
+      const conditionalNode = workflow.addNode('test.conditional');
+
+      const builder = new ExecutionPlanBuilder();
+      const buildConditional = (builder as any).buildConditionalStep.bind(builder);
+
+      const node = workflow.nodes.get(conditionalNode.id);
+      const step = buildConditional(node, workflow, new Set());
+
+      expect(step.branches).toHaveLength(2);
+      step.branches.forEach((branch: any) => {
+        expect(branch.downstreamNodes).toEqual([]);
+      });
+    });
+  });
 });
