@@ -39,6 +39,7 @@ ReactFlo uses a **single set of CSS variables** (`--reactflo-*`) that control th
 - **ReactFlow Components**: Controls, MiniMap, Background, Edges, Handles
 
 This unified approach means:
+
 - ✅ Change theme once, updates everywhere
 - ✅ No duplicate variable definitions
 - ✅ Consistent theming across the entire workflow builder
@@ -52,6 +53,7 @@ ReactFlo applies theme CSS variables to the WorkflowBuilder root element via inl
 - **ReactFlow Components**: CSS overrides map ReactFlow's hardcoded colors to `--reactflo-*` variables
 
 The theme system automatically:
+
 1. Sets all `--reactflo-*` CSS variables based on the theme
 2. ReactFlow components inherit these via CSS overrides
 3. Applies theme class (`.reactflo-theme-light` or `.reactflo-theme-dark`) for additional customization
@@ -94,7 +96,7 @@ function ThemedWorkflow() {
         <button onClick={() => setTheme('dark')}>🌙 Dark</button>
         <button onClick={() => setTheme('auto')}>🔄 Auto</button>
       </div>
-      
+
       <WorkflowBuilder theme={theme} nodes={nodeClasses} />
     </div>
   );
@@ -126,7 +128,7 @@ const customLight = createTheme('light', {
   },
 });
 
-<WorkflowBuilder theme={customLight} nodes={nodeClasses} />
+<WorkflowBuilder theme={customLight} nodes={nodeClasses} />;
 
 // Create custom dark theme
 const customDark = createTheme('dark', {
@@ -141,7 +143,7 @@ const customDark = createTheme('dark', {
   },
 });
 
-<WorkflowBuilder theme={customDark} nodes={nodeClasses} />
+<WorkflowBuilder theme={customDark} nodes={nodeClasses} />;
 ```
 
 ### Full Theme Object
@@ -215,7 +217,7 @@ const myTheme: Theme = {
   },
 };
 
-<WorkflowBuilder theme={myTheme} nodes={nodeClasses} />
+<WorkflowBuilder theme={myTheme} nodes={nodeClasses} />;
 ```
 
 ### CSS Variables
@@ -234,7 +236,7 @@ All themes use CSS variables that control **both ReactFlo and ReactFlow** compon
 }
 
 /* Dark mode overrides */
-[data-theme="dark"] .my-workflow {
+[data-theme='dark'] .my-workflow {
   --reactflo-node-bg: #2d2d2d;
   --reactflo-node-border: #404040;
   --reactflo-node-text: #e0e0e0;
@@ -243,25 +245,26 @@ All themes use CSS variables that control **both ReactFlo and ReactFlow** compon
 
 **Available CSS Variables (used by both ReactFlo & ReactFlow):**
 
-| Variable | Affects | Light Default | Dark Default |
-|----------|---------|---------------|--------------|
-| `--reactflo-bg-primary` | Canvas, main backgrounds | `#ffffff` | `#1e1e1e` |
-| `--reactflo-bg-secondary` | Toolbar, MiniMap background | `#f9f9f9` | `#2d2d2d` |
-| `--reactflo-text-primary` | All text, Controls icons | `#333333` | `#e0e0e0` |
-| `--reactflo-text-secondary` | Secondary labels | `#666666` | `#b0b0b0` |
-| `--reactflo-border-primary` | Edges, borders, Controls | `#dddddd` | `#404040` |
-| `--reactflo-node-bg` | Custom nodes, MiniMap nodes | `#ffffff` | `#2d2d2d` |
-| `--reactflo-node-border` | Node borders, MiniMap strokes | `#dddddd` | `#404040` |
-| `--reactflo-toolbar-bg` | Toolbar background | `#f9f9f9` | `#2d2d2d` |
-| `--reactflo-button-primary` | Buttons, Handles, selected edges | `#3498db` | `#5dade2` |
-| `--reactflo-button-secondary` | Controls buttons | `#f9f9f9` | `#2d2d2d` |
-| `--reactflo-button-hover` | Button hover, Controls hover | `#e3e3e3` | `#3a3a3a` |
-| `--reactflo-canvas-bg` | Canvas background | `#ffffff` | `#1e1e1e` |
-| `--reactflo-canvas-grid` | Background pattern | `#e3e3e3` | `#2a2a2a` |
-| `--reactflo-status-success` | Success indicators | `#27ae60` | `#2ecc71` |
-| `--reactflo-status-error` | Error indicators | `#e74c3c` | `#e74c3c` |
+| Variable                      | Affects                          | Light Default | Dark Default |
+| ----------------------------- | -------------------------------- | ------------- | ------------ |
+| `--reactflo-bg-primary`       | Canvas, main backgrounds         | `#ffffff`     | `#1e1e1e`    |
+| `--reactflo-bg-secondary`     | Toolbar, MiniMap background      | `#f9f9f9`     | `#2d2d2d`    |
+| `--reactflo-text-primary`     | All text, Controls icons         | `#333333`     | `#e0e0e0`    |
+| `--reactflo-text-secondary`   | Secondary labels                 | `#666666`     | `#b0b0b0`    |
+| `--reactflo-border-primary`   | Edges, borders, Controls         | `#dddddd`     | `#404040`    |
+| `--reactflo-node-bg`          | Custom nodes, MiniMap nodes      | `#ffffff`     | `#2d2d2d`    |
+| `--reactflo-node-border`      | Node borders, MiniMap strokes    | `#dddddd`     | `#404040`    |
+| `--reactflo-toolbar-bg`       | Toolbar background               | `#f9f9f9`     | `#2d2d2d`    |
+| `--reactflo-button-primary`   | Buttons, Handles, selected edges | `#3498db`     | `#5dade2`    |
+| `--reactflo-button-secondary` | Controls buttons                 | `#f9f9f9`     | `#2d2d2d`    |
+| `--reactflo-button-hover`     | Button hover, Controls hover     | `#e3e3e3`     | `#3a3a3a`    |
+| `--reactflo-canvas-bg`        | Canvas background                | `#ffffff`     | `#1e1e1e`    |
+| `--reactflo-canvas-grid`      | Background pattern               | `#e3e3e3`     | `#2a2a2a`    |
+| `--reactflo-status-success`   | Success indicators               | `#27ae60`     | `#2ecc71`    |
+| `--reactflo-status-error`     | Error indicators                 | `#e74c3c`     | `#e74c3c`    |
 
 **Key Benefits:**
+
 - 🎨 Single variable controls multiple components
 - 🔄 Change once, updates everywhere (nodes, controls, minimap, etc.)
 - 🎯 Predictable - same variable names across all features
@@ -275,7 +278,7 @@ When using `theme="auto"`, ReactFlo automatically detects the user's system pref
 
 ```tsx
 <WorkflowBuilder
-  theme="auto"  // Respects prefers-color-scheme media query
+  theme="auto" // Respects prefers-color-scheme media query
   nodes={nodeClasses}
 />
 ```
@@ -348,7 +351,7 @@ import { WorkflowBuilder } from '@reactflo/react';
       variant: BackgroundVariant.Dots,
     },
   }}
-/>
+/>;
 ```
 
 ---
@@ -360,10 +363,7 @@ import { WorkflowBuilder } from '@reactflo/react';
 Apply custom CSS classes to any component using the `className` prop:
 
 ```tsx
-<WorkflowBuilder
-  className="my-workflow-builder"
-  nodes={[AddNode, MultiplyNode]}
-/>
+<WorkflowBuilder className="my-workflow-builder" nodes={[AddNode, MultiplyNode]} />
 ```
 
 ```css
@@ -489,15 +489,15 @@ Pass props directly to the underlying ReactFlow component:
       // Grid snapping
       snapToGrid: true,
       snapGrid: [15, 15],
-      
+
       // Viewport control
       defaultViewport: { x: 50, y: 50, zoom: 1 },
       minZoom: 0.2,
       maxZoom: 2,
-      
+
       // Connection style
       connectionLineType: 'smoothstep', // 'default' | 'straight' | 'step' | 'smoothstep'
-      
+
       // Interaction controls
       zoomOnScroll: true,
       panOnScroll: false,
@@ -506,7 +506,7 @@ Pass props directly to the underlying ReactFlow component:
       nodesConnectable: true,
       elementsSelectable: true,
       selectNodesOnDrag: false,
-      
+
       // Keyboard shortcuts
       deleteKeyCode: 'Backspace',
       selectionKeyCode: 'Shift',
@@ -528,19 +528,20 @@ import { BackgroundVariant } from 'reactflow';
   reactFlowCustomization={{
     backgroundProps: {
       variant: BackgroundVariant.Dots, // 'dots' | 'lines' | 'cross'
-      gap: 20,          // Gap between grid elements
-      size: 1.5,        // Size of grid elements
-      color: '#aaa',    // Color of grid elements
+      gap: 20, // Gap between grid elements
+      size: 1.5, // Size of grid elements
+      color: '#aaa', // Color of grid elements
       className: 'custom-background',
       style: { opacity: 0.5 },
     },
     showBackground: true, // Toggle background visibility
   }}
   nodes={nodeClasses}
-/>
+/>;
 ```
 
 **Background Variants:**
+
 - `BackgroundVariant.Dots` - Dotted grid pattern
 - `BackgroundVariant.Lines` - Line grid pattern
 - `BackgroundVariant.Cross` - Cross pattern
@@ -585,15 +586,15 @@ Customize the mini-map overview:
         if (node.data?.category === 'Output') return '#2ecc71';
         return '#95a5a6';
       },
-      
+
       // Appearance
       nodeStrokeColor: '#333',
       nodeBorderRadius: 4,
       maskColor: 'rgba(0, 0, 0, 0.2)',
-      
+
       // Position
       position: 'bottom-right',
-      
+
       // Styling
       className: 'custom-minimap',
       style: {
@@ -688,27 +689,27 @@ Style nodes differently based on their category using CSS attribute selectors or
 
 ```css
 /* Using wrapper class in your app */
-.styled-canvas .react-flow__node-custom[data-category="input"] {
+.styled-canvas .react-flow__node-custom[data-category='input'] {
   border-color: #3498db;
 }
 
-.styled-canvas .react-flow__node-custom[data-category="input"] .node-header {
+.styled-canvas .react-flow__node-custom[data-category='input'] .node-header {
   background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
 }
 
-.styled-canvas .react-flow__node-custom[data-category="math"] {
+.styled-canvas .react-flow__node-custom[data-category='math'] {
   border-color: #e74c3c;
 }
 
-.styled-canvas .react-flow__node-custom[data-category="math"] .node-header {
+.styled-canvas .react-flow__node-custom[data-category='math'] .node-header {
   background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
 }
 
-.styled-canvas .react-flow__node-custom[data-category="output"] {
+.styled-canvas .react-flow__node-custom[data-category='output'] {
   border-color: #2ecc71;
 }
 
-.styled-canvas .react-flow__node-custom[data-category="output"] .node-header {
+.styled-canvas .react-flow__node-custom[data-category='output'] .node-header {
   background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
 }
 ```
@@ -727,14 +728,15 @@ Add animations, shadows, and interactive effects:
 
 /* Glow effect */
 .react-flow__node-custom {
-  box-shadow: 
+  box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.1),
     0 0 20px rgba(233, 69, 96, 0.3);
 }
 
 /* Pulse animation */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
   }
   50% {
@@ -767,7 +769,7 @@ Create themeable nodes with CSS custom properties:
   --node-shadow: rgba(0, 0, 0, 0.1);
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   --node-bg: #2c3e50;
   --node-border: #34495e;
   --node-header-bg: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
@@ -810,7 +812,7 @@ import './StyledWorkflow.css';
       },
     }}
   />
-</div>
+</div>;
 ```
 
 ---
@@ -836,7 +838,7 @@ import { WorkflowBuilder, CustomNodeData } from '@reactflo/react';
       <p>{data.type}</p>
     </div>
   )}
-/>
+/>;
 ```
 
 **Category-Based Rendering:**
@@ -844,7 +846,7 @@ import { WorkflowBuilder, CustomNodeData } from '@reactflo/react';
 ```tsx
 const renderNodeContent = (data: CustomNodeData) => {
   const inputs = data.inputs ? Object.entries(data.inputs) : [];
-  
+
   switch (data.category) {
     case 'Input':
       return (
@@ -858,7 +860,7 @@ const renderNodeContent = (data: CustomNodeData) => {
           ))}
         </div>
       );
-      
+
     case 'Math':
       const symbol = data.label.includes('Add') ? '+' : '×';
       return (
@@ -867,7 +869,7 @@ const renderNodeContent = (data: CustomNodeData) => {
           <div style={{ fontSize: '12px' }}>{data.label}</div>
         </div>
       );
-      
+
     case 'Output':
       return (
         <div style={{ padding: '16px' }}>
@@ -875,19 +877,15 @@ const renderNodeContent = (data: CustomNodeData) => {
           <div style={{ fontWeight: 'bold', textAlign: 'center' }}>{data.label}</div>
           {inputs.map(([key, port]) => (
             <div key={key}>
-              <div style={{ fontSize: '11px', color: '#34d399' }}>
-                {port.label || key}
-              </div>
+              <div style={{ fontSize: '11px', color: '#34d399' }}>{port.label || key}</div>
               {data[key] !== undefined && (
-                <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
-                  {String(data[key])}
-                </div>
+                <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{String(data[key])}</div>
               )}
             </div>
           ))}
         </div>
       );
-      
+
     default:
       return (
         <div style={{ padding: '12px' }}>
@@ -898,15 +896,13 @@ const renderNodeContent = (data: CustomNodeData) => {
   }
 };
 
-<WorkflowBuilder
-  nodes={nodeClasses}
-  renderNodeContent={renderNodeContent}
-/>
+<WorkflowBuilder nodes={nodeClasses} renderNodeContent={renderNodeContent} />;
 ```
 
 **What You Can Access:**
 
 The `CustomNodeData` interface provides:
+
 - `label` - Node label
 - `type` - Node type identifier
 - `category` - Node category
@@ -915,6 +911,7 @@ The `CustomNodeData` interface provides:
 - All node property values (accessible via `data[propertyName]`)
 
 **Important Notes:**
+
 - Connection handles are automatically rendered around your custom content
 - Your render function should return valid React elements
 - Changes to property values will trigger re-renders automatically
@@ -976,10 +973,7 @@ const renderPaletteItem = (item: { type: string; label: string; category?: strin
   );
 };
 
-<WorkflowBuilder
-  nodes={nodeClasses}
-  renderPaletteItem={renderPaletteItem}
-/>
+<WorkflowBuilder nodes={nodeClasses} renderPaletteItem={renderPaletteItem} />;
 ```
 
 ### Custom Toolbar Rendering
@@ -993,7 +987,7 @@ The `renderToolbar` prop gives you complete control over the toolbar, while stil
   nodes={nodeClasses}
   renderToolbar={(actions) => (
     <div style={{ padding: '12px', backgroundColor: '#2c3e50', display: 'flex', gap: '10px' }}>
-      <button 
+      <button
         onClick={actions.onExecute}
         disabled={!actions.canExecute}
         style={{
@@ -1006,8 +1000,8 @@ The `renderToolbar` prop gives you complete control over the toolbar, while stil
       >
         ▶️ Execute
       </button>
-      
-      <button 
+
+      <button
         onClick={actions.onSave}
         style={{
           padding: '8px 16px',
@@ -1019,8 +1013,8 @@ The `renderToolbar` prop gives you complete control over the toolbar, while stil
       >
         💾 Save
       </button>
-      
-      <button 
+
+      <button
         onClick={actions.onLoad}
         style={{
           padding: '8px 16px',
@@ -1032,8 +1026,8 @@ The `renderToolbar` prop gives you complete control over the toolbar, while stil
       >
         📂 Load
       </button>
-      
-      <button 
+
+      <button
         onClick={actions.onClear}
         style={{
           padding: '8px 16px',
@@ -1045,9 +1039,9 @@ The `renderToolbar` prop gives you complete control over the toolbar, while stil
       >
         🗑️ Clear
       </button>
-      
+
       <div style={{ flex: 1 }} />
-      
+
       <div style={{ color: '#ecf0f1', fontSize: '12px' }}>
         {actions.canExecute ? '✅ Ready' : '⚠️ Add nodes'}
       </div>
@@ -1059,6 +1053,7 @@ The `renderToolbar` prop gives you complete control over the toolbar, while stil
 **Available Actions:**
 
 The `renderToolbar` function receives an actions object with:
+
 - `onExecute: () => void` - Execute the workflow
 - `onSave: () => void` - Save workflow to file
 - `onLoad: () => void` - Load workflow from file
@@ -1068,6 +1063,7 @@ The `renderToolbar` function receives an actions object with:
 **Complete Example:**
 
 See [CustomRenderWorkflow example](../packages/examples/src/examples/CustomRenderWorkflow.tsx) for a full implementation with:
+
 - Category-specific node layouts
 - Icon-based palette items
 - Custom styled toolbar
@@ -1087,10 +1083,10 @@ Configure which buttons appear in the toolbar:
 ```tsx
 <WorkflowBuilder
   toolbarOptions={{
-    showExecute: true,   // Show execute button
-    showSave: true,      // Show save button
-    showLoad: true,      // Show load button
-    showClear: true,     // Show clear button
+    showExecute: true, // Show execute button
+    showSave: true, // Show save button
+    showLoad: true, // Show load button
+    showClear: true, // Show clear button
     showUndoRedo: false, // Show undo/redo buttons (default: false)
   }}
 />
@@ -1117,17 +1113,18 @@ Customize or remove toolbar button icons:
 ```tsx
 <WorkflowBuilder
   toolbarIcons={{
-    execute: '▶',     // Custom execute icon
-    save: '💾',       // Keep default save icon
-    load: null,       // Remove load icon
-    clear: '✖',       // Custom clear icon (X symbol)
-    undo: '↶',        // Custom undo icon
-    redo: '↷',        // Custom redo icon
+    execute: '▶', // Custom execute icon
+    save: '💾', // Keep default save icon
+    load: null, // Remove load icon
+    clear: '✖', // Custom clear icon (X symbol)
+    undo: '↶', // Custom undo icon
+    redo: '↷', // Custom redo icon
   }}
 />
 ```
 
 **Icon Options:**
+
 - **String value** - Replace with custom icon/text
 - **`null` / `false` / `''`** - Remove icon entirely
 - **`undefined`** - Use default icon
@@ -1137,10 +1134,10 @@ Customize or remove toolbar button icons:
 ```tsx
 <WorkflowBuilder
   toolbarIcons={{
-    execute: null,  // No icon, just "Execute" text
-    save: null,     // No icon, just "Save" text
-    load: null,     // No icon, just "Load" text
-    clear: null,    // No icon, just "Clear" text
+    execute: null, // No icon, just "Execute" text
+    save: null, // No icon, just "Save" text
+    load: null, // No icon, just "Load" text
+    clear: null, // No icon, just "Clear" text
   }}
 />
 ```
@@ -1150,10 +1147,10 @@ Customize or remove toolbar button icons:
 ```tsx
 <WorkflowBuilder
   toolbarIcons={{
-    execute: '▸',     // Right-pointing triangle
-    save: '⊕',        // Circled plus
-    load: '↓',        // Down arrow
-    clear: '⊗',       // Circled times
+    execute: '▸', // Right-pointing triangle
+    save: '⊕', // Circled plus
+    load: '↓', // Down arrow
+    clear: '⊗', // Circled times
   }}
 />
 ```
@@ -1171,13 +1168,11 @@ Use `toolbarOptions`, `toolbarIcons`, and `toolbarProps` together:
     showLoad: false,
     showClear: true,
   }}
-  
   // Custom icons
   toolbarIcons={{
     execute: '🚀',
     clear: '🗑️',
   }}
-  
   // Custom styles
   toolbarProps={{
     style: {
@@ -1204,7 +1199,7 @@ Customize the node palette sidebar:
   nodePaletteProps={{
     // Behavior
     groupByCategory: true,
-    
+
     // Class names
     classes: {
       root: 'custom-palette',
@@ -1213,7 +1208,7 @@ Customize the node palette sidebar:
       nodeItem: 'custom-palette-item',
       empty: 'custom-palette-empty',
     },
-    
+
     // Styles
     styles: {
       root: {
@@ -1255,7 +1250,7 @@ Customize the properties panel:
       input: 'custom-properties-input',
       empty: 'custom-properties-empty',
     },
-    
+
     // Styles
     styles: {
       root: {
@@ -1297,7 +1292,7 @@ Customize the toolbar:
       buttonDisabled: 'custom-toolbar-button-disabled',
       buttonActive: 'custom-toolbar-button-active',
     },
-    
+
     // Styles
     styles: {
       root: {
@@ -1370,7 +1365,7 @@ import './theme.css';
     palette: 'workflow-palette',
   }}
   nodes={nodeClasses}
-/>
+/>;
 ```
 
 ### Dark Mode Theme
@@ -1411,10 +1406,7 @@ const darkTheme = {
   },
 };
 
-<WorkflowBuilder
-  {...darkTheme}
-  nodes={nodeClasses}
-/>
+<WorkflowBuilder {...darkTheme} nodes={nodeClasses} />;
 ```
 
 ### Responsive Styling
@@ -1424,19 +1416,19 @@ Create responsive layouts:
 ```tsx
 const useResponsiveLayout = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
+
   return isMobile;
 };
 
 function MyWorkflow() {
   const isMobile = useResponsiveLayout();
-  
+
   return (
     <WorkflowBuilder
       showPalette={!isMobile}
@@ -1466,12 +1458,7 @@ import { WorkflowBuilder } from '@reactflo/react';
 import { AddNode, MultiplyNode } from './nodes';
 
 export function MinimalWorkflow() {
-  return (
-    <WorkflowBuilder
-      nodes={[AddNode, MultiplyNode]}
-      style={{ height: '100vh' }}
-    />
-  );
+  return <WorkflowBuilder nodes={[AddNode, MultiplyNode]} style={{ height: '100vh' }} />;
 }
 ```
 
@@ -1525,13 +1512,21 @@ See [`packages/examples/src/examples/StyledWorkflow.tsx`](../packages/examples/s
 Prefer CSS classes over inline styles for reusable themes:
 
 ✅ **Good:**
+
 ```tsx
 <WorkflowBuilder classes={{ root: 'my-theme' }} />
 ```
 
 ❌ **Avoid:**
+
 ```tsx
-<WorkflowBuilder style={{ /* lots of inline styles */ }} />
+<WorkflowBuilder
+  style={
+    {
+      /* lots of inline styles */
+    }
+  }
+/>
 ```
 
 ### 2. Combine Approaches
@@ -1540,8 +1535,8 @@ Use both classes and styles for maximum flexibility:
 
 ```tsx
 <WorkflowBuilder
-  classes={{ toolbar: 'toolbar-base' }}  // Base styling via CSS
-  styles={{ toolbar: { height: '60px' } }}  // Dynamic override
+  classes={{ toolbar: 'toolbar-base' }} // Base styling via CSS
+  styles={{ toolbar: { height: '60px' } }} // Dynamic override
 />
 ```
 
@@ -1553,7 +1548,7 @@ Use ReactFlow's built-in features instead of reinventing:
 <WorkflowBuilder
   reactFlowCustomization={{
     reactFlowProps: {
-      snapToGrid: true,  // Use built-in snapping
+      snapToGrid: true, // Use built-in snapping
       snapGrid: [15, 15],
     },
   }}
@@ -1578,6 +1573,7 @@ src/
 ### 5. Test Across Browsers
 
 Ensure your custom styles work across different browsers, especially:
+
 - Chrome/Edge (Chromium)
 - Firefox
 - Safari
@@ -1590,8 +1586,8 @@ When customizing styles, maintain accessibility:
 <WorkflowBuilder
   styles={{
     button: {
-      minHeight: '44px',  // Touch target size
-      fontSize: '16px',   // Readable text
+      minHeight: '44px', // Touch target size
+      fontSize: '16px', // Readable text
     },
   }}
 />
@@ -1616,7 +1612,7 @@ const myTheme: Partial<WorkflowBuilderProps> = {
   },
 };
 
-<WorkflowBuilder {...myTheme} nodes={nodeClasses} />
+<WorkflowBuilder {...myTheme} nodes={nodeClasses} />;
 ```
 
 ### 8. Optimize Custom Renderers
@@ -1624,14 +1620,11 @@ const myTheme: Partial<WorkflowBuilderProps> = {
 When using `renderNodeContent`, `renderPaletteItem`, or `renderToolbar`:
 
 **Extract Renderers Outside Component:**
+
 ```tsx
 // ❌ Bad - Creates new function on every render
 function MyWorkflow() {
-  return (
-    <WorkflowBuilder
-      renderNodeContent={(data) => <div>{data.label}</div>}
-    />
-  );
+  return <WorkflowBuilder renderNodeContent={(data) => <div>{data.label}</div>} />;
 }
 
 // ✅ Good - Reuses same function reference
@@ -1643,20 +1636,18 @@ function MyWorkflow() {
 ```
 
 **Use React.memo for Complex Components:**
+
 ```tsx
 const ComplexNodeRenderer = React.memo(({ data }: { data: CustomNodeData }) => {
   // Complex rendering logic
-  return (
-    <div>
-      {/* ... */}
-    </div>
-  );
+  return <div>{/* ... */}</div>;
 });
 
 const renderNodeContent = (data: CustomNodeData) => <ComplexNodeRenderer data={data} />;
 ```
 
 **Avoid Heavy Computations:**
+
 ```tsx
 // ❌ Bad - Recalculates on every render
 const renderNodeContent = (data: CustomNodeData) => {
@@ -1679,16 +1670,17 @@ const renderNodeContent = (data: CustomNodeData) => {
 
 Use the appropriate level of customization for your needs:
 
-| Need | Solution | Complexity |
-|------|----------|------------|
-| Change colors/fonts | CSS classes | ⭐ Low |
-| Adjust layout | Inline styles | ⭐ Low |
-| Theme integration | CSS variables | ⭐⭐ Medium |
-| Category-specific styles | CSS with data attributes | ⭐⭐ Medium |
-| Custom node layouts | `renderNodeContent` | ⭐⭐⭐ High |
-| Complete UI redesign | All render props | ⭐⭐⭐⭐ Very High |
+| Need                     | Solution                 | Complexity         |
+| ------------------------ | ------------------------ | ------------------ |
+| Change colors/fonts      | CSS classes              | ⭐ Low             |
+| Adjust layout            | Inline styles            | ⭐ Low             |
+| Theme integration        | CSS variables            | ⭐⭐ Medium        |
+| Category-specific styles | CSS with data attributes | ⭐⭐ Medium        |
+| Custom node layouts      | `renderNodeContent`      | ⭐⭐⭐ High        |
+| Complete UI redesign     | All render props         | ⭐⭐⭐⭐ Very High |
 
 **Start simple and progressively enhance:**
+
 ```tsx
 // Level 1: Just change colors
 <WorkflowBuilder style={{ backgroundColor: '#f0f0f0' }} />
@@ -1706,22 +1698,22 @@ Use the appropriate level of customization for your needs:
 
 ### WorkflowBuilder Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `className` | `string` | Root component class name |
-| `style` | `React.CSSProperties` | Root component inline styles |
-| `theme` | `Theme \| 'light' \| 'dark' \| 'auto'` | Theme configuration (default: 'light') |
-| `classes` | `WorkflowBuilderClasses` | Class names for sub-components |
-| `styles` | `WorkflowBuilderStyles` | Inline styles for sub-components |
-| `reactFlowCustomization` | `ReactFlowCustomization` | ReactFlow component customization |
-| `nodePaletteProps` | `Partial<NodePaletteProps>` | Node palette customization |
-| `propertyPanelProps` | `Partial<PropertyPanelProps>` | Property panel customization |
-| `toolbarProps` | `Partial<ToolbarProps>` | Toolbar customization |
-| `toolbarOptions` | `ToolbarOptions` | Configure which toolbar buttons to show |
-| `toolbarIcons` | `ToolbarIcons` | Customize or remove toolbar button icons |
-| `renderNodeContent` | `(data: CustomNodeData) => ReactNode` | Custom node content renderer |
-| `renderPaletteItem` | `(item) => ReactNode` | Custom palette item renderer |
-| `renderToolbar` | `(actions) => ReactNode` | Custom toolbar renderer |
+| Prop                     | Type                                   | Description                              |
+| ------------------------ | -------------------------------------- | ---------------------------------------- |
+| `className`              | `string`                               | Root component class name                |
+| `style`                  | `React.CSSProperties`                  | Root component inline styles             |
+| `theme`                  | `Theme \| 'light' \| 'dark' \| 'auto'` | Theme configuration (default: 'light')   |
+| `classes`                | `WorkflowBuilderClasses`               | Class names for sub-components           |
+| `styles`                 | `WorkflowBuilderStyles`                | Inline styles for sub-components         |
+| `reactFlowCustomization` | `ReactFlowCustomization`               | ReactFlow component customization        |
+| `nodePaletteProps`       | `Partial<NodePaletteProps>`            | Node palette customization               |
+| `propertyPanelProps`     | `Partial<PropertyPanelProps>`          | Property panel customization             |
+| `toolbarProps`           | `Partial<ToolbarProps>`                | Toolbar customization                    |
+| `toolbarOptions`         | `ToolbarOptions`                       | Configure which toolbar buttons to show  |
+| `toolbarIcons`           | `ToolbarIcons`                         | Customize or remove toolbar button icons |
+| `renderNodeContent`      | `(data: CustomNodeData) => ReactNode`  | Custom node content renderer             |
+| `renderPaletteItem`      | `(item) => ReactNode`                  | Custom palette item renderer             |
+| `renderToolbar`          | `(actions) => ReactNode`               | Custom toolbar renderer                  |
 
 ### WorkflowBuilderClasses
 
@@ -1739,11 +1731,11 @@ interface WorkflowBuilderClasses {
 
 ```typescript
 interface ToolbarOptions {
-  showExecute?: boolean;    // Default: true
-  showSave?: boolean;       // Default: true
-  showLoad?: boolean;       // Default: true
-  showClear?: boolean;      // Default: true
-  showUndoRedo?: boolean;   // Default: false
+  showExecute?: boolean; // Default: true
+  showSave?: boolean; // Default: true
+  showLoad?: boolean; // Default: true
+  showClear?: boolean; // Default: true
+  showUndoRedo?: boolean; // Default: false
 }
 ```
 
@@ -1751,12 +1743,12 @@ interface ToolbarOptions {
 
 ```typescript
 interface ToolbarIcons {
-  execute?: string | null | false;  // Default: '▶️'
-  save?: string | null | false;     // Default: '💾'
-  load?: string | null | false;     // Default: '📁'
-  clear?: string | null | false;    // Default: '🗑️'
-  undo?: string | null | false;     // Default: '↶'
-  redo?: string | null | false;     // Default: '↷'
+  execute?: string | null | false; // Default: '▶️'
+  save?: string | null | false; // Default: '💾'
+  load?: string | null | false; // Default: '📁'
+  clear?: string | null | false; // Default: '🗑️'
+  undo?: string | null | false; // Default: '↶'
+  redo?: string | null | false; // Default: '↷'
 }
 ```
 
@@ -1769,16 +1761,29 @@ interface Theme {
 }
 
 interface ThemeColors {
-  background: { primary: string; secondary: string; tertiary: string; };
-  text: { primary: string; secondary: string; disabled: string; };
-  border: { primary: string; secondary: string; focus: string; };
-  toolbar: { background: string; text: string; border: string; };
-  palette: { background: string; categoryHeader: string; itemHover: string; text: string; textSecondary: string; };
-  properties: { background: string; header: string; text: string; border: string; };
-  canvas: { background: string; grid: string; };
-  node: { background: string; border: string; text: string; header: string; shadow: string; };
-  button: { primary: string; secondary: string; hover: string; active: string; disabled: string; text: string; };
-  status: { success: string; error: string; warning: string; info: string; };
+  background: { primary: string; secondary: string; tertiary: string };
+  text: { primary: string; secondary: string; disabled: string };
+  border: { primary: string; secondary: string; focus: string };
+  toolbar: { background: string; text: string; border: string };
+  palette: {
+    background: string;
+    categoryHeader: string;
+    itemHover: string;
+    text: string;
+    textSecondary: string;
+  };
+  properties: { background: string; header: string; text: string; border: string };
+  canvas: { background: string; grid: string };
+  node: { background: string; border: string; text: string; header: string; shadow: string };
+  button: {
+    primary: string;
+    secondary: string;
+    hover: string;
+    active: string;
+    disabled: string;
+    text: string;
+  };
+  status: { success: string; error: string; warning: string; info: string };
 }
 ```
 
@@ -1816,6 +1821,7 @@ interface ReactFlowCustomization {
 ### Styles Not Applying
 
 1. **Check CSS specificity**: Your custom classes may be overridden by default styles
+
    ```css
    /* Increase specificity */
    .my-workflow.workflow-builder {
@@ -1824,6 +1830,7 @@ interface ReactFlowCustomization {
    ```
 
 2. **Use `!important` sparingly**: Only as a last resort
+
    ```css
    .my-workflow {
      background: red !important;
@@ -1841,13 +1848,14 @@ interface ReactFlowCustomization {
 ### Performance Issues
 
 1. **Avoid inline styles in loops**: Extract styles outside render
+
    ```tsx
    // ❌ Bad
-   nodes.map(node => <div style={{ color: 'red' }}>...</div>)
-   
+   nodes.map((node) => <div style={{ color: 'red' }}>...</div>);
+
    // ✅ Good
    const nodeStyle = { color: 'red' };
-   nodes.map(node => <div style={nodeStyle}>...</div>)
+   nodes.map((node) => <div style={nodeStyle}>...</div>);
    ```
 
 2. **Use CSS classes for animations**: CSS is more performant than JS animations
