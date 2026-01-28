@@ -650,7 +650,6 @@ describe('ExecutionPlanBuilder', () => {
       expect(step).toBeDefined();
       expect(step.type).toBe(ExecutionStepType.Conditional);
       expect(step.nodeId).toBe(conditionalNode.id);
-      expect(step.conditionalType).toBe('if-else'); // 2 branches = if-else
       expect(step.branches).toHaveLength(2); // thenOutput and elseOutput
     });
 
@@ -767,20 +766,6 @@ describe('ExecutionPlanBuilder', () => {
 
       expect(thenBranch.label).toBe('Then');
       expect(elseBranch.label).toBe('Else');
-    });
-
-    it('should detect conditional type based on output count', () => {
-      const workflow = new Workflow('wf-1', 'Conditional Type Test');
-      const conditionalNode = workflow.addNode('test.conditional');
-
-      const builder = new ExecutionPlanBuilder();
-      const buildConditional = (builder as any).buildConditionalStep.bind(builder);
-
-      const node = workflow.nodes.get(conditionalNode.id);
-      const step = buildConditional(node, workflow, new Set());
-
-      // 2 outputs = if-else
-      expect(step.conditionalType).toBe('if-else');
     });
   });
 

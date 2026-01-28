@@ -149,16 +149,17 @@ export interface ConditionalBranch {
  * Step that executes conditional branching (if/else, switch/case)
  * Phase 2 implementation
  *
- * TODO: Future enhancement - add `conditionInput` field to track which input
- * port drives the branching decision (useful for visualization/debugging).
- * Not needed for MVP since evaluateCondition() handles the runtime decision.
+ * TODO: Future enhancements for post-MVP:
+ * - Add `conditionInput` field to track which input port(s) drive the branching
+ *   decision (useful for visualization/debugging).
+ * - Add `conditionalType` field ('if-else' | 'switch' | 'custom') for UI rendering
+ *   hints. Not needed for MVP since evaluateCondition() handles runtime decisions
+ *   and users can create any branching logic (3-way compare, multi-route, etc).
  */
 export interface ConditionalStep extends BaseExecutionStep {
   type: ExecutionStepType.Conditional;
   /** ID of the conditional node */
   nodeId: NodeId;
-  /** Type of conditional ('if-else', 'switch') */
-  conditionalType: 'if-else' | 'switch';
   /** All possible branches */
   branches: ConditionalBranch[];
   /** Default branch if no conditions match (optional) */

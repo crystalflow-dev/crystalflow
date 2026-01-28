@@ -267,6 +267,14 @@
   - Complexity: Can be tricky for nodes with multiple inputs (e.g., CompareNode with `a` and `b`)
   - Implementation: Make optional, detect from node inputs, or use first input as fallback
 
+- **conditionalType field**: Add optional `conditionalType` field to `ConditionalStep` interface
+  - Purpose: Classify conditional nodes for UI rendering hints ('if-else' | 'switch' | 'router' | 'custom')
+  - Use case: Visual representation (diamond for if-else, hexagon for switch, etc)
+  - Note: Not needed for MVP - users can create any branching logic (3-way compare, multi-route, business rules)
+  - Location: `packages/types/src/execution.ts` - ConditionalStep interface
+  - Complexity: Hard to auto-detect - 2 outputs isn't always if-else (could be greater/less), 3+ outputs isn't always switch
+  - Implementation: Make optional, let nodes self-describe, or infer from output count with fallback to 'custom'
+
 ### Phase 3: Loop Execution (Week 5-6) - ⏳ PENDING
 
 ### Phase 4: Parallel Execution (Week 7-8) - ⏳ PENDING

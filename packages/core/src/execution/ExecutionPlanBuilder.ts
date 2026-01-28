@@ -389,18 +389,15 @@ export class ExecutionPlanBuilder {
       branches.push(branch);
     }
 
-    // Determine conditional type based on output ports
-    // Convention: if/else has 2 branches, switch can have many
-    const conditionalType = outputs.length === 2 ? 'if-else' : 'switch';
-
     // Create ConditionalStep
-    // Note: conditionInput field removed (future enhancement for visualization)
-    // Runtime decisions are made by evaluateCondition() method
+    // Note: conditionalType and conditionInput fields removed (future enhancements)
+    // - conditionalType: Would classify as 'if-else' or 'switch', but users can
+    //   create arbitrary branching (3-way compare, multi-route, etc)
+    // - Runtime decisions are made by evaluateCondition() method
     const step: ConditionalStep = {
       id: this._generateStepId(),
       type: ExecutionStepType.Conditional,
       nodeId: node.id,
-      conditionalType: conditionalType,
       branches: branches,
       metadata: {
         nodeName: node.label || node.id,
