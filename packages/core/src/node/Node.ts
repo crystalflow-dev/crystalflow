@@ -5,6 +5,7 @@ import {
   NodeState,
   NodeMetadata,
   PortDefinition,
+  PropertyDefinition,
   CancellationReason,
 } from '@reactflo/types';
 import type { ExecutionContext } from '../execution/ExecutionContext';
@@ -81,6 +82,11 @@ export abstract class Node {
   private _outputs?: PortDefinition[];
 
   /**
+   * Property definitions
+   */
+  private _properties?: PropertyDefinition[];
+
+  /**
    * Execution context - injected by executor during node execution
    * @internal
    */
@@ -114,7 +120,7 @@ export abstract class Node {
    */
   public getInputs(): PortDefinition[] {
     if (!this._inputs) {
-      this._inputs = Reflect.getMetadata('node:inputs', this.constructor) || [];
+      this._inputs = this.collectMetadataFromPrototypeChain('node:inputs');
     }
     return this._inputs || [];
   }
@@ -124,9 +130,19 @@ export abstract class Node {
    */
   public getOutputs(): PortDefinition[] {
     if (!this._outputs) {
-      this._outputs = Reflect.getMetadata('node:outputs', this.constructor) || [];
+      this._outputs = this.collectMetadataFromPrototypeChain('node:outputs');
     }
     return this._outputs || [];
+  }
+
+  /**
+   * Get property definitions
+   */
+  public getProperties(): PropertyDefinition[] {
+    if (!this._properties) {
+      this._properties = this.collectMetadataFromPrototypeChain('node:properties');
+    }
+    return this._properties || [];
   }
 
   /**
@@ -161,6 +177,52 @@ export abstract class Node {
    */
   public setOutput<T = unknown>(portId: string, value: T): void {
     this[portId] = value;
+  }
+
+  /**
+   * Get the value of a property
+   * @param propertyId - ID of the property
+   */
+  public getProperty<T = unknown>(propertyId: string): T {
+    return this[propertyId] as T;
+  }
+
+  /**
+   * Set the value of a property
+   * @param propertyId - ID of the property
+   * @param value - Value to set
+   */
+  public setProperty<T = unknown>(propertyId: string, value: T): void {
+    this[propertyId] = value;
+  }
+
+  /**
+   * Collect metadata from the entire prototype chain to support inheritance
+   * @private
+   */
+  private collectMetadataFromPrototypeChain<T extends { id: string }>(metadataKey: string): T[] {
+    const collected: T[] = [];
+    const seenIds = new Set<string>();
+    let currentPrototype = this.constructor;
+
+    // Walk up the prototype chain until we reach Node or Object
+    while (currentPrototype && currentPrototype !== Node && currentPrototype !== Object) {
+      const metadata = Reflect.getOwnMetadata(metadataKey, currentPrototype);
+      if (metadata && Array.isArray(metadata)) {
+        // Add metadata from this level, but skip duplicates based on ID
+        // Child class metadata takes precedence (first occurrence wins)
+        for (const item of metadata) {
+          if (item && typeof item === 'object' && 'id' in item && !seenIds.has(item.id)) {
+            seenIds.add(item.id);
+            collected.push(item);
+          }
+        }
+      }
+      // Move to parent constructor
+      currentPrototype = Object.getPrototypeOf(currentPrototype);
+    }
+
+    return collected;
   }
 
   /**
@@ -225,6 +287,7 @@ export abstract class Node {
   public toJSON(): Record<string, unknown> {
     const inputs = this.getInputs();
     const outputs = this.getOutputs();
+    const properties = this.getProperties();
 
     const data: Record<string, unknown> = {};
 
@@ -241,6 +304,14 @@ export abstract class Node {
       const value = this.getOutput(output.id);
       if (value !== undefined) {
         data[output.id] = value;
+      }
+    }
+
+    // Serialize property values
+    for (const property of properties) {
+      const value = this.getProperty(property.id);
+      if (value !== undefined) {
+        data[property.id] = value;
       }
     }
 
@@ -266,11 +337,20 @@ export abstract class Node {
     }
     if (json.data && typeof json.data === 'object') {
       const data = json.data as Record<string, unknown>;
+
       // Load input values
       const inputs = this.getInputs();
       for (const input of inputs) {
         if (data[input.id] !== undefined) {
           this.setInput(input.id, data[input.id]);
+        }
+      }
+
+      // Load property values
+      const properties = this.getProperties();
+      for (const property of properties) {
+        if (data[property.id] !== undefined) {
+          this.setProperty(property.id, data[property.id]);
         }
       }
     }

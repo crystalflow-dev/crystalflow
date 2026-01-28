@@ -6,5 +6,16 @@
  */
 
 export { Node } from './Node';
-export { defineNode, Input, Output, discoverNodes, getNodeRegistry } from './decorators';
+export {
+  defineNode,
+  Input,
+  Output,
+  Property,
+  discoverNodes,
+  getNodeRegistry,
+  type DefineNodeOptions,
+  type InputOptions,
+  type OutputOptions,
+  type PropertyOptions,
+} from './decorators';
 export { NodeRegistry, type NodeConstructor } from './NodeRegistry';

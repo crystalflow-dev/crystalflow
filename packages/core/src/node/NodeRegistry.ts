@@ -189,6 +189,7 @@ export class NodeRegistry {
       metadata: tempInstance.getMetadata(),
       inputs: tempInstance.getInputs(),
       outputs: tempInstance.getOutputs(),
+      properties: tempInstance.getProperties(),
     };
   }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
-import { PortDefinition } from '@reactflo/types';
+import { PortDefinition, PropertyDefinition } from '@reactflo/types';
 import { NodeConstructor } from '@reactflo/core';
 
 /**
@@ -15,6 +15,7 @@ export interface CustomNodeData {
   color?: string;
   inputs?: Record<string, PortDefinition>;
   outputs?: Record<string, PortDefinition>;
+  properties?: Record<string, PropertyDefinition>;
   nodeClass?: NodeConstructor;
   [key: string]: unknown;
 }

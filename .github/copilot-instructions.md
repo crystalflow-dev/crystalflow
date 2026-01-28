@@ -79,6 +79,116 @@ class AddNode extends Node {
 }
 ```
 
+### 1.1. Property System (NEW)
+
+**Properties vs Inputs - Critical Distinction:**
+
+- **@Property** = Static configuration values (shown in properties panel)
+- **@Input** = Dynamic data flow connections (connected via handles)
+- **@Output** = Computed results (generated during execution)
+
+```typescript
+@defineNode({
+  type: 'examples.config-demo',
+  label: 'Configuration Demo',
+  category: 'Examples',
+})
+class ConfigDemoNode extends Node {
+  // Properties: Static configuration (not connected)
+  @Property({
+    type: 'string',
+    label: 'Base Message',
+    defaultValue: 'Hello, World!',
+    description: 'Base message to process',
+  })
+  baseMessage: string = 'Hello, World!';
+
+  @Property({
+    type: 'select',
+    label: 'Transform Type',
+    defaultValue: 'uppercase',
+    options: [
+      { value: 'uppercase', label: 'UPPERCASE' },
+      { value: 'lowercase', label: 'lowercase' },
+    ],
+  })
+  transformType: string = 'uppercase';
+
+  @Property({
+    type: 'number',
+    label: 'Repeat Count',
+    defaultValue: 1,
+    min: 1,
+    max: 10,
+    step: 1,
+  })
+  repeatCount: number = 1;
+
+  // Input: Data flow (can be connected)
+  @Input({ type: 'string', label: 'Message Override', required: false })
+  messageOverride?: string;
+
+  // Output: Computed result
+  @Output({ type: 'string', label: 'Result' })
+  result: string;
+
+  execute() {
+    const message = this.messageOverride || this.baseMessage;
+    this.result = this.transformMessage(message);
+  }
+}
+```
+
+### 1.2. Property Inheritance
+
+Properties support inheritance for base node classes:
+
+```typescript
+// Base class with global properties
+class BaseNode extends Node {
+  @Property({
+    type: 'boolean',
+    label: 'Enable Logging',
+    defaultValue: false,
+  })
+  enableLogging: boolean = false;
+
+  @Property({
+    type: 'number',
+    label: 'Timeout (ms)',
+    defaultValue: 30000,
+    min: 1000,
+    max: 300000,
+  })
+  timeout: number = 30000;
+}
+
+// Child class inherits properties
+@defineNode({ type: 'http.request', label: 'HTTP Request' })
+class HttpRequestNode extends BaseNode {
+  // Inherits enableLogging and timeout properties automatically
+
+  @Property({ type: 'string', label: 'URL', required: true })
+  url: string = '';
+
+  execute() {
+    if (this.enableLogging) {
+      console.log(`Making request to ${this.url} with timeout ${this.timeout}ms`);
+    }
+  }
+}
+```
+
+**Property System Features:**
+
+- Type-safe property definitions with constraints
+- Support for string, number, boolean, select types
+- Min/max/step constraints for numbers
+- Options array for select dropdowns
+- Default values and validation
+- Inheritance from base classes
+- Automatic UI generation in properties panel
+
 **Important:**
 
 - Decorators are for Node classes (business logic), not React components
@@ -399,18 +509,24 @@ test(executor): add async execution tests
 
 ## Current Status
 
-- **Phase:** Phase 4 🚧 80% COMPLETE (React Package - Core Implementation Done)
+- **Phase:** Phase 4 🚧 100% COMPLETE (React Package - Fully Refactored with Property System)
 - **Completed:**
   - Phase 1 (Node System - 100%)
   - Phase 2 (Workflow System - 100%)
   - Phase 3 (Basic Execution Engine - 100%)
   - Phase 4 - React Package Structure (100%)
   - Phase 4 - Core React Components (100%)
+  - Phase 4 - Property System Integration (100%)
+  - Phase 4 - WorkflowBuilder Refactoring (100%)
   - Phase 4 - Examples Package (100%)
-- **In Progress:** Phase 4 - Advanced Features (JSON Editor, Undo/Redo)
-- **Next:** Monaco Editor integration, dual-mode editing
-- **Tests:** 215 passing tests across all packages
-- **Working Examples:** 1 (Simple Workflow with drag-and-drop)
+- **Latest Updates:**
+  - @Property decorator system with inheritance support
+  - WorkflowBuilder refactored for Single Responsibility Principle
+  - PropertyPanel updated to handle @Property vs @Input correctly
+  - Input nodes converted to use @Property for configuration
+- **Next:** Phase 5 - Monaco Editor integration, dual-mode editing
+- **Tests:** 279 passing tests across all packages
+- **Working Examples:** 1 (Complete workflow with property system and drag-and-drop)
 
 ## Execution Engine (Phase 3 - COMPLETED)
 
@@ -590,63 +706,76 @@ interface ExecutionResult {
 }
 ```
 
-## React Package (Phase 4 - 80% COMPLETE)
+## React Package (Phase 4 - COMPLETE)
 
-The React package has been substantially implemented with:
+The React package has been substantially refactored and improved with:
 
-### Package Structure
+### Package Structure (Refactored for Single Responsibility)
 
-- **Components** - Fully implemented core components
-  - WorkflowBuilder: Complete workflow builder with React Flow integration
-  - CustomNode: Full node renderer with decorator metadata parsing
-  - NodePalette: Drag-and-drop palette with category grouping and search
-  - PropertyPanel: Complete property inspector with type-aware inputs
-  - Toolbar: Full toolbar with save/load/execute/clear actions
-  - ConnectionLine: React Flow default connection renderer
+- **Components** - Focused, single-purpose components
+  - **WorkflowBuilder**: Main orchestrator component (refactored from 300+ lines to 80 lines)
+  - **WorkflowCanvas**: Pure React Flow rendering component
+  - **CustomNode**: Full node renderer with decorator metadata parsing
+  - **NodePalette**: Drag-and-drop palette with category grouping and search
+  - **PropertyPanel**: Complete property inspector supporting @Property decorators
+  - **Toolbar**: Full toolbar with save/load/execute/clear actions
+
+- **Focused Hooks** (NEW) - Each hook has a single responsibility
+  - **useReactFlowState**: React Flow state management (nodes, edges, selection)
+  - **useWorkflowExecution**: Workflow execution logic
+  - **useWorkflowFileOperations**: Save/load operations with error handling
+  - **useNodePalette**: Drag & drop logic and node creation
+  - **useWorkflow**: Core workflow operations and state (existing)
+  - **useNodeRegistry**: Access to registered node types (existing)
+  - **useExecution**: Workflow execution with event handlers (existing)
 
 - **Utilities**
-  - nodeConverter.ts: Converts decorated nodes to React Flow format
+  - nodeConverter.ts: Converts decorated nodes to React Flow format (supports @Property)
   - workflowConverter.ts: Serialization/deserialization utilities
   - Save/load workflow to/from JSON files
 
-- **Context Providers**
-  - WorkflowProvider: Global workflow state management
-  - useWorkflowContext: Hook for accessing workflow context
+### Property System Integration
 
-- **Custom Hooks**
-  - useWorkflow: Workflow operations and state
-  - useNodeRegistry: Access to registered node types
-  - useExecution: Workflow execution with event handlers
+- **PropertyPanel** now properly handles @Property decorated values instead of @Input
+- **Type-aware controls**: String, number, boolean, select with options
+- **Property constraints**: Min/max/step for numbers, required fields
+- **Default value support**: Shows and applies property defaults
+- **Real-time updates**: Property changes immediately reflected in workflow
+- **Inheritance support**: Properties from base classes automatically included
 
-### Dependencies
+### Architecture Benefits After Refactoring
 
-- React Flow 11.10.0 - For canvas and node rendering
-- Monaco Editor 4.6.0 - For JSON editing (not yet integrated)
-- React 18+ and React DOM 18+
+✅ **Single Responsibility**: Each hook/component has one clear purpose  
+✅ **Testability**: Each piece can be tested in isolation  
+✅ **Reusability**: Hooks can be used in other components  
+✅ **Maintainability**: Changes to one concern don't affect others  
+✅ **Readability**: Much easier to understand each piece  
+✅ **Flexibility**: Can compose different workflows easily
 
-### Current State
+### Current State (UPDATED)
 
-- ✅ Package structure complete
-- ✅ All core components fully implemented
-- ✅ Context providers implemented
-- ✅ Custom hooks implemented
-- ✅ Node converter utilities complete
-- ✅ Workflow serialization utilities complete
-- ✅ Drag-and-drop from palette working
-- ✅ Property panel with live editing
-- ✅ Save/load workflow functionality
-- ✅ Workflow execution integrated
-- ✅ Package builds successfully
+- ✅ Package structure complete and refactored
+- ✅ All core components fully implemented with single responsibility
+- ✅ Property system fully integrated (@Property decorator support)
+- ✅ WorkflowBuilder refactored into focused components and hooks
+- ✅ Node converter supports properties extraction
+- ✅ PropertyPanel handles properties vs inputs correctly
+- ✅ Workflow execution applies property values correctly
+- ✅ Input nodes converted to use @Property for configuration
+- ✅ Package builds successfully with TypeScript strict mode
+- ✅ All tests passing (279 tests)
 - ⏳ Monaco JSON editor (next)
 - ⏳ Dual-mode editing (next)
 - ⏳ Undo/redo system (next)
 
-### Examples Package
+### Examples Package (UPDATED)
 
 - ✅ Package initialized with Vite
 - ✅ Babel decorator support configured
-- ✅ Example nodes: NumberInput, StringInput, Add, Multiply, Subtract, Display
-- ✅ SimpleWorkflow demo with full UI
+- ✅ Example nodes: NumberInput, StringInput, Add, Multiply, Subtract, Display, **ConfigDemoNode**
+- ✅ **ConfigDemoNode**: Demonstrates @Property system with all supported types
+- ✅ **Input nodes refactored**: Use @Property instead of @Input for configuration
+- ✅ SimpleWorkflow demo with full UI including property panel
 - ✅ Development workflow integration
 - ✅ Hot-reload with watch modes
 

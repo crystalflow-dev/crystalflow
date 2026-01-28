@@ -13,3 +13,6 @@ export { SubtractNode } from './math/SubtractNode';
 
 // Output nodes
 export { DisplayNode } from './output/DisplayNode';
+
+// Demo nodes
+export { ConfigDemoNode } from './ConfigDemoNode';

@@ -1,4 +1,4 @@
-import { defineNode, Input, Output, Node } from '@reactflo/core';
+import { defineNode, Property, Output, Node } from '@reactflo/core';
 
 /**
  * String Input Node
@@ -12,7 +12,7 @@ import { defineNode, Input, Output, Node } from '@reactflo/core';
   color: '#9C27B0',
 })
 export class StringInputNode extends Node {
-  @Input({ type: 'string', label: 'Text', defaultValue: '' })
+  @Property({ type: 'string', label: 'Text', defaultValue: '' })
   inputValue: string = '';
 
   @Output({ type: 'string', label: 'Value' })
