@@ -394,12 +394,13 @@ export class ExecutionPlanBuilder {
     const conditionalType = outputs.length === 2 ? 'if-else' : 'switch';
 
     // Create ConditionalStep
+    // Note: conditionInput field removed (future enhancement for visualization)
+    // Runtime decisions are made by evaluateCondition() method
     const step: ConditionalStep = {
       id: this._generateStepId(),
       type: ExecutionStepType.Conditional,
       nodeId: node.id,
       conditionalType: conditionalType,
-      conditionInput: 'condition', // Default input port name
       branches: branches,
       metadata: {
         nodeName: node.label || node.id,

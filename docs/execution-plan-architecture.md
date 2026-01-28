@@ -61,7 +61,7 @@
 **Task 2.1: Define IConditionalNode Interface** [2 hours] - ⏳ PENDING
 - [ ] File: `packages/types/src/node.ts`
 - [ ] Add `IConditionalNode` interface extending base Node
-- [ ] Add `evaluateCondition(): string` method signature
+- [ ] Add `Condition(): string` method signature
 - [ ] Add JSDoc documentation with usage examples
 - [ ] Export interface from `packages/types/src/index.ts`
 - [ ] Run lint: `npm run lint -w @reactflo/types`
@@ -255,6 +255,17 @@
 - **Tests Added**: 50+ new tests
 - **Features**: If/Else conditionals, Switch/Case conditionals, Branch execution
 
+
+
+#### Phase 2 Future Enhancements (Post-MVP)
+
+- **conditionInput field**: Add optional `conditionInput` field to `ConditionalStep` interface
+  - Purpose: Track which input port(s) drive the branching decision
+  - Use case: Visualization, debugging, validation
+  - Note: Not needed for MVP execution since `evaluateCondition()` handles runtime decisions
+  - Location: `packages/types/src/execution.ts` - ConditionalStep interface
+  - Complexity: Can be tricky for nodes with multiple inputs (e.g., CompareNode with `a` and `b`)
+  - Implementation: Make optional, detect from node inputs, or use first input as fallback
 
 ### Phase 3: Loop Execution (Week 5-6) - ⏳ PENDING
 
