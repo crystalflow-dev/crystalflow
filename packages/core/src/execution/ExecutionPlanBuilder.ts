@@ -69,6 +69,12 @@ export class ExecutionPlanBuilder {
   /**
    * Build an execution plan from a workflow
    *
+   * Phase 2: Recursive building from entry points
+   * - Finds all entry nodes (nodes with no incoming connections)
+   * - Recursively builds steps starting from each entry point
+   * - Conditional nodes trigger recursive branch building
+   * - Regular nodes trigger recursive downstream building
+   *
    * @param workflow - The workflow to build a plan for
    * @returns ExecutionPlan ready for execution
    * @throws Error if workflow is invalid or contains unsupported patterns
@@ -84,42 +90,21 @@ export class ExecutionPlanBuilder {
       throw new Error(`Cannot build execution plan: workflow validation failed. ${errors}`);
     }
 
-    // Get execution order from workflow (topological sort)
-    const executionOrder = workflow.getExecutionOrder();
+    // Get entry nodes (nodes with no incoming connections)
+    const entryNodes = this.getWorkflowEntryNodes(workflow);
 
-    if (executionOrder.length === 0) {
-      throw new Error('Cannot build execution plan: workflow has no nodes');
+    if (entryNodes.length === 0) {
+      throw new Error('Cannot build execution plan: workflow has no entry nodes');
     }
 
-    // Phase 1: Simple sequential execution
-    // Build NodeExecutionStep for each node in topological order
+    // Build execution steps recursively from entry points
     const steps: ExecutionPlanStep[] = [];
     const visited = new Set<NodeId>();
 
-    for (const nodeId of executionOrder) {
-      if (visited.has(nodeId)) {
-        continue;
-      }
-
-      // Validate node exists
-      const node = workflow.nodes.get(nodeId);
-      if (!node) {
-        throw new Error(`Cannot build execution plan: node ${nodeId} not found in workflow`);
-      }
-
-      // Create NodeExecutionStep
-      const step: NodeExecutionStep = {
-        id: this._generateStepId(),
-        type: ExecutionStepType.NodeExecution,
-        nodeId: nodeId,
-        nodeType: node.type,
-        metadata: {
-          nodeName: node.label || nodeId,
-        },
-      };
-
-      steps.push(step);
-      visited.add(nodeId);
+    for (const nodeId of entryNodes) {
+      // Build steps recursively from this entry point
+      const nodeSteps = this.buildStepsForNode(nodeId, workflow, visited);
+      steps.push(...nodeSteps);
     }
 
     // Create and validate the execution plan
@@ -127,6 +112,43 @@ export class ExecutionPlanBuilder {
     plan.validate();
 
     return plan;
+  }
+
+  /**
+   * Get all entry nodes in a workflow (nodes with no incoming connections)
+   *
+   * Entry nodes are nodes that have no predecessor nodes - they are the starting
+   * points of the workflow execution. These nodes don't receive data from any
+   * other nodes and can execute immediately.
+   *
+   * @param workflow - The workflow to analyze
+   * @returns Array of node IDs that are entry points
+   *
+   * @example
+   * ```typescript
+   * // Workflow: InputA → Process → Output
+   * //          InputB ↗
+   * const entryNodes = this.getWorkflowEntryNodes(workflow);
+   * // Returns: [InputA.id, InputB.id]
+   * ```
+   */
+  private getWorkflowEntryNodes(workflow: Workflow): NodeId[] {
+    const entryNodes: NodeId[] = [];
+    const nodesWithIncoming = new Set<NodeId>();
+
+    // Mark all nodes that have incoming connections
+    for (const connection of workflow.connections.values()) {
+      nodesWithIncoming.add(connection.targetNodeId);
+    }
+
+    // Entry nodes are those NOT in the incoming set
+    for (const nodeId of workflow.nodes.keys()) {
+      if (!nodesWithIncoming.has(nodeId)) {
+        entryNodes.push(nodeId);
+      }
+    }
+
+    return entryNodes;
   }
 
   /**
@@ -302,13 +324,47 @@ export class ExecutionPlanBuilder {
       }
 
       // Recursively build steps for all downstream nodes
+      // Only process downstream nodes if ALL their dependencies have been visited
       for (const downstreamId of downstreamNodeIds) {
-        const downstreamSteps = this.buildStepsForNode(downstreamId, workflow, visited);
-        steps.push(...downstreamSteps);
+        if (this.areAllDependenciesVisited(downstreamId, workflow, visited)) {
+          const downstreamSteps = this.buildStepsForNode(downstreamId, workflow, visited);
+          steps.push(...downstreamSteps);
+        }
       }
     }
 
     return steps;
+  }
+
+  /**
+   * Check if all dependencies (predecessor nodes) of a node have been visited
+   *
+   * A node's dependencies are all nodes that have outgoing connections to it.
+   * This ensures we don't process a node before all its inputs are ready.
+   *
+   * @param nodeId - The node to check
+   * @param workflow - The workflow containing connections
+   * @param visited - Set of already visited node IDs
+   * @returns True if all predecessor nodes have been visited
+   */
+  private areAllDependenciesVisited(
+    nodeId: NodeId,
+    workflow: Workflow,
+    visited: Set<NodeId>
+  ): boolean {
+    // Find all nodes that connect TO this node (predecessors)
+    for (const connection of workflow.connections.values()) {
+      if (connection.targetNodeId === nodeId) {
+        // This node depends on sourceNodeId
+        if (!visited.has(connection.sourceNodeId)) {
+          // Found an unvisited dependency
+          return false;
+        }
+      }
+    }
+
+    // All dependencies have been visited (or no dependencies)
+    return true;
   }
 
   /**

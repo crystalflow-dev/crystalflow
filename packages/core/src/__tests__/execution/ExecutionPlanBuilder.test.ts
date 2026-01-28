@@ -302,7 +302,7 @@ describe('ExecutionPlanBuilder', () => {
       const builder = new ExecutionPlanBuilder();
 
       expect(() => builder.build(workflow)).toThrow(
-        'Cannot build execution plan: workflow has no nodes'
+        'Cannot build execution plan: workflow has no entry nodes'
       );
     });
 
@@ -874,6 +874,168 @@ describe('ExecutionPlanBuilder', () => {
       // Should have node1 + both downstream nodes
       expect(steps.length).toBeGreaterThan(1);
       expect(steps[0].nodeId).toBe(node1.id);
+    });
+  });
+
+  describe('build - conditional workflow integration', () => {
+    it('should build plan with conditional node using buildStepsForNode', () => {
+      const workflow = new Workflow('wf-1', 'Simple Conditional Workflow');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const thenNode = workflow.addNode('test.simple');
+      const elseNode = workflow.addNode('test.math-add');
+
+      workflow.connect(conditionalNode.id, 'thenOutput', thenNode.id, 'input');
+      workflow.connect(conditionalNode.id, 'elseOutput', elseNode.id, 'a');
+
+      const builder = new ExecutionPlanBuilder();
+      const plan = builder.build(workflow);
+
+      // Should have 1 ConditionalStep (which contains nested NodeExecutionSteps in branches)
+      expect(plan.steps).toHaveLength(1);
+      expect(plan.steps[0].type).toBe(ExecutionStepType.Conditional);
+
+      const conditionalStep = plan.steps[0];
+      if (conditionalStep.type === ExecutionStepType.Conditional) {
+        expect(conditionalStep.nodeId).toBe(conditionalNode.id);
+        expect(conditionalStep.branches).toHaveLength(2);
+
+        // Check then branch
+        const thenBranch = conditionalStep.branches.find((b) => b.id === 'thenOutput');
+        expect(thenBranch).toBeDefined();
+        expect(thenBranch!.steps).toHaveLength(1);
+        expect(thenBranch!.steps[0].type).toBe(ExecutionStepType.NodeExecution);
+
+        // Check else branch
+        const elseBranch = conditionalStep.branches.find((b) => b.id === 'elseOutput');
+        expect(elseBranch).toBeDefined();
+        expect(elseBranch!.steps).toHaveLength(1);
+        expect(elseBranch!.steps[0].type).toBe(ExecutionStepType.NodeExecution);
+      }
+    });
+
+    it('should build plan with mixed regular and conditional nodes', () => {
+      const workflow = new Workflow('wf-1', 'Mixed Workflow');
+      const inputNode = workflow.addNode('test.simple');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const thenNode = workflow.addNode('test.math-add');
+      const elseNode = workflow.addNode('test.simple');
+
+      // Regular node -> Conditional node
+      workflow.connect(inputNode.id, 'output', conditionalNode.id, 'condition');
+      // Conditional branches
+      workflow.connect(conditionalNode.id, 'thenOutput', thenNode.id, 'a');
+      workflow.connect(conditionalNode.id, 'elseOutput', elseNode.id, 'input');
+
+      const builder = new ExecutionPlanBuilder();
+      const plan = builder.build(workflow);
+
+      // Should have 2 steps: InputNode (regular), ConditionalNode (with branches)
+      expect(plan.steps).toHaveLength(2);
+      expect(plan.steps[0].type).toBe(ExecutionStepType.NodeExecution);
+      if (plan.steps[0].type === ExecutionStepType.NodeExecution) {
+        expect(plan.steps[0].nodeId).toBe(inputNode.id);
+      }
+      expect(plan.steps[1].type).toBe(ExecutionStepType.Conditional);
+      if (plan.steps[1].type === ExecutionStepType.Conditional) {
+        expect(plan.steps[1].nodeId).toBe(conditionalNode.id);
+      }
+    });
+
+    it('should build plan with nested conditional nodes', () => {
+      const workflow = new Workflow('wf-1', 'Nested Conditionals');
+      const outerConditional = workflow.addNode('test.conditional');
+      const innerConditional = workflow.addNode('test.conditional');
+      const leafNode = workflow.addNode('test.simple');
+
+      // Outer then -> Inner conditional
+      workflow.connect(outerConditional.id, 'thenOutput', innerConditional.id, 'condition');
+      // Inner then -> Leaf node
+      workflow.connect(innerConditional.id, 'thenOutput', leafNode.id, 'input');
+
+      const builder = new ExecutionPlanBuilder();
+      const plan = builder.build(workflow);
+
+      // Should have 1 outer ConditionalStep
+      expect(plan.steps).toHaveLength(1);
+      expect(plan.steps[0].type).toBe(ExecutionStepType.Conditional);
+
+      const outerStep = plan.steps[0];
+      if (outerStep.type === ExecutionStepType.Conditional) {
+        const thenBranch = outerStep.branches.find((b) => b.id === 'thenOutput');
+        expect(thenBranch).toBeDefined();
+        expect(thenBranch!.steps).toHaveLength(1);
+
+        // Then branch should contain another ConditionalStep
+        const innerStep = thenBranch!.steps[0];
+        expect(innerStep.type).toBe(ExecutionStepType.Conditional);
+
+        if (innerStep.type === ExecutionStepType.Conditional) {
+          const innerThenBranch = innerStep.branches.find((b) => b.id === 'thenOutput');
+          expect(innerThenBranch).toBeDefined();
+          expect(innerThenBranch!.steps).toHaveLength(1);
+          expect(innerThenBranch!.steps[0].type).toBe(ExecutionStepType.NodeExecution);
+          if (innerThenBranch!.steps[0].type === ExecutionStepType.NodeExecution) {
+            expect(innerThenBranch!.steps[0].nodeId).toBe(leafNode.id);
+          }
+        }
+      }
+    });
+
+    it('should handle workflow with conditional node and no downstream connections', () => {
+      const workflow = new Workflow('wf-1', 'Empty Branches');
+      workflow.addNode('test.conditional');
+
+      const builder = new ExecutionPlanBuilder();
+      const plan = builder.build(workflow);
+
+      expect(plan.steps).toHaveLength(1);
+      expect(plan.steps[0].type).toBe(ExecutionStepType.Conditional);
+
+      const conditionalStep = plan.steps[0];
+      if (conditionalStep.type === ExecutionStepType.Conditional) {
+        expect(conditionalStep.branches).toHaveLength(2);
+        conditionalStep.branches.forEach((branch) => {
+          expect(branch.steps).toEqual([]);
+        });
+      }
+    });
+
+    it('should build plan with conditional node in middle of workflow chain', () => {
+      const workflow = new Workflow('wf-1', 'Conditional in Middle');
+      const input = workflow.addNode('test.simple');
+      const conditional = workflow.addNode('test.conditional');
+      const thenNode = workflow.addNode('test.simple');
+      const output = workflow.addNode('test.math-add');
+
+      // Input -> Conditional
+      workflow.connect(input.id, 'output', conditional.id, 'condition');
+      // Then branch -> Output
+      workflow.connect(conditional.id, 'thenOutput', thenNode.id, 'input');
+      workflow.connect(thenNode.id, 'output', output.id, 'a');
+
+      const builder = new ExecutionPlanBuilder();
+      const plan = builder.build(workflow);
+
+      // Input (regular), Conditional (with then branch containing thenNode and output)
+      expect(plan.steps).toHaveLength(2);
+      expect(plan.steps[0].type).toBe(ExecutionStepType.NodeExecution);
+      if (plan.steps[0].type === ExecutionStepType.NodeExecution) {
+        expect(plan.steps[0].nodeId).toBe(input.id);
+      }
+      expect(plan.steps[1].type).toBe(ExecutionStepType.Conditional);
+
+      const conditionalStep = plan.steps[1];
+      if (conditionalStep.type === ExecutionStepType.Conditional) {
+        const thenBranch = conditionalStep.branches.find((b) => b.id === 'thenOutput');
+        expect(thenBranch!.steps).toHaveLength(2);
+
+        if (thenBranch!.steps[0].type === ExecutionStepType.NodeExecution) {
+          expect(thenBranch!.steps[0].nodeId).toBe(thenNode.id);
+        }
+        if (thenBranch!.steps[1].type === ExecutionStepType.NodeExecution) {
+          expect(thenBranch!.steps[1].nodeId).toBe(output.id);
+        }
+      }
     });
   });
 });
