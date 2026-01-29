@@ -215,33 +215,33 @@
 - [x] Run tests: 382 tests passing (1 skipped)
 - [x] Commit: "feat(core): wire conditional step execution to main loop"
 
-#### Week 4: Conditional Nodes - ⏳ PENDING
+#### Week 4: Conditional Nodes - 🚧 IN PROGRESS
 
-**Task 2.9: Create Flow Nodes Directory Structure** [1 hour] - ⏳ PENDING
-- [ ] Create directory: `packages/core/src/nodes/flow/`
-- [ ] Create file: `packages/core/src/nodes/flow/index.ts` (empty for now)
-- [ ] Create file: `packages/core/src/nodes/index.ts` (export flow nodes)
-- [ ] Update `packages/core/src/index.ts` to export from nodes
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Commit: "feat(core): create flow nodes directory structure"
+**Task 2.9: Create Flow Nodes Directory Structure** [1 hour] - ✅ COMPLETE
+- [x] Create directory: `packages/core/src/builtin/flow/` (renamed from nodes to builtin)
+- [x] Create file: `packages/core/src/builtin/flow/index.ts` (empty for now)
+- [x] Create file: `packages/core/src/builtin/index.ts` (export flow nodes)
+- [x] Update `packages/core/src/index.ts` to export from builtin
+- [x] Run lint: `npm run lint -w @reactflo/core`
+- [x] Commit: "feat(core): create flow control nodes directory structure"
 
-**Task 2.10: Implement IfNode** [4 hours] - ⏳ PENDING
-- [ ] File: `packages/core/src/nodes/flow/IfNode.ts`
-- [ ] Create `IfNode` class extending `Node` and implementing `IConditionalNode`
-- [ ] Add `@defineNode` decorator with metadata
-- [ ] Add `@Input` for `condition` (boolean, required)
-- [ ] Add `@Input` for `value` (any, optional) - passthrough data
-- [ ] Add `@Output` for `thenOutput` (any)
-- [ ] Add `@Output` for `elseOutput` (any)
-- [ ] Implement `execute()` method (set outputs based on inputs)
-- [ ] Implement `evaluateCondition()` method (return 'thenOutput' or 'elseOutput')
-- [ ] Add JSDoc documentation
-- [ ] Export from `packages/core/src/nodes/flow/index.ts`
-- [ ] Create test file: `packages/core/src/__tests__/IfNode.test.ts`
-- [ ] Write comprehensive unit tests (condition true/false, data passthrough)
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "feat(core): implement IfNode for if/else conditional flow"
+**Task 2.10: Implement IfNode** [4 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/builtin/flow/IfNode.ts`
+- [x] Create `IfNode` class extending `Node` and implementing `IConditionalNode`
+- [x] Add `@defineNode` decorator with metadata (type: 'flow.if', category: 'Flow Control')
+- [x] Add `@Input` for `condition` (boolean, required)
+- [x] Add `@Input` for `value` (any, optional) - passthrough data
+- [x] Add `@Output` for `thenOutput` (any)
+- [x] Add `@Output` for `elseOutput` (any)
+- [x] Implement `execute()` method (set outputs based on inputs)
+- [x] Implement `evaluateCondition()` method (return 'thenOutput' or 'elseOutput')
+- [x] Add JSDoc documentation
+- [x] Export from `packages/core/src/builtin/flow/index.ts`
+- [x] Create test file: `packages/core/src/__tests__/builtin/IfNode.test.ts`
+- [x] Write comprehensive unit tests (38 tests: metadata, execution paths, edge cases)
+- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors)
+- [x] Run tests: `npm test -w @reactflo/core` (416 tests passing)
+- [x] Commit: "feat(core): implement IfNode for if/else conditional flow"
 
 **Task 2.11: Implement SwitchNode** [4 hours] - ⏳ PENDING
 - [ ] File: `packages/core/src/nodes/flow/SwitchNode.ts`
