@@ -387,4 +387,292 @@ describe('Conditional Flow Integration Tests', () => {
       expect(executedNodes).not.toContain('default');
     });
   });
+
+  describe('Nested Conditionals', () => {
+    describe('IfNode nested in IfNode', () => {
+      it('should execute nested if in then branch', async () => {
+        const workflow = new Workflow();
+
+        // Outer if (true) -> inner if (true) -> collector
+        const outerIf = workflow.addNode('flow.if');
+        const innerIf = workflow.addNode('flow.if');
+        const thenThenCollector = workflow.addNode('test.collector');
+        const thenElseCollector = workflow.addNode('test.collector');
+        const elseCollector = workflow.addNode('test.collector');
+
+        // Configure outer if: true -> then branch
+        outerIf.condition = true;
+        outerIf.value = 'outer-data';
+
+        // Configure inner if: true -> then branch
+        innerIf.condition = true;
+
+        // Connect: outer.then -> inner.value
+        workflow.connect(outerIf.id, 'thenOutput', innerIf.id, 'value');
+
+        // Connect inner branches
+        workflow.connect(innerIf.id, 'thenOutput', thenThenCollector.id, 'input');
+        workflow.connect(innerIf.id, 'elseOutput', thenElseCollector.id, 'input');
+
+        // Connect outer else branch (should not execute)
+        workflow.connect(outerIf.id, 'elseOutput', elseCollector.id, 'input');
+
+        // Execute
+        const result = await workflow.execute();
+
+        // Verify: outer then -> inner then executed
+        expect(result.status).toBe('success');
+        expect(thenThenCollector.output).toBe('outer-data');
+        expect(thenElseCollector.output).toBeUndefined();
+        expect(elseCollector.output).toBeUndefined();
+      });
+
+      it('should execute nested if in then branch with false condition', async () => {
+        const workflow = new Workflow();
+
+        // Outer if (true) -> inner if (false) -> collector
+        const outerIf = workflow.addNode('flow.if');
+        const innerIf = workflow.addNode('flow.if');
+        const thenThenCollector = workflow.addNode('test.collector');
+        const thenElseCollector = workflow.addNode('test.collector');
+
+        // Configure
+        outerIf.condition = true;
+        outerIf.value = 'outer-data';
+        innerIf.condition = false;
+
+        // Connect
+        workflow.connect(outerIf.id, 'thenOutput', innerIf.id, 'value');
+        workflow.connect(innerIf.id, 'thenOutput', thenThenCollector.id, 'input');
+        workflow.connect(innerIf.id, 'elseOutput', thenElseCollector.id, 'input');
+
+        // Execute
+        const result = await workflow.execute();
+
+        // Verify: outer then -> inner else executed
+        expect(result.status).toBe('success');
+        expect(thenThenCollector.output).toBeUndefined();
+        expect(thenElseCollector.output).toBe('outer-data');
+      });
+
+      it('should execute nested if in else branch', async () => {
+        const workflow = new Workflow();
+
+        // Outer if (false) -> inner if (true) -> collector
+        const outerIf = workflow.addNode('flow.if');
+        const innerIf = workflow.addNode('flow.if');
+        const thenCollector = workflow.addNode('test.collector');
+        const elseThenCollector = workflow.addNode('test.collector');
+        const elseElseCollector = workflow.addNode('test.collector');
+
+        // Configure
+        outerIf.condition = false;
+        outerIf.value = 'outer-data';
+        innerIf.condition = true;
+
+        // Connect: outer.else -> inner.value
+        workflow.connect(outerIf.id, 'elseOutput', innerIf.id, 'value');
+
+        // Connect inner branches
+        workflow.connect(innerIf.id, 'thenOutput', elseThenCollector.id, 'input');
+        workflow.connect(innerIf.id, 'elseOutput', elseElseCollector.id, 'input');
+
+        // Connect outer then (should not execute)
+        workflow.connect(outerIf.id, 'thenOutput', thenCollector.id, 'input');
+
+        // Execute
+        const result = await workflow.execute();
+
+        // Verify: outer else -> inner then executed
+        expect(result.status).toBe('success');
+        expect(thenCollector.output).toBeUndefined();
+        expect(elseThenCollector.output).toBe('outer-data');
+        expect(elseElseCollector.output).toBeUndefined();
+      });
+    });
+
+    describe('IfNode nested in SwitchNode', () => {
+      it('should execute if node in matching switch case', async () => {
+        const workflow = new Workflow();
+
+        // Switch -> case_1 -> if -> collectors
+        const switchNode = workflow.addNode('flow.switch');
+        const ifNode = workflow.addNode('flow.if');
+        const thenCollector = workflow.addNode('test.collector');
+        const elseCollector = workflow.addNode('test.collector');
+        const defaultCollector = workflow.addNode('test.collector');
+
+        // Configure switch: match case_1
+        switchNode.value = 'orange';
+        switchNode.cases = ['apple', 'orange', 'banana'];
+        switchNode.data = 'switch-data';
+
+        // Configure if: true
+        ifNode.condition = true;
+
+        // Connect: switch.case_1 -> if.value
+        workflow.connect(switchNode.id, 'case_1', ifNode.id, 'value');
+
+        // Connect if branches
+        workflow.connect(ifNode.id, 'thenOutput', thenCollector.id, 'input');
+        workflow.connect(ifNode.id, 'elseOutput', elseCollector.id, 'input');
+
+        // Connect switch default (should not execute)
+        workflow.connect(switchNode.id, 'default', defaultCollector.id, 'input');
+
+        // Execute
+        const result = await workflow.execute();
+
+        // Verify: switch case_1 -> if then executed
+        expect(result.status).toBe('success');
+        expect(thenCollector.output).toBe('switch-data');
+        expect(elseCollector.output).toBeUndefined();
+        expect(defaultCollector.output).toBeUndefined();
+      });
+
+      it('should not execute if node in non-matching switch case', async () => {
+        const workflow = new Workflow();
+
+        // Switch -> default, case_1 has if node but should not execute
+        const switchNode = workflow.addNode('flow.switch');
+        const ifNode = workflow.addNode('flow.if');
+        const thenCollector = workflow.addNode('test.collector');
+        const defaultCollector = workflow.addNode('test.collector');
+
+        // Configure switch: match default (no match)
+        switchNode.value = 'grape';
+        switchNode.cases = ['apple', 'orange'];
+        switchNode.data = 'switch-data';
+
+        // Configure if: true (but should not execute)
+        ifNode.condition = true;
+
+        // Connect: switch.case_1 -> if.value (case_1 won't be active)
+        workflow.connect(switchNode.id, 'case_1', ifNode.id, 'value');
+
+        // Connect if branches
+        workflow.connect(ifNode.id, 'thenOutput', thenCollector.id, 'input');
+
+        // Connect switch default
+        workflow.connect(switchNode.id, 'default', defaultCollector.id, 'input');
+
+        // Execute
+        const result = await workflow.execute();
+
+        // Verify: switch default executed, if node did not
+        expect(result.status).toBe('success');
+        expect(thenCollector.output).toBeUndefined();
+        expect(defaultCollector.output).toBe('switch-data');
+      });
+    });
+
+    describe('SwitchNode nested in IfNode', () => {
+      it('should execute switch node in then branch', async () => {
+        const workflow = new Workflow();
+
+        // If (true) -> switch -> case collectors
+        const ifNode = workflow.addNode('flow.if');
+        const switchNode = workflow.addNode('flow.switch');
+        const case0Collector = workflow.addNode('test.collector');
+        const case1Collector = workflow.addNode('test.collector');
+        const defaultCollector = workflow.addNode('test.collector');
+        const elseCollector = workflow.addNode('test.collector');
+
+        // Configure if: true
+        ifNode.condition = true;
+        ifNode.value = 'if-data';
+
+        // Configure switch: match case_1
+        switchNode.value = 'orange';
+        switchNode.cases = ['apple', 'orange'];
+
+        // Connect: if.then -> switch.data
+        workflow.connect(ifNode.id, 'thenOutput', switchNode.id, 'data');
+
+        // Connect switch branches
+        workflow.connect(switchNode.id, 'case_0', case0Collector.id, 'input');
+        workflow.connect(switchNode.id, 'case_1', case1Collector.id, 'input');
+        workflow.connect(switchNode.id, 'default', defaultCollector.id, 'input');
+
+        // Connect if else (should not execute)
+        workflow.connect(ifNode.id, 'elseOutput', elseCollector.id, 'input');
+
+        // Execute
+        const result = await workflow.execute();
+
+        // Verify: if then -> switch case_1 executed
+        expect(result.status).toBe('success');
+        expect(case0Collector.output).toBeUndefined();
+        expect(case1Collector.output).toBe('if-data');
+        expect(defaultCollector.output).toBeUndefined();
+        expect(elseCollector.output).toBeUndefined();
+      });
+
+      it('should not execute switch node in else branch when then is active', async () => {
+        const workflow = new Workflow();
+
+        // If (true) -> then collector, else has switch (should not execute)
+        const ifNode = workflow.addNode('flow.if');
+        const switchNode = workflow.addNode('flow.switch');
+        const thenCollector = workflow.addNode('test.collector');
+        const case0Collector = workflow.addNode('test.collector');
+
+        // Configure if: true
+        ifNode.condition = true;
+        ifNode.value = 'if-data';
+
+        // Configure switch
+        switchNode.value = 'apple';
+        switchNode.cases = ['apple'];
+
+        // Connect: if.then -> then collector
+        workflow.connect(ifNode.id, 'thenOutput', thenCollector.id, 'input');
+
+        // Connect: if.else -> switch.data (should not execute)
+        workflow.connect(ifNode.id, 'elseOutput', switchNode.id, 'data');
+        workflow.connect(switchNode.id, 'case_0', case0Collector.id, 'input');
+
+        // Execute
+        const result = await workflow.execute();
+
+        // Verify: if then executed, switch did not
+        expect(result.status).toBe('success');
+        expect(thenCollector.output).toBe('if-data');
+        expect(case0Collector.output).toBeUndefined();
+      });
+    });
+
+    describe('Deep Nesting', () => {
+      it('should handle 3 levels of nesting (if -> if -> if)', async () => {
+        const workflow = new Workflow();
+
+        // Level 1: if (true)
+        const level1If = workflow.addNode('flow.if');
+        // Level 2: if (true)
+        const level2If = workflow.addNode('flow.if');
+        // Level 3: if (true)
+        const level3If = workflow.addNode('flow.if');
+        // Final collector
+        const collector = workflow.addNode('test.collector');
+
+        // Configure all to true
+        level1If.condition = true;
+        level1If.value = 'level-1';
+        level2If.condition = true;
+        level3If.condition = true;
+
+        // Connect: level1.then -> level2.value -> level3.value -> collector
+        workflow.connect(level1If.id, 'thenOutput', level2If.id, 'value');
+        workflow.connect(level2If.id, 'thenOutput', level3If.id, 'value');
+        workflow.connect(level3If.id, 'thenOutput', collector.id, 'input');
+
+        // Execute
+        const result = await workflow.execute();
+
+        // Verify: data flowed through all 3 levels
+        expect(result.status).toBe('success');
+        expect(collector.output).toBe('level-1');
+      });
+    });
+  });
 });

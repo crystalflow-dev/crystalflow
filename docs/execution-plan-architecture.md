@@ -287,16 +287,26 @@
 - [x] Run tests: `npm test -w @reactflo/core` (484 tests passing)
 - [x] Commit: "test(core): add integration tests for simple conditional workflows (Task 2.12)"
 
-**Task 2.13: Integration Testing - Nested Conditionals** [3 hours] - ⏳ PENDING
-- [ ] File: `packages/core/src/__tests__/ConditionalIntegration.test.ts`
-- [ ] Create test workflow with nested IfNode (if inside then branch)
-- [ ] Create test workflow with nested IfNode (if inside else branch)
-- [ ] Create test workflow with IfNode inside SwitchNode case
-- [ ] Verify nested execution works correctly
-- [ ] Verify execution plan is built correctly for nested cases
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "test(core): add integration tests for nested conditional workflows"
+**Task 2.13: Integration Testing - Nested Conditionals** [3 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/__tests__/builtin/ConditionalIntegration.test.ts`
+- [x] Create test workflow with nested IfNode (if inside then branch)
+- [x] Create test workflow with nested IfNode (if inside else branch)
+- [x] Create test workflow with IfNode inside SwitchNode case
+- [x] Create test workflow with SwitchNode inside IfNode branch
+- [x] Create deep nesting test (3 levels: if -> if -> if)
+- [x] 8 comprehensive nested conditional tests:
+  * IfNode in IfNode then branch (true/false)
+  * IfNode in IfNode else branch
+  * IfNode in SwitchNode matching case
+  * IfNode in SwitchNode non-matching case
+  * SwitchNode in IfNode then branch
+  * SwitchNode in IfNode else branch (not executed)
+  * Deep nesting (3 levels)
+- [x] Verify nested execution works correctly
+- [x] Verify data flows through multiple nesting levels
+- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors)
+- [x] Run tests: `npm test -w @reactflo/core` (492 tests passing, 8 new)
+- [x] Commit: "test(core): add integration tests for nested conditional workflows (Task 2.13)"
 
 **Task 2.14: Error Handling & Edge Cases** [2 hours] - ⏳ PENDING
 - [ ] File: `packages/core/src/__tests__/ConditionalErrors.test.ts`
