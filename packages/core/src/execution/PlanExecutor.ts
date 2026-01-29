@@ -104,50 +104,57 @@ export class PlanExecutor {
     context: ExecutionContext,
     executor: Executor
   ): Promise<void> {
-    // Emit step start event (will be added in future phases)
-    // await executor.emitAsync('onStepStart', step.id, step);
+    // Emit step start event
+    await executor.emitAsync('onStepStart', step.id, step.type);
 
-    switch (step.type) {
-      case ExecutionStepType.NodeExecution:
-        await this.executeNodeStep(step, workflow, context, executor);
-        break;
+    try {
+      switch (step.type) {
+        case ExecutionStepType.NodeExecution:
+          await this.executeNodeStep(step, workflow, context, executor);
+          break;
 
-      case ExecutionStepType.Conditional:
-        throw new ExecutionError('ConditionalStep not yet implemented (Phase 2)', {
-          executionId: context.executionId,
-          workflowId: context.workflowId,
-        });
+        case ExecutionStepType.Conditional:
+          throw new ExecutionError('ConditionalStep not yet implemented (Phase 2)', {
+            executionId: context.executionId,
+            workflowId: context.workflowId,
+          });
 
-      case ExecutionStepType.Loop:
-        throw new ExecutionError('LoopStep not yet implemented (Phase 3)', {
-          executionId: context.executionId,
-          workflowId: context.workflowId,
-        });
+        case ExecutionStepType.Loop:
+          throw new ExecutionError('LoopStep not yet implemented (Phase 3)', {
+            executionId: context.executionId,
+            workflowId: context.workflowId,
+          });
 
-      case ExecutionStepType.Parallel:
-        throw new ExecutionError('ParallelStep not yet implemented (Phase 4)', {
-          executionId: context.executionId,
-          workflowId: context.workflowId,
-        });
+        case ExecutionStepType.Parallel:
+          throw new ExecutionError('ParallelStep not yet implemented (Phase 4)', {
+            executionId: context.executionId,
+            workflowId: context.workflowId,
+          });
 
-      case ExecutionStepType.Merge:
-        throw new ExecutionError('MergeStep not yet implemented (Phase 4)', {
-          executionId: context.executionId,
-          workflowId: context.workflowId,
-        });
+        case ExecutionStepType.Merge:
+          throw new ExecutionError('MergeStep not yet implemented (Phase 4)', {
+            executionId: context.executionId,
+            workflowId: context.workflowId,
+          });
 
-      default: {
-        // Exhaustiveness check - if we reach here, we have an unknown step type
-        const _unknownStep: never = step;
-        throw new ExecutionError(`Unknown step type`, {
-          executionId: context.executionId,
-          workflowId: context.workflowId,
-        });
+        default: {
+          // Exhaustiveness check - if we reach here, we have an unknown step type
+          const _unknownStep: never = step;
+          throw new ExecutionError(`Unknown step type`, {
+            executionId: context.executionId,
+            workflowId: context.workflowId,
+          });
+        }
       }
-    }
 
-    // Emit step complete event (will be added in future phases)
-    // await executor.emitAsync('onStepComplete', step.id, step);
+      // Emit step complete event
+      await executor.emitAsync('onStepComplete', step.id, step.type);
+    } catch (error) {
+      // Emit step error event
+      await executor.emitAsync('onStepError', step.id, step.type, error as Error);
+      // Re-throw to propagate error
+      throw error;
+    }
   }
 
   /**
@@ -239,10 +246,16 @@ export class PlanExecutor {
       );
     }
 
-    // 6. Recursively execute the selected branch's steps
+    // 6. Emit branch enter event
+    await executor.emitAsync('onBranchEnter', nodeId, selectedBranch.id, selectedBranch.condition);
+
+    // 7. Recursively execute the selected branch's steps
     for (const branchStep of selectedBranch.steps) {
       await this.executeStep(branchStep, workflow, context, executor);
     }
+
+    // 8. Emit branch exit event
+    await executor.emitAsync('onBranchExit', nodeId, selectedBranch.id);
   }
 
   /**

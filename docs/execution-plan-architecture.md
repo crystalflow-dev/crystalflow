@@ -160,17 +160,44 @@
 - [x] Run tests: 370 tests passing (1 skipped)
 - [x] Commit: "feat(core): implement conditional step execution in PlanExecutor"
 
-**Task 2.7: Add Branch Execution Events** [2 hours] - ⏳ PENDING
-- [ ] File: `packages/types/src/execution.ts`
-- [ ] Add `onBranchEnter` event to `ExecutorEvents` interface
-- [ ] Add `onBranchExit` event to `ExecutorEvents` interface
-- [ ] File: `packages/core/src/execution/PlanExecutor.ts`
-- [ ] Emit `onBranchEnter` when entering a branch
-- [ ] Emit `onBranchExit` when exiting a branch
-- [ ] Add event tests
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "feat(core): add branch execution events for conditional flow"
+**Task 2.7: Add Branch Execution Events** [2 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/execution/Executor.ts`
+- [x] Added `onBranchEnter` event to `ExecutorEvents` interface
+  - Parameters: nodeId (string), branchId (string), condition (string)
+  - Emitted when entering a conditional branch
+- [x] Added `onBranchExit` event to `ExecutorEvents` interface
+  - Parameters: nodeId (string), branchId (string)
+  - Emitted when exiting a conditional branch
+- [x] Added `onStepStart` event to `ExecutorEvents` interface
+  - Parameters: stepId (string), stepType (string)
+  - Emitted when a step starts execution
+- [x] Added `onStepComplete` event to `ExecutorEvents` interface
+  - Parameters: stepId (string), stepType (string)
+  - Emitted when a step completes successfully
+- [x] Added `onStepError` event to `ExecutorEvents` interface
+  - Parameters: stepId (string), stepType (string), error (Error)
+  - Emitted when a step fails with error
+- [x] File: `packages/core/src/execution/PlanExecutor.ts`
+- [x] Emit `onStepStart` at beginning of executeStep()
+- [x] Emit `onStepComplete` at end of successful executeStep()
+- [x] Emit `onStepError` in catch block when step fails
+- [x] Emit `onBranchEnter` before executing branch steps
+- [x] Emit `onBranchExit` after executing branch steps
+- [x] All events use `executor.emitAsync()` for async listener support
+- [x] Wrapped executeStep() in try-catch for proper error event emission
+- [x] File: `packages/core/src/__tests__/execution/PlanExecutor.test.ts`
+- [x] Added 8 event tests:
+  - Test onStepStart and onStepComplete for single step
+  - Test step events for multiple steps
+  - Test async step event listeners
+  - Test onStepError emission when step fails
+  - Test onStepComplete NOT called after error
+  - Test onBranchEnter and onBranchExit emission
+  - Test branch events for default branch
+  - Test async branch event listeners
+- [x] Run lint: 0 errors (1 warning for any in ExecutorEvents - acceptable)
+- [x] Run tests: 378 tests passing (1 skipped)
+- [x] Commit: "feat(core): add step and branch execution events"
 
 **Task 2.8: Wire Conditional Execution to Main Loop** [1 hour] - ⏳ PENDING
 - [ ] File: `packages/core/src/execution/PlanExecutor.ts`
