@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { NodeConstructor } from '@reactflo/core';
-import { Node as ReactFlowNode, Edge } from 'reactflow';
-import 'reactflow/dist/style.css';
+import { Node as ReactFlowNode, Edge, ReactFlowProvider } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import './reactflow-theme.css';
 import { WorkflowCanvas } from '../WorkflowCanvas/WorkflowCanvas';
 import { NodePalette, NodePaletteProps } from '../NodePalette/NodePalette';
@@ -269,49 +269,68 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
           ? darkTheme
           : lightTheme
       : theme;
+
+  // State for React Flow instance
+  const [screenToFlowPosition, setScreenToFlowPosition] = useState<
+    ((pos: { x: number; y: number }) => { x: number; y: number }) | undefined
+  >(undefined);
+
   // State management hooks
   const reactFlowState = useReactFlowState();
   const { executeWorkflow } = useWorkflowExecution();
   const { saveWorkflow, loadWorkflow } = useWorkflowFileOperations();
-  const nodePalette = useNodePalette(nodes);
+  const nodePalette = useNodePalette(nodes, screenToFlowPosition);
+
+  // Callback to capture React Flow instance
+  const handleReactFlowInit = useCallback(
+    (instance: {
+      screenToFlowPosition: (pos: { x: number; y: number }) => { x: number; y: number };
+    }) => {
+      setScreenToFlowPosition(() => instance.screenToFlowPosition);
+    },
+    [] // Empty deps - only create once
+  );
 
   // Note: renderNodeContent is injected into nodes when they're created
   // via the nodePalette.onDrop handler, not here to avoid infinite loops
 
   // Handle toolbar actions
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     const result = saveWorkflow(reactFlowState.nodes, reactFlowState.edges);
     if (!result.success) {
       console.error('Save failed:', result.error);
     }
-  };
+  }, [reactFlowState.nodes, reactFlowState.edges, saveWorkflow]);
 
-  const handleLoad = async () => {
+  const handleLoad = useCallback(async () => {
     const result = await loadWorkflow();
     if (result.success) {
       reactFlowState.loadWorkflow(result.nodes!, result.edges!);
     } else {
       console.error('Load failed:', result.error);
     }
-  };
+  }, [loadWorkflow, reactFlowState]);
 
-  const handleExecute = async () => {
+  const handleExecute = useCallback(async () => {
     try {
       await executeWorkflow(reactFlowState.nodes, reactFlowState.edges);
     } catch (error) {
       console.error('Execution failed:', error);
     }
-  };
+  }, [executeWorkflow, reactFlowState.nodes, reactFlowState.edges]);
 
-  const handleDrop = (event: React.DragEvent) => {
-    const addNodeWithRenderContent = (node: ReactFlowNode) => {
-      if (renderNodeContent) {
-        node.data = { ...node.data, renderNodeContent };
-      }
-      reactFlowState.addNode(node);
-    };
-    nodePalette.onDrop(event, reactFlowState.generateNodeId, addNodeWithRenderContent);
-  };
+  const handleDrop = useCallback(
+    (event: React.DragEvent) => {
+      const addNodeWithRenderContent = (node: ReactFlowNode) => {
+        if (renderNodeContent) {
+          node.data = { ...node.data, renderNodeContent };
+        }
+        reactFlowState.addNode(node);
+      };
+      nodePalette.onDrop(event, reactFlowState.generateNodeId, addNodeWithRenderContent);
+    },
+    [nodePalette, reactFlowState, renderNodeContent]
+  );
 
   // Notify parent of changes
   useEffect(() => {
@@ -340,74 +359,97 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
     />
   );
 
-  const defaultRootStyle: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    ...themeToCSSVariables(resolvedTheme),
-  };
+  const defaultRootStyle: React.CSSProperties = useMemo(
+    () => ({
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      ...themeToCSSVariables(resolvedTheme),
+    }),
+    [resolvedTheme]
+  );
+
+  const mainContentStyle = useMemo(
+    () => ({ flex: 1, display: 'flex', overflow: 'hidden' as const }),
+    []
+  );
+
+  const handlePropertyPanelClose = useCallback(() => {
+    reactFlowState.onPaneClick();
+  }, [reactFlowState]);
+
+  const handlePropertyPanelUpdate = useCallback(
+    (updates: Record<string, unknown>) => {
+      if (reactFlowState.selectedNode) {
+        reactFlowState.updateNode(reactFlowState.selectedNode.id, updates);
+      }
+    },
+    [reactFlowState]
+  );
 
   return (
-    <div
-      className={cn(className, classes?.root, `reactflo-theme-${resolvedTheme.mode}`)}
-      style={mergeStyles(defaultRootStyle, styles?.root, style)}
-      data-theme={resolvedTheme.mode}
-    >
-      {/* Toolbar */}
-      {showToolbar &&
-        (renderToolbar || defaultRenderToolbar)({
-          onExecute: handleExecute,
-          onSave: handleSave,
-          onLoad: handleLoad,
-          onClear: reactFlowState.clearWorkflow,
-          canExecute: reactFlowState.nodes.length > 0,
-        })}
+    <ReactFlowProvider>
+      <div
+        className={cn(className, classes?.root, `reactflo-theme-${resolvedTheme.mode}`)}
+        style={mergeStyles(defaultRootStyle, styles?.root, style)}
+        data-theme={resolvedTheme.mode}
+      >
+        {/* Toolbar */}
+        {showToolbar &&
+          (renderToolbar || defaultRenderToolbar)({
+            onExecute: handleExecute,
+            onSave: handleSave,
+            onLoad: handleLoad,
+            onClear: reactFlowState.clearWorkflow,
+            canExecute: reactFlowState.nodes.length > 0,
+          })}
 
-      {/* Main content area */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        {/* Node Palette */}
-        {showPalette && (
-          <NodePalette
-            nodes={nodePalette.paletteItems}
-            onNodeDragStart={nodePalette.onNodeDragStart}
-            className={classes?.palette}
-            style={styles?.palette}
-            renderPaletteItem={renderPaletteItem}
-            {...nodePaletteProps}
+        {/* Main content area */}
+        <div style={mainContentStyle}>
+          {/* Node Palette */}
+          {showPalette && (
+            <NodePalette
+              nodes={nodePalette.paletteItems}
+              onNodeDragStart={nodePalette.onNodeDragStart}
+              className={classes?.palette}
+              style={styles?.palette}
+              renderPaletteItem={renderPaletteItem}
+              {...nodePaletteProps}
+            />
+          )}
+
+          {/* React Flow Canvas */}
+          <WorkflowCanvas
+            nodes={reactFlowState.nodes}
+            edges={reactFlowState.edges}
+            onNodesChange={reactFlowState.onNodesChange}
+            onEdgesChange={reactFlowState.onEdgesChange}
+            onConnect={reactFlowState.onConnect}
+            onNodeClick={reactFlowState.onNodeClick}
+            onPaneClick={reactFlowState.onPaneClick}
+            onDrop={handleDrop}
+            onDragOver={nodePalette.onDragOver}
+            onReactFlowInit={handleReactFlowInit}
+            className={`${classes?.canvas || ''} reactflo-theme-${resolvedTheme.mode}`}
+            style={styles?.canvas}
+            colorMode={resolvedTheme.mode === 'dark' ? 'dark' : 'light'}
+            reactFlowCustomization={reactFlowCustomization}
           />
-        )}
 
-        {/* React Flow Canvas */}
-        <WorkflowCanvas
-          nodes={reactFlowState.nodes}
-          edges={reactFlowState.edges}
-          onNodesChange={reactFlowState.onNodesChange}
-          onEdgesChange={reactFlowState.onEdgesChange}
-          onConnect={reactFlowState.onConnect}
-          onNodeClick={reactFlowState.onNodeClick}
-          onPaneClick={reactFlowState.onPaneClick}
-          onDrop={handleDrop}
-          onDragOver={nodePalette.onDragOver}
-          className={classes?.canvas}
-          style={styles?.canvas}
-          reactFlowCustomization={reactFlowCustomization}
-        />
-
-        {/* Property Panel */}
-        {showProperties && reactFlowState.selectedNode && (
-          <PropertyPanel
-            node={reactFlowState.selectedNode}
-            onClose={() => reactFlowState.onPaneClick()}
-            onUpdate={(updates) => {
-              reactFlowState.updateNode(reactFlowState.selectedNode!.id, updates);
-            }}
-            className={classes?.properties}
-            style={styles?.properties}
-            {...propertyPanelProps}
-          />
-        )}
+          {/* Property Panel */}
+          {showProperties && reactFlowState.selectedNode && (
+            <PropertyPanel
+              node={reactFlowState.selectedNode}
+              onClose={handlePropertyPanelClose}
+              onUpdate={handlePropertyPanelUpdate}
+              className={classes?.properties}
+              style={styles?.properties}
+              {...propertyPanelProps}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </ReactFlowProvider>
   );
 };

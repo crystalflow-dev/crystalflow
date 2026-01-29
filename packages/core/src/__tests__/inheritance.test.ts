@@ -26,7 +26,6 @@ abstract class MyAppBaseNode extends Node {
 
   protected log(message: string): void {
     if (this.debugMode) {
-      // eslint-disable-next-line no-console
       console.log(`[${this.environment}] ${this.id}: ${message}`);
     }
   }

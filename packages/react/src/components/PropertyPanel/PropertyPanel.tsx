@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Node as ReactFlowNode } from 'reactflow';
+import { Node as ReactFlowNode } from '@xyflow/react';
 import { CustomNodeData } from '../Node/CustomNode';
 import { PortDefinition, PropertyDefinition } from '@reactflo/types';
 import { PropertyPanelClasses, PropertyPanelStyles } from '../../types/styling';
@@ -12,7 +12,7 @@ export interface PropertyPanelProps {
   /**
    * Selected node
    */
-  node?: ReactFlowNode<CustomNodeData>;
+  node?: ReactFlowNode;
 
   /**
    * Callback when property changes
@@ -75,11 +75,12 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
   // Initialize/update local state when node changes
   useEffect(() => {
     if (node?.data) {
+      const nodeData = node.data as CustomNodeData;
       const values: Record<string, unknown> = {};
-      if (node.data.properties) {
-        Object.entries(node.data.properties).forEach(
+      if (nodeData.properties) {
+        Object.entries(nodeData.properties).forEach(
           ([key, propDef]: [string, PropertyDefinition]) => {
-            values[key] = node.data[key] !== undefined ? node.data[key] : propDef.defaultValue;
+            values[key] = nodeData[key] !== undefined ? nodeData[key] : propDef.defaultValue;
           }
         );
       }
@@ -145,6 +146,7 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
   }
 
   const { data } = node;
+  const nodeData = data as CustomNodeData;
 
   return (
     <div
@@ -182,17 +184,17 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
         }}
       >
         <div style={{ marginBottom: '5px' }}>
-          <strong>Label:</strong> {data.label}
+          <strong>Label:</strong> {nodeData.label}
         </div>
         <div style={{ marginBottom: '5px' }}>
-          <strong>Type:</strong> <code style={{ fontSize: '12px' }}>{data.type}</code>
+          <strong>Type:</strong> <code style={{ fontSize: '12px' }}>{nodeData.type}</code>
         </div>
-        {data.category && (
+        {nodeData.category && (
           <div>
-            <strong>Category:</strong> {data.category}
+            <strong>Category:</strong> {nodeData.category}
           </div>
         )}
-        {data.description && (
+        {nodeData.description && (
           <div
             style={{
               marginTop: '8px',
@@ -200,134 +202,133 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
               color: 'var(--reactflo-text-secondary, #666)',
             }}
           >
-            {data.description}
+            {nodeData.description}
           </div>
         )}
       </div>
 
       {/* Properties */}
-      {data.properties && Object.keys(data.properties).length > 0 && (
+      {nodeData.properties && Object.keys(nodeData.properties).length > 0 && (
         <div style={{ marginBottom: '20px' }}>
           <h4 style={{ marginTop: 0, marginBottom: '10px' }}>Properties</h4>
-          {Object.entries(data.properties).map(([key, propDef]: [string, PropertyDefinition]) => (
-            <div
-              key={key}
-              className={classes?.group}
-              style={mergeStyles(defaultGroupStyle, styles?.group)}
-            >
-              <label
-                className={classes?.label}
-                style={mergeStyles(defaultLabelStyle, styles?.label)}
+          {Object.entries(nodeData.properties).map(
+            ([key, propDef]: [string, PropertyDefinition]) => (
+              <div
+                key={key}
+                className={classes?.group}
+                style={mergeStyles(defaultGroupStyle, styles?.group)}
               >
-                {propDef.label || key}
-                {propDef.required && <span style={{ color: 'red' }}> *</span>}
-              </label>
-
-              {/* Render different control types based on property definition */}
-              {propDef.type === 'select' && propDef.options ? (
-                <select
-                  value={
-                    propertyValues[key] !== undefined
-                      ? String(propertyValues[key])
-                      : String(propDef.defaultValue || '')
-                  }
-                  className={classes?.input}
-                  style={mergeStyles(defaultInputStyle, styles?.input)}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    console.log(`Update property ${key}:`, value);
-
-                    // Update local state immediately for responsive UI
-                    setPropertyValues((prev) => ({ ...prev, [key]: value }));
-
-                    // Notify parent component
-                    if (onUpdate) {
-                      onUpdate({ [key]: value });
-                    }
-                  }}
+                <label
+                  className={classes?.label}
+                  style={mergeStyles(defaultLabelStyle, styles?.label)}
                 >
-                  {propDef.options.map((option: { value: string; label: string }) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              ) : propDef.type === 'boolean' ? (
-                <input
-                  type="checkbox"
-                  checked={
-                    propertyValues[key] !== undefined
-                      ? Boolean(propertyValues[key])
-                      : Boolean(propDef.defaultValue)
-                  }
-                  style={{
-                    marginRight: '8px',
-                    transform: 'scale(1.2)',
-                  }}
-                  onChange={(e) => {
-                    const value = e.target.checked;
-                    console.log(`Update property ${key}:`, value);
+                  {propDef.label || key}
+                  {propDef.required && <span style={{ color: 'red' }}> *</span>}
+                </label>
 
-                    // Update local state immediately for responsive UI
-                    setPropertyValues((prev) => ({ ...prev, [key]: value }));
-
-                    // Notify parent component
-                    if (onUpdate) {
-                      onUpdate({ [key]: value });
+                {/* Render different control types based on property definition */}
+                {propDef.type === 'select' && propDef.options ? (
+                  <select
+                    value={
+                      propertyValues[key] !== undefined
+                        ? String(propertyValues[key])
+                        : String(propDef.defaultValue || '')
                     }
-                  }}
-                />
-              ) : (
-                <input
-                  type={propDef.type === 'number' ? 'number' : 'text'}
-                  value={
-                    propertyValues[key] !== undefined
-                      ? String(propertyValues[key])
-                      : String(propDef.defaultValue || '')
-                  }
-                  placeholder={`Enter ${propDef.type}`}
-                  min={propDef.min}
-                  max={propDef.max}
-                  step={propDef.step}
-                  className={classes?.input}
-                  style={mergeStyles(defaultInputStyle, styles?.input)}
-                  onChange={(e) => {
-                    const value =
-                      propDef.type === 'number' ? parseFloat(e.target.value) : e.target.value;
-                    console.log(`Update property ${key}:`, value);
+                    className={classes?.input}
+                    style={mergeStyles(defaultInputStyle, styles?.input)}
+                    onChange={(e) => {
+                      const value = e.target.value;
 
-                    // Update local state immediately for responsive UI
-                    setPropertyValues((prev) => ({ ...prev, [key]: value }));
+                      // Update local state immediately for responsive UI
+                      setPropertyValues((prev) => ({ ...prev, [key]: value }));
 
-                    // Notify parent component
-                    if (onUpdate) {
-                      onUpdate({ [key]: value });
+                      // Notify parent component
+                      if (onUpdate) {
+                        onUpdate({ [key]: value });
+                      }
+                    }}
+                  >
+                    {propDef.options.map((option: { value: string; label: string }) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : propDef.type === 'boolean' ? (
+                  <input
+                    type="checkbox"
+                    checked={
+                      propertyValues[key] !== undefined
+                        ? Boolean(propertyValues[key])
+                        : Boolean(propDef.defaultValue)
                     }
-                  }}
-                />
-              )}
+                    style={{
+                      marginRight: '8px',
+                      transform: 'scale(1.2)',
+                    }}
+                    onChange={(e) => {
+                      const value = e.target.checked;
 
-              {propDef.description && (
-                <div
-                  style={{
-                    fontSize: '11px',
-                    color: 'var(--reactflo-text-secondary, #666)',
-                    marginTop: '2px',
-                  }}
-                >
-                  {propDef.description}
-                </div>
-              )}
-            </div>
-          ))}
+                      // Update local state immediately for responsive UI
+                      setPropertyValues((prev) => ({ ...prev, [key]: value }));
+
+                      // Notify parent component
+                      if (onUpdate) {
+                        onUpdate({ [key]: value });
+                      }
+                    }}
+                  />
+                ) : (
+                  <input
+                    type={propDef.type === 'number' ? 'number' : 'text'}
+                    value={
+                      propertyValues[key] !== undefined
+                        ? String(propertyValues[key])
+                        : String(propDef.defaultValue || '')
+                    }
+                    placeholder={`Enter ${propDef.type}`}
+                    min={propDef.min}
+                    max={propDef.max}
+                    step={propDef.step}
+                    className={classes?.input}
+                    style={mergeStyles(defaultInputStyle, styles?.input)}
+                    onChange={(e) => {
+                      const value =
+                        propDef.type === 'number' ? parseFloat(e.target.value) : e.target.value;
+
+                      // Update local state immediately for responsive UI
+                      setPropertyValues((prev) => ({ ...prev, [key]: value }));
+
+                      // Notify parent component
+                      if (onUpdate) {
+                        onUpdate({ [key]: value });
+                      }
+                    }}
+                  />
+                )}
+
+                {propDef.description && (
+                  <div
+                    style={{
+                      fontSize: '11px',
+                      color: 'var(--reactflo-text-secondary, #666)',
+                      marginTop: '2px',
+                    }}
+                  >
+                    {propDef.description}
+                  </div>
+                )}
+              </div>
+            )
+          )}
         </div>
       )}
 
       {/* Output Properties (read-only) */}
-      {data.outputs && Object.keys(data.outputs).length > 0 && (
+      {nodeData.outputs && Object.keys(nodeData.outputs).length > 0 && (
         <div>
           <h4 style={{ marginTop: 0, marginBottom: '10px' }}>Outputs</h4>
-          {Object.entries(data.outputs).map(([key, port]: [string, PortDefinition]) => (
+          {Object.entries(nodeData.outputs).map(([key, port]: [string, PortDefinition]) => (
             <div
               key={key}
               style={{

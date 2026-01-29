@@ -8,7 +8,7 @@ import {
   applyEdgeChanges,
   addEdge,
   Connection,
-} from 'reactflow';
+} from '@xyflow/react';
 
 /**
  * Hook for managing React Flow state (nodes, edges, selection)

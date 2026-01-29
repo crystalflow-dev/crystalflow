@@ -87,7 +87,6 @@ export function SimpleWorkflowExample() {
   };
 
   const handleError = (error: Error) => {
-    // eslint-disable-next-line no-console
     console.error('Execution error:', error);
   };
 

@@ -62,9 +62,9 @@ class HttpRequestNode extends Node {
   execute() {
     // Use the property values in execution logic
     const url = this.urlOverride || this.baseUrl;
-    // eslint-disable-next-line no-console
+
     console.log(`Making ${this.method} request to ${url} with timeout ${this.timeout}ms`);
-    // eslint-disable-next-line no-console
+
     console.log(`Follow redirects: ${this.followRedirects}`);
 
     // Mock response

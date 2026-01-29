@@ -100,8 +100,7 @@ export const StyledWorkflow: React.FC = () => {
           reactFlowCustomization={{
             // ReactFlow props
             reactFlowProps: {
-              snapToGrid: true,
-              snapGrid: [15, 15],
+              snapToGrid: false, // Disabled for smooth movement
               defaultViewport: { x: 50, y: 50, zoom: 1 },
               minZoom: 0.2,
               maxZoom: 2,

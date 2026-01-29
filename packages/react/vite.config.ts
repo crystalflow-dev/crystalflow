@@ -24,7 +24,7 @@ export default defineConfig({
         'react',
         'react-dom',
         'react/jsx-runtime',
-        'reactflow',
+        '@xyflow/react',
         '@reactflo/core',
         '@reactflo/types',
         '@monaco-editor/react',
@@ -34,13 +34,13 @@ export default defineConfig({
           react: 'React',
           'react-dom': 'ReactDOM',
           'react/jsx-runtime': 'jsxRuntime',
-          reactflow: 'ReactFlow',
+          '@xyflow/react': 'ReactFlow',
           '@reactflo/core': 'ReactFloCore',
           '@reactflo/types': 'ReactFloTypes',
           '@monaco-editor/react': 'MonacoReact',
         },
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name === 'style.css') return 'index.css';
+          if (assetInfo.name === 'style.css') return 'react.css';
           return assetInfo.name || 'asset';
         },
       },

@@ -1,12 +1,15 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Node as ReactFlowNode } from 'reactflow';
+import { Node as ReactFlowNode } from '@xyflow/react';
 import { NodeConstructor } from '@reactflo/core';
 import { convertNodeToReactFlow, getNodePaletteItems } from '../utils/nodeConverter';
 
 /**
  * Hook for handling drag and drop from node palette
  */
-export function useNodePalette(nodes: NodeConstructor[]) {
+export function useNodePalette(
+  nodes: NodeConstructor[],
+  screenToFlowPosition?: (position: { x: number; y: number }) => { x: number; y: number }
+) {
   const [draggedNodeType, setDraggedNodeType] = useState<string | null>(null);
 
   // Convert registered nodes to palette items
@@ -35,14 +38,24 @@ export function useNodePalette(nodes: NodeConstructor[]) {
 
       if (!draggedNodeType) return;
 
-      // Get the React Flow bounds
-      const reactFlowBounds = event.currentTarget.getBoundingClientRect();
+      // Calculate position using screenToFlowPosition if available
+      // This properly accounts for pan/zoom state
+      let position: { x: number; y: number };
 
-      // Calculate position
-      const position = {
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
-      };
+      if (screenToFlowPosition) {
+        // Use React Flow's coordinate transformation
+        position = screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
+        });
+      } else {
+        // Fallback to simple bounds calculation (less accurate)
+        const reactFlowBounds = event.currentTarget.getBoundingClientRect();
+        position = {
+          x: event.clientX - reactFlowBounds.left,
+          y: event.clientY - reactFlowBounds.top,
+        };
+      }
 
       // Get the node class
       const nodeClass = nodeClassMap.get(draggedNodeType);
@@ -59,7 +72,7 @@ export function useNodePalette(nodes: NodeConstructor[]) {
       addNode(newNode);
       setDraggedNodeType(null);
     },
-    [draggedNodeType, nodeClassMap]
+    [draggedNodeType, nodeClassMap, screenToFlowPosition]
   );
 
   const onDragOver = useCallback((event: React.DragEvent) => {

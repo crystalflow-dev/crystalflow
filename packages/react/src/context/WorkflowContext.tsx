@@ -103,6 +103,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
       if (!workflow) {
         throw new Error('No workflow instance');
       }
+
       const node = workflow.addNode(nodeType, options);
       return node.id;
     },
