@@ -308,16 +308,25 @@
 - [x] Run tests: `npm test -w @reactflo/core` (492 tests passing, 8 new)
 - [x] Commit: "test(core): add integration tests for nested conditional workflows (Task 2.13)"
 
-**Task 2.14: Error Handling & Edge Cases** [2 hours] - ⏳ PENDING
-- [ ] File: `packages/core/src/__tests__/ConditionalErrors.test.ts`
-- [ ] Test conditional node without evaluateCondition method (should error)
-- [ ] Test evaluateCondition returning invalid branch name (should error)
-- [ ] Test conditional node with no matching branch (should error or use default)
-- [ ] Test error propagation from within conditional branches
-- [ ] Add proper error messages and context
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "test(core): add error handling tests for conditional flow"
+**Task 2.14: Error Handling & Edge Cases** [2 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/__tests__/builtin/ConditionalErrors.test.ts`
+- [x] Test conditional node with empty evaluateCondition return value (fails properly)
+- [x] Test evaluateCondition returning invalid branch name (fails with error)
+- [x] Test conditional node with no matching branch
+- [x] Test error propagation from within conditional branches
+- [x] 11 comprehensive error and edge case tests:
+  * Empty branch name handling
+  * Invalid branch name handling
+  * Error propagation from IfNode then/else branches
+  * Error propagation from SwitchNode case/default branches
+  * Error propagation from nested conditionals
+  * IfNode/SwitchNode with no connections
+  * SwitchNode with empty cases array
+  * IfNode with undefined condition (falsy behavior)
+- [x] Add proper error messages and context
+- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors)
+- [x] Run tests: `npm test -w @reactflo/core` (503 tests passing, 11 new)
+- [x] Commit: "test(core): add error handling tests for conditional flow (Task 2.14)"
 
 **Task 2.14.5: UI Integration Testing for Builtin Conditional Nodes** [3 hours] - ⏳ PENDING
 - [ ] File: `packages/examples/src/examples/ConditionalNodesDemo.tsx` (create new)
