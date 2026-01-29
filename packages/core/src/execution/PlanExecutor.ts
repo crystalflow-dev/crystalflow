@@ -114,10 +114,8 @@ export class PlanExecutor {
           break;
 
         case ExecutionStepType.Conditional:
-          throw new ExecutionError('ConditionalStep not yet implemented (Phase 2)', {
-            executionId: context.executionId,
-            workflowId: context.workflowId,
-          });
+          await this.executeConditionalStep(step, workflow, context, executor);
+          break;
 
         case ExecutionStepType.Loop:
           throw new ExecutionError('LoopStep not yet implemented (Phase 3)', {

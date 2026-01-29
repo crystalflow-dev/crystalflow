@@ -199,14 +199,21 @@
 - [x] Run tests: 378 tests passing (1 skipped)
 - [x] Commit: "feat(core): add step and branch execution events"
 
-**Task 2.8: Wire Conditional Execution to Main Loop** [1 hour] - ⏳ PENDING
-- [ ] File: `packages/core/src/execution/PlanExecutor.ts`
-- [ ] Add case for `ExecutionStepType.Conditional` in `executeStep()` switch
-- [ ] Route to `executeConditionalStep()` method
-- [ ] Add integration test with end-to-end conditional workflow
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "feat(core): wire conditional step execution into main execution loop"
+**Task 2.8: Wire Conditional Execution to Main Loop** [1 hour] - ✅ COMPLETE
+- [x] File: `packages/core/src/execution/PlanExecutor.ts`
+- [x] Removed "ConditionalStep not yet implemented" throw statement
+- [x] Added case for `ExecutionStepType.Conditional` in `executeStep()` switch
+- [x] Routed to `executeConditionalStep()` method
+- [x] File: `packages/core/src/__tests__/execution/PlanExecutor.test.ts`
+- [x] Added nested conditional test (now works through execute loop)
+- [x] Added 3 integration tests:
+  - End-to-end conditional workflow with both branches
+  - All events emitted correctly for conditional workflow
+  - Nested conditionals through main execute loop
+- [x] Updated "unsupported step types" test to use Loop instead of Conditional
+- [x] Run lint: 0 errors
+- [x] Run tests: 382 tests passing (1 skipped)
+- [x] Commit: "feat(core): wire conditional step execution to main loop"
 
 #### Week 4: Conditional Nodes - ⏳ PENDING
 

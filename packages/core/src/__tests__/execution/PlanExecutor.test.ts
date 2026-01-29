@@ -356,9 +356,11 @@ describe('PlanExecutor', () => {
 
       const step = {
         id: 'step-1',
-        type: ExecutionStepType.Conditional,
+        type: ExecutionStepType.Loop,
         nodeId: node.id,
-        branches: [],
+        loopType: 'for',
+        bodySteps: [],
+        maxIterations: 10,
       };
 
       const plan = new ExecutionPlan([step as any]);
@@ -367,7 +369,7 @@ describe('PlanExecutor', () => {
       const workflowExecutor = new Executor();
 
       await expect(planExecutor.execute(plan, workflow, context, workflowExecutor)).rejects.toThrow(
-        'ConditionalStep not yet implemented'
+        'LoopStep not yet implemented'
       );
     });
   });
@@ -767,8 +769,249 @@ describe('PlanExecutor', () => {
       ).rejects.toThrow(/does not implement IConditionalNode interface/);
     });
 
-    // Note: Nested conditional test moved to Task 2.8 integration tests
-    // because it requires ConditionalStep to be wired into executeStep() switch
+    it('should execute nested conditional steps', async () => {
+      const workflow = new Workflow('wf-1', 'Nested Conditional Workflow');
+      const outerConditional = workflow.addNode('test.conditional');
+      const innerConditional = workflow.addNode('test.conditional');
+      const finalNode = workflow.addNode('test.simple');
+
+      // Outer condition: take "then" branch
+      const outerNode = workflow.nodes.get(outerConditional.id) as TestConditionalNode;
+      outerNode.value = 5;
+
+      // Inner condition: take "else" branch
+      const innerNode = workflow.nodes.get(innerConditional.id) as TestConditionalNode;
+      innerNode.value = -3;
+
+      const innerConditionalStep: ConditionalStep = {
+        id: 'step-inner-conditional',
+        type: ExecutionStepType.Conditional,
+        nodeId: innerConditional.id,
+        branches: [
+          {
+            id: 'inner-else',
+            condition: 'else',
+            steps: [
+              {
+                id: 'step-final',
+                type: ExecutionStepType.NodeExecution,
+                nodeId: finalNode.id,
+                nodeType: 'test.simple',
+              },
+            ],
+          },
+        ],
+      };
+
+      const outerConditionalStep: ConditionalStep = {
+        id: 'step-outer-conditional',
+        type: ExecutionStepType.Conditional,
+        nodeId: outerConditional.id,
+        branches: [
+          {
+            id: 'outer-then',
+            condition: 'then',
+            steps: [innerConditionalStep], // Nested conditional
+          },
+        ],
+      };
+
+      const context = new ExecutionContext('exec-1', 'wf-1');
+      const planExecutor = new PlanExecutor();
+      const workflowExecutor = new Executor();
+
+      // Call private method directly using type casting for unit testing
+      await (planExecutor as any).executeConditionalStep(
+        outerConditionalStep,
+        workflow,
+        context,
+        workflowExecutor
+      );
+
+      // All three nodes should be executed
+      expect(context.getNodeResult(outerConditional.id)).toBeDefined();
+      expect(context.getNodeResult(innerConditional.id)).toBeDefined();
+      expect(context.getNodeResult(finalNode.id)).toBeDefined();
+    });
+  });
+
+  describe('conditional execution - integration tests', () => {
+    it('should execute conditional workflow end-to-end through main execute loop', async () => {
+      const workflow = new Workflow('wf-1', 'Conditional Workflow');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const thenNode = workflow.addNode('test.simple');
+      const elseNode = workflow.addNode('test.simple');
+
+      const condNode = workflow.nodes.get(conditionalNode.id) as TestConditionalNode;
+      condNode.value = 10; // Will take "then" branch
+
+      const conditionalStep: ConditionalStep = {
+        id: 'step-conditional',
+        type: ExecutionStepType.Conditional,
+        nodeId: conditionalNode.id,
+        branches: [
+          {
+            id: 'then-branch',
+            condition: 'then',
+            steps: [
+              {
+                id: 'step-then',
+                type: ExecutionStepType.NodeExecution,
+                nodeId: thenNode.id,
+                nodeType: 'test.simple',
+              },
+            ],
+          },
+          {
+            id: 'else-branch',
+            condition: 'else',
+            steps: [
+              {
+                id: 'step-else',
+                type: ExecutionStepType.NodeExecution,
+                nodeId: elseNode.id,
+                nodeType: 'test.simple',
+              },
+            ],
+          },
+        ],
+      };
+
+      const plan = new ExecutionPlan([conditionalStep]);
+      const context = new ExecutionContext('exec-1', 'wf-1');
+      const planExecutor = new PlanExecutor();
+      const workflowExecutor = new Executor();
+
+      await planExecutor.execute(plan, workflow, context, workflowExecutor);
+
+      // Conditional node should be executed
+      expect(context.getNodeResult(conditionalNode.id)).toBeDefined();
+      // "Then" branch node should be executed
+      expect(context.getNodeResult(thenNode.id)).toBeDefined();
+      // "Else" branch node should NOT be executed
+      expect(context.getNodeResult(elseNode.id)).toBeUndefined();
+    });
+
+    it('should emit all events for conditional workflow', async () => {
+      const workflow = new Workflow('wf-1', 'Conditional Workflow');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const thenNode = workflow.addNode('test.simple');
+
+      const condNode = workflow.nodes.get(conditionalNode.id) as TestConditionalNode;
+      condNode.value = 5;
+
+      const conditionalStep: ConditionalStep = {
+        id: 'step-conditional',
+        type: ExecutionStepType.Conditional,
+        nodeId: conditionalNode.id,
+        branches: [
+          {
+            id: 'then-branch',
+            condition: 'then',
+            steps: [
+              {
+                id: 'step-then',
+                type: ExecutionStepType.NodeExecution,
+                nodeId: thenNode.id,
+                nodeType: 'test.simple',
+              },
+            ],
+          },
+        ],
+      };
+
+      const plan = new ExecutionPlan([conditionalStep]);
+      const context = new ExecutionContext('exec-1', 'wf-1');
+      const planExecutor = new PlanExecutor();
+      const workflowExecutor = new Executor();
+
+      const events: string[] = [];
+
+      workflowExecutor.on('onStepStart', (stepId, stepType) => {
+        events.push(`step-start:${stepId}:${stepType}`);
+      });
+
+      workflowExecutor.on('onBranchEnter', (nodeId, branchId) => {
+        events.push(`branch-enter:${nodeId}:${branchId}`);
+      });
+
+      workflowExecutor.on('onBranchExit', (nodeId, branchId) => {
+        events.push(`branch-exit:${nodeId}:${branchId}`);
+      });
+
+      workflowExecutor.on('onStepComplete', (stepId, stepType) => {
+        events.push(`step-complete:${stepId}:${stepType}`);
+      });
+
+      await planExecutor.execute(plan, workflow, context, workflowExecutor);
+
+      // Should have: conditional step start, branch enter, then step start, then step complete, branch exit, conditional step complete
+      expect(events.length).toBeGreaterThanOrEqual(6);
+      expect(events[0]).toBe('step-start:step-conditional:conditional');
+      expect(events).toContain(`branch-enter:${conditionalNode.id}:then-branch`);
+      expect(events).toContain('step-start:step-then:node-execution');
+      expect(events).toContain('step-complete:step-then:node-execution');
+      expect(events).toContain(`branch-exit:${conditionalNode.id}:then-branch`);
+      expect(events[events.length - 1]).toBe('step-complete:step-conditional:conditional');
+    });
+
+    it('should handle nested conditionals through main execute loop', async () => {
+      const workflow = new Workflow('wf-1', 'Nested Conditional Workflow');
+      const outerConditional = workflow.addNode('test.conditional');
+      const innerConditional = workflow.addNode('test.conditional');
+      const finalNode = workflow.addNode('test.simple');
+
+      const outerNode = workflow.nodes.get(outerConditional.id) as TestConditionalNode;
+      outerNode.value = 10; // then
+
+      const innerNode = workflow.nodes.get(innerConditional.id) as TestConditionalNode;
+      innerNode.value = -5; // else
+
+      const innerConditionalStep: ConditionalStep = {
+        id: 'step-inner',
+        type: ExecutionStepType.Conditional,
+        nodeId: innerConditional.id,
+        branches: [
+          {
+            id: 'inner-else',
+            condition: 'else',
+            steps: [
+              {
+                id: 'step-final',
+                type: ExecutionStepType.NodeExecution,
+                nodeId: finalNode.id,
+                nodeType: 'test.simple',
+              },
+            ],
+          },
+        ],
+      };
+
+      const outerConditionalStep: ConditionalStep = {
+        id: 'step-outer',
+        type: ExecutionStepType.Conditional,
+        nodeId: outerConditional.id,
+        branches: [
+          {
+            id: 'outer-then',
+            condition: 'then',
+            steps: [innerConditionalStep],
+          },
+        ],
+      };
+
+      const plan = new ExecutionPlan([outerConditionalStep]);
+      const context = new ExecutionContext('exec-1', 'wf-1');
+      const planExecutor = new PlanExecutor();
+      const workflowExecutor = new Executor();
+
+      await planExecutor.execute(plan, workflow, context, workflowExecutor);
+
+      // All three nodes should be executed
+      expect(context.getNodeResult(outerConditional.id)).toBeDefined();
+      expect(context.getNodeResult(innerConditional.id)).toBeDefined();
+      expect(context.getNodeResult(finalNode.id)).toBeDefined();
+    });
   });
 
   describe('branch execution events', () => {
