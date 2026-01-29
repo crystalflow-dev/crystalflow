@@ -27,6 +27,34 @@
   opacity: 0.9;
 }
 
+.example-nav {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.example-nav button {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.example-nav button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.example-nav button.active {
+  background: white;
+  color: #667eea;
+  border-color: white;
+  font-weight: 600;
+}
+
 .app-content {
   flex: 1;
   overflow: hidden;
@@ -55,6 +83,31 @@
   margin: 0;
   font-size: 14px;
   color: #666;
+}
+
+.example-info ul {
+  margin: 10px 0;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.example-info li {
+  margin: 5px 0;
+}
+
+.example-info h3 {
+  margin: 15px 0 5px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.example-info code {
+  background: #e0e0e0;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
 }
 
 .workflow-container {

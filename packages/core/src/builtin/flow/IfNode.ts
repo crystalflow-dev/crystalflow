@@ -36,9 +36,10 @@ export class IfNode extends Node implements IConditionalNode {
    * Boolean condition that determines which branch to execute.
    * - true: executes 'then' branch (thenOutput)
    * - false: executes 'else' branch (elseOutput)
+   * Must be explicitly set (cannot be undefined).
    */
   @Input({ type: 'boolean', label: 'Condition', required: true })
-  condition: boolean = false;
+  condition!: boolean; // No default value - must be explicitly set
 
   /**
    * Optional data to pass through to the active branch.
@@ -66,8 +67,18 @@ export class IfNode extends Node implements IConditionalNode {
    * Execute the node by setting outputs based on the condition.
    * Sets the active output (thenOutput or elseOutput) to the value input.
    * The inactive output remains undefined.
+   * 
+   * @throws {Error} If condition is not a boolean (undefined, null, or wrong type)
    */
   execute(): void {
+    // Validate that condition is explicitly set to a boolean value
+    if (typeof this.condition !== 'boolean') {
+      throw new Error(
+        `IfNode requires a boolean condition. Got: ${typeof this.condition} (${this.condition}). ` +
+        'Make sure to connect a boolean value to the condition input.'
+      );
+    }
+
     if (this.condition) {
       this.thenOutput = this.value;
       this.elseOutput = undefined;
@@ -83,8 +94,17 @@ export class IfNode extends Node implements IConditionalNode {
    * branch to execute.
    *
    * @returns The output port name: 'thenOutput' if condition is true, 'elseOutput' if false
+   * @throws {Error} If condition is not a boolean
    */
   evaluateCondition(): string {
+    // Validate that condition is explicitly set to a boolean value
+    if (typeof this.condition !== 'boolean') {
+      throw new Error(
+        `IfNode requires a boolean condition. Got: ${typeof this.condition} (${this.condition}). ` +
+        'Make sure to connect a boolean value to the condition input.'
+      );
+    }
+
     return this.condition ? 'thenOutput' : 'elseOutput';
   }
 }

@@ -365,7 +365,7 @@ describe('Conditional Flow Error Handling', () => {
       const thenCollector = workflow.addNode('test.error-collector');
       const elseCollector = workflow.addNode('test.error-collector');
 
-      // Don't set condition - should be undefined/falsy
+      // Don't set condition - should be undefined and cause error
       ifNode.value = 'data';
 
       workflow.connect(ifNode.id, 'thenOutput', thenCollector.id, 'input');
@@ -373,10 +373,11 @@ describe('Conditional Flow Error Handling', () => {
 
       const result = await workflow.execute();
 
-      // Undefined is falsy, should go to else branch
-      expect(result.status).toBe('success');
-      expect(thenCollector.output).toBeUndefined();
-      expect(elseCollector.output).toBe('data');
+      // Should fail because condition is required
+      expect(result.status).toBe('failed');
+      expect(result.error).toBeDefined();
+      expect(result.error?.message).toContain('Required input');
+      expect(result.error?.message).toContain('Condition');
     });
   });
 });

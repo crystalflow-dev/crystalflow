@@ -315,8 +315,8 @@ describe('IfNode', () => {
   });
 
   describe('Default Values', () => {
-    it('should have default condition of false', () => {
-      expect(ifNode.condition).toBe(false);
+    it('should have undefined condition (must be explicitly set)', () => {
+      expect(ifNode.condition).toBeUndefined();
     });
 
     it('should have undefined value by default', () => {
