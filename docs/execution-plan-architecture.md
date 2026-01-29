@@ -270,17 +270,22 @@
 - [x] Run tests: `npm test -w @reactflo/core` (474 tests passing)
 - [x] Commit: "feat(core): implement SwitchNode with dynamic case outputs (Task 2.11)"
 
-**Task 2.12: Integration Testing - Simple Conditionals** [3 hours] - ⏳ PENDING
-- [ ] File: `packages/core/src/__tests__/ConditionalIntegration.test.ts`
-- [ ] Create test workflow with IfNode (condition true path)
-- [ ] Create test workflow with IfNode (condition false path)
-- [ ] Create test workflow with SwitchNode (case match)
-- [ ] Create test workflow with SwitchNode (default case)
-- [ ] Verify only active branch executes
-- [ ] Verify data flows correctly through branches
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "test(core): add integration tests for simple conditional workflows"
+**Task 2.12: Integration Testing - Simple Conditionals** [3 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/__tests__/builtin/ConditionalIntegration.test.ts`
+- [x] Create test workflow with IfNode (condition true path)
+- [x] Create test workflow with IfNode (condition false path)
+- [x] Create test workflow with SwitchNode (case match)
+- [x] Create test workflow with SwitchNode (default case)
+- [x] Verify only active branch executes
+- [x] Verify data flows correctly through branches
+- [x] 10 comprehensive tests covering:
+  * IfNode true/false path execution
+  * SwitchNode case matching and default
+  * Data passthrough verification
+  * Branch execution isolation (only active branch runs)
+- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors)
+- [x] Run tests: `npm test -w @reactflo/core` (484 tests passing)
+- [x] Commit: "test(core): add integration tests for simple conditional workflows (Task 2.12)"
 
 **Task 2.13: Integration Testing - Nested Conditionals** [3 hours] - ⏳ PENDING
 - [ ] File: `packages/core/src/__tests__/ConditionalIntegration.test.ts`
