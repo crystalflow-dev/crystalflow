@@ -4,7 +4,7 @@
  */
 
 export { IfNode } from './IfNode';
+export { SwitchNode } from './SwitchNode';
 
 // Future exports:
-// export { SwitchNode } from './SwitchNode';
 // export { CompareNode } from './CompareNode';

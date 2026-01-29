@@ -243,23 +243,32 @@
 - [x] Run tests: `npm test -w @reactflo/core` (416 tests passing)
 - [x] Commit: "feat(core): implement IfNode for if/else conditional flow"
 
-**Task 2.11: Implement SwitchNode** [4 hours] - ⏳ PENDING
-- [ ] File: `packages/core/src/nodes/flow/SwitchNode.ts`
-- [ ] Create `SwitchNode` class extending `Node` and implementing `IConditionalNode`
-- [ ] Add `@defineNode` decorator with metadata
-- [ ] Add `@Input` for `value` (any, required)
-- [ ] Add `@Input` for `cases` (array, optional) - array of case values
-- [ ] Add `@Output` for `case0Output`, `case1Output`, `case2Output` (any)
-- [ ] Add `@Output` for `defaultOutput` (any)
-- [ ] Implement `execute()` method (set all outputs)
-- [ ] Implement `evaluateCondition()` method (return matching case output name or 'defaultOutput')
-- [ ] Add JSDoc documentation
-- [ ] Export from `packages/core/src/nodes/flow/index.ts`
-- [ ] Create test file: `packages/core/src/__tests__/SwitchNode.test.ts`
-- [ ] Write comprehensive unit tests (matching cases, default, edge cases)
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "feat(core): implement SwitchNode for switch/case conditional flow"
+**Task 2.11: Implement SwitchNode** [4 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/builtin/flow/SwitchNode.ts`
+- [x] Create `SwitchNode` class extending `Node` and implementing `IConditionalNode`
+- [x] Add `@defineNode` decorator with metadata (type: 'flow.switch', category: 'Flow Control')
+- [x] Add `@Input` for `value` (any, required) - value to match against cases
+- [x] Add `@Property` for `cases` (array, defaultValue: []) - defines output structure
+- [x] Add `@Input` for `data` (any, optional) - data to pass through to matching output
+- [x] Dynamic outputs: Override `getOutputs()` to generate case_0, case_1, ..., case_N, default
+- [x] Use direct property assignment pattern: `this[`case_${i}`] = data`
+- [x] Implement `execute()` method - clears old outputs, sets only matching output
+- [x] Implement `evaluateCondition()` method - returns 'case_0', 'case_1', or 'default'
+- [x] Uses strict equality (===) for type-safe matching
+- [x] Supports unlimited cases (1 to 1000+)
+- [x] Add comprehensive JSDoc documentation with examples
+- [x] Export from `packages/core/src/builtin/flow/index.ts`
+- [x] Create test file: `packages/core/src/__tests__/builtin/SwitchNode.test.ts`
+- [x] Write 54 comprehensive unit tests:
+  - [x] Node metadata verification
+  - [x] Dynamic output generation (1, 3, 20, 100+ cases)
+  - [x] Case matching and passthrough
+  - [x] Type matching with strict equality
+  - [x] Multiple executions with state clearing
+  - [x] Edge cases (NaN, objects, duplicates)
+- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors, 4 warnings)
+- [x] Run tests: `npm test -w @reactflo/core` (474 tests passing)
+- [x] Commit: "feat(core): implement SwitchNode with dynamic case outputs (Task 2.11)"
 
 **Task 2.12: Integration Testing - Simple Conditionals** [3 hours] - ⏳ PENDING
 - [ ] File: `packages/core/src/__tests__/ConditionalIntegration.test.ts`
@@ -295,6 +304,34 @@
 - [ ] Run tests: `npm test -w @reactflo/core`
 - [ ] Commit: "test(core): add error handling tests for conditional flow"
 
+**Task 2.14.5: UI Integration Testing for Builtin Conditional Nodes** [3 hours] - ⏳ PENDING
+- [ ] File: `packages/examples/src/examples/ConditionalNodesDemo.tsx` (create new)
+- [ ] Register IfNode and SwitchNode in NodeRegistry
+- [ ] Verify nodes appear in NodePalette with correct categories
+- [ ] Test IfNode in WorkflowBuilder:
+  - [ ] Verify condition property appears in PropertyPanel
+  - [ ] Verify then/else outputs appear in CustomNode
+  - [ ] Test connections from both output ports
+  - [ ] Test execution with true/false conditions
+- [ ] Test SwitchNode in WorkflowBuilder:
+  - [ ] Verify cases property (array) appears in PropertyPanel
+  - [ ] Verify dynamic outputs (case_0, case_1, ..., default) update when cases change
+  - [ ] Test adding/removing cases and seeing outputs update
+  - [ ] Test connections from case outputs
+  - [ ] Test execution with different matching values
+- [ ] File: `packages/react/src/utils/nodeConverter.ts`
+  - [ ] Verify getOutputs() override is called for dynamic outputs
+  - [ ] Ensure PropertyPanel correctly displays @Property for cases
+- [ ] Create ConditionalNodesDemo with:
+  - [ ] IfNode example (route based on value > threshold)
+  - [ ] SwitchNode example (route based on status: 'pending', 'approved', 'rejected')
+  - [ ] Visual verification of dynamic outputs
+- [ ] Run examples: `npm run dev -w @reactflo/examples`
+- [ ] Test manually in browser at http://localhost:5173
+- [ ] Verify no console errors
+- [ ] Take screenshots for documentation
+- [ ] Commit: "feat(examples): add UI integration demo for conditional nodes (IfNode, SwitchNode)"
+
 **Task 2.15: Update Documentation** [2 hours] - ⏳ PENDING
 - [ ] File: `packages/core/README.md`
 - [ ] Add section on conditional flow nodes
@@ -318,7 +355,7 @@
 - [ ] Commit: "chore: Phase 2 conditional flow implementation complete"
 
 #### Phase 2 Summary
-- **Total Tasks**: 16
+- **Total Tasks**: 17 (16 + 1 UI integration task)
 - **Estimated Time**: 38 hours
 - **Files Created**: 6 new files
 - **Files Modified**: 8 existing files
