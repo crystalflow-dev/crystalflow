@@ -97,8 +97,6 @@ describe('ExecutionPlan', () => {
         id: 'step-conditional',
         type: ExecutionStepType.Conditional,
         nodeId: 'if-node',
-        conditionalType: 'if-else',
-        conditionInput: 'condition',
         branches: [
           {
             id: 'then-branch',
@@ -150,7 +148,6 @@ describe('ExecutionPlan', () => {
         type: ExecutionStepType.Loop,
         nodeId: 'loop-node',
         loopType: 'for',
-        conditionInput: 'iterations',
         maxIterations: 10,
         bodySteps: [
           {
@@ -240,15 +237,12 @@ describe('ExecutionPlan', () => {
           type: ExecutionStepType.Loop,
           nodeId: 'loop-node',
           loopType: 'for',
-          conditionInput: 'iterations',
           maxIterations: 5,
           bodySteps: [
             {
               id: 'step-conditional',
               type: ExecutionStepType.Conditional,
               nodeId: 'if-node',
-              conditionalType: 'if-else',
-              conditionInput: 'condition',
               branches: [
                 {
                   id: 'then-branch',
@@ -318,7 +312,6 @@ describe('ExecutionPlan', () => {
         type: ExecutionStepType.Loop,
         nodeId: 'loop-node',
         loopType: 'for',
-        conditionInput: 'iterations',
         maxIterations: 10,
         bodySteps: [
           {
@@ -390,7 +383,6 @@ describe('ExecutionPlan', () => {
         type: ExecutionStepType.Loop,
         nodeId: 'loop-node',
         loopType: 'for',
-        conditionInput: 'iterations',
         maxIterations: 10,
         bodySteps: [
           {
@@ -451,8 +443,6 @@ describe('ExecutionPlan', () => {
         id: 'step-conditional',
         type: ExecutionStepType.Conditional,
         nodeId: 'if-node',
-        conditionalType: 'if-else',
-        conditionInput: 'condition',
         branches: [], // Empty!
       };
 
@@ -468,7 +458,6 @@ describe('ExecutionPlan', () => {
         type: ExecutionStepType.Loop,
         nodeId: 'loop-node',
         loopType: 'for',
-        conditionInput: 'iterations',
         maxIterations: 10,
         bodySteps: [], // Empty!
       };
@@ -483,7 +472,6 @@ describe('ExecutionPlan', () => {
         type: ExecutionStepType.Loop,
         nodeId: 'loop-node',
         loopType: 'for',
-        conditionInput: 'iterations',
         maxIterations: 0, // Invalid!
         bodySteps: [
           {
@@ -584,7 +572,6 @@ describe('ExecutionPlan', () => {
         type: ExecutionStepType.Loop,
         nodeId: 'loop-node',
         loopType: 'for',
-        conditionInput: 'iterations',
         maxIterations: 10,
         bodySteps: [
           {
@@ -631,8 +618,6 @@ describe('ExecutionPlan', () => {
         id: 'step-conditional',
         type: ExecutionStepType.Conditional,
         nodeId: 'if-node',
-        conditionalType: 'if-else',
-        conditionInput: 'condition',
         branches: [
           {
             id: 'branch',
@@ -661,7 +646,6 @@ describe('ExecutionPlan', () => {
         type: ExecutionStepType.Loop,
         nodeId: 'loop-node',
         loopType: 'for',
-        conditionInput: 'iterations',
         maxIterations: 10,
         bodySteps: [
           {

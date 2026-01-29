@@ -176,8 +176,8 @@ export interface LoopStep extends BaseExecutionStep {
   nodeId: NodeId;
   /** Type of loop ('for', 'while', 'forEach') */
   loopType: 'for' | 'while' | 'forEach';
-  /** Input port for loop condition/array */
-  conditionInput: string;
+  /** Input port for loop condition/array (Phase 3) */
+  conditionInput?: string;
   /** Steps to execute in loop body */
   bodySteps: ExecutionPlanStep[];
   /** Maximum iterations (safety limit) */

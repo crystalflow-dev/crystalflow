@@ -10,7 +10,12 @@ import { Workflow } from '../../workflow/Workflow';
 import { Node } from '../../node/Node';
 import { NodeRegistry } from '../../node/NodeRegistry';
 import { defineNode, Input, Output } from '../../node/decorators';
-import { ExecutionStepType, NodeExecutionStep } from '@reactflo/types';
+import {
+  ExecutionStepType,
+  NodeExecutionStep,
+  ConditionalStep,
+  IConditionalNode,
+} from '@reactflo/types';
 
 // Test nodes
 @defineNode({
@@ -61,6 +66,34 @@ class ErrorNode extends Node {
   }
 }
 
+// Conditional test node
+@defineNode({
+  type: 'test.conditional',
+  label: 'Test Conditional',
+  category: 'Test',
+})
+class TestConditionalNode extends Node implements IConditionalNode {
+  @Input({ type: 'number', label: 'Value' })
+  value: number = 0;
+
+  @Output({ type: 'string', label: 'Then' })
+  then: string = '';
+
+  @Output({ type: 'string', label: 'Else' })
+  else: string = '';
+
+  execute() {
+    // Node execution updates state
+    this.then = 'then-branch';
+    this.else = 'else-branch';
+  }
+
+  evaluateCondition(): string {
+    // Returns the output port name for the active branch
+    return this.value > 0 ? 'then' : 'else';
+  }
+}
+
 describe('PlanExecutor', () => {
   let registry: NodeRegistry;
 
@@ -74,6 +107,9 @@ describe('PlanExecutor', () => {
     }
     if (!registry.has('test.error')) {
       registry.register(ErrorNode);
+    }
+    if (!registry.has('test.conditional')) {
+      registry.register(TestConditionalNode);
     }
   });
 
@@ -505,6 +541,234 @@ describe('PlanExecutor', () => {
 
       expect(indices).toEqual([0, 1]);
     });
+  });
+
+  describe('executeConditionalStep - unit tests', () => {
+    it('should execute conditional step and take "then" branch', async () => {
+      const workflow = new Workflow('wf-1', 'Conditional Workflow');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const thenNode = workflow.addNode('test.simple');
+
+      // Set condition to take "then" branch
+      const condNode = workflow.nodes.get(conditionalNode.id) as TestConditionalNode;
+      condNode.value = 5; // > 0, will take "then" branch
+
+      const conditionalStep: ConditionalStep = {
+        id: 'step-conditional',
+        type: ExecutionStepType.Conditional,
+        nodeId: conditionalNode.id,
+        branches: [
+          {
+            id: 'then-branch',
+            condition: 'then', // Matches output port name
+            steps: [
+              {
+                id: 'step-then',
+                type: ExecutionStepType.NodeExecution,
+                nodeId: thenNode.id,
+                nodeType: 'test.simple',
+              },
+            ],
+          },
+        ],
+      };
+
+      const context = new ExecutionContext('exec-1', 'wf-1');
+      const planExecutor = new PlanExecutor();
+      const workflowExecutor = new Executor();
+
+      // Call private method directly using type casting for unit testing
+      await (planExecutor as any).executeConditionalStep(
+        conditionalStep,
+        workflow,
+        context,
+        workflowExecutor
+      );
+
+      // Conditional node should be executed
+      expect(context.getNodeResult(conditionalNode.id)).toBeDefined();
+      // "Then" branch node should be executed
+      expect(context.getNodeResult(thenNode.id)).toBeDefined();
+    });
+
+    it('should execute conditional step and take "else" branch', async () => {
+      const workflow = new Workflow('wf-1', 'Conditional Workflow');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const elseNode = workflow.addNode('test.simple');
+
+      // Set condition to take "else" branch
+      const condNode = workflow.nodes.get(conditionalNode.id) as TestConditionalNode;
+      condNode.value = -5; // <= 0, will take "else" branch
+
+      const conditionalStep: ConditionalStep = {
+        id: 'step-conditional',
+        type: ExecutionStepType.Conditional,
+        nodeId: conditionalNode.id,
+        branches: [
+          {
+            id: 'else-branch',
+            condition: 'else', // Matches output port name
+            steps: [
+              {
+                id: 'step-else',
+                type: ExecutionStepType.NodeExecution,
+                nodeId: elseNode.id,
+                nodeType: 'test.simple',
+              },
+            ],
+          },
+        ],
+      };
+
+      const context = new ExecutionContext('exec-1', 'wf-1');
+      const planExecutor = new PlanExecutor();
+      const workflowExecutor = new Executor();
+
+      // Call private method directly using type casting for unit testing
+      await (planExecutor as any).executeConditionalStep(
+        conditionalStep,
+        workflow,
+        context,
+        workflowExecutor
+      );
+
+      // Conditional node should be executed
+      expect(context.getNodeResult(conditionalNode.id)).toBeDefined();
+      // "Else" branch node should be executed
+      expect(context.getNodeResult(elseNode.id)).toBeDefined();
+    });
+
+    it('should use default branch when no branch matches', async () => {
+      const workflow = new Workflow('wf-1', 'Conditional Workflow');
+      const conditionalNode = workflow.addNode('test.conditional');
+      const defaultNode = workflow.addNode('test.simple');
+
+      const condNode = workflow.nodes.get(conditionalNode.id) as TestConditionalNode;
+      condNode.value = 5; // Will return "then", but we only have default branch
+
+      const conditionalStep: ConditionalStep = {
+        id: 'step-conditional',
+        type: ExecutionStepType.Conditional,
+        nodeId: conditionalNode.id,
+        branches: [], // No matching branches
+        defaultBranch: {
+          id: 'default-branch',
+          condition: 'default',
+          steps: [
+            {
+              id: 'step-default',
+              type: ExecutionStepType.NodeExecution,
+              nodeId: defaultNode.id,
+              nodeType: 'test.simple',
+            },
+          ],
+        },
+      };
+
+      const context = new ExecutionContext('exec-1', 'wf-1');
+      const planExecutor = new PlanExecutor();
+      const workflowExecutor = new Executor();
+
+      // Call private method directly using type casting for unit testing
+      await (planExecutor as any).executeConditionalStep(
+        conditionalStep,
+        workflow,
+        context,
+        workflowExecutor
+      );
+
+      // Default branch node should be executed
+      expect(context.getNodeResult(defaultNode.id)).toBeDefined();
+    });
+
+    it('should throw error when no branch matches and no default', async () => {
+      const workflow = new Workflow('wf-1', 'Conditional Workflow');
+      const conditionalNode = workflow.addNode('test.conditional');
+
+      const condNode = workflow.nodes.get(conditionalNode.id) as TestConditionalNode;
+      condNode.value = 5; // Will return "then"
+
+      const conditionalStep: ConditionalStep = {
+        id: 'step-conditional',
+        type: ExecutionStepType.Conditional,
+        nodeId: conditionalNode.id,
+        branches: [
+          {
+            id: 'wrong-branch',
+            condition: 'wrong', // Doesn't match "then"
+            steps: [],
+          },
+        ],
+      };
+
+      const context = new ExecutionContext('exec-1', 'wf-1');
+      const planExecutor = new PlanExecutor();
+      const workflowExecutor = new Executor();
+
+      // Call private method directly using type casting for unit testing
+      await expect(
+        (planExecutor as any).executeConditionalStep(
+          conditionalStep,
+          workflow,
+          context,
+          workflowExecutor
+        )
+      ).rejects.toThrow(/No matching branch found for condition 'then'/);
+    });
+
+    it('should throw error when conditional node not found', async () => {
+      const workflow = new Workflow('wf-1', 'Conditional Workflow');
+
+      const conditionalStep: ConditionalStep = {
+        id: 'step-conditional',
+        type: ExecutionStepType.Conditional,
+        nodeId: 'non-existent-node',
+        branches: [],
+      };
+
+      const context = new ExecutionContext('exec-1', 'wf-1');
+      const planExecutor = new PlanExecutor();
+      const workflowExecutor = new Executor();
+
+      // Call private method directly using type casting for unit testing
+      await expect(
+        (planExecutor as any).executeConditionalStep(
+          conditionalStep,
+          workflow,
+          context,
+          workflowExecutor
+        )
+      ).rejects.toThrow(/Conditional node non-existent-node not found/);
+    });
+
+    it('should throw error when node does not implement IConditionalNode', async () => {
+      const workflow = new Workflow('wf-1', 'Conditional Workflow');
+      const simpleNode = workflow.addNode('test.simple'); // Not a conditional node
+
+      const conditionalStep: ConditionalStep = {
+        id: 'step-conditional',
+        type: ExecutionStepType.Conditional,
+        nodeId: simpleNode.id,
+        branches: [],
+      };
+
+      const context = new ExecutionContext('exec-1', 'wf-1');
+      const planExecutor = new PlanExecutor();
+      const workflowExecutor = new Executor();
+
+      // Call private method directly using type casting for unit testing
+      await expect(
+        (planExecutor as any).executeConditionalStep(
+          conditionalStep,
+          workflow,
+          context,
+          workflowExecutor
+        )
+      ).rejects.toThrow(/does not implement IConditionalNode interface/);
+    });
+
+    // Note: Nested conditional test moved to Task 2.8 integration tests
+    // because it requires ConditionalStep to be wired into executeStep() switch
   });
 
   describe('debugging method stubs', () => {

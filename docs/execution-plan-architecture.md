@@ -135,19 +135,30 @@
 - [x] Run benchmarks: Performance improved (see Phase 2 benchmarks)
 - [x] Commit: "refactor(core): remove Graph class - redundant with execution plan architecture"
 
-**Task 2.6: Implement ConditionalStep Execution** [6 hours] - ⏳ PENDING
-- [ ] File: `packages/core/src/execution/PlanExecutor.ts`
-- [ ] Add `executeConditionalStep(step, workflow, context, executor): Promise<void>` method
-- [ ] Execute the conditional node first to get its state
-- [ ] Call `node.evaluateCondition()` to determine active branch
-- [ ] Find matching branch in `step.branches` array
-- [ ] Recursively execute the matching branch's steps
-- [ ] Handle case where no branch matches (throw error or use default)
-- [ ] Add proper error handling with context
-- [ ] Add unit tests for conditional step execution
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Run tests: `npm test -w @reactflo/core`
-- [ ] Commit: "feat(core): implement conditional step execution in PlanExecutor"
+**Task 2.6: Implement ConditionalStep Execution** [6 hours] - ✅ COMPLETE
+- [x] File: `packages/core/src/execution/PlanExecutor.ts`
+- [x] Added `executeConditionalStep(step, workflow, context, executor): Promise<void>` method
+- [x] Executes the conditional node first to update its state
+- [x] Calls `node.evaluateCondition()` to determine active branch (returns output port name)
+- [x] Finds matching branch in `step.branches` array by condition
+- [x] Recursively executes the matching branch's steps via `executeStep()`
+- [x] Handles case where no branch matches (uses defaultBranch or throws error)
+- [x] Added proper error handling with ExecutionError and context
+- [x] Added type safety: node type guard for IConditionalNode interface
+- [x] File: `packages/core/src/__tests__/execution/PlanExecutor.test.ts`
+- [x] Created `TestConditionalNode` test helper implementing IConditionalNode
+- [x] Added 6 unit tests for conditional step execution:
+  - Test "then" branch execution
+  - Test "else" branch execution
+  - Test default branch when no match
+  - Test error when no match and no default
+  - Test error when node not found
+  - Test error when node doesn't implement IConditionalNode
+- [x] Tests call private method directly via type casting for unit testing
+- [x] Nested conditional test deferred to Task 2.8 (requires wiring to executeStep switch)
+- [x] Run lint: 0 errors (9 warnings for 'any' in test code - acceptable)
+- [x] Run tests: 370 tests passing (1 skipped)
+- [x] Commit: "feat(core): implement conditional step execution in PlanExecutor"
 
 **Task 2.7: Add Branch Execution Events** [2 hours] - ⏳ PENDING
 - [ ] File: `packages/types/src/execution.ts`

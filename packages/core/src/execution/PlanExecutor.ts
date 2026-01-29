@@ -12,12 +12,14 @@ import { Workflow } from '../workflow/Workflow';
 import {
   ExecutionStepType,
   CancellationReason,
-  NodeExecutionStep,
   ExecutionPlanStep,
-  BaseExecutionStep,
+  NodeExecutionStep,
+  ConditionalStep,
 } from '@reactflo/types';
 import { ExecutionError, CancellationError, TimeoutError, UserCancelledError } from './errors';
 import type { Executor } from './Executor';
+import type { IConditionalNode } from '@reactflo/types';
+import type { Node } from '../node/Node';
 
 /**
  * PlanExecutor executes execution plans step-by-step
@@ -134,11 +136,14 @@ export class PlanExecutor {
           workflowId: context.workflowId,
         });
 
-      default:
-        throw new ExecutionError(`Unknown step type: ${(step as BaseExecutionStep).type}`, {
+      default: {
+        // Exhaustiveness check - if we reach here, we have an unknown step type
+        const _unknownStep: never = step;
+        throw new ExecutionError(`Unknown step type`, {
           executionId: context.executionId,
           workflowId: context.workflowId,
         });
+      }
     }
 
     // Emit step complete event (will be added in future phases)
@@ -166,7 +171,78 @@ export class PlanExecutor {
     }
 
     // Delegate to Executor's executeNode method
-    await executor.executeNode(node, workflow, context);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (executor as any).executeNode(node, workflow, context);
+  }
+
+  /**
+   * Execute a ConditionalStep
+   * Phase 2 implementation
+   *
+   * Execution flow:
+   * 1. Execute the conditional node to update its state
+   * 2. Call node.evaluateCondition() to determine which branch to take
+   * 3. Find the matching branch in the step's branches array
+   * 4. Recursively execute the branch's steps
+   * 5. If no branch matches, use defaultBranch or throw error
+   */
+  private async executeConditionalStep(
+    step: ConditionalStep,
+    workflow: Workflow,
+    context: ExecutionContext,
+    executor: Executor
+  ): Promise<void> {
+    const nodeId = step.nodeId;
+    const node = workflow.nodes.get(nodeId);
+
+    if (!node) {
+      throw new ExecutionError(`Conditional node ${nodeId} not found in workflow`, {
+        executionId: context.executionId,
+        workflowId: context.workflowId,
+      });
+    }
+
+    // Check if node implements IConditionalNode interface
+    if (typeof (node as Partial<IConditionalNode>).evaluateCondition !== 'function') {
+      throw new ExecutionError(
+        `Node ${nodeId} does not implement IConditionalNode interface (missing evaluateCondition method)`,
+        {
+          executionId: context.executionId,
+          workflowId: context.workflowId,
+        }
+      );
+    }
+
+    // 1. Execute the conditional node to update its state
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (executor as any).executeNode(node, workflow, context);
+
+    // 2. Call evaluateCondition() to determine which branch to take
+    const activeOutputPort: string = (node as Node & IConditionalNode).evaluateCondition();
+
+    // 3. Find the matching branch
+    let selectedBranch = step.branches.find((branch) => branch.condition === activeOutputPort);
+
+    // 4. If no branch matches, try default branch
+    if (!selectedBranch && step.defaultBranch) {
+      selectedBranch = step.defaultBranch;
+    }
+
+    // 5. If still no branch, throw error
+    if (!selectedBranch) {
+      throw new ExecutionError(
+        `No matching branch found for condition '${activeOutputPort}' in conditional node ${nodeId}`,
+        {
+          executionId: context.executionId,
+          workflowId: context.workflowId,
+        }
+      );
+    }
+
+    // 6. Recursively execute the selected branch's steps
+    for (const branchStep of selectedBranch.steps) {
+      await this.executeStep(branchStep, workflow, context, executor);
+    }
   }
 
   /**
