@@ -43,8 +43,7 @@ export const Basic: Story = {
   args: {
     id: 'node-1',
     type: 'custom',
-    xPos: 0,
-    yPos: 0,
+    position: { x: 0, y: 0 },
     zIndex: 0,
     isConnectable: true,
     dragging: false,
@@ -53,7 +52,7 @@ export const Basic: Story = {
       type: 'basic',
     },
     selected: false,
-  },
+  } as any,
 };
 
 /**
@@ -63,8 +62,7 @@ export const Selected: Story = {
   args: {
     id: 'node-2',
     type: 'custom',
-    xPos: 0,
-    yPos: 0,
+    position: { x: 0, y: 0 },
     zIndex: 0,
     isConnectable: true,
     dragging: false,
@@ -73,7 +71,7 @@ export const Selected: Story = {
       type: 'basic',
     },
     selected: true,
-  },
+  } as any,
 };
 
 /**
@@ -83,8 +81,7 @@ export const WithPorts: Story = {
   args: {
     id: 'node-3',
     type: 'custom',
-    xPos: 0,
-    yPos: 0,
+    position: { x: 0, y: 0 },
     zIndex: 0,
     isConnectable: true,
     dragging: false,
@@ -100,5 +97,5 @@ export const WithPorts: Story = {
       },
     },
     selected: false,
-  },
+  } as any,
 };

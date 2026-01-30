@@ -36,5 +36,10 @@ export const Default: Story = {
     fromPosition: 'right' as any,
     toPosition: 'left' as any,
     connectionStatus: null,
+    fromNode: { id: 'node-1', position: { x: 0, y: 0 }, data: {} } as any,
+    fromHandle: { id: 'output-1', type: 'source', position: 'right' } as any,
+    toNode: { id: 'node-2', position: { x: 200, y: 0 }, data: {} } as any,
+    toHandle: { id: 'input-1', type: 'target', position: 'left' } as any,
+    pointer: { x: 200, y: 200 },
   },
 };
