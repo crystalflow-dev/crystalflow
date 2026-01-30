@@ -1156,12 +1156,12 @@ describe('PlanExecutor', () => {
 
       const events: string[] = [];
 
-      workflowExecutor.on('onBranchEnter', async (nodeId, branchId) => {
+      workflowExecutor.on('onBranchEnter', async (_nodeId, branchId) => {
         await new Promise((resolve) => setTimeout(resolve, 10));
         events.push(`async-enter:${branchId}`);
       });
 
-      workflowExecutor.on('onBranchExit', async (nodeId, branchId) => {
+      workflowExecutor.on('onBranchExit', async (_nodeId, branchId) => {
         await new Promise((resolve) => setTimeout(resolve, 10));
         events.push(`async-exit:${branchId}`);
       });
