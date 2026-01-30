@@ -67,7 +67,7 @@ export class IfNode extends Node implements IConditionalNode {
    * Execute the node by setting outputs based on the condition.
    * Sets the active output (thenOutput or elseOutput) to the value input.
    * The inactive output remains undefined.
-   * 
+   *
    * @throws {Error} If condition is not a boolean (undefined, null, or wrong type)
    */
   execute(): void {
@@ -75,7 +75,7 @@ export class IfNode extends Node implements IConditionalNode {
     if (typeof this.condition !== 'boolean') {
       throw new Error(
         `IfNode requires a boolean condition. Got: ${typeof this.condition} (${this.condition}). ` +
-        'Make sure to connect a boolean value to the condition input.'
+          'Make sure to connect a boolean value to the condition input.'
       );
     }
 
@@ -101,7 +101,7 @@ export class IfNode extends Node implements IConditionalNode {
     if (typeof this.condition !== 'boolean') {
       throw new Error(
         `IfNode requires a boolean condition. Got: ${typeof this.condition} (${this.condition}). ` +
-        'Make sure to connect a boolean value to the condition input.'
+          'Make sure to connect a boolean value to the condition input.'
       );
     }
 

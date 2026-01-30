@@ -51,8 +51,8 @@ function ConditionalNodesDemo() {
         <h3>Example Workflow Ideas:</h3>
         <ul>
           <li>
-            <strong>Basic If Test:</strong> NumberInput(5) → IsPositive → IfNode (connect
-            IsPositive result to value, NumberInput to data) → Display nodes on then/else branches
+            <strong>Basic If Test:</strong> NumberInput(5) → IsPositive → IfNode (connect IsPositive
+            result to value, NumberInput to data) → Display nodes on then/else branches
           </li>
           <li>
             <strong>Number Comparison:</strong> Two NumberInputs → Compare (a=10, b=5, operation=gt)
@@ -75,8 +75,8 @@ function ConditionalNodesDemo() {
             IfNode → Display grade tiers
           </li>
           <li>
-            <strong>Nested Conditions:</strong> NumberInput → IsPositive → IfNode → then branch
-            goes to IsEven → another IfNode → classify as "Positive Even" or "Positive Odd"
+            <strong>Nested Conditions:</strong> NumberInput → IsPositive → IfNode → then branch goes
+            to IsEven → another IfNode → classify as "Positive Even" or "Positive Odd"
           </li>
         </ul>
       </div>
