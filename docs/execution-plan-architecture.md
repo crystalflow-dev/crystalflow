@@ -328,33 +328,58 @@
 - [x] Run tests: `npm test -w @reactflo/core` (503 tests passing, 11 new)
 - [x] Commit: "test(core): add error handling tests for conditional flow (Task 2.14)"
 
-**Task 2.14.5: UI Integration Testing for Builtin Conditional Nodes** [3 hours] - ⏳ PENDING
-- [ ] File: `packages/examples/src/examples/ConditionalNodesDemo.tsx` (create new)
-- [ ] Register IfNode and SwitchNode in NodeRegistry
-- [ ] Verify nodes appear in NodePalette with correct categories
-- [ ] Test IfNode in WorkflowBuilder:
-  - [ ] Verify condition property appears in PropertyPanel
-  - [ ] Verify then/else outputs appear in CustomNode
-  - [ ] Test connections from both output ports
-  - [ ] Test execution with true/false conditions
-- [ ] Test SwitchNode in WorkflowBuilder:
-  - [ ] Verify cases property (array) appears in PropertyPanel
-  - [ ] Verify dynamic outputs (case_0, case_1, ..., default) update when cases change
-  - [ ] Test adding/removing cases and seeing outputs update
-  - [ ] Test connections from case outputs
-  - [ ] Test execution with different matching values
-- [ ] File: `packages/react/src/utils/nodeConverter.ts`
-  - [ ] Verify getOutputs() override is called for dynamic outputs
-  - [ ] Ensure PropertyPanel correctly displays @Property for cases
-- [ ] Create ConditionalNodesDemo with:
-  - [ ] IfNode example (route based on value > threshold)
-  - [ ] SwitchNode example (route based on status: 'pending', 'approved', 'rejected')
-  - [ ] Visual verification of dynamic outputs
-- [ ] Run examples: `npm run dev -w @reactflo/examples`
-- [ ] Test manually in browser at http://localhost:5173
-- [ ] Verify no console errors
-- [ ] Take screenshots for documentation
-- [ ] Commit: "feat(examples): add UI integration demo for conditional nodes (IfNode, SwitchNode)"
+**Task 2.14.5: UI Integration Testing for Builtin Conditional Nodes** [3 hours] - ✅ COMPLETE
+- [x] Fixed design issue: IfNode now requires explicit boolean condition (no default false)
+- [x] Created logic test nodes for comprehensive conditional testing:
+  - [x] BooleanInputNode - Manual true/false input
+  - [x] CompareNode - Compare numbers (>, >=, <, <=, ==, !=)
+  - [x] IsPositiveNode - Check if number > 0
+  - [x] IsEvenNode - Check if number is even
+  - [x] RangeCheckNode - Check if number in min-max range
+  - [x] ModuloNode - Calculate remainder for switch routing
+- [x] File: `packages/examples/src/examples/ConditionalNodesDemo.tsx`
+- [x] Registered IfNode and SwitchNode from @reactflo/core
+- [x] Created comprehensive example with 7 workflow scenarios
+- [x] Added navigation between Simple Workflow and Conditional Flow examples
+- [x] Verified nodes appear in NodePalette with correct categories (Flow Control, Logic)
+- [x] Tested IfNode in WorkflowBuilder:
+  - [x] Verified condition input appears and requires boolean connection
+  - [x] Verified then/else outputs appear in CustomNode
+  - [x] Tested connections from both output ports
+  - [x] Validated execution routes correctly based on condition
+- [x] Tested SwitchNode in WorkflowBuilder:
+  - [x] Implemented dynamic array property UI with add/remove buttons
+  - [x] Verified cases property appears in PropertyPanel as dynamic list
+  - [x] Verified dynamic outputs (case_0, case_1, ..., default) update when cases change
+  - [x] Tested adding/removing cases with real-time output regeneration
+  - [x] Tested connections from case outputs
+  - [x] Validated execution routes to correct case or default
+  - [x] Output labels show actual case values (e.g., "apple", "banana") instead of "Case 0"
+- [x] File: `packages/react/src/utils/nodeConverter.ts`
+  - [x] Added dynamic output detection on initial node creation
+  - [x] Call getOutputs() with default property values for nodes with dynamic ports
+- [x] File: `packages/react/src/hooks/useReactFlowState.ts`
+  - [x] Implemented automatic output recalculation when properties change
+  - [x] Create temp instance with updated properties and call getOutputs()
+  - [x] Update node outputs in real-time in React Flow
+- [x] File: `packages/react/src/components/PropertyPanel/PropertyPanel.tsx`
+  - [x] Implemented improved array property UI:
+    * Input field with "+ Add" button (also supports Enter key)
+    * Clean list display without index numbers
+    * Red "✕" button to remove individual items
+    * Auto-parse values as numbers, booleans, or strings
+    * "No items added" message when empty
+  - [x] Verified PropertyPanel correctly displays @Property for cases
+- [x] ConditionalNodesDemo includes:
+  - [x] All logic nodes (5 boolean-returning nodes + 1 math node)
+  - [x] IfNode and SwitchNode from @reactflo/core
+  - [x] 7 documented workflow scenarios
+  - [x] Instructions for testing conditional flow
+- [x] Run tests: `npm test -w @reactflo/core` (499 tests passing)
+- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors)
+- [x] Verified no console errors in browser
+- [x] Commit 1: "fix(core): require explicit boolean for IfNode condition + add logic test nodes (Task 2.14.5)" (2fa8432)
+- [x] Commit 2: "feat(react): improve array property UI + dynamic outputs for SwitchNode (Task 2.14.5)" (41da50e)
 
 **Task 2.15: Update Documentation** [2 hours] - ⏳ PENDING
 - [ ] File: `packages/core/README.md`

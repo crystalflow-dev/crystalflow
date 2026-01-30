@@ -71,7 +71,7 @@ export class SwitchNode extends Node implements IConditionalNode {
     for (let i = 0; i < this.cases.length; i++) {
       outputs.push({
         id: `case_${i}`,
-        label: `Case ${i}`,
+        label: String(this.cases[i]), // Show the actual case value
         type: 'any',
       });
     }
