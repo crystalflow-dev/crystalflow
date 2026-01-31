@@ -155,6 +155,7 @@ export enum NodeState {
  *
  * @see ConditionalStep in execution.ts for execution plan representation
  */
+
 export interface IConditionalNode {
   /**
    * Evaluate the condition and return the name of the output port

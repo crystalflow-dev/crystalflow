@@ -93,19 +93,20 @@ export class SwitchNode extends Node implements IConditionalNode {
    */
   execute(): void {
     // Clear all previous output properties
+    const nodeRecord = this as unknown as Record<string, unknown>;
     this.cases.forEach((_, i) => {
-      delete (this as any)[`case_${i}`];
+      delete nodeRecord[`case_${i}`];
     });
-    delete (this as any)['default'];
+    delete nodeRecord['default'];
 
     // Find matching case index
     const matchIndex = this.cases.findIndex((caseValue) => caseValue === this.value);
 
     // Set the appropriate output as a property on this node
     if (matchIndex >= 0) {
-      (this as any)[`case_${matchIndex}`] = this.data;
+      nodeRecord[`case_${matchIndex}`] = this.data;
     } else {
-      (this as any)['default'] = this.data;
+      nodeRecord['default'] = this.data;
     }
   }
 

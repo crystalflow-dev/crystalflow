@@ -60,14 +60,13 @@ export function convertNodeToReactFlow(
     // Apply property default values to the instance
     propertyDefinitions.forEach((prop) => {
       if (prop.defaultValue !== undefined) {
-        (tempInstance as any)[prop.id] = prop.defaultValue;
+        tempInstance[prop.id] = prop.defaultValue;
       }
     });
 
     // If node has getOutputs method, use it to get initial outputs
-    if (typeof (tempInstance as any).getOutputs === 'function') {
-      const dynamicOutputs = (tempInstance as any).getOutputs();
-      console.log('Initial dynamic outputs for', nodeClass.name, ':', dynamicOutputs);
+    if (typeof tempInstance.getOutputs === 'function') {
+      const dynamicOutputs = tempInstance.getOutputs();
 
       // Replace static outputs with dynamic ones
       const dynOutputs: Record<string, PortDefinition> = {};

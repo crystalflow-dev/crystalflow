@@ -9,6 +9,8 @@ import {
   addEdge,
   Connection,
 } from '@xyflow/react';
+import { PortDefinition } from '@reactflo/types';
+import { NodeConstructor } from '@reactflo/core';
 
 /**
  * Hook for managing React Flow state (nodes, edges, selection)
@@ -55,7 +57,9 @@ export function useReactFlowState() {
         if (updatedData.nodeClass && typeof updatedData.nodeClass === 'function') {
           try {
             // Create a temporary instance with updated properties
-            const tempInstance = new (updatedData.nodeClass as any)(`temp-${Date.now()}`);
+            const tempInstance = new (updatedData.nodeClass as NodeConstructor)(
+              `temp-${Date.now()}`
+            );
 
             // Apply all current properties to the instance
             Object.keys(updatedData.properties || {}).forEach((key) => {
@@ -67,11 +71,9 @@ export function useReactFlowState() {
             // Check if node has dynamic outputs (getOutputs method)
             if (typeof tempInstance.getOutputs === 'function') {
               const dynamicOutputs = tempInstance.getOutputs();
-              console.log('Recalculated dynamic outputs:', dynamicOutputs);
-
               // Convert to outputs object
-              const outputs: Record<string, any> = {};
-              dynamicOutputs.forEach((port: any) => {
+              const outputs: Record<string, PortDefinition> = {};
+              dynamicOutputs.forEach((port) => {
                 outputs[port.id] = port;
               });
 

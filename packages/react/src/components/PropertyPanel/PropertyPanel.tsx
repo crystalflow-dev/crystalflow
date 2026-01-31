@@ -272,32 +272,78 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
                       // Update local state immediately for responsive UI
                       setPropertyValues((prev) => ({ ...prev, [key]: value }));
 
-                    // Notify parent component
-                    if (onUpdate) {
-                      onUpdate({ [key]: value });
-                    }
-                  }}
-                />
-              ) : propDef.type === 'array' ? (
-                <div>
-                  {/* Input and Add button */}
-                  <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
-                    <input
-                      type="text"
-                      id={`${key}-input`}
-                      placeholder="Enter value"
-                      style={{
-                        flex: 1,
-                        padding: '6px',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        fontSize: '13px',
-                        boxSizing: 'border-box',
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          const input = e.target as HTMLInputElement;
+                      // Notify parent component
+                      if (onUpdate) {
+                        onUpdate({ [key]: value });
+                      }
+                    }}
+                  />
+                ) : propDef.type === 'array' ? (
+                  <div>
+                    {/* Input and Add button */}
+                    <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
+                      <input
+                        type="text"
+                        id={`${key}-input`}
+                        placeholder="Enter value"
+                        style={{
+                          flex: 1,
+                          padding: '6px',
+                          border: '1px solid #ccc',
+                          borderRadius: '4px',
+                          fontSize: '13px',
+                          boxSizing: 'border-box',
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            const input = e.target as HTMLInputElement;
+                            const text = input.value.trim();
+                            if (text) {
+                              // Parse value
+                              let value: unknown;
+                              const num = Number(text);
+                              if (!isNaN(num) && text !== '') {
+                                value = num;
+                              } else if (text === 'true') {
+                                value = true;
+                              } else if (text === 'false') {
+                                value = false;
+                              } else {
+                                value = text;
+                              }
+
+                              // Add to array
+                              const currentArray = Array.isArray(propertyValues[key])
+                                ? (propertyValues[key] as unknown[])
+                                : [];
+                              const newArray = [...currentArray, value];
+
+                              if (process.env.NODE_ENV === 'development') {
+                                console.warn(`Add to array property ${key}:`, newArray);
+                              }
+                              setPropertyValues((prev) => ({ ...prev, [key]: newArray }));
+                              if (onUpdate) {
+                                onUpdate({ [key]: newArray });
+                              }
+                              input.value = '';
+                            }
+                          }
+                        }}
+                      />
+                      <button
+                        style={{
+                          padding: '6px 12px',
+                          background: '#667eea',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                        }}
+                        onClick={() => {
+                          const input = document.getElementById(`${key}-input`) as HTMLInputElement;
                           const text = input.value.trim();
                           if (text) {
                             // Parse value
@@ -319,147 +365,109 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
                               : [];
                             const newArray = [...currentArray, value];
 
-                            console.log(`Add to array property ${key}:`, newArray);
+                            if (process.env.NODE_ENV === 'development') {
+                              console.warn(`Add to array property ${key}:`, newArray);
+                            }
                             setPropertyValues((prev) => ({ ...prev, [key]: newArray }));
                             if (onUpdate) {
                               onUpdate({ [key]: newArray });
                             }
                             input.value = '';
                           }
-                        }
-                      }}
-                    />
-                    <button
-                      style={{
-                        padding: '6px 12px',
-                        background: '#667eea',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                      }}
-                      onClick={() => {
-                        const input = document.getElementById(`${key}-input`) as HTMLInputElement;
-                        const text = input.value.trim();
-                        if (text) {
-                          // Parse value
-                          let value: unknown;
-                          const num = Number(text);
-                          if (!isNaN(num) && text !== '') {
-                            value = num;
-                          } else if (text === 'true') {
-                            value = true;
-                          } else if (text === 'false') {
-                            value = false;
-                          } else {
-                            value = text;
-                          }
-
-                          // Add to array
-                          const currentArray = Array.isArray(propertyValues[key])
-                            ? (propertyValues[key] as unknown[])
-                            : [];
-                          const newArray = [...currentArray, value];
-
-                          console.log(`Add to array property ${key}:`, newArray);
-                          setPropertyValues((prev) => ({ ...prev, [key]: newArray }));
-                          if (onUpdate) {
-                            onUpdate({ [key]: newArray });
-                          }
-                          input.value = '';
-                        }
-                      }}
-                    >
-                      + Add
-                    </button>
-                  </div>
-
-                  {/* Display list of values */}
-                  <div style={{ marginTop: '8px' }}>
-                    {Array.isArray(propertyValues[key]) &&
-                    (propertyValues[key] as unknown[]).length > 0 ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        {(propertyValues[key] as unknown[]).map((item, index) => (
-                          <div
-                            key={index}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              padding: '6px 8px',
-                              background: 'white',
-                              border: '1px solid #e0e0e0',
-                              borderRadius: '4px',
-                              fontSize: '13px',
-                            }}
-                          >
-                            <span style={{ flex: 1, fontFamily: 'monospace' }}>
-                              {JSON.stringify(item)}
-                            </span>
-                            <button
-                              style={{
-                                padding: '2px 8px',
-                                background: '#ff4444',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '3px',
-                                fontSize: '11px',
-                                cursor: 'pointer',
-                                marginLeft: '8px',
-                              }}
-                              onClick={() => {
-                                const currentArray = propertyValues[key] as unknown[];
-                                const newArray = currentArray.filter((_, i) => i !== index);
-
-                                console.log(`Remove from array property ${key}:`, newArray);
-                                setPropertyValues((prev) => ({ ...prev, [key]: newArray }));
-                                if (onUpdate) {
-                                  onUpdate({ [key]: newArray });
-                                }
-                              }}
-                              title="Remove"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div
-                        style={{
-                          padding: '8px',
-                          background: '#f5f5f5',
-                          borderRadius: '4px',
-                          fontSize: '12px',
-                          color: '#999',
-                          textAlign: 'center',
                         }}
                       >
-                        No items added
-                      </div>
-                    )}
+                        + Add
+                      </button>
+                    </div>
+
+                    {/* Display list of values */}
+                    <div style={{ marginTop: '8px' }}>
+                      {Array.isArray(propertyValues[key]) &&
+                      (propertyValues[key] as unknown[]).length > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          {(propertyValues[key] as unknown[]).map((item, index) => (
+                            <div
+                              key={index}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                padding: '6px 8px',
+                                background: 'white',
+                                border: '1px solid #e0e0e0',
+                                borderRadius: '4px',
+                                fontSize: '13px',
+                              }}
+                            >
+                              <span style={{ flex: 1, fontFamily: 'monospace' }}>
+                                {JSON.stringify(item)}
+                              </span>
+                              <button
+                                style={{
+                                  padding: '2px 8px',
+                                  background: '#ff4444',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '3px',
+                                  fontSize: '11px',
+                                  cursor: 'pointer',
+                                  marginLeft: '8px',
+                                }}
+                                onClick={() => {
+                                  const currentArray = propertyValues[key] as unknown[];
+                                  const newArray = currentArray.filter((_, i) => i !== index);
+
+                                  if (process.env.NODE_ENV === 'development') {
+                                    console.warn(`Remove from array property ${key}:`, newArray);
+                                  }
+                                  setPropertyValues((prev) => ({ ...prev, [key]: newArray }));
+                                  if (onUpdate) {
+                                    onUpdate({ [key]: newArray });
+                                  }
+                                }}
+                                title="Remove"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            padding: '8px',
+                            background: '#f5f5f5',
+                            borderRadius: '4px',
+                            fontSize: '12px',
+                            color: '#999',
+                            textAlign: 'center',
+                          }}
+                        >
+                          No items added
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <input
-                  type={propDef.type === 'number' ? 'number' : 'text'}
-                  value={
-                    propertyValues[key] !== undefined
-                      ? String(propertyValues[key])
-                      : String(propDef.defaultValue || '')
-                  }
-                  placeholder={`Enter ${propDef.type}`}
-                  min={propDef.min}
-                  max={propDef.max}
-                  step={propDef.step}
-                  className={classes?.input}
-                  style={mergeStyles(defaultInputStyle, styles?.input)}
-                  onChange={(e) => {
-                    const value =
-                      propDef.type === 'number' ? parseFloat(e.target.value) : e.target.value;
-                    console.log(`Update property ${key}:`, value);
+                ) : (
+                  <input
+                    type={propDef.type === 'number' ? 'number' : 'text'}
+                    value={
+                      propertyValues[key] !== undefined
+                        ? String(propertyValues[key])
+                        : String(propDef.defaultValue || '')
+                    }
+                    placeholder={`Enter ${propDef.type}`}
+                    min={propDef.min}
+                    max={propDef.max}
+                    step={propDef.step}
+                    className={classes?.input}
+                    style={mergeStyles(defaultInputStyle, styles?.input)}
+                    onChange={(e) => {
+                      const value =
+                        propDef.type === 'number' ? parseFloat(e.target.value) : e.target.value;
+                      if (process.env.NODE_ENV === 'development') {
+                        console.warn(`Update property ${key}:`, value);
+                      }
 
                       // Update local state immediately for responsive UI
                       setPropertyValues((prev) => ({ ...prev, [key]: value }));

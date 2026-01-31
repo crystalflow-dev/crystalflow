@@ -205,7 +205,7 @@ export class ExecutionPlanBuilder {
    * ```
    */
   public isConditionalNode(node: Node): node is Node & IConditionalNode {
-    return typeof (node as any).evaluateCondition === 'function';
+    return typeof (node as Node & Partial<IConditionalNode>).evaluateCondition === 'function';
   }
 
   /**
