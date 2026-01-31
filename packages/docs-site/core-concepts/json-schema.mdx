@@ -1,0 +1,487 @@
+---
+title: "JSON Schema"
+description: "Understanding ReactFlo's workflow JSON format and schema"
+---
+
+ReactFlo workflows are fully serializable to JSON, enabling version control, sharing, and programmatic manipulation of workflows.
+
+## Overview
+
+Every ReactFlo workflow can be:
+- **Serialized** to JSON for storage
+- **Deserialized** from JSON to recreate workflows
+- **Validated** against a formal JSON Schema
+- **Version controlled** in Git
+- **Shared** across teams and applications
+
+## Workflow JSON Format
+
+The workflow JSON format follows this structure:
+
+```json
+{
+  "version": "1.0.0",
+  "id": "workflow-abc123",
+  "name": "My Workflow",
+  "description": "Optional workflow description",
+  "nodes": [
+    {
+      "id": "node-1",
+      "type": "math.add",
+      "position": { "x": 100, "y": 100 },
+      "inputs": { "a": 10, "b": 20 },
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn-1",
+      "source": "node-1",
+      "sourceOutput": "result",
+      "target": "node-2",
+      "targetInput": "value"
+    }
+  ],
+  "variables": {
+    "apiKey": "your-key",
+    "environment": "production"
+  }
+}
+```
+
+## Top-Level Fields
+
+<ParamField path="version" type="string" required>
+  Schema version (currently `"1.0.0"`)
+</ParamField>
+
+<ParamField path="id" type="string" required>
+  Unique identifier for the workflow
+</ParamField>
+
+<ParamField path="name" type="string">
+  Human-readable workflow name
+</ParamField>
+
+<ParamField path="description" type="string">
+  Optional description of the workflow's purpose
+</ParamField>
+
+<ParamField path="nodes" type="Node[]" required>
+  Array of node definitions
+</ParamField>
+
+<ParamField path="connections" type="Connection[]" required>
+  Array of connections between nodes
+</ParamField>
+
+<ParamField path="variables" type="Record<string, any>">
+  Global variables accessible during execution
+</ParamField>
+
+## Node Format
+
+Each node in the `nodes` array has this structure:
+
+```json
+{
+  "id": "node-1",
+  "type": "math.add",
+  "position": {
+    "x": 100,
+    "y": 100
+  },
+  "inputs": {
+    "a": 10,
+    "b": 20
+  },
+  "properties": {
+    "precision": 2
+  },
+  "metadata": {
+    "label": "Add Numbers",
+    "category": "Math"
+  }
+}
+```
+
+### Node Fields
+
+<ParamField path="id" type="string" required>
+  Unique identifier for the node within the workflow
+</ParamField>
+
+<ParamField path="type" type="string" required>
+  Node type identifier (e.g., `"math.add"`, `"http.request"`)
+</ParamField>
+
+<ParamField path="position" type="{x: number, y: number}" required>
+  Visual position on the canvas
+</ParamField>
+
+<ParamField path="inputs" type="Record<string, any>">
+  Input port values (for unconnected inputs)
+</ParamField>
+
+<ParamField path="properties" type="Record<string, any>">
+  Property values set via @Property decorator
+</ParamField>
+
+<ParamField path="metadata" type="object">
+  Additional metadata (label, category, description)
+</ParamField>
+
+## Connection Format
+
+Each connection in the `connections` array:
+
+```json
+{
+  "id": "conn-1",
+  "source": "node-1",
+  "sourceOutput": "result",
+  "target": "node-2",
+  "targetInput": "value"
+}
+```
+
+### Connection Fields
+
+<ParamField path="id" type="string" required>
+  Unique identifier for the connection
+</ParamField>
+
+<ParamField path="source" type="string" required>
+  ID of the source node
+</ParamField>
+
+<ParamField path="sourceOutput" type="string" required>
+  Name of the output port on the source node
+</ParamField>
+
+<ParamField path="target" type="string" required>
+  ID of the target node
+</ParamField>
+
+<ParamField path="targetInput" type="string" required>
+  Name of the input port on the target node
+</ParamField>
+
+## Serialization API
+
+### To JSON
+
+Convert a workflow to JSON:
+
+```typescript
+import { serializeWorkflow } from '@reactflo/core';
+
+// Get workflow data
+const workflowData = workflow.toJSON();
+
+// Serialize to JSON string
+const json = serializeWorkflow(workflowData);
+
+// Save to file
+import fs from 'fs';
+fs.writeFileSync('workflow.json', json);
+```
+
+### From JSON
+
+Load a workflow from JSON:
+
+```typescript
+import { deserializeWorkflow, Workflow } from '@reactflo/core';
+import fs from 'fs';
+
+// Read JSON file
+const json = fs.readFileSync('workflow.json', 'utf-8');
+
+// Deserialize
+const workflowData = deserializeWorkflow(json);
+
+// Create workflow instance
+const workflow = Workflow.fromJSON(workflowData);
+```
+
+## Validation
+
+Validate workflow JSON against the schema:
+
+```typescript
+import { validateWorkflowJSON } from '@reactflo/core';
+
+const json = fs.readFileSync('workflow.json', 'utf-8');
+const errors = validateWorkflowJSON(json);
+
+if (errors.length > 0) {
+  console.error('Validation errors:', errors);
+} else {
+  console.log('Workflow JSON is valid!');
+}
+```
+
+## Complete Example
+
+Here's a complete workflow JSON with multiple nodes and connections:
+
+```json workflow.json
+{
+  "version": "1.0.0",
+  "id": "data-processing-workflow",
+  "name": "Data Processing Pipeline",
+  "description": "Fetches, filters, and transforms data",
+  "nodes": [
+    {
+      "id": "http-fetch",
+      "type": "http.request",
+      "position": { "x": 100, "y": 100 },
+      "properties": {
+        "url": "https://api.example.com/data",
+        "method": "GET"
+      },
+      "metadata": {
+        "label": "Fetch Data",
+        "category": "Network"
+      }
+    },
+    {
+      "id": "filter-active",
+      "type": "data.filter",
+      "position": { "x": 300, "y": 100 },
+      "properties": {
+        "condition": "item.active === true"
+      },
+      "metadata": {
+        "label": "Filter Active Items",
+        "category": "Data"
+      }
+    },
+    {
+      "id": "transform",
+      "type": "data.map",
+      "position": { "x": 500, "y": 100 },
+      "properties": {
+        "expression": "{ id: item.id, name: item.name }"
+      },
+      "metadata": {
+        "label": "Transform Data",
+        "category": "Data"
+      }
+    },
+    {
+      "id": "display",
+      "type": "output.display",
+      "position": { "x": 700, "y": 100 },
+      "inputs": {},
+      "metadata": {
+        "label": "Display Results",
+        "category": "Output"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn-1",
+      "source": "http-fetch",
+      "sourceOutput": "response",
+      "target": "filter-active",
+      "targetInput": "array"
+    },
+    {
+      "id": "conn-2",
+      "source": "filter-active",
+      "sourceOutput": "filtered",
+      "target": "transform",
+      "targetInput": "array"
+    },
+    {
+      "id": "conn-3",
+      "source": "transform",
+      "sourceOutput": "output",
+      "target": "display",
+      "targetInput": "value"
+    }
+  ],
+  "variables": {
+    "apiKey": "your-api-key",
+    "environment": "production",
+    "maxRetries": 3
+  }
+}
+```
+
+## Loading This Workflow
+
+```typescript
+import { deserializeWorkflow, Workflow, Executor } from '@reactflo/core';
+import fs from 'fs';
+
+// Load from file
+const json = fs.readFileSync('workflow.json', 'utf-8');
+const workflowData = deserializeWorkflow(json);
+const workflow = Workflow.fromJSON(workflowData);
+
+// Execute
+const executor = new Executor();
+const result = await executor.execute(workflow);
+
+console.log('Workflow executed:', result.status);
+```
+
+## Schema Validation
+
+The formal JSON Schema is available at `schema/workflow.schema.json` in the repository.
+
+### Using the Schema
+
+```typescript
+import Ajv from 'ajv';
+import schema from '@reactflo/core/schema/workflow.schema.json';
+
+const ajv = new Ajv();
+const validate = ajv.compile(schema);
+
+const workflowData = JSON.parse(json);
+const valid = validate(workflowData);
+
+if (!valid) {
+  console.error('Validation errors:', validate.errors);
+}
+```
+
+## Version Control
+
+Store workflows in Git:
+
+```bash
+# Add workflow to Git
+git add workflows/my-workflow.json
+git commit -m "Add data processing workflow"
+
+# View changes
+git diff workflows/my-workflow.json
+
+# Restore previous version
+git checkout HEAD~1 workflows/my-workflow.json
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use Semantic Versioning" icon="code-branch">
+    Follow semantic versioning for workflow changes: major.minor.patch
+  </Accordion>
+
+  <Accordion title="Add Descriptions" icon="book">
+    Include workflow and node descriptions for documentation
+  </Accordion>
+
+  <Accordion title="Validate Before Saving" icon="shield-check">
+    Always validate JSON before committing to version control
+  </Accordion>
+
+  <Accordion title="Use Variables for Secrets" icon="key">
+    Never hardcode sensitive data - use variables and inject at runtime
+  </Accordion>
+
+  <Accordion title="Organize by Category" icon="folder">
+    Store related workflows in organized directories
+  </Accordion>
+</AccordionGroup>
+
+## Programmatic Workflow Creation
+
+Create workflows programmatically from JSON:
+
+```typescript
+import { Workflow } from '@reactflo/core';
+
+const workflowData = {
+  version: '1.0.0',
+  id: 'generated-workflow',
+  name: 'Generated Workflow',
+  nodes: [
+    {
+      id: 'node-1',
+      type: 'math.add',
+      position: { x: 100, y: 100 },
+      inputs: { a: 10, b: 20 }
+    }
+  ],
+  connections: [],
+  variables: {}
+};
+
+const workflow = Workflow.fromJSON(workflowData);
+```
+
+## Migration Between Versions
+
+When the schema version changes, use migration utilities:
+
+```typescript
+import { migrateWorkflow } from '@reactflo/core';
+
+// Migrate from old version to current
+const migratedData = migrateWorkflow(oldWorkflowData, {
+  from: '0.9.0',
+  to: '1.0.0'
+});
+
+const workflow = Workflow.fromJSON(migratedData);
+```
+
+<Warning>
+  **Breaking Changes:** Schema version 1.0.0 has not been published yet. Until then, breaking changes may occur without migration paths.
+</Warning>
+
+## Export Formats
+
+### Minified JSON
+
+```typescript
+const json = serializeWorkflow(workflowData, { pretty: false });
+// Single line, no whitespace
+```
+
+### Pretty JSON
+
+```typescript
+const json = serializeWorkflow(workflowData, { pretty: true, indent: 2 });
+// Formatted with 2-space indentation
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Serialization Guide"
+    icon="file-code"
+    href="/guides/serialization"
+  >
+    Learn advanced serialization techniques
+  </Card>
+  <Card
+    title="Workflow API"
+    icon="code"
+    href="/api-reference/core/workflow"
+  >
+    Complete Workflow API reference
+  </Card>
+  <Card
+    title="Creating Workflows"
+    icon="diagram-project"
+    href="/guides/creating-custom-nodes"
+  >
+    Build custom workflows
+  </Card>
+  <Card
+    title="Version Control"
+    icon="code-branch"
+    href="/guides/version-control"
+  >
+    Best practices for Git
+  </Card>
+</CardGroup>

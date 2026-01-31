@@ -47,6 +47,9 @@ packages/
 ├── core/          # Node system, workflow engine, execution (zero dependencies)
 ├── types/         # Shared TypeScript type definitions
 ├── react/         # React components (depends on React Flow + Monaco)
+├── examples/      # Example applications demonstrating ReactFlo usage
+├── landing/       # Marketing/landing page (Next.js)
+├── docs-site/     # Official documentation (Mintlify)
 ├── cli/           # CLI tools (future)
 └── plugins/       # Official plugins (future)
 ```

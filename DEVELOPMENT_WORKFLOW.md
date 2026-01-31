@@ -65,6 +65,14 @@ cd packages/examples
 npm run dev
 ```
 
+### Run Documentation Site
+
+```bash
+cd packages/docs-site
+mint dev --port 3333
+# Open http://localhost:3333
+```
+
 ## Clean Build
 
 If you encounter issues, clean all build artifacts:

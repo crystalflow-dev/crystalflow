@@ -1,0 +1,334 @@
+---
+title: "WorkflowBuilder"
+description: "WorkflowBuilder component API reference"
+---
+
+The `WorkflowBuilder` component is the main visual workflow editor powered by React Flow.
+
+## Component
+
+```typescript
+function WorkflowBuilder(props: WorkflowBuilderProps): JSX.Element;
+```
+
+## Props
+
+<ParamField path="nodes" type="Array<typeof Node>">
+  Array of node classes to make available in the palette.
+</ParamField>
+
+<ParamField path="onWorkflowChange" type="(workflow: Workflow) => void">
+  Callback when workflow changes (nodes added/removed, connections changed, etc.).
+</ParamField>
+
+<ParamField path="initialWorkflow" type="Workflow">
+  Optional initial workflow to load.
+</ParamField>
+
+<ParamField path="showNodePalette" type="boolean" default="true">
+  Show/hide the node palette sidebar.
+</ParamField>
+
+<ParamField path="showPropertyPanel" type="boolean" default="true">
+  Show/hide the property panel sidebar.
+</ParamField>
+
+<ParamField path="showToolbar" type="boolean" default="true">
+  Show/hide the toolbar.
+</ParamField>
+
+<ParamField path="showJsonEditor" type="boolean" default="false">
+  Show/hide JSON editor (Monaco).
+</ParamField>
+
+<ParamField path="editorMode" type="'visual' | 'json' | 'split'" default="'visual'">
+  Editor view mode.
+</ParamField>
+
+<ParamField path="onExecute" type="(result: ExecutionResult) => void">
+  Callback when workflow execution completes.
+</ParamField>
+
+<ParamField path="onError" type="(error: Error) => void">
+  Callback when an error occurs.
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS class for the container.
+</ParamField>
+
+<ParamField path="style" type="React.CSSProperties">
+  Inline styles for the container.
+</ParamField>
+
+## Basic Usage
+
+```tsx
+import React from 'react';
+import { WorkflowBuilder } from '@reactflo/react';
+import { AddNode, MultiplyNode, DisplayNode } from './nodes';
+
+function App() {
+  const nodes = [AddNode, MultiplyNode, DisplayNode];
+
+  const handleWorkflowChange = (workflow) => {
+    console.log('Workflow changed:', workflow.toJSON());
+  };
+
+  const handleExecute = (result) => {
+    console.log('Execution result:', result);
+  };
+
+  return (
+    <WorkflowBuilder
+      nodes={nodes}
+      onWorkflowChange={handleWorkflowChange}
+      onExecute={handleExecute}
+    />
+  );
+}
+```
+
+## With Initial Workflow
+
+```tsx
+import { Workflow } from '@reactflo/core';
+
+const initialWorkflow = new Workflow('my-workflow', 'My Workflow');
+// Add nodes and connections...
+
+<WorkflowBuilder
+  nodes={[AddNode, MultiplyNode]}
+  initialWorkflow={initialWorkflow}
+  onWorkflowChange={handleChange}
+/>
+```
+
+## Custom Configuration
+
+```tsx
+<WorkflowBuilder
+  nodes={[AddNode, MultiplyNode]}
+  showNodePalette={true}
+  showPropertyPanel={true}
+  showToolbar={true}
+  editorMode="visual"
+  className="my-workflow-builder"
+  style={{ height: '800px' }}
+  onWorkflowChange={handleChange}
+  onExecute={handleExecute}
+  onError={handleError}
+/>
+```
+
+## JSON Editor Mode
+
+<Warning>
+  **Work in Progress:** Monaco JSON editor integration is currently being implemented.
+</Warning>
+
+```tsx
+<WorkflowBuilder
+  nodes={[AddNode, MultiplyNode]}
+  showJsonEditor={true}
+  editorMode="split"  // visual, json, or split
+/>
+```
+
+## Features
+
+<CardGroup cols={2}>
+  <Card title="Drag & Drop" icon="hand">
+    Drag nodes from palette to canvas
+  </Card>
+  <Card title="Visual Connections" icon="link">
+    Connect nodes by dragging between ports
+  </Card>
+  <Card title="Property Editing" icon="sliders">
+    Edit node properties in the sidebar
+  </Card>
+  <Card title="Execute Workflows" icon="play">
+    Run workflows and view results
+  </Card>
+  <Card title="Save/Load" icon="floppy-disk">
+    Import and export workflows as JSON
+  </Card>
+  <Card title="Undo/Redo" icon="rotate-left">
+    Coming soon
+  </Card>
+</CardGroup>
+
+## Event Handlers
+
+### onWorkflowChange
+
+Called whenever the workflow structure changes:
+
+```tsx
+const handleChange = (workflow: Workflow) => {
+  // Save to localStorage
+  localStorage.setItem('workflow', JSON.stringify(workflow.toJSON()));
+  
+  // or send to server
+  await saveWorkflow(workflow.toJSON());
+};
+```
+
+### onExecute
+
+Called when workflow execution completes:
+
+```tsx
+const handleExecute = (result: ExecutionResult) => {
+  if (result.status === 'success') {
+    console.log('Success! Duration:', result.duration, 'ms');
+    
+    // Access node results
+    result.nodeResults.forEach((nodeResult, nodeId) => {
+      console.log(`Node ${nodeId}:`, nodeResult.outputs);
+    });
+  } else {
+    console.error('Execution failed:', result.error);
+  }
+};
+```
+
+### onError
+
+Called when errors occur in the UI:
+
+```tsx
+const handleError = (error: Error) => {
+  // Show error notification
+  toast.error(error.message);
+  
+  // Log to error service
+  errorLogger.log(error);
+};
+```
+
+## Styling
+
+The WorkflowBuilder uses CSS modules and can be customized:
+
+```css
+/* Your custom styles */
+.my-workflow-builder {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Override internal styles */
+.my-workflow-builder .react-flow__node {
+  border: 2px solid #007bff;
+}
+```
+
+## Complete Example
+
+```tsx
+import React, { useState, useCallback } from 'react';
+import { WorkflowBuilder } from '@reactflo/react';
+import { Workflow, ExecutionResult } from '@reactflo/core';
+import {
+  NumberInputNode,
+  AddNode,
+  MultiplyNode,
+  DisplayNode
+} from './nodes';
+
+function WorkflowApp() {
+  const [workflow, setWorkflow] = useState<Workflow | null>(null);
+  const [result, setResult] = useState<ExecutionResult | null>(null);
+
+  const nodes = [
+    NumberInputNode,
+    AddNode,
+    MultiplyNode,
+    DisplayNode
+  ];
+
+  const handleWorkflowChange = useCallback((newWorkflow: Workflow) => {
+    setWorkflow(newWorkflow);
+    
+    // Auto-save to localStorage
+    localStorage.setItem(
+      'workflow',
+      JSON.stringify(newWorkflow.toJSON())
+    );
+  }, []);
+
+  const handleExecute = useCallback((executionResult: ExecutionResult) => {
+    setResult(executionResult);
+    
+    if (executionResult.status === 'success') {
+      console.log('Workflow executed successfully!');
+    }
+  }, []);
+
+  const handleError = useCallback((error: Error) => {
+    console.error('Error:', error);
+    alert(`Error: ${error.message}`);
+  }, []);
+
+  return (
+    <div className="app">
+      <h1>My Workflow Editor</h1>
+      
+      <WorkflowBuilder
+        nodes={nodes}
+        onWorkflowChange={handleWorkflowChange}
+        onExecute={handleExecute}
+        onError={handleError}
+        showNodePalette={true}
+        showPropertyPanel={true}
+        showToolbar={true}
+        style={{ height: '600px' }}
+      />
+      
+      {result && (
+        <div className="results">
+          <h2>Execution Result</h2>
+          <pre>{JSON.stringify(result, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default WorkflowApp;
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card
+    title="Hooks"
+    icon="hook"
+    href="/api-reference/react/hooks"
+  >
+    React hooks API
+  </Card>
+  <Card
+    title="Components"
+    icon="layer-group"
+    href="/api-reference/react/components"
+  >
+    Individual components
+  </Card>
+  <Card
+    title="Workflow Builder Guide"
+    icon="book"
+    href="/guides/workflow-builder"
+  >
+    Complete guide
+  </Card>
+  <Card
+    title="Examples"
+    icon="code"
+    href="/examples/basic-math"
+  >
+    Full examples
+  </Card>
+</CardGroup>

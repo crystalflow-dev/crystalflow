@@ -1,0 +1,164 @@
+---
+title: "Which Package Do I Need?"
+description: "Choose between Visual Builder or Core-only packages"
+---
+
+ReactFlo offers two approaches depending on your use case.
+
+## Visual Workflow Builder (Recommended)
+
+<Card title="@reactflo/react + @reactflo/core" icon="diagram-project" color="#3B82F6">
+  **Best for:** Building visual workflow applications with drag-and-drop UI
+</Card>
+
+Perfect if you want to:
+- Build a **visual workflow editor** for end users
+- Create **no-code/low-code** tools
+- Provide a **drag-and-drop interface** for workflow creation
+- Let users **visually connect nodes** on a canvas
+- Build **SaaS applications** with workflow builders
+
+**Includes:**
+- Complete visual workflow builder component
+- React Flow integration for canvas rendering
+- Node palette, property panel, toolbar
+- Save/load workflows as JSON
+- Real-time execution feedback
+- All core execution features
+
+<CodeGroup>
+```bash npm
+npm install @reactflo/react @reactflo/core @reactflo/types
+```
+
+```bash pnpm
+pnpm add @reactflo/react @reactflo/core @reactflo/types
+```
+
+```bash yarn
+yarn add @reactflo/react @reactflo/core @reactflo/types
+```
+</CodeGroup>
+
+---
+
+## Core Package Only (Backend/Headless)
+
+<Card title="@reactflo/core" icon="cube" color="#6B7280">
+  **Best for:** Backend workflows, automation, CLI tools, or custom UIs
+</Card>
+
+Perfect if you want to:
+- Build **backend automation** workflows
+- Create **CLI tools** with workflow execution
+- Execute **pre-defined workflows** without UI
+- Build a **completely custom UI** from scratch
+- Use workflows in **Node.js servers** or **serverless functions**
+
+**Includes:**
+- Node system with decorators
+- Workflow engine and execution
+- JSON serialization
+- Event system
+- Error handling and cancellation
+- Zero UI dependencies
+
+<CodeGroup>
+```bash npm
+npm install @reactflo/core @reactflo/types
+```
+
+```bash pnpm
+pnpm add @reactflo/core @reactflo/types
+```
+
+```bash yarn
+yarn add @reactflo/core @reactflo/types
+```
+</CodeGroup>
+
+## Comparison
+
+| Feature | Visual Builder | Core Only |
+|---------|---------------|-----------|
+| **Visual canvas** | ✓ Included | ✗ Not included |
+| **Drag & drop nodes** | ✓ Included | ✗ Not included |
+| **Property panel** | ✓ Included | ✗ Not included |
+| **Save/load UI** | ✓ Included | ✗ Manual implementation |
+| **Workflow execution** | ✓ Included | ✓ Included |
+| **Custom nodes** | ✓ Supported | ✓ Supported |
+| **JSON serialization** | ✓ Included | ✓ Included |
+| **React dependency** | ✓ Required | ✗ Not required |
+| **Bundle size** | ~250KB | ~50KB |
+| **Use case** | End-user apps | Backend/automation |
+
+## Which Should I Choose?
+
+<AccordionGroup>
+  <Accordion title="Choose Visual Builder if..." icon="diagram-project">
+    - You're building a **SaaS application** with workflow features
+    - Users need to **create workflows visually**
+    - You want **drag-and-drop** functionality
+    - You need a **complete UI** out of the box
+    - You're building a **React application**
+  </Accordion>
+
+  <Accordion title="Choose Core Only if..." icon="cube">
+    - You're building **backend automation**
+    - Workflows are **pre-defined** (not user-created)
+    - You need **lightweight** execution (CLI, serverless)
+    - You want to build a **custom UI** from scratch
+    - You're working in **Node.js without React**
+  </Accordion>
+</AccordionGroup>
+
+## Can I Use Both?
+
+Yes! Many applications use both:
+
+**Example:** A SaaS platform where:
+- **Frontend (React)** - Users create workflows with `@reactflo/react`
+- **Backend (Node.js)** - Server executes workflows with `@reactflo/core`
+- **Shared** - Workflows are saved as JSON and executed on backend
+
+```typescript
+// Frontend: User creates workflow visually
+<WorkflowBuilder nodes={[...]} onSave={saveToServer} />
+
+// Backend: Server executes saved workflow
+const workflow = Workflow.fromJSON(savedWorkflow);
+const result = await workflow.execute();
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Visual Builder Quick Start"
+    icon="rocket"
+    href="/getting-started/visual-builder-quickstart"
+  >
+    Start with the visual builder (5 minutes)
+  </Card>
+  <Card
+    title="Core-Only Quick Start"
+    icon="code"
+    href="/getting-started/core-only-quickstart"
+  >
+    Start with core package only
+  </Card>
+  <Card
+    title="Installation Guide"
+    icon="download"
+    href="/getting-started/installation"
+  >
+    Detailed installation instructions
+  </Card>
+  <Card
+    title="Examples"
+    icon="book-open"
+    href="/examples/basic-math"
+  >
+    See complete examples
+  </Card>
+</CardGroup>

@@ -1,0 +1,540 @@
+---
+title: "Executor"
+description: "Executor class API reference"
+---
+
+The `Executor` class orchestrates workflow execution with events and state management.
+
+## Class: Executor
+
+```typescript
+class Executor extends AsyncEventEmitter {
+  // Methods
+  execute(workflow: Workflow, options?: ExecutionOptions): Promise<ExecutionResult>;
+  cancel(executionId: string, reason?: CancellationReason): void;
+  cancelAll(reason?: CancellationReason): void;
+  isExecutionActive(executionId: string): boolean;
+  
+  // Event Methods (inherited from AsyncEventEmitter)
+  on(event: string, listener: Function): this;
+  once(event: string, listener: Function): this;
+  off(event: string, listener: Function): this;
+  emit(event: string, ...args: any[]): Promise<boolean>;
+}
+```
+
+## Methods
+
+### execute()
+
+Execute a workflow with options.
+
+```typescript
+execute(workflow: Workflow, options?: ExecutionOptions): Promise<ExecutionResult>;
+```
+
+<ParamField path="workflow" type="Workflow">
+  Workflow instance to execute.
+</ParamField>
+
+<ParamField path="options" type="ExecutionOptions">
+  Optional execution configuration:
+  - `timeout?: number` - Maximum execution time (ms)
+  - `variables?: Record<string, any>` - Workflow variables
+  - `abortSignal?: AbortSignal` - External cancellation signal
+</ParamField>
+
+**Returns:** Promise resolving to `ExecutionResult`.
+
+**Example:**
+
+```typescript
+import { Executor } from '@reactflo/core';
+
+const executor = new Executor();
+
+const result = await executor.execute(workflow, {
+  timeout: 30000,
+  variables: { apiKey: 'xxx' }
+});
+
+console.log(result.status); // 'success'
+console.log(result.duration); // 1523 (ms)
+```
+
+---
+
+### cancel()
+
+Cancel a specific execution.
+
+```typescript
+cancel(executionId: string, reason?: CancellationReason): void;
+```
+
+<ParamField path="executionId" type="string">
+  Execution ID to cancel.
+</ParamField>
+
+<ParamField path="reason" type="CancellationReason">
+  Cancellation reason (default: `CancellationReason.UserCancelled`).
+</ParamField>
+
+**Example:**
+
+```typescript
+let executionId: string;
+
+executor.on('beforeExecute', (context) => {
+  executionId = context.executionId;
+});
+
+// Cancel after 5 seconds
+setTimeout(() => {
+  executor.cancel(executionId, CancellationReason.UserCancelled);
+}, 5000);
+```
+
+---
+
+### cancelAll()
+
+Cancel all active executions.
+
+```typescript
+cancelAll(reason?: CancellationReason): void;
+```
+
+<ParamField path="reason" type="CancellationReason">
+  Cancellation reason (default: `CancellationReason.UserCancelled`).
+</ParamField>
+
+**Example:**
+
+```typescript
+executor.cancelAll(CancellationReason.UserCancelled);
+```
+
+---
+
+### isExecutionActive()
+
+Check if an execution is currently running.
+
+```typescript
+isExecutionActive(executionId: string): boolean;
+```
+
+<ParamField path="executionId" type="string">
+  Execution ID to check.
+</ParamField>
+
+**Returns:** `true` if execution is active, `false` otherwise.
+
+**Example:**
+
+```typescript
+if (executor.isExecutionActive(executionId)) {
+  console.log('Execution is running');
+}
+```
+
+## Events
+
+The Executor emits events throughout the execution lifecycle. All event listeners can be synchronous or asynchronous.
+
+### beforeExecute
+
+Emitted before workflow execution starts.
+
+```typescript
+executor.on('beforeExecute', (context: ExecutionContext) => {
+  console.log(`Starting execution: ${context.executionId}`);
+});
+```
+
+<ParamField path="context" type="ExecutionContext">
+  Execution context with `executionId`, `workflowId`, `variables`, etc.
+</ParamField>
+
+---
+
+### afterExecute
+
+Emitted after workflow execution completes.
+
+```typescript
+executor.on('afterExecute', (result: ExecutionResult) => {
+  console.log(`Execution ${result.status}: ${result.duration}ms`);
+});
+```
+
+<ParamField path="result" type="ExecutionResult">
+  Complete execution result.
+</ParamField>
+
+---
+
+### onNodeStart
+
+Emitted when a node starts executing.
+
+```typescript
+executor.on('onNodeStart', (nodeId: string, node: Node) => {
+  console.log(`Node ${nodeId} starting...`);
+});
+```
+
+<ParamField path="nodeId" type="string">
+  Node ID.
+</ParamField>
+
+<ParamField path="node" type="Node">
+  Node instance.
+</ParamField>
+
+---
+
+### onNodeComplete
+
+Emitted when a node completes successfully.
+
+```typescript
+executor.on('onNodeComplete', (nodeId: string, result: NodeExecutionResult) => {
+  console.log(`Node ${nodeId} completed:`, result.outputs);
+});
+```
+
+<ParamField path="nodeId" type="string">
+  Node ID.
+</ParamField>
+
+<ParamField path="result" type="NodeExecutionResult">
+  Node execution result with outputs, timing, etc.
+</ParamField>
+
+---
+
+### onNodeError
+
+Emitted when a node fails.
+
+```typescript
+executor.on('onNodeError', (nodeId: string, error: Error) => {
+  console.error(`Node ${nodeId} failed:`, error);
+});
+```
+
+<ParamField path="nodeId" type="string">
+  Node ID.
+</ParamField>
+
+<ParamField path="error" type="Error">
+  Error that occurred.
+</ParamField>
+
+---
+
+### onError
+
+Emitted when workflow execution fails.
+
+```typescript
+executor.on('onError', (error: Error) => {
+  console.error('Workflow failed:', error);
+});
+```
+
+<ParamField path="error" type="Error">
+  Error that caused workflow failure.
+</ParamField>
+
+---
+
+### onCancellation
+
+Emitted when execution is cancelled.
+
+```typescript
+executor.on('onCancellation', (
+  executionId: string,
+  reason: CancellationReason,
+  cancelledAt: Date
+) => {
+  console.log(`Execution ${executionId} cancelled: ${reason}`);
+});
+```
+
+<ParamField path="executionId" type="string">
+  Cancelled execution ID.
+</ParamField>
+
+<ParamField path="reason" type="CancellationReason">
+  Cancellation reason.
+</ParamField>
+
+<ParamField path="cancelledAt" type="Date">
+  Timestamp of cancellation.
+</ParamField>
+
+## Types
+
+### ExecutionOptions
+
+```typescript
+interface ExecutionOptions {
+  timeout?: number;
+  variables?: Record<string, any>;
+  abortSignal?: AbortSignal;
+}
+```
+
+### ExecutionResult
+
+```typescript
+interface ExecutionResult {
+  id: string;
+  workflowId: string;
+  status: 'success' | 'failed' | 'cancelled';
+  startTime: Date;
+  endTime?: Date;
+  duration?: number;
+  nodeResults: Map<string, NodeExecutionResult>;
+  error?: Error;
+  cancellationReason?: CancellationReason;
+  cancelledAt?: Date;
+}
+```
+
+### NodeExecutionResult
+
+```typescript
+interface NodeExecutionResult {
+  nodeId: string;
+  state: NodeState;
+  outputs: Record<string, any>;
+  error?: Error;
+  startTime: Date;
+  endTime?: Date;
+  duration?: number;
+}
+```
+
+### ExecutionContext
+
+```typescript
+interface ExecutionContext {
+  executionId: string;
+  workflowId: string;
+  startTime: Date;
+  variables: Record<string, any>;
+  nodeResults: Map<string, NodeExecutionResult>;
+}
+```
+
+### CancellationReason
+
+```typescript
+enum CancellationReason {
+  Timeout = 'timeout',
+  UserCancelled = 'user-cancelled',
+  ExternalSignal = 'external-signal',
+  ResourceLimit = 'resource-limit'
+}
+```
+
+## Usage Examples
+
+### Basic Execution
+
+```typescript
+import { Executor } from '@reactflo/core';
+
+const executor = new Executor();
+
+const result = await executor.execute(workflow);
+console.log(result.status); // 'success'
+```
+
+### With Events
+
+```typescript
+const executor = new Executor();
+
+executor.on('beforeExecute', (context) => {
+  console.log(`Starting: ${context.executionId}`);
+});
+
+executor.on('onNodeStart', (nodeId, node) => {
+  console.log(`Executing ${node.type} (${nodeId})`);
+});
+
+executor.on('onNodeComplete', (nodeId, result) => {
+  console.log(`Completed ${nodeId}:`, result.outputs);
+});
+
+executor.on('afterExecute', (result) => {
+  console.log(`Finished in ${result.duration}ms`);
+});
+
+await executor.execute(workflow);
+```
+
+### Async Event Handlers
+
+```typescript
+executor.on('onNodeComplete', async (nodeId, result) => {
+  // Executor waits for async handlers
+  await saveToDatabase(result);
+  await sendWebhook(result);
+  console.log('Persisted node result');
+});
+
+await executor.execute(workflow);
+```
+
+### With Timeout
+
+```typescript
+try {
+  const result = await executor.execute(workflow, {
+    timeout: 10000 // 10 seconds
+  });
+} catch (error) {
+  if (error instanceof TimeoutError) {
+    console.error('Execution timed out');
+  }
+}
+```
+
+### With Cancellation
+
+```typescript
+let executionId: string;
+
+executor.on('beforeExecute', (context) => {
+  executionId = context.executionId;
+});
+
+executor.on('onCancellation', (id, reason) => {
+  console.log(`Cancelled: ${reason}`);
+});
+
+// Start execution
+const promise = executor.execute(workflow);
+
+// Cancel after 5 seconds
+setTimeout(() => {
+  executor.cancel(executionId);
+}, 5000);
+
+try {
+  await promise;
+} catch (error) {
+  if (error instanceof CancellationError) {
+    console.log('Execution was cancelled');
+  }
+}
+```
+
+### With AbortSignal
+
+```typescript
+const controller = new AbortController();
+
+// Start execution
+const promise = executor.execute(workflow, {
+  abortSignal: controller.signal
+});
+
+// Cancel from outside
+setTimeout(() => controller.abort(), 5000);
+
+try {
+  await promise;
+} catch (error) {
+  console.error('Cancelled:', error);
+}
+```
+
+### Progress Tracking
+
+```typescript
+const totalNodes = workflow.nodes.size;
+let completedNodes = 0;
+
+executor.on('onNodeStart', (nodeId) => {
+  console.log(`Progress: ${completedNodes}/${totalNodes}`);
+});
+
+executor.on('onNodeComplete', (nodeId) => {
+  completedNodes++;
+  const progress = (completedNodes / totalNodes) * 100;
+  console.log(`Progress: ${progress.toFixed(0)}%`);
+});
+
+await executor.execute(workflow);
+```
+
+### Error Recovery
+
+```typescript
+executor.on('onNodeError', async (nodeId, error) => {
+  console.error(`Node ${nodeId} failed:`, error);
+  
+  // Log to external service
+  await logError({
+    nodeId,
+    error: error.message,
+    timestamp: new Date()
+  });
+});
+
+executor.on('onError', async (error) => {
+  // Workflow failed - send notification
+  await sendAlertEmail({
+    subject: 'Workflow Failed',
+    body: error.message
+  });
+});
+
+try {
+  await executor.execute(workflow);
+} catch (error) {
+  // Handle gracefully
+  console.log('Execution failed, but errors were logged');
+}
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card
+    title="Execution & Events"
+    icon="bolt"
+    href="/guides/execution-and-events"
+  >
+    Master the execution system
+  </Card>
+  <Card
+    title="Cancellation"
+    icon="ban"
+    href="/advanced/cancellation"
+  >
+    Learn about cancellation
+  </Card>
+  <Card
+    title="Error Handling"
+    icon="triangle-exclamation"
+    href="/advanced/error-handling"
+  >
+    Handle execution errors
+  </Card>
+  <Card
+    title="Workflow API"
+    icon="diagram-project"
+    href="/api-reference/core/workflow"
+  >
+    Workflow class reference
+  </Card>
+</CardGroup>

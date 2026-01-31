@@ -1,0 +1,415 @@
+---
+title: "Hooks"
+description: "React hooks API reference"
+---
+
+ReactFlo provides several hooks for building custom workflow UIs.
+
+## useWorkflow
+
+Manage workflow state and operations.
+
+```typescript
+function useWorkflow(initialWorkflow?: Workflow): {
+  workflow: Workflow;
+  addNode: (nodeClass: typeof Node, options?: AddNodeOptions) => Node;
+  removeNode: (nodeId: string) => void;
+  updateNodeData: (nodeId: string, data: Record<string, any>) => void;
+  connect: (sourceId: string, sourcePort: string, targetId: string, targetPort: string) => void;
+  disconnect: (connectionId: string) => void;
+  clear: () => void;
+  reset: () => void;
+}
+```
+
+**Example:**
+
+```tsx
+import { useWorkflow } from '@reactflo/react';
+import { AddNode } from './nodes';
+
+function MyComponent() {
+  const { workflow, addNode, connect } = useWorkflow();
+
+  const handleAddNode = () => {
+    const node = addNode(AddNode, {
+      position: { x: 100, y: 100 }
+    });
+    console.log('Added node:', node.id);
+  };
+
+  return <button onClick={handleAddNode}>Add Node</button>;
+}
+```
+
+---
+
+## useNodeRegistry
+
+Access the node registry.
+
+```typescript
+function useNodeRegistry(nodes?: Array<typeof Node>): {
+  registry: NodeRegistry;
+  nodeTypes: Map<string, typeof Node>;
+  getNodeClass: (type: string) => typeof Node | undefined;
+  getNodeMetadata: (type: string) => NodeMetadata | undefined;
+}
+```
+
+**Example:**
+
+```tsx
+import { useNodeRegistry } from '@reactflo/react';
+import { AddNode, MultiplyNode } from './nodes';
+
+function NodeList() {
+  const { nodeTypes, getNodeMetadata } = useNodeRegistry([
+    AddNode,
+    MultiplyNode
+  ]);
+
+  return (
+    <ul>
+      {Array.from(nodeTypes.keys()).map(type => {
+        const metadata = getNodeMetadata(type);
+        return <li key={type}>{metadata?.label}</li>;
+      })}
+    </ul>
+  );
+}
+```
+
+---
+
+## useExecution
+
+Execute workflows with event handlers.
+
+```typescript
+function useExecution(): {
+  executor: Executor;
+  isExecuting: boolean;
+  result: ExecutionResult | null;
+  error: Error | null;
+  execute: (workflow: Workflow, options?: ExecutionOptions) => Promise<ExecutionResult>;
+  cancel: (executionId: string) => void;
+  reset: () => void;
+}
+```
+
+**Example:**
+
+```tsx
+import { useExecution } from '@reactflo/react';
+
+function ExecuteButton({ workflow }) {
+  const { execute, isExecuting, result, error } = useExecution();
+
+  const handleExecute = async () => {
+    try {
+      const executionResult = await execute(workflow, {
+        timeout: 30000
+      });
+      console.log('Success!', executionResult);
+    } catch (err) {
+      console.error('Failed:', err);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={handleExecute} disabled={isExecuting}>
+        {isExecuting ? 'Executing...' : 'Execute'}
+      </button>
+      
+      {result && <div>Status: {result.status}</div>}
+      {error && <div>Error: {error.message}</div>}
+    </div>
+  );
+}
+```
+
+---
+
+## useReactFlowState
+
+Manage React Flow nodes and edges state.
+
+```typescript
+function useReactFlowState(workflow: Workflow): {
+  nodes: ReactFlowNode[];
+  edges: ReactFlowEdge[];
+  onNodesChange: OnNodesChange;
+  onEdgesChange: OnEdgesChange;
+  onConnect: OnConnect;
+}
+```
+
+**Example:**
+
+```tsx
+import { useReactFlowState } from '@reactflo/react';
+import { ReactFlow } from 'reactflow';
+
+function CustomCanvas({ workflow }) {
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
+    useReactFlowState(workflow);
+
+  return (
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+    />
+  );
+}
+```
+
+---
+
+## useWorkflowExecution
+
+Combined workflow execution with progress tracking.
+
+```typescript
+function useWorkflowExecution(workflow: Workflow): {
+  execute: () => Promise<void>;
+  isExecuting: boolean;
+  progress: number;
+  result: ExecutionResult | null;
+  error: Error | null;
+  cancel: () => void;
+}
+```
+
+**Example:**
+
+```tsx
+import { useWorkflowExecution } from '@reactflo/react';
+
+function ExecutionPanel({ workflow }) {
+  const { execute, isExecuting, progress, result, error, cancel } =
+    useWorkflowExecution(workflow);
+
+  return (
+    <div>
+      <button onClick={execute} disabled={isExecuting}>
+        Execute
+      </button>
+      
+      {isExecuting && (
+        <>
+          <progress value={progress} max={100} />
+          <button onClick={cancel}>Cancel</button>
+        </>
+      )}
+      
+      {result && <div>Completed in {result.duration}ms</div>}
+      {error && <div>Error: {error.message}</div>}
+    </div>
+  );
+}
+```
+
+---
+
+## useWorkflowFileOperations
+
+Save and load workflows to/from files.
+
+```typescript
+function useWorkflowFileOperations(workflow: Workflow): {
+  save: (filename?: string) => Promise<void>;
+  load: (file: File) => Promise<Workflow>;
+  saveToJson: () => string;
+  loadFromJson: (json: string) => Workflow;
+}
+```
+
+**Example:**
+
+```tsx
+import { useWorkflowFileOperations } from '@reactflo/react';
+
+function FileMenu({ workflow, onLoad }) {
+  const { save, load } = useWorkflowFileOperations(workflow);
+
+  const handleSave = async () => {
+    await save('my-workflow.json');
+  };
+
+  const handleLoad = async (event) => {
+    const file = event.target.files[0];
+    const loadedWorkflow = await load(file);
+    onLoad(loadedWorkflow);
+  };
+
+  return (
+    <div>
+      <button onClick={handleSave}>Save</button>
+      <input type="file" onChange={handleLoad} accept=".json" />
+    </div>
+  );
+}
+```
+
+---
+
+## useNodePalette
+
+Manage node palette drag-and-drop.
+
+```typescript
+function useNodePalette(nodeTypes: Array<typeof Node>): {
+  categories: Map<string, typeof Node[]>;
+  onDragStart: (event: React.DragEvent, nodeClass: typeof Node) => void;
+  onDragEnd: (event: React.DragEvent) => void;
+}
+```
+
+**Example:**
+
+```tsx
+import { useNodePalette } from '@reactflo/react';
+
+function NodePalette({ nodeTypes }) {
+  const { categories, onDragStart, onDragEnd } = useNodePalette(nodeTypes);
+
+  return (
+    <div>
+      {Array.from(categories.entries()).map(([category, nodes]) => (
+        <div key={category}>
+          <h3>{category}</h3>
+          {nodes.map((NodeClass) => {
+            const metadata = Reflect.getMetadata('node:definition', NodeClass);
+            return (
+              <div
+                key={metadata.type}
+                draggable
+                onDragStart={(e) => onDragStart(e, NodeClass)}
+                onDragEnd={onDragEnd}
+              >
+                {metadata.label}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+## Complete Example
+
+```tsx
+import React from 'react';
+import {
+  useWorkflow,
+  useExecution,
+  useNodeRegistry,
+  useWorkflowFileOperations
+} from '@reactflo/react';
+import { AddNode, MultiplyNode } from './nodes';
+
+function CustomWorkflowBuilder() {
+  const { workflow, addNode, connect, clear } = useWorkflow();
+  const { nodeTypes } = useNodeRegistry([AddNode, MultiplyNode]);
+  const { execute, isExecuting, result } = useExecution();
+  const { save, load } = useWorkflowFileOperations(workflow);
+
+  const handleAddNode = (NodeClass: typeof Node) => {
+    addNode(NodeClass, {
+      position: { x: Math.random() * 500, y: Math.random() * 500 }
+    });
+  };
+
+  const handleExecute = async () => {
+    await execute(workflow);
+  };
+
+  const handleSave = async () => {
+    await save('workflow.json');
+  };
+
+  const handleLoad = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await load(file);
+    }
+  };
+
+  return (
+    <div>
+      <div className="toolbar">
+        <button onClick={handleExecute} disabled={isExecuting}>
+          {isExecuting ? 'Executing...' : 'Execute'}
+        </button>
+        <button onClick={handleSave}>Save</button>
+        <input type="file" onChange={handleLoad} accept=".json" />
+        <button onClick={clear}>Clear</button>
+      </div>
+
+      <div className="palette">
+        <h3>Node Types</h3>
+        {Array.from(nodeTypes.values()).map((NodeClass) => {
+          const metadata = Reflect.getMetadata('node:definition', NodeClass);
+          return (
+            <button
+              key={metadata.type}
+              onClick={() => handleAddNode(NodeClass)}
+            >
+              Add {metadata.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {result && (
+        <div className="result">
+          <h3>Result</h3>
+          <pre>{JSON.stringify(result, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default CustomWorkflowBuilder;
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card
+    title="WorkflowBuilder"
+    icon="diagram-project"
+    href="/api-reference/react/workflow-builder"
+  >
+    Main component reference
+  </Card>
+  <Card
+    title="Components"
+    icon="layer-group"
+    href="/api-reference/react/components"
+  >
+    Individual components
+  </Card>
+  <Card
+    title="Workflow Builder Guide"
+    icon="book"
+    href="/guides/workflow-builder"
+  >
+    Complete guide
+  </Card>
+  <Card
+    title="Core API"
+    icon="cube"
+    href="/api-reference/core/workflow"
+  >
+    Workflow class API
+  </Card>
+</CardGroup>

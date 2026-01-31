@@ -1,0 +1,537 @@
+---
+title: "Inheritance"
+description: "Using inheritance to create reusable node hierarchies"
+---
+
+ReactFlo supports class inheritance, allowing you to create base node classes with shared functionality and decorators.
+
+## Why Use Inheritance?
+
+<CardGroup cols={2}>
+  <Card title="Code Reuse" icon="recycle">
+    Share common logic across multiple nodes
+  </Card>
+  <Card title="Consistency" icon="check-double">
+    Ensure consistent behavior and properties
+  </Card>
+  <Card title="Maintainability" icon="wrench">
+    Update common code in one place
+  </Card>
+  <Card title="Organization" icon="sitemap">
+    Create logical node hierarchies
+  </Card>
+</CardGroup>
+
+## Basic Inheritance
+
+```typescript
+import { Node, defineNode, Property, Input, Output } from '@reactflo/core';
+
+// Base class with common functionality
+class BaseApiNode extends Node {
+  @Property({
+    type: 'string',
+    label: 'API Key',
+    required: true
+  })
+  apiKey: string = '';
+
+  @Property({
+    type: 'number',
+    label: 'Timeout (ms)',
+    defaultValue: 30000
+  })
+  timeout: number = 30000;
+
+  protected async makeRequest(url: string, options?: RequestInit) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          ...options?.headers
+        },
+        signal: controller.signal
+      });
+
+      return await response.json();
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
+// Child class inherits properties and methods
+@defineNode({
+  type: 'api.users',
+  label: 'Fetch Users',
+  category: 'API'
+})
+class FetchUsersNode extends BaseApiNode {
+  // Inherits apiKey and timeout properties
+
+  @Output({ type: 'any[]', label: 'Users' })
+  users: any[];
+
+  async execute() {
+    // Use inherited method
+    this.users = await this.makeRequest('https://api.example.com/users');
+  }
+}
+
+@defineNode({
+  type: 'api.posts',
+  label: 'Fetch Posts',
+  category: 'API'
+})
+class FetchPostsNode extends BaseApiNode {
+  // Also inherits apiKey and timeout properties
+
+  @Output({ type: 'any[]', label: 'Posts' })
+  posts: any[];
+
+  async execute() {
+    // Use inherited method
+    this.posts = await this.makeRequest('https://api.example.com/posts');
+  }
+}
+```
+
+## Property Inheritance
+
+All properties defined with `@Property` are inherited:
+
+```typescript
+class BaseNode extends Node {
+  @Property({ type: 'boolean', label: 'Enable Logging', defaultValue: false })
+  enableLogging: boolean = false;
+
+  @Property({ type: 'string', label: 'Log Level', defaultValue: 'info' })
+  logLevel: string = 'info';
+
+  protected log(message: string) {
+    if (this.enableLogging) {
+      console.log(`[${this.logLevel.toUpperCase()}] ${message}`);
+    }
+  }
+}
+
+@defineNode({ type: 'custom.processor', label: 'Processor', category: 'Custom' })
+class ProcessorNode extends BaseNode {
+  // Inherits enableLogging and logLevel
+
+  @Input({ type: 'any', label: 'Data' })
+  data: any;
+
+  @Output({ type: 'any', label: 'Result' })
+  result: any;
+
+  execute() {
+    this.log('Processing data...');  // Use inherited method
+    this.result = this.processData(this.data);
+    this.log('Processing complete');
+  }
+}
+```
+
+## Multi-Level Inheritance
+
+Create deep inheritance hierarchies:
+
+```typescript
+// Level 1: Base for all nodes
+class BaseNode extends Node {
+  @Property({ type: 'boolean', label: 'Enable Logging', defaultValue: false })
+  enableLogging: boolean = false;
+
+  protected log(message: string) {
+    if (this.enableLogging) {
+      console.log(message);
+    }
+  }
+}
+
+// Level 2: Base for HTTP nodes
+class BaseHttpNode extends BaseNode {
+  @Property({ type: 'number', label: 'Timeout', defaultValue: 30000 })
+  timeout: number = 30000;
+
+  @Property({ type: 'number', label: 'Retries', defaultValue: 3 })
+  retries: number = 3;
+
+  protected async fetchWithRetry(url: string, options?: RequestInit) {
+    let lastError: Error;
+
+    for (let i = 0; i <= this.retries; i++) {
+      try {
+        this.log(`Attempt ${i + 1}/${this.retries + 1}`);
+        return await this.makeRequest(url, options);
+      } catch (error) {
+        lastError = error;
+        if (i < this.retries) {
+          await this.delay(1000 * Math.pow(2, i)); // Exponential backoff
+        }
+      }
+    }
+
+    throw lastError;
+  }
+
+  private async makeRequest(url: string, options?: RequestInit) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  private delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+
+// Level 3: Base for REST API nodes
+class BaseRestApiNode extends BaseHttpNode {
+  @Property({ type: 'string', label: 'Base URL', required: true })
+  baseUrl: string = '';
+
+  @Property({ type: 'string', label: 'API Key' })
+  apiKey: string = '';
+
+  protected async get(path: string) {
+    return this.fetchWithRetry(`${this.baseUrl}${path}`, {
+      method: 'GET',
+      headers: this.getHeaders()
+    });
+  }
+
+  protected async post(path: string, body: any) {
+    return this.fetchWithRetry(`${this.baseUrl}${path}`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(body)
+    });
+  }
+
+  private getHeaders() {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+
+    if (this.apiKey) {
+      headers['Authorization'] = `Bearer ${this.apiKey}`;
+    }
+
+    return headers;
+  }
+}
+
+// Level 4: Concrete implementation
+@defineNode({
+  type: 'api.github.repos',
+  label: 'GitHub Repositories',
+  category: 'GitHub'
+})
+class GitHubReposNode extends BaseRestApiNode {
+  // Inherits: enableLogging, timeout, retries, baseUrl, apiKey
+  // Inherits methods: log, get, post, fetchWithRetry
+
+  @Input({ type: 'string', label: 'Username', required: true })
+  username: string = '';
+
+  @Output({ type: 'any[]', label: 'Repositories' })
+  repositories: any[];
+
+  async execute() {
+    this.log(`Fetching repos for ${this.username}`);
+    const response = await this.get(`/users/${this.username}/repos`);
+    this.repositories = await response.json();
+    this.log(`Found ${this.repositories.length} repositories`);
+  }
+}
+```
+
+## Abstract Methods Pattern
+
+Use abstract patterns for enforceability:
+
+```typescript
+abstract class BaseProcessorNode extends Node {
+  @Property({ type: 'boolean', label: 'Enable Logging', defaultValue: false })
+  enableLogging: boolean = false;
+
+  @Input({ type: 'any', label: 'Input' })
+  input: any;
+
+  @Output({ type: 'any', label: 'Output' })
+  output: any;
+
+  execute() {
+    this.log('Starting processing...');
+    this.output = this.process(this.input);
+    this.log('Processing complete');
+  }
+
+  // Child classes must implement this
+  protected abstract process(input: any): any;
+
+  protected log(message: string) {
+    if (this.enableLogging) {
+      console.log(message);
+    }
+  }
+}
+
+@defineNode({ type: 'text.uppercase', label: 'Uppercase', category: 'Text' })
+class UppercaseNode extends BaseProcessorNode {
+  protected process(input: any): any {
+    return String(input).toUpperCase();
+  }
+}
+
+@defineNode({ type: 'text.lowercase', label: 'Lowercase', category: 'Text' })
+class LowercaseNode extends BaseProcessorNode {
+  protected process(input: any): any {
+    return String(input).toLowerCase();
+  }
+}
+```
+
+## Mixin Pattern
+
+Combine multiple behaviors:
+
+```typescript
+// Mixin for caching behavior
+function CacheableMixin<T extends new (...args: any[]) => Node>(Base: T) {
+  return class extends Base {
+    private cache = new Map<string, any>();
+
+    @Property({ type: 'boolean', label: 'Enable Cache', defaultValue: true })
+    enableCache: boolean = true;
+
+    protected getCached(key: string): any | undefined {
+      if (this.enableCache) {
+        return this.cache.get(key);
+      }
+    }
+
+    protected setCache(key: string, value: any) {
+      if (this.enableCache) {
+        this.cache.set(key, value);
+      }
+    }
+
+    protected clearCache() {
+      this.cache.clear();
+    }
+  };
+}
+
+// Mixin for retry behavior
+function RetryableMixin<T extends new (...args: any[]) => Node>(Base: T) {
+  return class extends Base {
+    @Property({ type: 'number', label: 'Max Retries', defaultValue: 3 })
+    maxRetries: number = 3;
+
+    protected async retry<T>(fn: () => Promise<T>): Promise<T> {
+      let lastError: Error;
+
+      for (let i = 0; i <= this.maxRetries; i++) {
+        try {
+          return await fn();
+        } catch (error) {
+          lastError = error;
+          if (i < this.maxRetries) {
+            await this.delay(1000 * Math.pow(2, i));
+          }
+        }
+      }
+
+      throw lastError;
+    }
+
+    private delay(ms: number) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+  };
+}
+
+// Use multiple mixins
+@defineNode({ type: 'api.data', label: 'Fetch Data', category: 'API' })
+class FetchDataNode extends RetryableMixin(CacheableMixin(Node)) {
+  // Has both caching and retry capabilities
+
+  @Input({ type: 'string', label: 'URL' })
+  url: string = '';
+
+  @Output({ type: 'any', label: 'Data' })
+  data: any;
+
+  async execute() {
+    // Check cache first
+    const cached = this.getCached(this.url);
+    if (cached) {
+      this.data = cached;
+      return;
+    }
+
+    // Fetch with retry
+    const response = await this.retry(async () => {
+      const res = await fetch(this.url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    });
+
+    this.data = response;
+    this.setCache(this.url, response);
+  }
+}
+```
+
+## Override Parent Methods
+
+Override methods while calling parent implementation:
+
+```typescript
+class BaseNode extends Node {
+  execute() {
+    console.log('Base execute');
+    this.doWork();
+  }
+
+  protected doWork() {
+    // Base implementation
+  }
+}
+
+@defineNode({ type: 'custom.child', label: 'Child', category: 'Custom' })
+class ChildNode extends BaseNode {
+  execute() {
+    console.log('Child execute - before');
+    super.execute();  // Call parent
+    console.log('Child execute - after');
+  }
+
+  protected doWork() {
+    super.doWork();  // Call parent implementation
+    // Add child-specific work
+  }
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Start with Base Classes" icon="layer-group">
+    Identify common patterns and create base classes early.
+  </Accordion>
+
+  <Accordion title="Keep Hierarchies Shallow" icon="bars-staggered">
+    Avoid deep inheritance trees (3-4 levels max).
+  </Accordion>
+
+  <Accordion title="Use Protected Methods" icon="lock">
+    Make shared methods `protected` to encapsulate implementation.
+  </Accordion>
+
+  <Accordion title="Document Base Classes" icon="book">
+    Clearly document what child classes should override.
+  </Accordion>
+
+  <Accordion title="Consider Composition" icon="cubes">
+    Sometimes composition (mixins) is better than inheritance.
+  </Accordion>
+</AccordionGroup>
+
+## Common Base Classes
+
+### API Client Base
+
+```typescript
+class BaseApiClientNode extends Node {
+  @Property({ type: 'string', label: 'API Key', required: true })
+  apiKey: string = '';
+
+  @Property({ type: 'number', label: 'Timeout', defaultValue: 30000 })
+  timeout: number = 30000;
+
+  protected async request(url: string, options?: RequestInit) {
+    // Common API request logic
+  }
+}
+```
+
+### Data Processor Base
+
+```typescript
+abstract class BaseDataProcessorNode extends Node {
+  @Input({ type: 'any[]', label: 'Data' })
+  data: any[] = [];
+
+  @Output({ type: 'any[]', label: 'Processed' })
+  processed: any[];
+
+  execute() {
+    this.processed = this.data.map(item => this.processItem(item));
+  }
+
+  protected abstract processItem(item: any): any;
+}
+```
+
+### File Operation Base
+
+```typescript
+class BaseFileNode extends Node {
+  @Property({ type: 'string', label: 'Encoding', defaultValue: 'utf-8' })
+  encoding: string = 'utf-8';
+
+  protected readFile(path: string) {
+    // Common file reading logic
+  }
+
+  protected writeFile(path: string, content: string) {
+    // Common file writing logic
+  }
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Property System"
+    icon="sliders"
+    href="/advanced/property-system"
+  >
+    Understanding property inheritance
+  </Card>
+  <Card
+    title="Creating Custom Nodes"
+    icon="hammer"
+    href="/guides/creating-custom-nodes"
+  >
+    Build nodes with inheritance
+  </Card>
+  <Card
+    title="Node API"
+    icon="code"
+    href="/api-reference/core/node"
+  >
+    Complete Node class reference
+  </Card>
+  <Card
+    title="Examples"
+    icon="code-simple"
+    href="/examples/basic-math"
+  >
+    See inheritance in action
+  </Card>
+</CardGroup>

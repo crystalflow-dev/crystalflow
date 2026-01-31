@@ -40,6 +40,11 @@ jobs:
       - name: Build landing package
         run: npm run build --workspace=@reactflo/landing
 
+      - name: Build docs-site
+        run: |
+          cd packages/docs-site
+          npx mintlify validate
+
       - name: Run type check
         run: npm run typecheck
 

@@ -1,0 +1,313 @@
+---
+title: "Types"
+description: "TypeScript type definitions reference"
+---
+
+The `@reactflo/types` package contains all shared TypeScript type definitions.
+
+## Installation
+
+```bash
+npm install @reactflo/types
+```
+
+## Core Types
+
+### Node Types
+
+```typescript
+// Node state
+type NodeState = 'idle' | 'executing' | 'success' | 'error';
+
+// Node metadata
+interface NodeMetadata {
+  type: string;
+  label: string;
+  category: string;
+  description?: string;
+  inputs: InputMetadata[];
+  outputs: OutputMetadata[];
+  properties: PropertyMetadata[];
+}
+
+// Port metadata
+interface InputMetadata {
+  name: string;
+  type: string;
+  label: string;
+  required: boolean;
+  defaultValue?: any;
+  description?: string;
+}
+
+interface OutputMetadata {
+  name: string;
+  type: string;
+  label: string;
+  description?: string;
+}
+
+// Property metadata
+interface PropertyMetadata {
+  name: string;
+  type: 'string' | 'number' | 'boolean' | 'select';
+  label: string;
+  defaultValue?: any;
+  required?: boolean;
+  description?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  options?: Array<{ value: string; label: string }>;
+}
+```
+
+---
+
+### Workflow Types
+
+```typescript
+// Workflow structure
+interface WorkflowJSON {
+  version: string;
+  id: string;
+  name: string;
+  nodes: NodeJSON[];
+  connections: ConnectionJSON[];
+  variables: Record<string, any>;
+}
+
+// Node JSON
+interface NodeJSON {
+  id: string;
+  type: string;
+  position: { x: number; y: number };
+  data: {
+    inputs: Record<string, any>;
+    outputs: Record<string, any>;
+    properties: Record<string, any>;
+  };
+}
+
+// Connection JSON
+interface ConnectionJSON {
+  id: string;
+  source: string;
+  sourcePort: string;
+  target: string;
+  targetPort: string;
+}
+
+// Validation
+interface ValidationResult {
+  isValid: boolean;
+  errors?: string[];
+}
+```
+
+---
+
+### Execution Types
+
+```typescript
+// Execution options
+interface ExecutionOptions {
+  timeout?: number;
+  variables?: Record<string, any>;
+  abortSignal?: AbortSignal;
+}
+
+// Execution result
+interface ExecutionResult {
+  id: string;
+  workflowId: string;
+  status: ExecutionStatus;
+  startTime: Date;
+  endTime?: Date;
+  duration?: number;
+  nodeResults: Map<string, NodeExecutionResult>;
+  error?: Error;
+  cancellationReason?: CancellationReason;
+  cancelledAt?: Date;
+}
+
+// Execution status
+type ExecutionStatus = 'success' | 'failed' | 'cancelled';
+
+// Node execution result
+interface NodeExecutionResult {
+  nodeId: string;
+  state: NodeState;
+  outputs: Record<string, any>;
+  error?: Error;
+  startTime: Date;
+  endTime?: Date;
+  duration?: number;
+}
+
+// Execution context
+interface ExecutionContext {
+  executionId: string;
+  workflowId: string;
+  startTime: Date;
+  variables: Record<string, any>;
+  nodeResults: Map<string, NodeExecutionResult>;
+}
+
+// Cancellation
+enum CancellationReason {
+  Timeout = 'timeout',
+  UserCancelled = 'user-cancelled',
+  ExternalSignal = 'external-signal',
+  ResourceLimit = 'resource-limit'
+}
+```
+
+---
+
+### UI Types
+
+```typescript
+// React Flow node data
+interface NodeData {
+  id: string;
+  type: string;
+  metadata: NodeMetadata;
+  inputs: Record<string, any>;
+  outputs: Record<string, any>;
+  properties: Record<string, any>;
+  state: NodeState;
+}
+
+// Position
+interface Position {
+  x: number;
+  y: number;
+}
+
+// Add node options
+interface AddNodeOptions {
+  id?: string;
+  position?: Position;
+  data?: Record<string, any>;
+}
+```
+
+## Usage
+
+Import types in your code:
+
+```typescript
+import {
+  NodeMetadata,
+  WorkflowJSON,
+  ExecutionResult,
+  ExecutionOptions,
+  CancellationReason
+} from '@reactflo/types';
+
+// Use in function signatures
+function executeWorkflow(
+  workflow: WorkflowJSON,
+  options: ExecutionOptions
+): Promise<ExecutionResult> {
+  // ...
+}
+
+// Type node metadata
+const metadata: NodeMetadata = {
+  type: 'math.add',
+  label: 'Add',
+  category: 'Math',
+  inputs: [
+    { name: 'a', type: 'number', label: 'A', required: true },
+    { name: 'b', type: 'number', label: 'B', required: true }
+  ],
+  outputs: [
+    { name: 'result', type: 'number', label: 'Result' }
+  ],
+  properties: []
+};
+```
+
+## Type Guards
+
+Utility type guards for runtime type checking:
+
+```typescript
+import { isNodeExecutionResult, isExecutionResult } from '@reactflo/types';
+
+function processResult(result: unknown) {
+  if (isExecutionResult(result)) {
+    console.log('Execution status:', result.status);
+  }
+}
+
+function processNodeResult(result: unknown) {
+  if (isNodeExecutionResult(result)) {
+    console.log('Node outputs:', result.outputs);
+  }
+}
+```
+
+## Generic Types
+
+For building custom extensions:
+
+```typescript
+// Generic node data
+interface CustomNodeData<TInputs = any, TOutputs = any, TProps = any> {
+  inputs: TInputs;
+  outputs: TOutputs;
+  properties: TProps;
+}
+
+// Strongly typed node
+class TypedAddNode extends Node {
+  @Input({ type: 'number', label: 'A' })
+  a!: number;
+
+  @Input({ type: 'number', label: 'B' })
+  b!: number;
+
+  @Output({ type: 'number', label: 'Result' })
+  result!: number;
+}
+
+// Extract input/output types
+type AddInputs = Pick<TypedAddNode, 'a' | 'b'>;
+type AddOutputs = Pick<TypedAddNode, 'result'>;
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card
+    title="Node API"
+    icon="cube"
+    href="/api-reference/core/node"
+  >
+    Node class reference
+  </Card>
+  <Card
+    title="Workflow API"
+    icon="diagram-project"
+    href="/api-reference/core/workflow"
+  >
+    Workflow class reference
+  </Card>
+  <Card
+    title="Executor API"
+    icon="bolt"
+    href="/api-reference/core/executor"
+  >
+    Executor class reference
+  </Card>
+  <Card
+    title="JSON Schema"
+    icon="file-code"
+    href="/core-concepts/json-schema"
+  >
+    Workflow JSON format
+  </Card>
+</CardGroup>

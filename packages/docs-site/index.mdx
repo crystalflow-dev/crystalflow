@@ -1,0 +1,173 @@
+---
+title: "Welcome to ReactFlo"
+description: "Build powerful visual workflow applications with React and TypeScript"
+---
+
+<img
+  className="block dark:hidden"
+  src="/logo/reactflo-logo-light.svg"
+  alt="ReactFlo Logo"
+  width="200"
+/>
+<img
+  className="hidden dark:block"
+  src="/logo/reactflo-logo-dark.svg"
+  alt="ReactFlo Logo"
+  width="200"
+/>
+
+## What is ReactFlo?
+
+ReactFlo is a **declarative workflow builder framework** that provides everything you need to create custom workflow applications.
+
+<CardGroup cols={2}>
+  <Card title="Visual Workflow Builder" icon="diagram-project">
+    Complete React components for drag-and-drop workflow creation
+  </Card>
+  <Card title="Powerful Execution Engine" icon="bolt">
+    Robust workflow engine with events, cancellation, and error handling
+  </Card>
+  <Card title="TypeScript Decorators" icon="at">
+    Define nodes with clean, declarative syntax
+  </Card>
+  <Card title="JSON Serialization" icon="file-code">
+    Save and load workflows as portable JSON
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+Choose your path based on what you're building:
+
+<CardGroup cols={2}>
+  <Card
+    title="Visual Builder (Recommended)"
+    icon="diagram-project"
+    href="/getting-started/visual-builder-quickstart"
+  >
+    **Build visual workflow apps** with drag-and-drop UI in React (5 minutes)
+  </Card>
+  <Card
+    title="Core Package Only"
+    icon="cube"
+    href="/getting-started/core-only-quickstart"
+  >
+    **Backend workflows and automation** without UI (5 minutes)
+  </Card>
+</CardGroup>
+
+<Note>
+  Not sure which to choose? See [Which Package Do I Need?](/getting-started/which-package)
+</Note>
+
+## Core Principle
+
+> **"We build the how, you focus on the what."**
+
+ReactFlo provides the complete workflow infrastructure—visual builder, execution engine, serialization, validation—so you can focus on building custom nodes for your specific domain.
+
+## Key Features
+
+<AccordionGroup>
+  <Accordion title="Decorator-Based Node Definitions" icon="at">
+    Define nodes using clean TypeScript decorators. No complex configuration needed.
+    
+    ```typescript
+    @defineNode({ type: 'math.add', label: 'Add', category: 'Math' })
+    class AddNode extends Node {
+      @Input({ type: 'number', label: 'A' })
+      a: number = 0;
+      
+      @Output({ type: 'number', label: 'Result' })
+      result: number;
+      
+      execute() {
+        this.result = this.a + this.b;
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Visual Workflow Builder" icon="diagram-project">
+    Complete React components for building visual workflow editors:
+    - Drag-and-drop node palette
+    - Visual canvas with pan/zoom
+    - Property panel for node configuration
+    - Save/load workflows as JSON
+    - Real-time execution feedback
+  </Accordion>
+
+  <Accordion title="Robust Execution Engine" icon="bolt">
+    Production-ready execution with:
+    - Serial execution (topological order)
+    - Async node support
+    - Event system with async handlers
+    - Cancellation (timeout, user, external signal)
+    - Error handling and recovery
+    - Progress tracking
+  </Accordion>
+
+  <Accordion title="JSON Serialization" icon="file-code">
+    Save and load complete workflows as portable JSON:
+    - Formal JSON schema
+    - Version control friendly
+    - Cross-platform compatible
+    - Database storage ready
+  </Accordion>
+</AccordionGroup>
+
+## Architecture
+
+ReactFlo is built as a layered architecture:
+
+```
+User Applications (your custom nodes)
+         ↓
+@reactflo/react (visual builder, React components)
+         ↓
+React Flow (canvas rendering, UI primitives)
+         ↓
+@reactflo/core (execution engine, validation)
+```
+
+## Packages
+
+<CardGroup cols={3}>
+  <Card title="@reactflo/core" icon="cube">
+    **Core Package**
+    
+    Node system, workflow engine, execution, zero dependencies (except reflect-metadata)
+  </Card>
+  
+  <Card title="@reactflo/react" icon="react">
+    **React Package**
+    
+    Visual workflow builder, components, hooks, React Flow integration
+  </Card>
+  
+  <Card title="@reactflo/types" icon="code">
+    **Types Package**
+    
+    Shared TypeScript type definitions for all packages
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<Steps>
+  <Step title="Choose Your Path">
+    Decide between [Visual Builder](/getting-started/which-package) or [Core-Only](/getting-started/which-package) based on your needs.
+  </Step>
+
+  <Step title="Install Packages">
+    Follow the [Installation Guide](/getting-started/installation) for your chosen path.
+  </Step>
+
+  <Step title="Quick Start">
+    Complete the [Visual Builder Quick Start](/getting-started/visual-builder-quickstart) or [Core-Only Quick Start](/getting-started/core-only-quickstart).
+  </Step>
+
+  <Step title="Build Your App">
+    Create your first complete application with [Your First Workflow Builder](/getting-started/your-first-workflow-builder).
+  </Step>
+</Steps>

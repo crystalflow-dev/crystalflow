@@ -32,6 +32,9 @@ npm test -w @reactflo/types
 
 # Run command in all packages
 npm run build --workspaces
+
+# Run documentation site
+cd packages/docs-site && mint dev --port 3333
 ```
 
 ## 🏗️ Development Workflow

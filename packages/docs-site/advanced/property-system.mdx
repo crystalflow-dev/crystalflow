@@ -1,0 +1,512 @@
+---
+title: "Property System"
+description: "Deep dive into the ReactFlo property system"
+---
+
+The property system allows you to add configurable, static values to your nodes that appear in the properties panel.
+
+## Properties vs Inputs
+
+<Note>
+  **Critical Distinction:**
+  - **@Property** = Static configuration (set once in UI, not connected)
+  - **@Input** = Dynamic data flow (connected to other nodes)
+  - **@Output** = Computed results (generated during execution)
+</Note>
+
+```typescript
+class ExampleNode extends Node {
+  // Property: Configuration in properties panel
+  @Property({ type: 'string', label: 'API URL' })
+  apiUrl: string = 'https://api.example.com';
+
+  // Input: Data from connections
+  @Input({ type: 'string', label: 'Query' })
+  query: string = '';
+
+  // Output: Result of execution
+  @Output({ type: 'any', label: 'Data' })
+  data: any;
+
+  execute() {
+    // Use both property and input
+    this.data = await fetch(`${this.apiUrl}?q=${this.query}`);
+  }
+}
+```
+
+## Property Types
+
+### String Properties
+
+```typescript
+@Property({
+  type: 'string',
+  label: 'API Endpoint',
+  defaultValue: 'https://api.example.com',
+  required: true,
+  description: 'The API endpoint URL'
+})
+endpoint: string = 'https://api.example.com';
+```
+
+### Number Properties
+
+```typescript
+@Property({
+  type: 'number',
+  label: 'Timeout (seconds)',
+  defaultValue: 30,
+  min: 1,
+  max: 300,
+  step: 5,
+  description: 'Request timeout in seconds'
+})
+timeout: number = 30;
+```
+
+**Options:**
+- `min` - Minimum allowed value
+- `max` - Maximum allowed value
+- `step` - Increment step for UI controls
+
+### Boolean Properties
+
+```typescript
+@Property({
+  type: 'boolean',
+  label: 'Enable Caching',
+  defaultValue: true,
+  description: 'Cache responses for improved performance'
+})
+enableCaching: boolean = true;
+```
+
+### Select Properties
+
+```typescript
+@Property({
+  type: 'select',
+  label: 'HTTP Method',
+  defaultValue: 'GET',
+  options: [
+    { value: 'GET', label: 'GET' },
+    { value: 'POST', label: 'POST' },
+    { value: 'PUT', label: 'PUT' },
+    { value: 'DELETE', label: 'DELETE' }
+  ],
+  description: 'HTTP request method'
+})
+method: string = 'GET';
+```
+
+## Property Options
+
+<ParamField path="type" type="'string' | 'number' | 'boolean' | 'select'" required>
+  The property type
+</ParamField>
+
+<ParamField path="label" type="string" required>
+  Display label in the properties panel
+</ParamField>
+
+<ParamField path="defaultValue" type="any">
+  Default value for the property
+</ParamField>
+
+<ParamField path="required" type="boolean" default="false">
+  Whether the property is required
+</ParamField>
+
+<ParamField path="description" type="string">
+  Help text shown in the UI
+</ParamField>
+
+<ParamField path="options" type="Array<{value: any, label: string}>">
+  Options for select type (required for select type)
+</ParamField>
+
+<ParamField path="min" type="number">
+  Minimum value (number type only)
+</ParamField>
+
+<ParamField path="max" type="number">
+  Maximum value (number type only)
+</ParamField>
+
+<ParamField path="step" type="number">
+  Step increment (number type only)
+</ParamField>
+
+## Property Inheritance
+
+Properties are inherited from base classes:
+
+```typescript
+// Base class with common properties
+class BaseApiNode extends Node {
+  @Property({
+    type: 'boolean',
+    label: 'Enable Logging',
+    defaultValue: false
+  })
+  enableLogging: boolean = false;
+
+  @Property({
+    type: 'number',
+    label: 'Timeout (ms)',
+    defaultValue: 30000,
+    min: 1000,
+    max: 120000
+  })
+  timeout: number = 30000;
+
+  @Property({
+    type: 'number',
+    label: 'Retry Count',
+    defaultValue: 3,
+    min: 0,
+    max: 10
+  })
+  retryCount: number = 3;
+}
+
+// Child inherits all properties
+@defineNode({
+  type: 'api.users',
+  label: 'Fetch Users',
+  category: 'API'
+})
+class FetchUsersNode extends BaseApiNode {
+  // Inherits: enableLogging, timeout, retryCount
+
+  @Property({
+    type: 'string',
+    label: 'Endpoint',
+    defaultValue: '/users'
+  })
+  endpoint: string = '/users';
+
+  @Output({ type: 'any[]', label: 'Users' })
+  users: any[];
+
+  async execute() {
+    if (this.enableLogging) {
+      console.log(`Fetching from ${this.endpoint}`);
+    }
+
+    // Use inherited properties
+    const response = await this.fetchWithRetry(
+      this.endpoint,
+      this.timeout,
+      this.retryCount
+    );
+
+    this.users = response.data;
+  }
+}
+```
+
+## Complex Property Examples
+
+### Configuration Node
+
+```typescript
+@defineNode({
+  type: 'config.settings',
+  label: 'Configuration',
+  category: 'Config'
+})
+class ConfigNode extends Node {
+  @Property({
+    type: 'string',
+    label: 'Environment',
+    defaultValue: 'development'
+  })
+  environment: string = 'development';
+
+  @Property({
+    type: 'boolean',
+    label: 'Debug Mode',
+    defaultValue: false
+  })
+  debugMode: boolean = false;
+
+  @Property({
+    type: 'number',
+    label: 'Max Connections',
+    defaultValue: 10,
+    min: 1,
+    max: 100
+  })
+  maxConnections: number = 10;
+
+  @Property({
+    type: 'select',
+    label: 'Log Level',
+    defaultValue: 'info',
+    options: [
+      { value: 'debug', label: 'Debug' },
+      { value: 'info', label: 'Info' },
+      { value: 'warn', label: 'Warning' },
+      { value: 'error', label: 'Error' }
+    ]
+  })
+  logLevel: string = 'info';
+
+  @Output({ type: 'any', label: 'Config' })
+  config: any;
+
+  execute() {
+    this.config = {
+      environment: this.environment,
+      debugMode: this.debugMode,
+      maxConnections: this.maxConnections,
+      logLevel: this.logLevel
+    };
+  }
+}
+```
+
+### HTTP Client Node
+
+```typescript
+@defineNode({
+  type: 'http.client',
+  label: 'HTTP Client',
+  category: 'Network'
+})
+class HttpClientNode extends Node {
+  @Property({
+    type: 'string',
+    label: 'Base URL',
+    defaultValue: 'https://api.example.com',
+    required: true
+  })
+  baseUrl: string = '';
+
+  @Property({
+    type: 'select',
+    label: 'Method',
+    defaultValue: 'GET',
+    options: [
+      { value: 'GET', label: 'GET' },
+      { value: 'POST', label: 'POST' },
+      { value: 'PUT', label: 'PUT' },
+      { value: 'PATCH', label: 'PATCH' },
+      { value: 'DELETE', label: 'DELETE' }
+    ]
+  })
+  method: string = 'GET';
+
+  @Property({
+    type: 'number',
+    label: 'Timeout (seconds)',
+    defaultValue: 30,
+    min: 1,
+    max: 300
+  })
+  timeout: number = 30;
+
+  @Property({
+    type: 'boolean',
+    label: 'Follow Redirects',
+    defaultValue: true
+  })
+  followRedirects: boolean = true;
+
+  @Property({
+    type: 'boolean',
+    label: 'Verify SSL',
+    defaultValue: true
+  })
+  verifySSL: boolean = true;
+
+  @Input({ type: 'string', label: 'Path' })
+  path: string = '';
+
+  @Input({ type: 'any', label: 'Body', required: false })
+  body?: any;
+
+  @Output({ type: 'any', label: 'Response' })
+  response: any;
+
+  @Output({ type: 'number', label: 'Status Code' })
+  statusCode: number;
+
+  async execute() {
+    const url = `${this.baseUrl}${this.path}`;
+    
+    const controller = new AbortController();
+    const timeoutMs = this.timeout * 1000;
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const res = await fetch(url, {
+        method: this.method,
+        body: this.body ? JSON.stringify(this.body) : undefined,
+        headers: this.body ? { 'Content-Type': 'application/json' } : {},
+        signal: controller.signal,
+        redirect: this.followRedirects ? 'follow' : 'manual'
+      });
+
+      this.statusCode = res.status;
+      this.response = await res.json();
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+```
+
+## Property Validation
+
+Validate properties in the execute method:
+
+```typescript
+execute() {
+  // Validate required properties
+  if (!this.apiUrl) {
+    throw new Error('API URL is required');
+  }
+
+  // Validate format
+  if (!this.apiUrl.startsWith('http')) {
+    throw new Error('API URL must start with http:// or https://');
+  }
+
+  // Validate ranges
+  if (this.timeout < 1 || this.timeout > 300) {
+    throw new Error('Timeout must be between 1 and 300 seconds');
+  }
+
+  // Proceed with execution
+  this.result = await this.callApi(this.apiUrl);
+}
+```
+
+## UI Integration
+
+Properties appear in the PropertyPanel component:
+
+```tsx
+import { PropertyPanel } from '@reactflo/react';
+
+<PropertyPanel
+  node={selectedNode}
+  onChange={(propertyName, value) => {
+    // Update property value
+    selectedNode[propertyName] = value;
+  }}
+/>
+```
+
+The PropertyPanel automatically renders appropriate controls:
+- Text input for `string`
+- Number spinner for `number`
+- Checkbox for `boolean`
+- Dropdown for `select`
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use Sensible Defaults" icon="sliders">
+    Always provide default values that work out of the box.
+  </Accordion>
+
+  <Accordion title="Add Descriptions" icon="book">
+    Include description fields to help users understand each property.
+  </Accordion>
+
+  <Accordion title="Set Constraints" icon="ruler">
+    Use min/max/step for numbers to prevent invalid values.
+  </Accordion>
+
+  <Accordion title="Group Related Properties" icon="layer-group">
+    Use base classes to group common properties (logging, timeouts, etc.).
+  </Accordion>
+
+  <Accordion title="Validate in Execute" icon="shield-check">
+    Always validate property values before using them.
+  </Accordion>
+</AccordionGroup>
+
+## Common Patterns
+
+### API Configuration
+
+```typescript
+class BaseApiNode extends Node {
+  @Property({ type: 'string', label: 'API Key', required: true })
+  apiKey: string = '';
+
+  @Property({ type: 'string', label: 'Base URL', defaultValue: 'https://api.example.com' })
+  baseUrl: string = 'https://api.example.com';
+
+  @Property({ type: 'number', label: 'Timeout', defaultValue: 30, min: 1, max: 300 })
+  timeout: number = 30;
+}
+```
+
+### File Operations
+
+```typescript
+@Property({
+  type: 'select',
+  label: 'Encoding',
+  defaultValue: 'utf-8',
+  options: [
+    { value: 'utf-8', label: 'UTF-8' },
+    { value: 'ascii', label: 'ASCII' },
+    { value: 'base64', label: 'Base64' }
+  ]
+})
+encoding: string = 'utf-8';
+```
+
+### Data Processing
+
+```typescript
+@Property({
+  type: 'number',
+  label: 'Batch Size',
+  defaultValue: 100,
+  min: 1,
+  max: 10000,
+  step: 100
+})
+batchSize: number = 100;
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Decorators"
+    icon="at"
+    href="/core-concepts/decorators"
+  >
+    Learn about all decorators
+  </Card>
+  <Card
+    title="Inheritance"
+    icon="sitemap"
+    href="/advanced/inheritance"
+  >
+    Property inheritance patterns
+  </Card>
+  <Card
+    title="Creating Custom Nodes"
+    icon="hammer"
+    href="/guides/creating-custom-nodes"
+  >
+    Build nodes with properties
+  </Card>
+  <Card
+    title="Decorators API"
+    icon="code"
+    href="/api-reference/core/decorators"
+  >
+    Complete API reference
+  </Card>
+</CardGroup>

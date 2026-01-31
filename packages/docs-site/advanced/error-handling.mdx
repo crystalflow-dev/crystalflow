@@ -1,0 +1,522 @@
+---
+title: "Error Handling"
+description: "Handle errors gracefully in ReactFlo workflows"
+---
+
+ReactFlo provides a comprehensive error handling system with typed exceptions and detailed error context.
+
+## Error Types
+
+ReactFlo includes several specialized error types:
+
+<CardGroup cols={2}>
+  <Card title="ExecutionError" icon="triangle-exclamation">
+    Base class for all execution errors
+  </Card>
+  <Card title="NodeExecutionError" icon="cube">
+    Errors during node execution
+  </Card>
+  <Card title="ValidationError" icon="shield-check">
+    Workflow validation failures
+  </Card>
+  <Card title="TimeoutError" icon="clock">
+    Execution timeout exceeded
+  </Card>
+  <Card title="CancellationError" icon="stop">
+    Execution was cancelled
+  </Card>
+  <Card title="UserCancelledError" icon="user">
+    User-initiated cancellation
+  </Card>
+</CardGroup>
+
+## Basic Error Handling
+
+```typescript
+import { Executor, ExecutionError } from '@reactflo/core';
+
+try {
+  const result = await executor.execute(workflow);
+  console.log('Success:', result);
+} catch (error) {
+  if (error instanceof ExecutionError) {
+    console.error('Execution failed:', error.message);
+    console.error('Execution ID:', error.executionId);
+    console.error('Workflow ID:', error.workflowId);
+  } else {
+    console.error('Unexpected error:', error);
+  }
+}
+```
+
+## Node Execution Errors
+
+When a node fails, a `NodeExecutionError` is thrown with detailed context:
+
+```typescript
+import { NodeExecutionError } from '@reactflo/core';
+
+try {
+  const result = await executor.execute(workflow);
+} catch (error) {
+  if (error instanceof NodeExecutionError) {
+    console.error('Node failed:', {
+      nodeId: error.nodeId,
+      nodeType: error.nodeType,
+      executionId: error.executionId,
+      workflowId: error.workflowId,
+      cause: error.cause  // Original error
+    });
+  }
+}
+```
+
+### Error Properties
+
+<ParamField path="nodeId" type="string">
+  ID of the node that failed
+</ParamField>
+
+<ParamField path="nodeType" type="string">
+  Type of the node (e.g., `'math.add'`)
+</ParamField>
+
+<ParamField path="executionId" type="string">
+  Unique execution identifier
+</ParamField>
+
+<ParamField path="workflowId" type="string">
+  Workflow identifier
+</ParamField>
+
+<ParamField path="cause" type="Error">
+  The original error that caused the failure
+</ParamField>
+
+## Validation Errors
+
+Thrown when workflow validation fails:
+
+```typescript
+import { ValidationError } from '@reactflo/core';
+
+try {
+  const result = await executor.execute(workflow);
+} catch (error) {
+  if (error instanceof ValidationError) {
+    console.error('Workflow validation failed:', error.message);
+    // Check specific validation issues
+    if (error.message.includes('cycle')) {
+      console.error('Workflow contains a circular dependency');
+    }
+  }
+}
+```
+
+## Timeout Errors
+
+Thrown when execution exceeds the timeout limit:
+
+```typescript
+import { TimeoutError } from '@reactflo/core';
+
+try {
+  const result = await executor.execute(workflow, {
+    timeout: 30000  // 30 seconds
+  });
+} catch (error) {
+  if (error instanceof TimeoutError) {
+    console.error(`Execution timed out after ${error.timeout}ms`);
+    console.error(`Execution ID: ${error.executionId}`);
+  }
+}
+```
+
+## Cancellation Errors
+
+Thrown when execution is cancelled:
+
+```typescript
+import { UserCancelledError, CancellationError } from '@reactflo/core';
+
+try {
+  const result = await executor.execute(workflow);
+} catch (error) {
+  if (error instanceof UserCancelledError) {
+    console.log('User cancelled execution');
+    console.log('Reason:', error.reason);
+  } else if (error instanceof CancellationError) {
+    console.log('Execution was cancelled');
+    console.log('Reason:', error.reason);
+  }
+}
+```
+
+## Error Events
+
+Listen to error events during execution:
+
+```typescript
+executor.on('onNodeError', (nodeId, error) => {
+  console.error(`Node ${nodeId} failed:`, error.message);
+  
+  // Send to error tracking service
+  sendToSentry({
+    nodeId,
+    error,
+    timestamp: new Date()
+  });
+});
+
+executor.on('onError', (error) => {
+  console.error('Workflow execution error:', error);
+  
+  // Notify user
+  notifyUser({
+    type: 'error',
+    message: 'Workflow execution failed',
+    details: error.message
+  });
+});
+```
+
+## Node-Level Error Handling
+
+Handle errors within individual nodes:
+
+```typescript
+@defineNode({
+  type: 'http.request',
+  label: 'HTTP Request',
+  category: 'Network'
+})
+class HttpRequestNode extends Node {
+  @Property({ type: 'string', label: 'URL', required: true })
+  url: string = '';
+
+  @Output({ type: 'any', label: 'Response' })
+  response: any;
+
+  @Output({ type: 'string', label: 'Error', required: false })
+  error?: string;
+
+  async execute() {
+    try {
+      const res = await fetch(this.url);
+      
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      
+      this.response = await res.json();
+    } catch (error) {
+      // Log the error
+      console.error(`Failed to fetch ${this.url}:`, error);
+      
+      // Set error output
+      this.error = error.message;
+      
+      // Re-throw to stop workflow execution
+      throw new Error(`HTTP request failed: ${error.message}`);
+    }
+  }
+}
+```
+
+## Validation in Nodes
+
+Validate inputs before execution:
+
+```typescript
+execute() {
+  // Validate required inputs
+  if (!this.url) {
+    throw new Error('URL is required');
+  }
+
+  // Validate format
+  try {
+    new URL(this.url);
+  } catch {
+    throw new Error('Invalid URL format');
+  }
+
+  // Validate value ranges
+  if (this.timeout < 1000 || this.timeout > 300000) {
+    throw new Error('Timeout must be between 1 and 300 seconds');
+  }
+
+  // Validate data types
+  if (!Array.isArray(this.items)) {
+    throw new Error('Items must be an array');
+  }
+
+  // Proceed with execution
+  this.result = this.processData();
+}
+```
+
+## Graceful Degradation
+
+Continue execution with fallback values:
+
+```typescript
+async execute() {
+  try {
+    this.data = await this.fetchFromPrimarySource();
+  } catch (primaryError) {
+    console.warn('Primary source failed, trying fallback');
+    
+    try {
+      this.data = await this.fetchFromFallbackSource();
+    } catch (fallbackError) {
+      // Both failed - use default
+      console.error('All sources failed, using default data');
+      this.data = this.getDefaultData();
+    }
+  }
+}
+```
+
+## Error Recovery
+
+Implement retry logic with exponential backoff:
+
+```typescript
+async execute() {
+  const maxRetries = 3;
+  let lastError: Error;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      this.result = await this.fetchData();
+      return;  // Success!
+    } catch (error) {
+      lastError = error;
+      console.warn(`Attempt ${attempt} failed:`, error.message);
+      
+      if (attempt < maxRetries) {
+        // Exponential backoff: 1s, 2s, 4s
+        const delay = 1000 * Math.pow(2, attempt - 1);
+        console.log(`Retrying in ${delay}ms...`);
+        await this.sleep(delay);
+      }
+    }
+  }
+
+  // All retries failed
+  throw new Error(`Failed after ${maxRetries} attempts: ${lastError.message}`);
+}
+
+private sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+```
+
+## Complete Error Handling Example
+
+```typescript
+import {
+  Executor,
+  ExecutionError,
+  NodeExecutionError,
+  ValidationError,
+  TimeoutError,
+  UserCancelledError
+} from '@reactflo/core';
+
+async function executeWorkflowWithErrorHandling(workflow) {
+  const executor = new Executor();
+  
+  // Set up error event listeners
+  executor.on('onNodeError', (nodeId, error) => {
+    console.error(`❌ Node ${nodeId} failed:`, error.message);
+    
+    // Log to error tracking service
+    logToErrorTracking({
+      level: 'error',
+      nodeId,
+      error: error.message,
+      stack: error.stack
+    });
+  });
+  
+  executor.on('onError', (error) => {
+    console.error('❌ Workflow execution failed:', error.message);
+    
+    // Notify administrators
+    sendAdminNotification({
+      subject: 'Workflow Execution Failed',
+      body: error.message
+    });
+  });
+  
+  // Execute with comprehensive error handling
+  try {
+    const result = await executor.execute(workflow, {
+      timeout: 60000,
+      variables: { apiKey: process.env.API_KEY }
+    });
+    
+    if (result.status === 'success') {
+      console.log('✅ Workflow executed successfully');
+      return result;
+    }
+    
+  } catch (error) {
+    // Handle specific error types
+    if (error instanceof NodeExecutionError) {
+      console.error('Node execution failed:', {
+        node: error.nodeId,
+        type: error.nodeType,
+        message: error.message
+      });
+      
+      // Attempt recovery or fallback
+      return handleNodeFailure(error);
+      
+    } else if (error instanceof ValidationError) {
+      console.error('Workflow validation failed:', error.message);
+      
+      // Show validation errors to user
+      showValidationErrors(error);
+      
+    } else if (error instanceof TimeoutError) {
+      console.error(`Execution timed out after ${error.timeout}ms`);
+      
+      // Offer to retry with longer timeout
+      return promptRetryWithTimeout(workflow);
+      
+    } else if (error instanceof UserCancelledError) {
+      console.log('User cancelled the execution');
+      
+      // Clean up and notify
+      cleanupCancelledExecution(error.executionId);
+      
+    } else if (error instanceof ExecutionError) {
+      console.error('General execution error:', error.message);
+      
+    } else {
+      console.error('Unexpected error:', error);
+      throw error;  // Re-throw unknown errors
+    }
+  }
+}
+```
+
+## UI Error Display
+
+Show errors to users in React:
+
+```tsx
+import React, { useState } from 'react';
+import { Executor, NodeExecutionError } from '@reactflo/core';
+
+function WorkflowExecutor({ workflow }) {
+  const [error, setError] = useState(null);
+  const [nodeErrors, setNodeErrors] = useState({});
+  
+  const execute = async () => {
+    setError(null);
+    setNodeErrors({});
+    
+    const executor = new Executor();
+    
+    executor.on('onNodeError', (nodeId, error) => {
+      setNodeErrors(prev => ({
+        ...prev,
+        [nodeId]: error.message
+      }));
+    });
+    
+    try {
+      await executor.execute(workflow);
+    } catch (error) {
+      if (error instanceof NodeExecutionError) {
+        setError(`Node ${error.nodeId} failed: ${error.message}`);
+      } else {
+        setError(error.message);
+      }
+    }
+  };
+  
+  return (
+    <div>
+      <button onClick={execute}>Execute</button>
+      
+      {error && (
+        <div className="error-banner">
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+      
+      {Object.entries(nodeErrors).map(([nodeId, errorMsg]) => (
+        <div key={nodeId} className="node-error">
+          <strong>{nodeId}:</strong> {errorMsg}
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Always Catch Errors" icon="hand">
+    Wrap executor calls in try-catch blocks to handle failures gracefully.
+  </Accordion>
+
+  <Accordion title="Validate Early" icon="shield-check">
+    Validate inputs at the beginning of execute() to fail fast.
+  </Accordion>
+
+  <Accordion title="Provide Context" icon="circle-info">
+    Include helpful error messages with context about what failed and why.
+  </Accordion>
+
+  <Accordion title="Log Appropriately" icon="file-lines">
+    Log errors with enough detail for debugging but not sensitive data.
+  </Accordion>
+
+  <Accordion title="Use Specific Error Types" icon="sitemap">
+    Check for specific error types to handle different scenarios appropriately.
+  </Accordion>
+
+  <Accordion title="Clean Up Resources" icon="broom">
+    Always clean up resources (connections, timers) in finally blocks.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Execution & Events"
+    icon="bolt"
+    href="/guides/execution-and-events"
+  >
+    Master the event system
+  </Card>
+  <Card
+    title="Cancellation"
+    icon="stop"
+    href="/advanced/cancellation"
+  >
+    Cancel long-running executions
+  </Card>
+  <Card
+    title="Executor API"
+    icon="code"
+    href="/api-reference/core/executor"
+  >
+    Complete Executor reference
+  </Card>
+  <Card
+    title="Node API"
+    icon="cube"
+    href="/api-reference/core/node"
+  >
+    Node class reference
+  </Card>
+</CardGroup>

@@ -1,0 +1,469 @@
+---
+title: "Execution Engine"
+description: "Understanding how ReactFlo executes workflows"
+---
+
+The **Execution Engine** is responsible for running workflows, managing node execution, propagating data, and handling errors.
+
+## Overview
+
+ReactFlo's execution engine provides:
+
+<CardGroup cols={2}>
+  <Card title="Serial Execution" icon="list-ol">
+    Nodes execute sequentially in topological order
+  </Card>
+  <Card title="Event System" icon="bolt">
+    Comprehensive events for monitoring execution
+  </Card>
+  <Card title="Error Handling" icon="triangle-exclamation">
+    Graceful error handling with detailed context
+  </Card>
+  <Card title="Cancellation" icon="stop">
+    Support for cancelling long-running executions
+  </Card>
+</CardGroup>
+
+## The Executor
+
+The `Executor` class orchestrates workflow execution:
+
+```typescript
+import { Executor } from '@reactflo/core';
+
+const executor = new Executor();
+const result = await executor.execute(workflow);
+```
+
+### Execution Options
+
+```typescript
+const result = await executor.execute(workflow, {
+  timeout: 30000,                    // Timeout in milliseconds
+  variables: { apiKey: 'xxx' },      // Global variables
+  abortSignal: controller.signal     // Cancellation signal
+});
+```
+
+<ParamField path="timeout" type="number">
+  Maximum execution time in milliseconds (default: no timeout)
+</ParamField>
+
+<ParamField path="variables" type="Record<string, any>">
+  Global variables accessible to all nodes during execution
+</ParamField>
+
+<ParamField path="abortSignal" type="AbortSignal">
+  Optional AbortSignal for cancelling execution
+</ParamField>
+
+## Execution Flow
+
+The execution follows these steps:
+
+<Steps>
+  <Step title="Validation">
+    Workflow is validated (cycles, connections, required inputs)
+  </Step>
+  <Step title="Context Creation">
+    ExecutionContext is created with unique execution ID
+  </Step>
+  <Step title="Topological Sort">
+    Nodes are sorted into execution order
+  </Step>
+  <Step title="Sequential Execution">
+    Each node executes in order:
+    - Check for cancellation
+    - Transfer data from predecessors
+    - Validate inputs
+    - Execute node logic
+    - Store results
+  </Step>
+  <Step title="Result Collection">
+    All node results are collected and returned
+  </Step>
+</Steps>
+
+## Event System
+
+The Executor emits events throughout execution:
+
+### Before Execution
+
+```typescript
+executor.on('beforeExecute', (context) => {
+  console.log('Starting execution:', context.executionId);
+});
+```
+
+### Node Events
+
+```typescript
+executor.on('onNodeStart', (nodeId, node) => {
+  console.log(`Starting node ${nodeId} (${node.type})`);
+});
+
+executor.on('onNodeComplete', (nodeId, result) => {
+  console.log(`Node ${nodeId} completed:`, result.outputs);
+});
+
+executor.on('onNodeError', (nodeId, error) => {
+  console.error(`Node ${nodeId} failed:`, error.message);
+});
+```
+
+### After Execution
+
+```typescript
+executor.on('afterExecute', (result) => {
+  console.log('Execution complete:', result.status);
+  console.log('Duration:', result.duration, 'ms');
+});
+```
+
+### Error Events
+
+```typescript
+executor.on('onError', (error) => {
+  console.error('Workflow execution failed:', error);
+});
+```
+
+### Async Event Listeners
+
+All event listeners support async functions - the executor waits for them to complete:
+
+```typescript
+executor.on('onNodeComplete', async (nodeId, result) => {
+  // Executor waits for async operations
+  await saveToDatabase(result);
+  await sendWebhook(nodeId);
+  console.log('Node result processed');
+});
+```
+
+## Execution Result
+
+The executor returns an `ExecutionResult` object:
+
+```typescript
+interface ExecutionResult {
+  id: string;                                    // Unique execution ID
+  workflowId: string;                            // Workflow identifier
+  status: 'success' | 'failed' | 'cancelled';    // Execution status
+  startTime: Date;                               // When execution started
+  endTime?: Date;                                // When execution ended
+  duration?: number;                             // Duration in ms
+  nodeResults: Map<string, NodeExecutionResult>; // Results for each node
+  error?: Error;                                 // Error if failed
+  cancellationReason?: CancellationReason;       // Reason if cancelled
+  cancelledAt?: Date;                            // When cancelled
+}
+```
+
+### Using Results
+
+```typescript
+const result = await executor.execute(workflow);
+
+if (result.status === 'success') {
+  // Access node outputs
+  result.nodeResults.forEach((nodeResult, nodeId) => {
+    console.log(`${nodeId}:`, nodeResult.outputs);
+  });
+  
+  console.log('Total duration:', result.duration, 'ms');
+} else {
+  console.error('Execution failed:', result.error);
+}
+```
+
+## Data Propagation
+
+Data flows automatically between connected nodes:
+
+```typescript
+// Node 1 outputs: { result: 42 }
+// Connected to Node 2 input 'value'
+// Node 2 automatically receives: this.value = 42
+```
+
+### How It Works
+
+1. Source node executes and sets output values
+2. Executor identifies connections from source outputs
+3. Target node inputs are populated with output values
+4. Target node executes with received data
+
+## Error Handling
+
+The execution engine provides robust error handling:
+
+### Node Execution Errors
+
+```typescript
+import { NodeExecutionError } from '@reactflo/core';
+
+try {
+  const result = await executor.execute(workflow);
+} catch (error) {
+  if (error instanceof NodeExecutionError) {
+    console.error(`Node ${error.nodeId} (${error.nodeType}) failed`);
+    console.error('Execution ID:', error.executionId);
+    console.error('Workflow ID:', error.workflowId);
+    console.error('Cause:', error.cause);
+  }
+}
+```
+
+### Validation Errors
+
+```typescript
+import { ValidationError } from '@reactflo/core';
+
+try {
+  const result = await executor.execute(workflow);
+} catch (error) {
+  if (error instanceof ValidationError) {
+    console.error('Workflow validation failed:', error.message);
+  }
+}
+```
+
+### Timeout Errors
+
+```typescript
+import { TimeoutError } from '@reactflo/core';
+
+try {
+  const result = await executor.execute(workflow, { timeout: 5000 });
+} catch (error) {
+  if (error instanceof TimeoutError) {
+    console.error('Execution timed out after', error.timeout, 'ms');
+  }
+}
+```
+
+## Cancellation
+
+Workflows can be cancelled during execution:
+
+### User-Initiated Cancellation
+
+```typescript
+// Start execution
+const promise = executor.execute(workflow);
+
+// Cancel after 2 seconds
+setTimeout(() => {
+  executor.cancel(executionId, CancellationReason.UserCancelled);
+}, 2000);
+
+try {
+  await promise;
+} catch (error) {
+  if (error instanceof UserCancelledError) {
+    console.log('User cancelled execution');
+  }
+}
+```
+
+### External Signal Cancellation
+
+```typescript
+const controller = new AbortController();
+
+// Start execution
+const promise = executor.execute(workflow, {
+  abortSignal: controller.signal
+});
+
+// Cancel from external signal
+controller.abort();
+```
+
+### Timeout-Based Cancellation
+
+```typescript
+try {
+  const result = await executor.execute(workflow, {
+    timeout: 30000 // 30 seconds
+  });
+} catch (error) {
+  if (error instanceof TimeoutError) {
+    console.log('Execution timed out');
+  }
+}
+```
+
+### Mid-Node Cancellation
+
+Nodes can check for cancellation during long operations:
+
+```typescript
+class LongRunningNode extends Node {
+  async execute() {
+    for (let i = 0; i < 1000; i++) {
+      // Check if execution was cancelled
+      this.checkCancellation();
+      
+      await processItem(i);
+    }
+  }
+}
+```
+
+## Execution Context
+
+The `ExecutionContext` provides runtime information to nodes:
+
+```typescript
+class CustomNode extends Node {
+  execute() {
+    // Access execution context
+    const executionId = this.context.executionId;
+    const workflowId = this.context.workflowId;
+    const variables = this.context.variables;
+    
+    // Use context data
+    console.log(`Executing in ${executionId}`);
+  }
+}
+```
+
+### Context Properties
+
+<ParamField path="executionId" type="string">
+  Unique identifier for this execution
+</ParamField>
+
+<ParamField path="workflowId" type="string">
+  Identifier of the workflow being executed
+</ParamField>
+
+<ParamField path="variables" type="Record<string, any>">
+  Global variables passed to execution
+</ParamField>
+
+<ParamField path="startTime" type="Date">
+  When execution started
+</ParamField>
+
+## Performance Monitoring
+
+Track execution performance with timing data:
+
+```typescript
+const result = await executor.execute(workflow);
+
+console.log('Total execution time:', result.duration, 'ms');
+
+// Individual node timings
+result.nodeResults.forEach((nodeResult, nodeId) => {
+  console.log(`${nodeId}: ${nodeResult.duration}ms`);
+});
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Always Handle Errors" icon="triangle-exclamation">
+    Wrap execution in try-catch and handle different error types appropriately.
+  </Accordion>
+
+  <Accordion title="Set Reasonable Timeouts" icon="clock">
+    Use timeouts to prevent workflows from hanging indefinitely.
+  </Accordion>
+
+  <Accordion title="Monitor Execution Events" icon="eye">
+    Use events for logging, monitoring, and debugging execution flow.
+  </Accordion>
+
+  <Accordion title="Check Cancellation in Long Nodes" icon="stop">
+    For long-running nodes, periodically check for cancellation.
+  </Accordion>
+
+  <Accordion title="Use Variables for Configuration" icon="gear">
+    Pass runtime configuration through variables rather than hardcoding.
+  </Accordion>
+</AccordionGroup>
+
+## Example: Complete Execution
+
+```typescript
+import { Executor, CancellationReason } from '@reactflo/core';
+
+async function runWorkflow(workflow) {
+  const executor = new Executor();
+  
+  // Set up event listeners
+  executor.on('beforeExecute', (context) => {
+    console.log(`Starting execution ${context.executionId}`);
+  });
+  
+  executor.on('onNodeStart', (nodeId, node) => {
+    console.log(`Executing ${node.type}`);
+  });
+  
+  executor.on('onNodeComplete', async (nodeId, result) => {
+    // Async event handler - executor waits
+    await logToDatabase(nodeId, result);
+  });
+  
+  executor.on('afterExecute', (result) => {
+    console.log(`Completed in ${result.duration}ms`);
+  });
+  
+  // Execute with options
+  try {
+    const result = await executor.execute(workflow, {
+      timeout: 60000,
+      variables: {
+        apiKey: process.env.API_KEY,
+        environment: 'production'
+      }
+    });
+    
+    if (result.status === 'success') {
+      console.log('Workflow succeeded!');
+      return result;
+    }
+  } catch (error) {
+    console.error('Execution failed:', error);
+    throw error;
+  }
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Decorators"
+    icon="at"
+    href="/core-concepts/decorators"
+  >
+    Learn about decorator syntax
+  </Card>
+  <Card
+    title="Execution & Events Guide"
+    icon="bolt"
+    href="/guides/execution-and-events"
+  >
+    Master the event system
+  </Card>
+  <Card
+    title="Cancellation"
+    icon="stop"
+    href="/advanced/cancellation"
+  >
+    Advanced cancellation patterns
+  </Card>
+  <Card
+    title="Executor API"
+    icon="code"
+    href="/api-reference/core/executor"
+  >
+    Complete Executor API docs
+  </Card>
+</CardGroup>

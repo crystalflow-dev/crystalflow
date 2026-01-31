@@ -1,0 +1,417 @@
+---
+title: "Workflow Builder UI"
+description: "Build visual workflow interfaces with React"
+---
+
+The ReactFlo React package provides components to create visual workflow builder interfaces powered by React Flow.
+
+## Overview
+
+The `@reactflo/react` package includes:
+
+<CardGroup cols={2}>
+  <Card title="WorkflowBuilder" icon="diagram-project">
+    Complete workflow editor component
+  </Card>
+  <Card title="Custom Hooks" icon="hook">
+    React hooks for workflow management
+  </Card>
+  <Card title="Node Components" icon="cube">
+    Customizable node renderers
+  </Card>
+  <Card title="Panels & Controls" icon="sliders">
+    Property panels and toolbars
+  </Card>
+</CardGroup>
+
+## Installation
+
+```bash
+npm install @reactflo/react @reactflo/core reflect-metadata react react-dom
+```
+
+## Basic Usage
+
+```tsx App.tsx
+import React from 'react';
+import { WorkflowBuilder } from '@reactflo/react';
+import { AddNode, MultiplyNode } from './nodes';
+
+function App() {
+  return (
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <WorkflowBuilder
+        nodes={[AddNode, MultiplyNode]}
+        onWorkflowChange={(workflow) => {
+          console.log('Workflow updated:', workflow);
+        }}
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+## WorkflowBuilder Props
+
+<ParamField path="nodes" type="NodeClass[]" required>
+  Array of node classes to make available in the palette
+</ParamField>
+
+<ParamField path="initialWorkflow" type="Workflow">
+  Optional initial workflow to load
+</ParamField>
+
+<ParamField path="onWorkflowChange" type="(workflow: Workflow) => void">
+  Callback when workflow changes
+</ParamField>
+
+<ParamField path="onExecute" type="(result: ExecutionResult) => void">
+  Callback when workflow executes
+</ParamField>
+
+<ParamField path="showToolbar" type="boolean" default="true">
+  Show/hide the toolbar
+</ParamField>
+
+<ParamField path="showNodePalette" type="boolean" default="true">
+  Show/hide the node palette
+</ParamField>
+
+<ParamField path="showPropertyPanel" type="boolean" default="true">
+  Show/hide the property panel
+</ParamField>
+
+## Complete Example
+
+```tsx
+import React, { useState } from 'react';
+import { WorkflowBuilder } from '@reactflo/react';
+import { 
+  NumberInputNode,
+  AddNode,
+  MultiplyNode,
+  DisplayNode 
+} from './nodes';
+
+function App() {
+  const [workflow, setWorkflow] = useState(null);
+
+  return (
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <WorkflowBuilder
+        nodes={[
+          NumberInputNode,
+          AddNode,
+          MultiplyNode,
+          DisplayNode
+        ]}
+        onWorkflowChange={(wf) => {
+          setWorkflow(wf);
+          console.log('Workflow updated');
+        }}
+        onExecute={(result) => {
+          console.log('Execution result:', result);
+          if (result.status === 'success') {
+            alert('Workflow executed successfully!');
+          } else {
+            alert(`Execution failed: ${result.error?.message}`);
+          }
+        }}
+        showToolbar={true}
+        showNodePalette={true}
+        showPropertyPanel={true}
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+## Using Custom Hooks
+
+For more control, use the underlying hooks:
+
+```tsx
+import React from 'react';
+import { 
+  useWorkflow, 
+  useNodeRegistry,
+  useExecution 
+} from '@reactflo/react';
+
+function CustomWorkflowEditor() {
+  const { workflow, addNode, removeNode, connect } = useWorkflow();
+  const { registry } = useNodeRegistry([AddNode, MultiplyNode]);
+  const { execute, isExecuting, result } = useExecution();
+
+  const handleAddNode = (nodeType: string) => {
+    addNode(nodeType, {
+      position: { x: 100, y: 100 }
+    });
+  };
+
+  const handleExecute = async () => {
+    const executionResult = await execute(workflow);
+    console.log('Result:', executionResult);
+  };
+
+  return (
+    <div>
+      <button onClick={() => handleAddNode('math.add')}>
+        Add Math Node
+      </button>
+      <button onClick={handleExecute} disabled={isExecuting}>
+        {isExecuting ? 'Executing...' : 'Execute Workflow'}
+      </button>
+      {/* Render workflow canvas */}
+    </div>
+  );
+}
+```
+
+## Node Palette
+
+The node palette allows users to drag and drop nodes:
+
+```tsx
+import { NodePalette } from '@reactflo/react';
+
+<NodePalette
+  nodes={[AddNode, MultiplyNode]}
+  onNodeDrop={(nodeType, position) => {
+    workflow.addNodeByType(nodeType, { position });
+  }}
+/>
+```
+
+## Property Panel
+
+The property panel displays node properties and inputs:
+
+```tsx
+import { PropertyPanel } from '@reactflo/react';
+
+<PropertyPanel
+  node={selectedNode}
+  onChange={(propertyName, value) => {
+    selectedNode.setInputValue(propertyName, value);
+  }}
+/>
+```
+
+## Toolbar Actions
+
+<Warning>
+  **Work in Progress:** Some toolbar features are still under development.
+</Warning>
+
+```tsx
+import { Toolbar } from '@reactflo/react';
+
+<Toolbar
+  onSave={() => {
+    const json = serializeWorkflow(workflow.toJSON());
+    // Save to file/API
+  }}
+  onLoad={() => {
+    // Load from file/API
+  }}
+  onExecute={() => {
+    // Execute workflow
+  }}
+  onClear={() => {
+    // Clear workflow
+  }}
+/>
+```
+
+## Customizing Appearance
+
+### Custom Node Renderer
+
+```tsx
+import { CustomNode } from '@reactflo/react';
+
+<WorkflowBuilder
+  nodeRenderer={(node) => (
+    <CustomNode
+      node={node}
+      className="my-custom-node"
+      style={{
+        background: '#f0f0f0',
+        border: '2px solid #333'
+      }}
+    />
+  )}
+  nodes={[AddNode]}
+/>
+```
+
+### Styling
+
+```css styles.css
+.reactflo-node {
+  background: white;
+  border: 2px solid #3b82f6;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.reactflo-node-header {
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.reactflo-input-handle {
+  background: #10b981;
+}
+
+.reactflo-output-handle {
+  background: #ef4444;
+}
+```
+
+## React Flow Integration
+
+WorkflowBuilder is built on React Flow. Access React Flow features:
+
+```tsx
+import { ReactFlowProvider } from 'reactflow';
+import { WorkflowBuilder } from '@reactflo/react';
+
+<ReactFlowProvider>
+  <WorkflowBuilder nodes={[AddNode]} />
+</ReactFlowProvider>
+```
+
+## Event Handling
+
+Handle workflow events:
+
+```tsx
+<WorkflowBuilder
+  nodes={[AddNode]}
+  onNodeAdd={(node) => console.log('Node added:', node)}
+  onNodeRemove={(nodeId) => console.log('Node removed:', nodeId)}
+  onConnectionCreate={(conn) => console.log('Connected:', conn)}
+  onConnectionRemove={(conn) => console.log('Disconnected:', conn)}
+  onNodeSelect={(node) => console.log('Node selected:', node)}
+/>
+```
+
+## Keyboard Shortcuts
+
+<Warning>
+  **Work in Progress:** Keyboard shortcuts are planned for a future release.
+</Warning>
+
+Planned keyboard shortcuts:
+- `Delete` - Remove selected nodes
+- `Ctrl/Cmd + Z` - Undo
+- `Ctrl/Cmd + Shift + Z` - Redo
+- `Ctrl/Cmd + S` - Save workflow
+- `Ctrl/Cmd + E` - Execute workflow
+
+## Persistence
+
+Save and load workflows:
+
+```tsx
+import { serializeWorkflow, deserializeWorkflow } from '@reactflo/core';
+
+// Save
+const saveWorkflow = () => {
+  const json = serializeWorkflow(workflow.toJSON());
+  localStorage.setItem('workflow', json);
+};
+
+// Load
+const loadWorkflow = () => {
+  const json = localStorage.getItem('workflow');
+  if (json) {
+    const workflowData = deserializeWorkflow(json);
+    const loadedWorkflow = Workflow.fromJSON(workflowData);
+    // Set workflow in UI
+  }
+};
+```
+
+## Monaco Editor Integration
+
+<Warning>
+  **Work in Progress:** Monaco JSON editor integration is under development for dual-mode editing (visual + code).
+</Warning>
+
+Planned features:
+- Side-by-side visual and JSON editing
+- Real-time sync between modes
+- JSON schema validation
+- Syntax highlighting
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Provide Clear Node Labels" icon="tag">
+    Use descriptive labels and categories to help users find nodes.
+  </Accordion>
+
+  <Accordion title="Handle Errors Gracefully" icon="triangle-exclamation">
+    Show user-friendly error messages when execution fails.
+  </Accordion>
+
+  <Accordion title="Auto-Save Workflows" icon="floppy-disk">
+    Implement auto-save to prevent data loss.
+  </Accordion>
+
+  <Accordion title="Validate Before Execute" icon="shield-check">
+    Validate workflows before execution and show validation errors.
+  </Accordion>
+
+  <Accordion title="Provide Visual Feedback" icon="eye">
+    Show execution progress and node states during workflow execution.
+  </Accordion>
+</AccordionGroup>
+
+## Example Projects
+
+Check out complete example projects in the repository:
+
+- **Simple Math Workflow** - Basic arithmetic operations
+- **Data Processing Pipeline** - Fetch, filter, transform data
+- **API Integration** - HTTP requests and response handling
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="WorkflowBuilder API"
+    icon="code"
+    href="/api-reference/react/workflow-builder"
+  >
+    Complete WorkflowBuilder reference
+  </Card>
+  <Card
+    title="React Hooks"
+    icon="hook"
+    href="/api-reference/react/hooks"
+  >
+    All available React hooks
+  </Card>
+  <Card
+    title="Component API"
+    icon="cube"
+    href="/api-reference/react/components"
+  >
+    Individual component docs
+  </Card>
+  <Card
+    title="Examples"
+    icon="code-simple"
+    href="/examples/basic-math"
+  >
+    View complete examples
+  </Card>
+</CardGroup>

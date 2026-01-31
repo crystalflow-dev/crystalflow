@@ -1,0 +1,359 @@
+---
+title: "Decorators"
+description: "Decorator API reference"
+---
+
+ReactFlo uses TypeScript decorators to define nodes, inputs, outputs, and properties.
+
+<Info>
+  Requires `experimentalDecorators: true` in your `tsconfig.json`.
+</Info>
+
+## @defineNode
+
+Define a node type with metadata.
+
+```typescript
+@defineNode(metadata: NodeMetadata)
+```
+
+<ParamField path="metadata" type="NodeMetadata">
+  Node metadata configuration:
+  - `type: string` - Unique node type identifier
+  - `label: string` - Display name
+  - `category: string` - Category for grouping
+  - `description?: string` - Optional description
+</ParamField>
+
+**Example:**
+
+```typescript
+@defineNode({
+  type: 'math.add',
+  label: 'Add Numbers',
+  category: 'Math',
+  description: 'Adds two numbers together'
+})
+class AddNode extends Node {
+  // ...
+}
+```
+
+---
+
+## @Input
+
+Define an input port on a node.
+
+```typescript
+@Input(config: InputConfig)
+```
+
+<ParamField path="config" type="InputConfig">
+  Input configuration:
+  - `type: string` - Data type (`'string'`, `'number'`, `'boolean'`, `'any'`, etc.)
+  - `label: string` - Display label
+  - `required?: boolean` - Whether input is required (default: `true`)
+  - `defaultValue?: any` - Default value if not connected
+  - `description?: string` - Optional description
+</ParamField>
+
+**Example:**
+
+```typescript
+@Input({ type: 'number', label: 'First Number', required: true })
+a: number = 0;
+
+@Input({ type: 'string', label: 'Optional Text', required: false })
+text?: string;
+```
+
+---
+
+## @Output
+
+Define an output port on a node.
+
+```typescript
+@Output(config: OutputConfig)
+```
+
+<ParamField path="config" type="OutputConfig">
+  Output configuration:
+  - `type: string` - Data type
+  - `label: string` - Display label
+  - `description?: string` - Optional description
+</ParamField>
+
+**Example:**
+
+```typescript
+@Output({ type: 'number', label: 'Result' })
+result: number;
+
+@Output({ type: 'string', label: 'Message' })
+message: string;
+```
+
+---
+
+## @Property
+
+Define a static configuration property.
+
+```typescript
+@Property(config: PropertyConfig)
+```
+
+<ParamField path="config" type="PropertyConfig">
+  Property configuration:
+  - `type: 'string' | 'number' | 'boolean' | 'select'` - Property type
+  - `label: string` - Display label
+  - `defaultValue?: any` - Default value
+  - `required?: boolean` - Whether required
+  - `description?: string` - Optional description
+  
+  **For numbers:**
+  - `min?: number` - Minimum value
+  - `max?: number` - Maximum value
+  - `step?: number` - Increment step
+  
+  **For select:**
+  - `options: Array<{ value: string; label: string }>` - Dropdown options
+</ParamField>
+
+**Example:**
+
+```typescript
+@Property({
+  type: 'string',
+  label: 'API URL',
+  defaultValue: 'https://api.example.com',
+  required: true
+})
+url: string = 'https://api.example.com';
+
+@Property({
+  type: 'number',
+  label: 'Timeout (ms)',
+  defaultValue: 5000,
+  min: 1000,
+  max: 60000,
+  step: 1000
+})
+timeout: number = 5000;
+
+@Property({
+  type: 'select',
+  label: 'Method',
+  defaultValue: 'GET',
+  options: [
+    { value: 'GET', label: 'GET' },
+    { value: 'POST', label: 'POST' }
+  ]
+})
+method: string = 'GET';
+```
+
+## Property vs Input
+
+<CardGroup cols={2}>
+  <Card title="@Property" icon="sliders">
+    **Static configuration** - Set in property panel, not connected to other nodes.
+    Use for: URLs, timeouts, mode selection, formatting options.
+  </Card>
+  <Card title="@Input" icon="plug">
+    **Dynamic data flow** - Connected via handles to other node outputs.
+    Use for: Data processing, computed values, workflow results.
+  </Card>
+</CardGroup>
+
+**Example showing both:**
+
+```typescript
+@defineNode({
+  type: 'http.request',
+  label: 'HTTP Request',
+  category: 'HTTP'
+})
+class HttpRequestNode extends Node {
+  // Property: Static configuration
+  @Property({
+    type: 'string',
+    label: 'Base URL',
+    defaultValue: 'https://api.example.com'
+  })
+  baseUrl: string = 'https://api.example.com';
+
+  // Input: Dynamic data from another node
+  @Input({ type: 'string', label: 'Endpoint' })
+  endpoint: string = '';
+
+  @Output({ type: 'any', label: 'Response' })
+  response: any;
+
+  async execute() {
+    const url = `${this.baseUrl}${this.endpoint}`;
+    const res = await fetch(url);
+    this.response = await res.json();
+  }
+}
+```
+
+## Decorator Metadata
+
+All decorator metadata is stored using `reflect-metadata`:
+
+```typescript
+import 'reflect-metadata';
+
+// Get node metadata
+const metadata = Reflect.getMetadata('node:definition', NodeClass);
+
+// Get input metadata
+const inputs = Reflect.getMetadata('node:inputs', NodeClass.prototype);
+
+// Get output metadata
+const outputs = Reflect.getMetadata('node:outputs', NodeClass.prototype);
+
+// Get property metadata
+const properties = Reflect.getMetadata('node:properties', NodeClass.prototype);
+```
+
+## Inheritance
+
+Decorators support inheritance:
+
+```typescript
+class BaseNode extends Node {
+  @Property({ type: 'boolean', label: 'Enable Logging' })
+  enableLogging: boolean = false;
+}
+
+@defineNode({ type: 'custom.node', label: 'Custom' })
+class CustomNode extends BaseNode {
+  // Inherits enableLogging property automatically
+  
+  @Input({ type: 'string', label: 'Data' })
+  data: string = '';
+}
+```
+
+## TypeScript Configuration
+
+Add to your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "ES2020",
+    "lib": ["ES2020"]
+  }
+}
+```
+
+## Complete Example
+
+```typescript
+import { Node, defineNode, Input, Output, Property } from '@reactflo/core';
+
+@defineNode({
+  type: 'text.format',
+  label: 'Format Text',
+  category: 'Text',
+  description: 'Formats text with various options'
+})
+class FormatTextNode extends Node {
+  // Properties: Static configuration
+  @Property({
+    type: 'select',
+    label: 'Case',
+    defaultValue: 'none',
+    options: [
+      { value: 'none', label: 'No Change' },
+      { value: 'upper', label: 'UPPERCASE' },
+      { value: 'lower', label: 'lowercase' }
+    ]
+  })
+  caseStyle: string = 'none';
+
+  @Property({
+    type: 'boolean',
+    label: 'Trim Whitespace',
+    defaultValue: true
+  })
+  trim: boolean = true;
+
+  // Inputs: Dynamic data
+  @Input({ type: 'string', label: 'Text', required: true })
+  text: string = '';
+
+  @Input({ type: 'string', label: 'Prefix', required: false })
+  prefix?: string;
+
+  // Outputs: Results
+  @Output({ type: 'string', label: 'Formatted' })
+  formatted: string;
+
+  execute() {
+    let result = this.text;
+
+    // Apply prefix
+    if (this.prefix) {
+      result = this.prefix + result;
+    }
+
+    // Apply case
+    switch (this.caseStyle) {
+      case 'upper':
+        result = result.toUpperCase();
+        break;
+      case 'lower':
+        result = result.toLowerCase();
+        break;
+    }
+
+    // Apply trim
+    if (this.trim) {
+      result = result.trim();
+    }
+
+    this.formatted = result;
+  }
+}
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card
+    title="Creating Custom Nodes"
+    icon="wand-magic-sparkles"
+    href="/guides/creating-custom-nodes"
+  >
+    Learn to build nodes
+  </Card>
+  <Card
+    title="Property System"
+    icon="sliders"
+    href="/advanced/property-system"
+  >
+    Deep dive into properties
+  </Card>
+  <Card
+    title="Node API"
+    icon="cube"
+    href="/api-reference/core/node"
+  >
+    Node class reference
+  </Card>
+  <Card
+    title="Decorators Concept"
+    icon="at"
+    href="/core-concepts/decorators"
+  >
+    Understand decorators
+  </Card>
+</CardGroup>
