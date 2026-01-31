@@ -9,7 +9,13 @@
 import { ExecutionPlan } from './ExecutionPlan';
 import { ExecutionContext } from './ExecutionContext';
 import { Workflow } from '../workflow/Workflow';
-import { ExecutionStepType, CancellationReason } from '@reactflo/types';
+import {
+  ExecutionStepType,
+  CancellationReason,
+  NodeExecutionStep,
+  ExecutionPlanStep,
+  BaseExecutionStep,
+} from '@reactflo/types';
 import { ExecutionError, CancellationError, TimeoutError, UserCancelledError } from './errors';
 import type { Executor } from './Executor';
 
@@ -91,7 +97,7 @@ export class PlanExecutor {
    * Routes to the appropriate executor based on step type
    */
   private async executeStep(
-    step: any,
+    step: ExecutionPlanStep,
     workflow: Workflow,
     context: ExecutionContext,
     executor: Executor
@@ -129,7 +135,7 @@ export class PlanExecutor {
         });
 
       default:
-        throw new ExecutionError(`Unknown step type: ${(step as any).type}`, {
+        throw new ExecutionError(`Unknown step type: ${(step as BaseExecutionStep).type}`, {
           executionId: context.executionId,
           workflowId: context.workflowId,
         });
@@ -144,7 +150,7 @@ export class PlanExecutor {
    * Delegates to Executor's executeNode method
    */
   private async executeNodeStep(
-    step: any,
+    step: NodeExecutionStep,
     workflow: Workflow,
     context: ExecutionContext,
     executor: Executor
@@ -160,7 +166,7 @@ export class PlanExecutor {
     }
 
     // Delegate to Executor's executeNode method
-    await (executor as any).executeNode(node, workflow, context);
+    await executor.executeNode(node, workflow, context);
   }
 
   /**

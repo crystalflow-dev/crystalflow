@@ -29,6 +29,7 @@ import { PlanExecutor } from './PlanExecutor';
  * The executor will wait for all listeners to complete before continuing.
  */
 export interface ExecutorEvents {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: (...args: any[]) => void | Promise<void>;
   beforeExecute: (context: ExecutionContext) => void | Promise<void>;
   afterExecute: (result: ExecutionResult) => void | Promise<void>;
@@ -206,7 +207,7 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
   /**
    * Execute a single node
    */
-  private async executeNode(
+  public async executeNode(
     node: Node,
     workflow: Workflow,
     context: ExecutionContext

@@ -14,5 +14,10 @@ export { SubtractNode } from './math/SubtractNode';
 // Output nodes
 export { DisplayNode } from './output/DisplayNode';
 
+// Data nodes
+export { MockAPINode } from './data/MockAPINode';
+export { ExtractFieldNode } from './data/ExtractFieldNode';
+export { FormatTextNode } from './data/FormatTextNode';
+
 // Demo nodes
 export { ConfigDemoNode } from './ConfigDemoNode';

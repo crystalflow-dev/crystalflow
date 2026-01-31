@@ -18,6 +18,7 @@ Currently, ExecutionPlan enforces a single linear sequence at the top level, whi
 ## Complexity Levels
 
 ### Level 1: Simple Multiple Entry Points (Phase 1)
+
 All entry points converge at the same merge point.
 
 ```
@@ -27,15 +28,18 @@ Entry-3 → Process-3 ↗
 ```
 
 **Characteristics**:
+
 - All branches are independent
 - All branches merge at same node
 - No intermediate merges
 - **Solution**: Single virtual ParallelStep wrapper
 
 ### Level 2: Intermediate Merge Points (Phase 4)
+
 Entry branches merge at different points, creating nested parallelism.
 
 **Example 1: Sequential Merges**
+
 ```
 R → T ↘
          C → D → END
@@ -44,12 +48,14 @@ Y → I → M ↗
 ```
 
 Flow:
+
 - R→T and A→B run in parallel
 - T and B merge at C
 - C and M run in parallel (M started from Y entry point)
 - C and M merge at D
 
 **Example 2: All Parallel with Progressive Merge**
+
 ```
 R → T → X ↘
              D → END
@@ -58,18 +64,21 @@ Y → I → M → N ↗
 ```
 
 Flow:
+
 - All three branches (R→T→X, A→B→C, Y→I→M→N) start in parallel
 - First two branches (X and C) merge at D
 - Third branch (N) continues running during first merge
 - Merged result from X+C merges with N at END
 
 **Characteristics**:
+
 - Multiple merge points at different depths
 - Branches can merge while others continue
 - Requires dependency graph analysis
 - **Solution**: Dynamic parallel section detection with nested ParallelSteps
 
 ### Level 3: Complex DAG Patterns (Future)
+
 Arbitrary directed acyclic graphs with multiple splits and merges.
 
 ```
@@ -79,6 +88,7 @@ A →→│         F → END
 ```
 
 **Characteristics**:
+
 - One node splits into multiple branches
 - Multiple merge and split points
 - Requires full DAG analysis
@@ -89,7 +99,7 @@ A →→│         F → END
 ```typescript
 // ExecutionPlan is linear at top level
 const plan = [
-  { type: 'node-execution', nodeId: 'step-1' },  // Must be single entry
+  { type: 'node-execution', nodeId: 'step-1' }, // Must be single entry
   { type: 'node-execution', nodeId: 'step-2' },
   // ...
 ];
@@ -111,6 +121,7 @@ Workflow Graph:
 Handle only Level 1 complexity - all entry points merge at same location.
 
 **Implementation**:
+
 ```typescript
 // ExecutionPlanBuilder.build() - Phase 1
 const entryNodes = workflow.getEntryNodes();
@@ -118,56 +129,59 @@ const entryNodes = workflow.getEntryNodes();
 if (entryNodes.length > 1) {
   // Check if all paths converge at same point
   const commonMergePoint = findCommonMergePoint(entryNodes, workflow);
-  
+
   if (!commonMergePoint) {
     throw new Error(
       'Complex merge patterns not supported in Phase 1. ' +
-      'All entry point branches must converge at the same node.'
+        'All entry point branches must converge at the same node.'
     );
   }
-  
+
   // All merge at same point - simple virtual parallel
   const plan = [
     {
       type: 'parallel',
       id: '__virtual_entry_parallel__',
-      branches: entryNodes.map(nodeId => ({
+      branches: entryNodes.map((nodeId) => ({
         id: `entry-${nodeId}`,
-        steps: this.buildPathToMerge(nodeId, commonMergePoint, workflow)
+        steps: this.buildPathToMerge(nodeId, commonMergePoint, workflow),
       })),
-      mergeStrategy: 'all'
+      mergeStrategy: 'all',
     },
     {
       type: 'merge',
       id: '__virtual_entry_merge__',
-      branchIds: entryNodes.map(nodeId => `entry-${nodeId}`),
-      strategy: 'all'
+      branchIds: entryNodes.map((nodeId) => `entry-${nodeId}`),
+      strategy: 'all',
     },
     // Continue from merge point...
-    ...this.buildFromNode(commonMergePoint, workflow)
+    ...this.buildFromNode(commonMergePoint, workflow),
   ];
 }
 ```
 
 **Pros**:
+
 - ✅ Simple to implement and understand
 - ✅ Handles common use case (parallel data fetching)
 - ✅ Clear error messages for unsupported patterns
 - ✅ Can be implemented in Phase 1 timeline
 
 **Cons**:
+
 - ❌ Limited to simple merge patterns
 - ❌ Doesn't handle intermediate merges
 - ❌ Users must restructure complex workflows
 
 **Validation**: Detect and reject Level 2/3 patterns with helpful error:
+
 ```
 Error: Complex merge pattern detected in workflow.
   Entry branches merge at multiple points (C, D).
-  Phase 1 only supports workflows where all entry branches 
+  Phase 1 only supports workflows where all entry branches
   converge at a single merge point.
-  
-  Workaround: Restructure workflow to have all entry points 
+
+  Workaround: Restructure workflow to have all entry points
   merge at the same node, or wait for Phase 4 (Parallel Execution).
 ```
 
@@ -176,6 +190,7 @@ Error: Complex merge pattern detected in workflow.
 Handle Level 2 and Level 3 complexity - arbitrary parallel patterns.
 
 **Implementation** (Phase 4):
+
 ```typescript
 // ExecutionPlanBuilder.build() - Phase 4
 const plan = this.buildFromDependencyAnalysis(workflow);
@@ -190,32 +205,32 @@ const plan = this.buildFromDependencyAnalysis(workflow);
 function buildFromDependencyAnalysis(workflow: Workflow): ExecutionPlan {
   const levels = computeParallelLevels(workflow);
   const steps = [];
-  
+
   for (const level of levels) {
     if (level.nodes.length === 1) {
       // Single node - sequential execution
       steps.push({
         type: 'node-execution',
-        nodeId: level.nodes[0]
+        nodeId: level.nodes[0],
       });
     } else {
       // Multiple nodes - parallel execution
       steps.push({
         type: 'parallel',
-        branches: level.nodes.map(nodeId => ({
+        branches: level.nodes.map((nodeId) => ({
           id: `level-${level.index}-${nodeId}`,
-          steps: this.buildSubgraph(nodeId, level.mergePoint, workflow)
-        }))
+          steps: this.buildSubgraph(nodeId, level.mergePoint, workflow),
+        })),
       });
-      
+
       steps.push({
         type: 'merge',
-        branchIds: level.nodes.map(nodeId => `level-${level.index}-${nodeId}`),
-        strategy: 'all'
+        branchIds: level.nodes.map((nodeId) => `level-${level.index}-${nodeId}`),
+        strategy: 'all',
       });
     }
   }
-  
+
   return new ExecutionPlan(steps);
 }
 ```
@@ -242,6 +257,7 @@ function buildFromDependencyAnalysis(workflow: Workflow): ExecutionPlan {
    - Continue until all branches converge
 
 **Example: Level 2 Pattern**
+
 ```
 R → T ↘
          C → D → END
@@ -250,6 +266,7 @@ Y → I → M ↗
 ```
 
 **Execution Plan**:
+
 ```typescript
 [
   // Level 0: Entry nodes in parallel
@@ -258,10 +275,10 @@ Y → I → M ↗
     branches: [
       { id: 'branch-1', steps: [R, T] },
       { id: 'branch-2', steps: [A, B] },
-      { id: 'branch-3', steps: [Y, I, M] }
-    ]
+      { id: 'branch-3', steps: [Y, I, M] },
+    ],
   },
-  
+
   // Partial merge: T and B → C (M continues)
   {
     type: 'parallel',
@@ -270,35 +287,37 @@ Y → I → M ↗
         id: 'merged-1-2',
         steps: [
           { type: 'merge', branchIds: ['branch-1', 'branch-2'] },
-          { type: 'node-execution', nodeId: 'C' }
-        ]
+          { type: 'node-execution', nodeId: 'C' },
+        ],
       },
       {
         id: 'continuing-3',
-        steps: [] // M already executed, just wait
-      }
-    ]
+        steps: [], // M already executed, just wait
+      },
+    ],
   },
-  
+
   // Final merge: C and M → D
   {
     type: 'merge',
     branchIds: ['merged-1-2', 'continuing-3'],
-    strategy: 'all'
+    strategy: 'all',
   },
-  
+
   { type: 'node-execution', nodeId: 'D' },
-  { type: 'node-execution', nodeId: 'END' }
-]
+  { type: 'node-execution', nodeId: 'END' },
+];
 ```
 
 **Pros**:
+
 - ✅ Handles arbitrary parallel patterns
 - ✅ Optimal parallel execution
 - ✅ Maximum performance
 - ✅ Flexible for complex workflows
 
 **Cons**:
+
 - ❌ Complex algorithm implementation
 - ❌ Harder to debug and visualize
 - ❌ Requires extensive testing
@@ -309,6 +328,7 @@ Y → I → M ↗
 Wrap all entry points in an implicit ParallelStep at the beginning of the plan.
 
 **Implementation**:
+
 ```typescript
 // ExecutionPlanBuilder.build()
 const entryNodes = workflow.getEntryNodes(); // Nodes with no incoming edges
@@ -319,17 +339,17 @@ if (entryNodes.length > 1) {
     {
       type: 'parallel',
       id: '__virtual_entry_parallel__',
-      branches: entryNodes.map(nodeId => ({
+      branches: entryNodes.map((nodeId) => ({
         id: `entry-${nodeId}`,
-        steps: this.buildStepsForNode(nodeId, workflow, visited)
+        steps: this.buildStepsForNode(nodeId, workflow, visited),
       })),
-      mergeStrategy: 'all'
+      mergeStrategy: 'all',
     },
     {
       type: 'merge',
       id: '__virtual_entry_merge__',
-      branchIds: entryNodes.map(nodeId => `entry-${nodeId}`),
-      strategy: 'all'
+      branchIds: entryNodes.map((nodeId) => `entry-${nodeId}`),
+      strategy: 'all',
     },
     // Continue with rest of workflow...
   ];
@@ -340,6 +360,7 @@ if (entryNodes.length > 1) {
 ```
 
 **Pros**:
+
 - ✅ True parallel execution of independent entry paths
 - ✅ Natural representation of workflow structure
 - ✅ No special cases in PlanExecutor
@@ -347,6 +368,7 @@ if (entryNodes.length > 1) {
 - ✅ Transparent to users (virtual steps don't correspond to real nodes)
 
 **Cons**:
+
 - ❌ Adds virtual steps that don't correspond to user nodes
 - ❌ Slightly more complex debugging (need to identify virtual steps)
 
@@ -355,6 +377,7 @@ if (entryNodes.length > 1) {
 Execute entry points one by one in topological order.
 
 **Implementation**:
+
 ```typescript
 // ExecutionPlanBuilder.build()
 const entryNodes = workflow.getEntryNodes();
@@ -367,11 +390,13 @@ for (const nodeId of entryNodes) {
 ```
 
 **Pros**:
+
 - ✅ Simple implementation
 - ✅ No virtual steps
 - ✅ Predictable execution order
 
 **Cons**:
+
 - ❌ Loses parallelism opportunities (slower execution)
 - ❌ Not semantically correct (independent paths should be parallel)
 - ❌ Poor user experience for workflows designed for parallel entry
@@ -381,22 +406,25 @@ for (const nodeId of entryNodes) {
 Create a virtual "start" node that doesn't exist in the workflow.
 
 **Implementation**:
+
 ```typescript
 // Create virtual root
 const virtualRoot = {
   type: 'node-execution',
   id: '__virtual_root__',
   nodeId: '__virtual_root__',
-  nodeType: '__virtual__'
+  nodeType: '__virtual__',
 };
 
 // Connect it to all entry points somehow...
 ```
 
 **Pros**:
+
 - ✅ Makes all workflows have exactly one entry point
 
 **Cons**:
+
 - ❌ Virtual node pollutes the execution trace
 - ❌ Confusing for debugging (what is this node?)
 - ❌ Still need to handle connecting to multiple next nodes
@@ -409,6 +437,7 @@ const virtualRoot = {
 **Scope**: Level 1 complexity only
 
 **Tasks**:
+
 1. Detect entry nodes with no incoming connections
 2. Find common merge point (all branches converge at same node)
 3. If found: Generate virtual ParallelStep wrapper
@@ -417,12 +446,14 @@ const virtualRoot = {
 6. Validate all nodeIds reference existing workflow nodes
 
 **Testing**:
+
 - ✅ Single entry point (no wrapper needed)
 - ✅ Multiple entry points merging at same node
 - ✅ Error handling for intermediate merge patterns
 - ✅ Both parallel and sequential strategies
 
 **Deliverables**:
+
 - Basic ExecutionPlanBuilder with entry point handling
 - Clear error messages for unsupported patterns
 - Documentation of limitations
@@ -432,6 +463,7 @@ const virtualRoot = {
 **Scope**: Level 2 and Level 3 complexity
 
 **Tasks**:
+
 1. Implement topological sort with level assignment
 2. Implement merge point detection algorithm
 3. Implement parallel section identification
@@ -440,6 +472,7 @@ const virtualRoot = {
 6. Optimize execution order for maximum parallelism
 
 **Testing**:
+
 - ✅ Intermediate merge patterns (Example 1)
 - ✅ Progressive merge patterns (Example 2)
 - ✅ Complex DAG patterns with multiple splits/merges
@@ -447,6 +480,7 @@ const virtualRoot = {
 - ✅ Performance comparison with sequential execution
 
 **Deliverables**:
+
 - Full dependency graph analysis
 - Optimal parallel execution plans
 - Comprehensive test suite
@@ -531,6 +565,7 @@ Add metadata to virtual steps for debugging:
 ## Action Items
 
 ### Phase 1 (Week 1-2)
+
 - [x] Document multiple entry points requirement
 - [x] Document complexity levels and examples
 - [x] Define Phase 1 scope (simple patterns only)
@@ -542,6 +577,7 @@ Add metadata to virtual steps for debugging:
 - [ ] Document Phase 1 limitations in user-facing docs
 
 ### Phase 4 (Week 7-8)
+
 - [ ] Research optimal parallel execution algorithms
 - [ ] Implement topological sort with level detection
 - [ ] Implement merge point detection

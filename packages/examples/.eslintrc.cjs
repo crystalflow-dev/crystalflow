@@ -4,5 +4,6 @@ module.exports = {
   rules: {
     // Allow console statements in examples
     'no-console': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
   },
 };
