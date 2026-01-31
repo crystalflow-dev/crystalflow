@@ -1,12 +1,25 @@
+import dynamic from 'next/dynamic';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Features from '@/components/Features';
-import AIUseCases from '@/components/AIUseCases';
-import CodeExample from '@/components/CodeExample';
-import Roadmap from '@/components/Roadmap';
-import GettingStarted from '@/components/GettingStarted';
-import Contributors from '@/components/Contributors';
 import Footer from '@/components/Footer';
+
+// Lazy load heavy components with syntax highlighters
+const AIUseCases = dynamic(() => import('@/components/AIUseCases'), {
+  loading: () => <div className="py-32 bg-dark-grey" />,
+});
+const Roadmap = dynamic(() => import('@/components/Roadmap'), {
+  loading: () => <div className="py-32 bg-dark-grey" />,
+});
+const CodeExample = dynamic(() => import('@/components/CodeExample'), {
+  loading: () => <div className="py-32 bg-dark-grey" />,
+});
+const GettingStarted = dynamic(() => import('@/components/GettingStarted'), {
+  loading: () => <div className="py-32 bg-dark-grey" />,
+});
+const Contributors = dynamic(() => import('@/components/Contributors'), {
+  loading: () => <div className="py-32 bg-dark-grey" />,
+});
 
 export default function Home() {
   return (

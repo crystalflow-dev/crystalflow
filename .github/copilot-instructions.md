@@ -855,88 +855,103 @@ A future architectural enhancement to move workflow execution from client-side t
 ### Epic Breakdown
 
 **Story 1: API Design & Specification**
+
 - OpenAPI 3.0 specification for REST endpoints
 - WebSocket event protocol design
 - Authentication & authorization strategy
 - API versioning and error formats
 
 **Story 2: Server Package Foundation**
+
 - Create @reactflo/server package with Express/Fastify
 - Basic middleware setup (CORS, error handling, logging)
 - Environment configuration
 - Health check endpoints
 
 **Story 3: Workflow Management API**
+
 - REST endpoints for workflow CRUD operations
 - Input validation using JSON schema
 - Pagination and filtering for workflow lists
 
 **Story 4: Workflow Persistence Layer**
+
 - Database integration (PostgreSQL/MongoDB/SQLite)
 - Workflow and execution result schemas
 - Repository pattern implementation
 - Database migrations
 
 **Story 5: Execution API Endpoints**
+
 - Endpoints for workflow execution (execute, status, cancel, list)
 - Support for execution options (timeout, variables)
 - Persist execution results to database
 
 **Story 6: Execution Queue System**
+
 - Queue implementation (BullMQ or in-memory)
 - Priority levels and concurrency limits
 - Retry logic and dead letter queue
 - Graceful shutdown handling
 
 **Story 7: Real-Time Event Streaming**
+
 - WebSocket/SSE server for execution events
 - Authentication for WebSocket connections
 - Event buffering and reconnection handling
 - Stream onNodeStart, onNodeComplete, etc.
 
 **Story 8: Client SDK Implementation**
+
 - Create @reactflo/client package with HTTP and WebSocket clients
 - TypeScript types for all API responses
 - Retry logic with exponential backoff
 - Connection state management
 
 **Story 9: Adapter Pattern for React Package**
+
 - ExecutionAdapter interface (LocalExecutionAdapter, RemoteExecutionAdapter)
 - Update useExecution hook to use adapters
 - Configuration to switch between local/remote modes
 - Backward compatibility maintained
 
 **Story 10: Authentication & Authorization**
+
 - JWT-based authentication
 - API key authentication option
 - Role-based access control (RBAC)
 - Workflow ownership and permissions
 
 **Story 11: Error Handling & Monitoring**
+
 - Structured logging (JSON format)
 - Metrics collection (Prometheus format)
 - Health check endpoints
 - Performance monitoring and alerting
 
 **Story 12: Server Configuration & Deployment**
+
 - Docker support (Dockerfile, docker-compose)
 - Process management (PM2 or cluster mode)
 - Graceful shutdown and health checks
 - Example deployment configs (AWS, GCP, Azure)
 
 **Story 13: API Documentation**
+
 - OpenAPI specification published
 - Interactive API docs (Swagger UI)
 - Client SDK documentation with code examples
 - Migration guide from local to remote execution
 
 **Story 14: Integration & E2E Tests**
+
 - E2E tests for all workflows
 - Load testing (concurrent executions)
 - WebSocket connection tests
 - CI/CD pipeline integration
 
 **Story 15: Migration Tools & Backward Compatibility**
+
 - CLI tool to deploy workflows to server
 - Workflow export/import utilities
 - Local execution mode remains available

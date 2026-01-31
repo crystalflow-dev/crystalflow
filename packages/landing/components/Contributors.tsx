@@ -30,13 +30,13 @@ const contributionAreas = [
 
 export default function Contributors() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.3 });
+  const isInView = useInView(ref, { once: false, amount: 0.3 });
 
   return (
     <section
       id="contributors"
       ref={ref}
-      className="py-32 px-6 bg-dark-grey relative overflow-hidden"
+      className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-dark-grey relative overflow-hidden"
     >
       {/* Background gradient */}
       <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-secondary/5" />
@@ -47,10 +47,12 @@ export default function Contributors() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">Become an Early Contributor</h2>
-          <p className="text-xl text-light-grey max-w-3xl mx-auto mb-8">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 px-4">
+            Become an Early Contributor
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-light-grey max-w-3xl mx-auto mb-6 sm:mb-8 px-4">
             ReactFlo is open source and growing fast. Join us in building the future of workflow
             automation.
             <br />
@@ -65,7 +67,7 @@ export default function Contributors() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12"
         >
           {contributionAreas.map((area, index) => {
             const Icon = area.icon;
@@ -92,48 +94,48 @@ export default function Contributors() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="bg-black border border-light-grey/10 rounded-2xl p-8 md:p-12 text-center"
+          className="bg-black border border-light-grey/10 rounded-2xl p-6 sm:p-8 md:p-12 text-center"
         >
           <div className="max-w-2xl mx-auto">
-            <h3 className="text-3xl font-bold mb-4">Ready to Contribute?</h3>
-            <p className="text-light-grey mb-8">
+            <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Ready to Contribute?</h3>
+            <p className="text-sm sm:text-base text-light-grey mb-6 sm:mb-8">
               Whether you're fixing a typo or building a major feature, every contribution matters.
               Check out our contribution guidelines and start making an impact today.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <a
                 href="https://github.com/fladeed/reactflo"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:shadow-[0_0_30px_rgba(42,65,255,0.5)] transition-all duration-300 hover:scale-105"
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white font-semibold text-sm sm:text-base rounded-lg hover:shadow-[0_0_30px_rgba(42,65,255,0.5)] transition-all duration-300 hover:scale-105"
               >
-                <FaGithub className="text-xl" />
+                <FaGithub className="text-lg sm:text-xl" />
                 View on GitHub
               </a>
               <a
                 href="https://github.com/fladeed/reactflo/blob/main/CONTRIBUTING.md"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border border-light-grey/30 text-white font-semibold rounded-lg hover:border-primary transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-transparent border border-light-grey/30 text-white font-semibold text-sm sm:text-base rounded-lg hover:border-primary transition-all duration-300"
               >
                 Read Contributing Guide
               </a>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-light-grey/10">
+            <div className="grid grid-cols-3 gap-4 sm:gap-6 mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-light-grey/10">
               <div>
-                <p className="text-3xl font-bold text-primary mb-1">Open</p>
-                <p className="text-sm text-light-grey/60">Source</p>
+                <p className="text-2xl sm:text-3xl font-bold text-primary mb-1">Open</p>
+                <p className="text-xs sm:text-sm text-light-grey/60">Source</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-secondary mb-1">MIT</p>
-                <p className="text-sm text-light-grey/60">License</p>
+                <p className="text-2xl sm:text-3xl font-bold text-secondary mb-1">MIT</p>
+                <p className="text-xs sm:text-sm text-light-grey/60">License</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-primary mb-1">Active</p>
-                <p className="text-sm text-light-grey/60">Development</p>
+                <p className="text-2xl sm:text-3xl font-bold text-primary mb-1">Active</p>
+                <p className="text-xs sm:text-sm text-light-grey/60">Development</p>
               </div>
             </div>
           </div>

@@ -178,7 +178,7 @@ const StatusIcon = ({ status }: { status: Phase['status']; progress?: number }) 
 const PhaseCard = ({ phase, index }: { phase: Phase; index: number }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const isInView = useInView(ref, { once: false, margin: '-100px' });
 
   const isMVP = phase.id <= 4; // Phases 1-4 are MVP
 
@@ -291,7 +291,7 @@ const PhaseCard = ({ phase, index }: { phase: Phase; index: number }) => {
 
 export default function Roadmap() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const isInView = useInView(ref, { once: false, margin: '-100px' });
 
   const stats = {
     complete: phases.filter((p) => p.status === 'complete').length,
@@ -301,22 +301,28 @@ export default function Roadmap() {
   };
 
   return (
-    <section id="roadmap" ref={ref} className="py-32 px-6 bg-linear-to-b from-black to-dark-grey">
+    <section
+      id="roadmap"
+      ref={ref}
+      className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-linear-to-b from-black to-dark-grey"
+    >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-20"
+          className="text-center mb-12 sm:mb-16 md:mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">Development Roadmap</h2>
-          <p className="text-xl text-light-grey mb-8">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 px-4">
+            Development Roadmap
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-light-grey mb-6 sm:mb-8 px-4">
             Building the future of workflow automation, one phase at a time
           </p>
 
           {/* Stats */}
-          <div className="flex flex-wrap justify-center gap-6 text-sm">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-xs sm:text-sm px-4">
             <div className="flex items-center gap-2">
               <FaCheckCircle className="text-secondary" />
               <span className="text-light-grey">{stats.complete} Complete</span>
@@ -336,13 +342,13 @@ export default function Roadmap() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-8 inline-block"
+            className="mt-6 sm:mt-8 inline-block"
           >
-            <div className="px-6 py-3 bg-secondary/10 border border-secondary/30 rounded-full">
-              <div className="flex items-center gap-3">
-                <FaCheckCircle className="text-secondary text-xl" />
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 bg-secondary/10 border border-secondary/30 rounded-full">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <FaCheckCircle className="text-secondary text-lg sm:text-xl" />
                 <div>
-                  <p className="text-secondary font-bold text-sm">Core MVP Complete</p>
+                  <p className="text-secondary font-bold text-xs sm:text-sm">Core MVP Complete</p>
                   <p className="text-light-grey/60 text-xs">Phases 1-4 • Production Ready</p>
                 </div>
               </div>
@@ -351,7 +357,7 @@ export default function Roadmap() {
         </motion.div>
 
         {/* Timeline - Compact Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {phases.map((phase, index) => (
             <PhaseCard key={phase.id} phase={phase} index={index} />
           ))}
@@ -362,9 +368,9 @@ export default function Roadmap() {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ delay: 1 }}
-          className="mt-16 text-center"
+          className="mt-12 sm:mt-16 text-center px-4"
         >
-          <p className="text-sm text-light-grey/60">
+          <p className="text-xs sm:text-sm text-light-grey/60">
             Want to contribute? Check out our{' '}
             <a
               href="https://github.com/reactflo/reactflo"

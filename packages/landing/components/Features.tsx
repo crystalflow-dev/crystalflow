@@ -77,18 +77,24 @@ export default function Features() {
   const isInView = useInView(ref, { once: false, amount: 0.2 });
 
   return (
-    <section id="features" className="py-32 px-6 bg-linear-to-b from-black to-dark-grey" ref={ref}>
+    <section
+      id="features"
+      className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-linear-to-b from-black to-dark-grey"
+      ref={ref}
+    >
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-20"
+          className="text-center mb-12 sm:mb-16 md:mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">Perfect for AI & Automation</h2>
-          <p className="text-xl text-light-grey max-w-2xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 px-4">
+            Perfect for AI & Automation
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-light-grey max-w-2xl mx-auto px-4">
             Whether you're building AI agent platforms, no-code tools, or data pipelines—
-            <br />
+            <br className="hidden sm:block" />
             ReactFlo handles the complexity so you can ship faster.
           </p>
         </motion.div>
@@ -97,7 +103,7 @@ export default function Features() {
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
         >
           {features.map((feature, index) => {
             const Icon = feature.icon;
@@ -105,13 +111,15 @@ export default function Features() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="group relative p-8 bg-dark-grey border border-light-grey/10 rounded-2xl hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(42,65,255,0.2)]"
+                className="group relative p-6 sm:p-8 bg-dark-grey border border-light-grey/10 rounded-2xl hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(42,65,255,0.2)]"
               >
-                <div className="text-5xl mb-4 text-primary">
+                <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 text-primary">
                   <Icon />
                 </div>
-                <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-light-grey leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">{feature.title}</h3>
+                <p className="text-sm sm:text-base text-light-grey leading-relaxed">
+                  {feature.description}
+                </p>
 
                 {/* Hover effect gradient */}
                 <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none" />

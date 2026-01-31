@@ -58,27 +58,29 @@ const useCases = [
 
 export default function AIUseCases() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const isInView = useInView(ref, { once: false, margin: '-100px' });
 
   return (
-    <section id="use-cases" ref={ref} className="py-32 px-6 bg-dark-grey">
+    <section id="use-cases" ref={ref} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-dark-grey">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-20"
+          className="text-center mb-12 sm:mb-16 md:mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">What Can You Build?</h2>
-          <p className="text-xl text-light-grey max-w-3xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 px-4">
+            What Can You Build?
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-light-grey max-w-3xl mx-auto px-4">
             From AI automation platforms to no-code tools—ReactFlo powers the next generation of
             workflow applications
           </p>
         </motion.div>
 
         {/* Use cases grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {useCases.map((useCase, index) => {
             const Icon = useCase.icon;
             return (
@@ -87,7 +89,7 @@ export default function AIUseCases() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative bg-black border border-light-grey/10 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(42,65,255,0.2)]"
+                className="group relative bg-black border border-light-grey/10 rounded-2xl p-6 sm:p-8 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(42,65,255,0.2)]"
               >
                 {/* Gradient overlay on hover */}
                 <div
@@ -98,16 +100,18 @@ export default function AIUseCases() {
                 <div className="relative z-10">
                   {/* Icon */}
                   <div
-                    className={`inline-flex p-3 rounded-lg bg-linear-to-br ${useCase.color} mb-4`}
+                    className={`inline-flex p-2.5 sm:p-3 rounded-lg bg-linear-to-br ${useCase.color} mb-3 sm:mb-4`}
                   >
-                    <Icon className="w-6 h-6 text-white" />
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-2xl font-bold mb-3">{useCase.title}</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">{useCase.title}</h3>
 
                   {/* Description */}
-                  <p className="text-light-grey leading-relaxed mb-4">{useCase.description}</p>
+                  <p className="text-sm sm:text-base text-light-grey leading-relaxed mb-3 sm:mb-4">
+                    {useCase.description}
+                  </p>
 
                   {/* Examples */}
                   <div className="space-y-2">
@@ -132,15 +136,15 @@ export default function AIUseCases() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="text-center mt-16"
+          className="text-center mt-12 sm:mt-16 px-4"
         >
-          <p className="text-lg text-light-grey mb-6">
+          <p className="text-base sm:text-lg text-light-grey mb-4 sm:mb-6">
             Don't see your use case? ReactFlo is a framework—build{' '}
             <span className="text-primary font-semibold">anything</span>.
           </p>
           <a
             href="#getting-started"
-            className="inline-block px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:shadow-[0_0_30px_rgba(42,65,255,0.5)] transition-all duration-300 hover:scale-105"
+            className="inline-block px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white font-semibold text-base sm:text-lg rounded-lg hover:shadow-[0_0_30px_rgba(42,65,255,0.5)] transition-all duration-300 hover:scale-105"
           >
             Start Building
           </a>
