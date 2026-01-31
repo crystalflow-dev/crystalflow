@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { WorkflowBuilder } from '@reactflo/react';
-import { BackgroundVariant } from 'reactflow';
+import { BackgroundVariant } from '@xyflow/react';
 import './StyledWorkflow.css';
 
 // Import example nodes
