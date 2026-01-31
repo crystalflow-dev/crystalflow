@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
-import { Node as ReactFlowNode, Edge } from 'reactflow';
+import { Node as ReactFlowNode, Edge } from '@xyflow/react';
 import { Workflow } from '@reactflo/core';
+import { CustomNodeData } from '../components/Node/CustomNode';
 
 /**
  * Hook for workflow execution logic
@@ -8,32 +9,30 @@ import { Workflow } from '@reactflo/core';
 export function useWorkflowExecution() {
   const executeWorkflow = useCallback(async (nodes: ReactFlowNode[], edges: Edge[]) => {
     try {
-      console.log('Executing workflow with nodes:', nodes);
-      console.log('Edges:', edges);
-
       // Create a new Workflow instance
       const workflow = new Workflow();
 
       // Add nodes to workflow
       nodes.forEach((rfNode) => {
-        const nodeType = rfNode.data.type;
-        if (!nodeType) {
+        const nodeData = rfNode.data as CustomNodeData;
+        const nodeTypeName = nodeData.type;
+        if (!nodeTypeName) {
           console.error(`Node ${rfNode.id} missing type`);
           return;
         }
 
         // Prepare property values for node configuration
         const propertyData: Record<string, unknown> = {};
-        if (rfNode.data.properties) {
-          Object.keys(rfNode.data.properties).forEach((propKey) => {
-            if (rfNode.data[propKey] !== undefined) {
-              propertyData[propKey] = rfNode.data[propKey];
+        if (nodeData.properties) {
+          Object.keys(nodeData.properties).forEach((propKey) => {
+            if (nodeData[propKey] !== undefined) {
+              propertyData[propKey] = nodeData[propKey];
             }
           });
         }
 
-        // Add node to workflow using its type string and property configuration
-        workflow.addNode(nodeType, {
+        // Add node to workflow using the node type string and property configuration
+        workflow.addNode(nodeTypeName, {
           id: rfNode.id,
           position: rfNode.position,
           data: propertyData,
@@ -48,11 +47,7 @@ export function useWorkflowExecution() {
       });
 
       // Execute the workflow
-      console.log('Starting workflow execution...');
       const result = await workflow.execute();
-
-      console.log('Workflow execution completed:', result);
-      console.log('Node results:', result.nodeResults);
 
       return result;
     } catch (error) {

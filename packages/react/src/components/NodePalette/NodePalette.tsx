@@ -2,6 +2,7 @@ import { NodeConstructor } from '@reactflo/core';
 import React, { useMemo, useState } from 'react';
 import { NodePaletteClasses, NodePaletteStyles } from '../../types/styling';
 import { cn, mergeStyles } from '../../utils/styling';
+import './NodePalette.css';
 
 /**
  * Node palette item
@@ -147,6 +148,13 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
     overflowY: 'auto',
     backgroundColor: 'var(--reactflo-palette-bg, #f9f9f9)',
     color: 'var(--reactflo-palette-text, #333)',
+    direction: 'rtl', // Move scrollbar to left
+    scrollbarWidth: 'thin', // Firefox
+    scrollbarColor: 'transparent transparent', // Firefox - hide by default
+  };
+
+  const defaultContentStyle: React.CSSProperties = {
+    direction: 'ltr', // Reset content direction to normal
   };
 
   const defaultSearchStyle: React.CSSProperties = {
@@ -185,68 +193,70 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
   return (
     <div
-      className={cn(className, classes?.root)}
+      className={cn('reactflo-node-palette', className, classes?.root)}
       style={mergeStyles(defaultRootStyle, styles?.root, style)}
     >
-      <h3 style={{ margin: '0 0 10px 0' }}>Node Palette</h3>
+      <div style={defaultContentStyle}>
+        <h3 style={{ margin: '0 0 10px 0' }}>Node Palette</h3>
 
-      {/* Search box */}
-      <input
-        type="text"
-        placeholder="Search nodes..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className={classes?.search}
-        style={mergeStyles(defaultSearchStyle, styles?.search)}
-      />
+        {/* Search box */}
+        <input
+          type="text"
+          placeholder="Search nodes..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className={classes?.search}
+          style={mergeStyles(defaultSearchStyle, styles?.search)}
+        />
 
-      {/* Render grouped nodes */}
-      {Object.entries(groupedNodes).map(([category, categoryNodes]) => (
-        <div key={category} style={{ marginBottom: '15px' }}>
-          {groupByCategory && (
-            <h4
-              className={classes?.categoryHeader}
-              style={mergeStyles(defaultCategoryHeaderStyle, styles?.categoryHeader)}
-            >
-              {category}
-            </h4>
-          )}
+        {/* Render grouped nodes */}
+        {Object.entries(groupedNodes).map(([category, categoryNodes]) => (
+          <div key={category} style={{ marginBottom: '15px' }}>
+            {groupByCategory && (
+              <h4
+                className={classes?.categoryHeader}
+                style={mergeStyles(defaultCategoryHeaderStyle, styles?.categoryHeader)}
+              >
+                {category}
+              </h4>
+            )}
 
-          {categoryNodes.map((node) => (
-            <div
-              key={node.type}
-              draggable
-              onDragStart={(e) => handleDragStart(e, node.type)}
-              title={node.description || node.label}
-              className={classes?.nodeItem}
-              data-category={node.category}
-              style={mergeStyles(
-                defaultNodeItemStyle,
-                {
-                  borderLeft: node.color ? `4px solid ${node.color}` : undefined,
-                },
-                styles?.nodeItem
-              )}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              {(renderPaletteItem || defaultRenderPaletteItem)(node)}
-            </div>
-          ))}
-        </div>
-      ))}
+            {categoryNodes.map((node) => (
+              <div
+                key={node.type}
+                draggable
+                onDragStart={(e) => handleDragStart(e, node.type)}
+                title={node.description || node.label}
+                className={classes?.nodeItem}
+                data-category={node.category}
+                style={mergeStyles(
+                  defaultNodeItemStyle,
+                  {
+                    borderLeft: node.color ? `4px solid ${node.color}` : undefined,
+                  },
+                  styles?.nodeItem
+                )}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                {(renderPaletteItem || defaultRenderPaletteItem)(node)}
+              </div>
+            ))}
+          </div>
+        ))}
 
-      {filteredNodes.length === 0 && (
-        <div className={classes?.empty} style={mergeStyles(defaultEmptyStyle, styles?.empty)}>
-          No nodes found
-        </div>
-      )}
+        {filteredNodes.length === 0 && (
+          <div className={classes?.empty} style={mergeStyles(defaultEmptyStyle, styles?.empty)}>
+            No nodes found
+          </div>
+        )}
+      </div>
     </div>
   );
 };

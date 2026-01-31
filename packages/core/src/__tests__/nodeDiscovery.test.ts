@@ -294,7 +294,6 @@ describe('Node Auto-Discovery', () => {
     });
 
     it('should support bulk registration after auto-registration', () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       @defineNode({
         type: 'test.bulk1',
         label: 'Bulk Node 1',

@@ -5,7 +5,7 @@
  * similar to popular UI libraries like Material-UI and Chakra UI.
  */
 
-import { ReactFlowProps, BackgroundVariant, Node } from 'reactflow';
+import { ReactFlowProps, BackgroundVariant, Node } from '@xyflow/react';
 
 /**
  * Base style props that all components support

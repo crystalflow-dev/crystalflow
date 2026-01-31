@@ -62,6 +62,20 @@ export interface ThemeColors {
     shadow: string;
   };
 
+  // React Flow specific colors
+  reactflow: {
+    edge: string;
+    edgeSelected: string;
+    handle: string;
+    handleHover: string;
+    connectionLine: string;
+    selectionRect: string;
+    miniMapBackground: string;
+    miniMapMask: string;
+    controlsBackground: string;
+    controlsShadow: string;
+  };
+
   // Interactive states
   button: {
     primary: string;
@@ -153,6 +167,18 @@ export const lightTheme: Theme = {
       warning: '#f39c12',
       info: '#3498db',
     },
+    reactflow: {
+      edge: '#b1b1b7',
+      edgeSelected: '#3498db',
+      handle: '#3498db',
+      handleHover: '#2980b9',
+      connectionLine: '#3498db',
+      selectionRect: '#3498db',
+      miniMapBackground: '#ffffff',
+      miniMapMask: '#f5f5f5',
+      controlsBackground: '#ffffff',
+      controlsShadow: 'rgba(0, 0, 0, 0.1)',
+    },
   },
 };
 
@@ -220,6 +246,18 @@ export const darkTheme: Theme = {
       warning: '#f39c12',
       info: '#5dade2',
     },
+    reactflow: {
+      edge: '#555',
+      edgeSelected: '#5dade2',
+      handle: '#5dade2',
+      handleHover: '#3498db',
+      connectionLine: '#5dade2',
+      selectionRect: '#5dade2',
+      miniMapBackground: '#2d2d2d',
+      miniMapMask: '#1e1e1e',
+      controlsBackground: '#2d2d2d',
+      controlsShadow: 'rgba(0, 0, 0, 0.4)',
+    },
   },
 };
 
@@ -248,6 +286,7 @@ export function createTheme(mode: 'light' | 'dark', overrides?: Partial<ThemeCol
       node: { ...baseTheme.colors.node, ...overrides.node },
       button: { ...baseTheme.colors.button, ...overrides.button },
       status: { ...baseTheme.colors.status, ...overrides.status },
+      reactflow: { ...baseTheme.colors.reactflow, ...overrides.reactflow },
     },
   };
 }
@@ -296,6 +335,17 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
     '--reactflo-status-error': theme.colors.status.error,
     '--reactflo-status-warning': theme.colors.status.warning,
     '--reactflo-status-info': theme.colors.status.info,
+    // React Flow specific variables
+    '--reactflo-edge-color': theme.colors.reactflow.edge,
+    '--reactflo-edge-selected': theme.colors.reactflow.edgeSelected,
+    '--reactflo-handle-color': theme.colors.reactflow.handle,
+    '--reactflo-handle-hover': theme.colors.reactflow.handleHover,
+    '--reactflo-connection-line': theme.colors.reactflow.connectionLine,
+    '--reactflo-selection-rect': theme.colors.reactflow.selectionRect,
+    '--reactflo-minimap-bg': theme.colors.reactflow.miniMapBackground,
+    '--reactflo-minimap-mask': theme.colors.reactflow.miniMapMask,
+    '--reactflo-controls-bg': theme.colors.reactflow.controlsBackground,
+    '--reactflo-controls-shadow': theme.colors.reactflow.controlsShadow,
   };
 }
 

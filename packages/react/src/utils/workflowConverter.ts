@@ -2,10 +2,11 @@
  * Utilities for converting between React Flow and ReactFlo Workflow formats
  */
 
-import { Node as ReactFlowNode, Edge } from 'reactflow';
+import { Node as ReactFlowNode, Edge } from '@xyflow/react';
 import { Workflow, serializeWorkflow, deserializeWorkflow, NodeConstructor } from '@reactflo/core';
 import { WorkflowData } from '@reactflo/types';
 import { convertNodeToReactFlow } from './nodeConverter';
+import { CustomNodeData } from '../components/Node/CustomNode';
 
 /**
  * Convert React Flow nodes and edges to ReactFlo Workflow
@@ -20,15 +21,16 @@ export function reactFlowToWorkflow(
 
   // Add nodes to workflow
   nodes.forEach((rfNode) => {
-    const nodeType = rfNode.data.type;
-    if (!nodeType) {
+    const nodeData = rfNode.data as CustomNodeData;
+    const nodeTypeName = nodeData.type;
+    if (!nodeTypeName) {
       console.warn(`Node ${rfNode.id} missing type, skipping`);
       return;
     }
 
     try {
-      // Add node to workflow using its type string
-      const node = workflow.addNode(nodeType, {
+      // Add node to workflow using the node type string
+      const node = workflow.addNode(nodeTypeName, {
         id: rfNode.id,
         position: rfNode.position,
       });
@@ -42,7 +44,7 @@ export function reactFlowToWorkflow(
         });
       }
     } catch (error) {
-      console.error(`Failed to add node ${rfNode.id} of type ${nodeType}:`, error);
+      console.error(`Failed to add node ${rfNode.id} of type ${nodeTypeName}:`, error);
       throw error;
     }
   });

@@ -59,5 +59,6 @@
 
 .workflow-container {
   flex: 1;
+  min-height: 0; /* Allows flex child to shrink below content size */
   position: relative;
 }

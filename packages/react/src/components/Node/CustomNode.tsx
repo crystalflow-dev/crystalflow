@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
+import React from 'react';
+import { Handle, Position, NodeProps } from '@xyflow/react';
 import { PortDefinition, PropertyDefinition } from '@reactflo/types';
 import { NodeConstructor } from '@reactflo/core';
 import './CustomNode.css';
@@ -40,96 +40,61 @@ export interface CustomNodeData {
 /**
  * Default node content renderer
  */
-const defaultRenderNodeContent = (data: CustomNodeData): React.ReactNode => {
-  const inputs = data.inputs ? Object.entries(data.inputs) : [];
-  const outputs = data.outputs ? Object.entries(data.outputs) : [];
-
-  return (
-    <div className="node-content" data-category={data.category}>
-      {/* Node Header */}
-      <div className="node-header">
-        {data.icon && <span className="node-icon">{data.icon}</span>}
-        <span className="node-label">{data.label}</span>
-      </div>
-      <div className="node-type">{data.type}</div>
-
-      {/* Port Labels */}
-      {(inputs.length > 0 || outputs.length > 0) && (
-        <div className="node-ports">
-          <div className="node-inputs">
-            {inputs.map(([key, port]) => (
-              <div key={key} className="port-label">
-                {port.label || key}
-                {data[key] !== undefined && (
-                  <span className="port-value">: {String(data[key])}</span>
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="node-outputs">
-            {outputs.map(([key, port]) => (
-              <div key={key} className="port-label">
-                {port.label || key}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+const defaultRenderNodeContent = (data: CustomNodeData): React.ReactNode => (
+  <div className="node-content" data-category={data.category}>
+    <div className="node-header">
+      {data.icon && <span className="node-icon">{data.icon}</span>}
+      <span className="node-label">{data.label}</span>
     </div>
-  );
-};
+    <div className="node-type">{data.type}</div>
+  </div>
+);
 
-export const CustomNode: React.FC<NodeProps<CustomNodeData>> = memo(({ data }) => {
-  const inputs = data.inputs ? Object.entries(data.inputs) : [];
-  const outputs = data.outputs ? Object.entries(data.outputs) : [];
-
-  // Calculate handle positions
-  const inputHandleSpacing = inputs.length > 1 ? 100 / (inputs.length + 1) : 50;
-  const outputHandleSpacing = outputs.length > 1 ? 100 / (outputs.length + 1) : 50;
-
-  // Use custom renderer if provided, otherwise use default
-  const renderContent = data.renderNodeContent || defaultRenderNodeContent;
+export const CustomNode: React.FC<NodeProps> = ({ data }) => {
+  // Type assert data to our CustomNodeData interface
+  const nodeData = data as CustomNodeData;
+  const inputs = nodeData.inputs ? Object.entries(nodeData.inputs) : [];
+  const outputs = nodeData.outputs ? Object.entries(nodeData.outputs) : [];
+  const renderContent = nodeData.renderNodeContent || defaultRenderNodeContent;
 
   return (
     <>
       {/* Input Handles */}
       {inputs.map(([key, port], index) => {
-        const position = (index + 1) * inputHandleSpacing;
+        const portDef = port as PortDefinition;
+        const position = inputs.length > 1 ? ((index + 1) * 100) / (inputs.length + 1) : 50;
         return (
           <Handle
-            key={`input-${key}`}
+            key={key}
             type="target"
             position={Position.Left}
             id={key}
-            style={{
-              top: `${position}%`,
-            }}
-            title={`${port.label || key} (${port.type})`}
+            style={{ top: `${position}%` }}
+            title={`${portDef.label || key} (${portDef.type})`}
           />
         );
       })}
 
-      {/* Node Content - Using standard div that ReactFlow styles */}
-      {renderContent(data)}
+      {/* Node Content */}
+      {renderContent(nodeData)}
 
       {/* Output Handles */}
       {outputs.map(([key, port], index) => {
-        const position = (index + 1) * outputHandleSpacing;
+        const portDef = port as PortDefinition;
+        const position = outputs.length > 1 ? ((index + 1) * 100) / (outputs.length + 1) : 50;
         return (
           <Handle
-            key={`output-${key}`}
+            key={key}
             type="source"
             position={Position.Right}
             id={key}
-            style={{
-              top: `${position}%`,
-            }}
-            title={`${port.label || key} (${port.type})`}
+            style={{ top: `${position}%` }}
+            title={`${portDef.label || key} (${portDef.type})`}
           />
         );
       })}
     </>
   );
-});
+};
 
 CustomNode.displayName = 'CustomNode';

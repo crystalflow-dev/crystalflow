@@ -1,8 +1,7 @@
 import 'reflect-metadata';
-import { Node as ReactFlowNode } from 'reactflow';
+import { Node as ReactFlowNode } from '@xyflow/react';
 import { NodeMetadata, PortDefinition, PropertyDefinition } from '@reactflo/types';
 import { NodeConstructor } from '@reactflo/core';
-import { CustomNodeData } from '../components/Node/CustomNode';
 
 /**
  * Convert a ReactFlo Node class (with decorators) to React Flow node format
@@ -19,7 +18,7 @@ export function convertNodeToReactFlow(
   nodeClass: NodeConstructor,
   nodeId: string,
   position: { x: number; y: number }
-): ReactFlowNode<CustomNodeData> {
+): ReactFlowNode {
   // Get node metadata from decorator
   const metadata: NodeMetadata = Reflect.getMetadata('node:metadata', nodeClass);
 
@@ -36,14 +35,6 @@ export function convertNodeToReactFlow(
   // Get properties metadata
   const propertyDefinitions: PropertyDefinition[] =
     Reflect.getMetadata('node:properties', nodeClass) || [];
-
-  console.log('convertNodeToReactFlow:', {
-    nodeClass: nodeClass.name,
-    metadata,
-    inputPorts,
-    outputPorts,
-    propertyDefinitions,
-  });
 
   // Convert ports to object format
   const inputs: Record<string, PortDefinition> = {};

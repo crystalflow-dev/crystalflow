@@ -3,8 +3,9 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FaBolt } from 'react-icons/fa';
-import { ReactFlow, Node, Edge, ReactFlowProvider, Handle, Position } from 'reactflow';
-import 'reactflow/dist/style.css';
+import { ReactFlow, Node, Edge, ReactFlowProvider, Handle, Position } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import '@reactflo/react/dist/react.css';
 
 // Generate stable particle positions outside component to avoid re-computation
 const particles = Array.from({ length: 20 }, () => ({
@@ -371,6 +372,7 @@ const FloatingWorkflow = () => (
           panOnScroll={false}
           panOnDrag={false}
           zoomOnDoubleClick={false}
+          colorMode="dark"
           fitView
           proOptions={{ hideAttribution: true }}
         ></ReactFlow>

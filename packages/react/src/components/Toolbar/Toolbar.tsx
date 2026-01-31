@@ -1,4 +1,5 @@
 import React from 'react';
+import { IoPlay, IoSave, IoFolder, IoTrash, IoArrowUndo, IoArrowRedo } from 'react-icons/io5';
 import { ToolbarClasses, ToolbarStyles } from '../../types/styling';
 import { cn, mergeStyles } from '../../utils/styling';
 
@@ -35,39 +36,39 @@ export interface ToolbarOptions {
 
 /**
  * Toolbar Icons - Customize button icons
- * Set to string to replace icon, null/false/'' to remove icon, undefined to keep default
+ * Set to ReactNode to replace icon, null/false to remove icon, undefined to keep default
  */
 export interface ToolbarIcons {
   /**
    * Execute button icon
-   * @default '▶️'
+   * @default <IoPlay />
    */
-  execute?: string | null | false;
+  execute?: React.ReactNode | null | false;
   /**
    * Save button icon
-   * @default '💾'
+   * @default <IoSave />
    */
-  save?: string | null | false;
+  save?: React.ReactNode | null | false;
   /**
    * Load button icon
-   * @default '📁'
+   * @default <IoFolder />
    */
-  load?: string | null | false;
+  load?: React.ReactNode | null | false;
   /**
    * Clear button icon
-   * @default '🗑️'
+   * @default <IoTrash />
    */
-  clear?: string | null | false;
+  clear?: React.ReactNode | null | false;
   /**
    * Undo button icon
-   * @default '↶'
+   * @default <IoArrowUndo />
    */
-  undo?: string | null | false;
+  undo?: React.ReactNode | null | false;
   /**
    * Redo button icon
-   * @default '↷'
+   * @default <IoArrowRedo />
    */
-  redo?: string | null | false;
+  redo?: React.ReactNode | null | false;
 }
 
 /**
@@ -196,22 +197,22 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   // Helper function to render icon
   const renderIcon = (
-    iconValue: string | null | false | undefined,
-    defaultIcon: string
-  ): string => {
-    if (iconValue === null || iconValue === false || iconValue === '') {
-      return ''; // Remove icon
+    iconValue: React.ReactNode | null | false | undefined,
+    defaultIcon: React.ReactNode
+  ): React.ReactNode => {
+    if (iconValue === null || iconValue === false) {
+      return null; // Remove icon
     }
     return iconValue !== undefined ? iconValue : defaultIcon; // Custom or default
   };
 
   // Get icon values
-  const executeIcon = renderIcon(icons?.execute, '▶️');
-  const saveIcon = renderIcon(icons?.save, '💾');
-  const loadIcon = renderIcon(icons?.load, '📁');
-  const clearIcon = renderIcon(icons?.clear, '🗑️');
-  const undoIcon = renderIcon(icons?.undo, '↶');
-  const redoIcon = renderIcon(icons?.redo, '↷');
+  const executeIcon = renderIcon(icons?.execute, <IoPlay />);
+  const saveIcon = renderIcon(icons?.save, <IoSave />);
+  const loadIcon = renderIcon(icons?.load, <IoFolder />);
+  const clearIcon = renderIcon(icons?.clear, <IoTrash />);
+  const undoIcon = renderIcon(icons?.undo, <IoArrowUndo />);
+  const redoIcon = renderIcon(icons?.redo, <IoArrowRedo />);
   const defaultRootStyle: React.CSSProperties = {
     padding: '10px',
     borderBottom: '1px solid var(--reactflo-toolbar-border, #ddd)',
@@ -234,15 +235,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   };
 
   const defaultDisabledStyle: React.CSSProperties = {
-    opacity: 0.5,
+    opacity: 0.4,
     cursor: 'not-allowed',
-    background: '#4a4a4a',
-    color: '#999',
-    border: '1px solid #555',
+    background: 'var(--reactflo-button-disabled, #f5f5f5)',
+    color: 'var(--reactflo-text-disabled, #999)',
+    border: '1px solid var(--reactflo-border-disabled, #e0e0e0)',
   };
 
   const defaultActiveStyle: React.CSSProperties = {
-    background: 'var(--reactflo-status-success, #4CAF50)',
+    background: 'var(--reactflo-status-success, #1b5e20)',
     color: 'white',
     fontWeight: 'bold',
   };
@@ -266,7 +267,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           )}
           title="Execute workflow"
         >
-          {isExecuting ? '⏳ Executing...' : `${executeIcon}${executeIcon ? ' ' : ''}Execute`}
+          {isExecuting ? (
+            '⏳ Executing...'
+          ) : (
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {executeIcon}
+              <span>Execute</span>
+            </span>
+          )}
         </button>
       )}
 
@@ -284,7 +292,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             e.currentTarget.style.background = 'var(--reactflo-button-secondary, white)';
           }}
         >
-          {saveIcon && `${saveIcon} `}Save
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {saveIcon}
+            <span>Save</span>
+          </span>
         </button>
       )}
 
@@ -302,7 +313,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             e.currentTarget.style.background = 'var(--reactflo-button-secondary, white)';
           }}
         >
-          {loadIcon && `${loadIcon} `}Load
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {loadIcon}
+            <span>Load</span>
+          </span>
         </button>
       )}
 
@@ -320,7 +334,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             e.currentTarget.style.background = 'var(--reactflo-button-secondary, white)';
           }}
         >
-          {clearIcon && `${clearIcon} `}Clear
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {clearIcon}
+            <span>Clear</span>
+          </span>
         </button>
       )}
 
@@ -341,7 +358,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             )}
             title="Undo"
           >
-            {undoIcon && `${undoIcon} `}Undo
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {undoIcon}
+              <span>Undo</span>
+            </span>
           </button>
 
           {/* Redo Button */}
@@ -357,7 +377,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             )}
             title="Redo"
           >
-            {redoIcon && `${redoIcon} `}Redo
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {redoIcon}
+              <span>Redo</span>
+            </span>
           </button>
         </>
       )}
