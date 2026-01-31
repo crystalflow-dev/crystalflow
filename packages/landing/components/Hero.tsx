@@ -441,7 +441,8 @@ export default function Hero() {
               className="inline-block"
             >
               <div className="px-4 py-2 bg-dark-grey border border-primary/30 rounded-full text-sm text-light-grey flex items-center gap-2">
-                <FaBolt className="text-primary" /> Declarative Workflow Framework
+                <FaBolt className="text-primary" /> Build AI Automation Tools • No-Code Workflow
+                Builders • Data Pipelines
               </div>
             </motion.div>
 
@@ -482,8 +483,13 @@ export default function Hero() {
 
             {/* Subheading */}
             <p className="text-xl md:text-2xl text-light-grey max-w-3xl mx-auto leading-relaxed">
-              A declarative workflow builder framework that lets you focus on &quot;what to do&quot;
-              instead of &quot;how to do it&quot;.
+              Build your own{' '}
+              <span className="text-primary font-semibold">AI automation platform</span>, workflow
+              builder, or no-code tool.
+              <br className="hidden md:block" />
+              <span className="text-base md:text-lg">
+                Stop reinventing the wheel—focus on your unique features.
+              </span>
             </p>
 
             {/* CTA Buttons */}
@@ -531,21 +537,6 @@ export default function Hero() {
             </motion.div>
           </motion.div>
         </div>
-
-        {/* Scroll Indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <div className="w-6 h-10 border-2 border-light-grey/30 rounded-full flex items-start justify-center p-2">
-            <motion.div
-              className="w-1 h-2 bg-primary rounded-full"
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-          </div>
-        </motion.div>
       </section>
     </ReactFlowProvider>
   );

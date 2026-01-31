@@ -7,44 +7,47 @@ import {
   FaPaintBrush,
   FaProjectDiagram,
   FaFileCode,
-  FaFeatherAlt,
-  FaShieldAlt,
   FaRocket,
+  FaRobot,
+  FaBrain,
 } from 'react-icons/fa';
 
 const features = [
   {
-    icon: FaPaintBrush,
-    title: 'Decorator-Based Definitions',
+    icon: FaRobot,
+    title: 'Build AI Automation Platforms',
     description:
-      'Define workflow nodes using TypeScript decorators. Clean, declarative, and intuitive.',
+      'Create your own Make.com, Zapier, or n8n alternative. Perfect for AI agent workflows, LangChain integrations, and automation tools.',
+  },
+  {
+    icon: FaBrain,
+    title: 'No-Code/Low-Code Builders',
+    description:
+      'Build visual programming environments where non-technical users can create complex logic flows without writing code.',
   },
   {
     icon: FaProjectDiagram,
     title: 'Visual Workflow Builder',
-    description: 'Drag-and-drop interface powered by React Flow. Build complex workflows visually.',
+    description:
+      'Drag-and-drop interface powered by React Flow. Build complex workflows visually with real-time execution.',
+  },
+  {
+    icon: FaPaintBrush,
+    title: 'Simple Decorator API',
+    description:
+      'Define nodes in minutes with TypeScript decorators. No boilerplate—just clean, declarative code.',
   },
   {
     icon: FaFileCode,
-    title: 'JSON Serialization',
+    title: 'Full JSON Serialization',
     description:
-      'Every workflow is fully serializable to JSON. Save, load, and version control your workflows.',
-  },
-  {
-    icon: FaFeatherAlt,
-    title: 'Zero Dependencies',
-    description:
-      'Core engine has zero dependencies. Only reflect-metadata required for decorators.',
-  },
-  {
-    icon: FaShieldAlt,
-    title: '100% Type Safe',
-    description: 'Built with TypeScript. Full type inference and compile-time type checking.',
+      'Save, load, and version control workflows. Every workflow is JSON—perfect for databases and APIs.',
   },
   {
     icon: FaRocket,
-    title: 'Execution Engine',
-    description: 'Robust execution engine with events, error handling, and async support.',
+    title: 'Production-Ready Engine',
+    description:
+      'Robust execution with async support, error handling, cancellation, and real-time events.',
   },
 ];
 
@@ -82,10 +85,11 @@ export default function Features() {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">Everything You Need</h2>
+          <h2 className="text-5xl md:text-6xl font-bold mb-6">Perfect for AI & Automation</h2>
           <p className="text-xl text-light-grey max-w-2xl mx-auto">
-            A complete workflow framework that handles the complex parts, so you can focus on
-            building.
+            Whether you're building AI agent platforms, no-code tools, or data pipelines—
+            <br />
+            ReactFlo handles the complexity so you can ship faster.
           </p>
         </motion.div>
 
