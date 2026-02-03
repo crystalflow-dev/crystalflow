@@ -163,68 +163,64 @@ function App() {
   const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('light');
 
   return (
-    <div className="app">
-      {/* Info Popup - Shows current example info */}
-      <InfoPopup title={exampleInfo[currentExample].title}>
-        {exampleInfo[currentExample].content}
-      </InfoPopup>
-
-      {/* Theme Switcher - Compact Fixed Position Top Left */}
-      <div
-        style={{
-          position: 'fixed',
-          top: '20px',
-          left: '20px',
-          display: 'inline-flex',
-          gap: '4px',
-          padding: '4px',
-          background: 'var(--color-bg-elevated)',
-          border: '1px solid var(--color-border-light)',
-          borderRadius: 'var(--radius-md)',
-          boxShadow: 'var(--shadow-sm)',
-          zIndex: 9998,
-        }}
-      >
-        {(['light', 'dark', 'auto'] as const).map((themeOption) => (
-          <button
-            key={themeOption}
-            onClick={() => setTheme(themeOption)}
-            title={`Switch to ${themeOption} theme`}
+    <div className="app" data-theme={theme}>
+      <header className="app-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+          {/* Theme Switcher */}
+          <div
             style={{
-              padding: '6px 10px',
-              border: 'none',
-              borderRadius: 'var(--radius-sm)',
-              background:
-                theme === themeOption ? 'var(--color-primary-500)' : 'transparent',
-              color: theme === themeOption ? 'white' : 'var(--color-text-secondary)',
-              cursor: 'pointer',
-              fontSize: 'var(--font-size-xs)',
-              textTransform: 'capitalize',
-              transition: 'all var(--transition-fast) var(--ease-out)',
-              fontWeight: theme === themeOption ? 'var(--font-weight-semibold)' : 'var(--font-weight-normal)',
-            }}
-            onMouseEnter={(e) => {
-              if (theme !== themeOption) {
-                e.currentTarget.style.background = 'var(--color-bg-tertiary)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (theme !== themeOption) {
-                e.currentTarget.style.background = 'transparent';
-              }
+              display: 'inline-flex',
+              gap: '4px',
+              padding: '4px',
+              background: 'var(--color-bg-elevated)',
+              border: '1px solid var(--color-border-light)',
+              borderRadius: 'var(--radius-md)',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
-            {themeOption === 'light' ? '☀️' : themeOption === 'dark' ? '🌙' : '⚙️'}
-          </button>
-        ))}
-      </div>
+            {(['light', 'dark', 'auto'] as const).map((themeOption) => (
+              <button
+                key={themeOption}
+                onClick={() => setTheme(themeOption)}
+                title={`Switch to ${themeOption} theme`}
+                style={{
+                  padding: '6px 10px',
+                  border: 'none',
+                  borderRadius: 'var(--radius-sm)',
+                  background: theme === themeOption ? 'var(--color-primary-500)' : 'transparent',
+                  color: theme === themeOption ? 'white' : 'var(--color-text-secondary)',
+                  cursor: 'pointer',
+                  fontSize: 'var(--font-size-xs)',
+                  transition: 'all var(--transition-fast) var(--ease-out)',
+                  fontWeight:
+                    theme === themeOption ? 'var(--font-weight-semibold)' : 'var(--font-weight-normal)',
+                }}
+                onMouseEnter={(e) => {
+                  if (theme !== themeOption) {
+                    e.currentTarget.style.background = 'var(--color-bg-tertiary)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (theme !== themeOption) {
+                    e.currentTarget.style.background = 'transparent';
+                  }
+                }}
+              >
+                {themeOption === 'light' ? '☀️' : themeOption === 'dark' ? '🌙' : '⚙️'}
+              </button>
+            ))}
+          </div>
 
-      <header className="app-header">
-        <div>
-          <h1>ReactFlo Examples</h1>
-          <p>Interactive workflow builder demonstrations</p>
+          <div>
+            <h1>ReactFlo Examples</h1>
+            <p>Interactive workflow builder demonstrations</p>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          {/* Info Popup */}
+          <InfoPopup title={exampleInfo[currentExample].title}>
+            {exampleInfo[currentExample].content}
+          </InfoPopup>
           <button
             onClick={() => setCurrentExample('simple')}
             style={{

@@ -21,11 +21,8 @@ export function InfoPopup({ title, children }: InfoPopupProps) {
       <button
         onClick={() => setIsOpen(true)}
         style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          width: '44px',
-          height: '44px',
+          width: '40px',
+          height: '40px',
           borderRadius: '50%',
           border: '2px solid var(--color-primary-500)',
           background: 'var(--color-bg-elevated)',
@@ -34,9 +31,8 @@ export function InfoPopup({ title, children }: InfoPopupProps) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '24px',
-          boxShadow: 'var(--shadow-lg)',
-          zIndex: 9999,
+          fontSize: '20px',
+          boxShadow: 'var(--shadow-md)',
           transition: 'all var(--transition-fast) var(--ease-out)',
         }}
         onMouseEnter={(e) => {
