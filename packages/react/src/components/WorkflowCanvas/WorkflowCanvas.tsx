@@ -87,9 +87,15 @@ const ReactFlowInner: React.FC<{
         )}
         {showMiniMap && (
           <MiniMap
-            nodeColor={miniMapProps?.nodeColor}
+            nodeColor={
+              miniMapProps?.nodeColor ||
+              ((node: ReactFlowNode): string => {
+                // Extract color from node data if available
+                return (node.data?.color as string) || 'var(--color-primary-500)';
+              })
+            }
             nodeStrokeColor={miniMapProps?.nodeStrokeColor}
-            nodeBorderRadius={miniMapProps?.nodeBorderRadius}
+            nodeBorderRadius={miniMapProps?.nodeBorderRadius || 4}
             nodeClassName={miniMapProps?.nodeClassName}
             maskColor={miniMapProps?.maskColor}
             position={miniMapProps?.position}

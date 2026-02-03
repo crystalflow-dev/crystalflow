@@ -16,7 +16,6 @@ import {
   DisplayNode,
   ConfigDemoNode,
 } from '../nodes';
-import '../styles/reactflow.css';
 
 /**
  * Simple Workflow Example Component

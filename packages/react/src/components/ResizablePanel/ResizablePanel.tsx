@@ -4,7 +4,6 @@
  */
 
 import { useState, useEffect, useRef, type ReactNode, type CSSProperties } from 'react';
-import './ResizablePanel.css';
 
 export interface ResizablePanelProps {
   /** Panel content */
@@ -76,7 +75,8 @@ export function ResizablePanel({
     if (!isDragging) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const deltaX = resizeHandle === 'right' ? e.clientX - startXRef.current : startXRef.current - e.clientX;
+      const deltaX =
+        resizeHandle === 'right' ? e.clientX - startXRef.current : startXRef.current - e.clientX;
       const newWidth = startWidthRef.current + deltaX;
       const constrainedWidth = Math.max(minWidth, Math.min(maxWidth, newWidth));
       setWidth(constrainedWidth);

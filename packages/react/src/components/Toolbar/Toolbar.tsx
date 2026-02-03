@@ -214,38 +214,46 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   const undoIcon = renderIcon(icons?.undo, <IoArrowUndo />);
   const redoIcon = renderIcon(icons?.redo, <IoArrowRedo />);
   const defaultRootStyle: React.CSSProperties = {
-    padding: '10px',
-    borderBottom: '1px solid var(--reactflo-toolbar-border, #ddd)',
+    padding: 'var(--space-4)',
+    borderBottom: `1px solid var(--color-border-light)`,
     display: 'flex',
-    gap: '10px',
+    gap: 'var(--space-3)',
     alignItems: 'center',
-    backgroundColor: 'var(--reactflo-toolbar-bg, #f9f9f9)',
-    color: 'var(--reactflo-toolbar-text, #333)',
+    backgroundColor: 'var(--color-bg-secondary)',
+    color: 'var(--color-text-primary)',
+    fontFamily: 'var(--font-family-base)',
+    flexShrink: 0,
   };
 
   const defaultButtonStyle: React.CSSProperties = {
-    padding: '8px 16px',
-    borderRadius: '4px',
-    border: '1px solid var(--reactflo-border-primary, #ccc)',
-    background: 'var(--reactflo-button-secondary, white)',
-    color: 'var(--reactflo-button-text, #333)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--space-2)',
+    padding: 'var(--space-2) var(--space-3)',
+    borderRadius: 'var(--radius-sm)',
+    border: `1px solid var(--color-border-medium)`,
+    background: 'var(--color-bg-elevated)',
+    color: 'var(--color-text-primary)',
     cursor: 'pointer',
-    fontSize: '14px',
-    transition: 'all 0.2s',
+    fontSize: 'var(--font-size-sm)',
+    fontWeight: 'var(--font-weight-medium)',
+    fontFamily: 'var(--font-family-base)',
+    transition: 'all var(--transition-fast) var(--ease-out)',
   };
 
   const defaultDisabledStyle: React.CSSProperties = {
-    opacity: 0.4,
+    opacity: 0.5,
     cursor: 'not-allowed',
-    background: 'var(--reactflo-button-disabled, #f5f5f5)',
-    color: 'var(--reactflo-text-disabled, #999)',
-    border: '1px solid var(--reactflo-border-disabled, #e0e0e0)',
+    background: 'var(--color-bg-secondary)',
+    color: 'var(--color-text-tertiary)',
+    borderColor: 'var(--color-border-light)',
   };
 
   const defaultActiveStyle: React.CSSProperties = {
-    background: 'var(--reactflo-status-success, #1b5e20)',
-    color: 'white',
-    fontWeight: 'bold',
+    background: 'var(--color-primary-500)',
+    color: 'var(--color-text-inverse)',
+    borderColor: 'var(--color-primary-500)',
+    fontWeight: 'var(--font-weight-semibold)',
   };
 
   return (
@@ -286,10 +294,12 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           style={mergeStyles(defaultButtonStyle, styles?.button)}
           title="Save workflow"
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'var(--reactflo-button-hover, #f0f0f0)';
+            e.currentTarget.style.background = 'var(--color-bg-tertiary)';
+            e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'var(--reactflo-button-secondary, white)';
+            e.currentTarget.style.background = 'var(--color-bg-elevated)';
+            e.currentTarget.style.boxShadow = 'none';
           }}
         >
           <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -307,10 +317,12 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           style={mergeStyles(defaultButtonStyle, styles?.button)}
           title="Load workflow"
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'var(--reactflo-button-hover, #f0f0f0)';
+            e.currentTarget.style.background = 'var(--color-bg-tertiary)';
+            e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'var(--reactflo-button-secondary, white)';
+            e.currentTarget.style.background = 'var(--color-bg-elevated)';
+            e.currentTarget.style.boxShadow = 'none';
           }}
         >
           <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -328,10 +340,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           style={mergeStyles(defaultButtonStyle, styles?.button)}
           title="Clear canvas"
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'var(--reactflo-status-error, #fee)';
+            e.currentTarget.style.background = 'var(--color-error-50)';
+            e.currentTarget.style.borderColor = 'var(--color-error-500)';
+            e.currentTarget.style.color = 'var(--color-error-600)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'var(--reactflo-button-secondary, white)';
+            e.currentTarget.style.background = 'var(--color-bg-elevated)';
+            e.currentTarget.style.borderColor = 'var(--color-border-medium)';
+            e.currentTarget.style.color = 'var(--color-text-primary)';
           }}
         >
           <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>

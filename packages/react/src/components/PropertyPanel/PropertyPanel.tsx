@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Node as ReactFlowNode } from '@xyflow/react';
+import { FiSettings, FiX, FiBox, FiChevronRight, FiZap, FiPlus, FiTrash2 } from 'react-icons/fi';
 import { CustomNodeData } from '../Node/CustomNode';
-import { PortDefinition, PropertyDefinition } from '@reactflo/types';
+import { PropertyDefinition } from '@reactflo/types';
 import { PropertyPanelClasses, PropertyPanelStyles } from '../../types/styling';
 import { cn, mergeStyles } from '../../utils/styling';
 
@@ -9,58 +10,63 @@ import { cn, mergeStyles } from '../../utils/styling';
  * PropertyPanel Props
  */
 export interface PropertyPanelProps {
-  /**
-   * Selected node
-   */
   node?: ReactFlowNode;
-
-  /**
-   * Callback when property changes
-   */
   onUpdate?: (updates: Partial<CustomNodeData>) => void;
-
-  /**
-   * Callback when panel is closed
-   */
   onClose?: () => void;
-
-  /**
-   * Custom styles
-   */
   style?: React.CSSProperties;
-
-  /**
-   * Custom className
-   */
   className?: string;
-
-  /**
-   * Class name overrides for sub-components
-   */
   classes?: PropertyPanelClasses;
-
-  /**
-   * Style overrides for sub-components
-   */
   styles?: PropertyPanelStyles;
 }
 
+interface CollapsibleSectionProps {
+  title: string;
+  icon?: React.ReactNode;
+  defaultExpanded?: boolean;
+  children: React.ReactNode;
+}
+
 /**
- * PropertyPanel component
- *
- * Displays and allows editing of properties for the selected node.
- * Properties are automatically generated from @Property decorator metadata.
- *
- * Features:
- * - Shows all node properties (not inputs - those are for data flow)
- * - Type-appropriate input controls (text, number, boolean, select, etc.)
- * - Support for property constraints (min/max/step for numbers)
- * - Select dropdowns for enumerated values
- * - Real-time property updates
- * - Default value display
- * - Required field indicators
+ * Collapsible Section Component
  */
-export const PropertyPanel: React.FC<PropertyPanelProps> = ({
+function CollapsibleSection({
+  title,
+  icon,
+  defaultExpanded = true,
+  children,
+}: CollapsibleSectionProps) {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
+  return (
+    <div className={`property-section ${isExpanded ? 'property-section--expanded' : ''}`}>
+      <div
+        className="property-section__header"
+        onClick={() => setIsExpanded(!isExpanded)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsExpanded(!isExpanded);
+          }
+        }}
+      >
+        <div className="property-section__title">
+          {icon && <span className="property-section__icon">{icon}</span>}
+          {title}
+        </div>
+        <FiChevronRight className="property-section__chevron" size={16} />
+      </div>
+      {isExpanded && <div className="property-section__content">{children}</div>}
+    </div>
+  );
+}
+
+/**
+ * PropertyPanel Component
+ * Modern redesign with collapsible sections and improved UX
+ */
+export function PropertyPanel({
   node,
   onUpdate,
   onClose,
@@ -68,11 +74,10 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
   className,
   classes,
   styles,
-}) => {
-  // Local state for property values
+}: PropertyPanelProps) {
   const [propertyValues, setPropertyValues] = useState<Record<string, unknown>>({});
 
-  // Initialize/update local state when node changes
+  // Initialize property values from node data
   useEffect(() => {
     if (node?.data) {
       const nodeData = node.data as CustomNodeData;
@@ -86,451 +91,238 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
       }
       setPropertyValues(values);
     }
-  }, [node?.id]); // Only reset when node ID changes
+  }, [node?.id]);
 
-  const defaultRootStyle: React.CSSProperties = {
-    width: '300px',
-    padding: '10px',
-    borderLeft: '1px solid var(--reactflo-properties-border, #ddd)',
-    backgroundColor: 'var(--reactflo-properties-bg, #f9f9f9)',
-    color: 'var(--reactflo-properties-text, #333)',
+  // Handle property value change
+  const handlePropertyChange = (key: string, value: unknown) => {
+    setPropertyValues((prev) => ({ ...prev, [key]: value }));
+    onUpdate?.({ [key]: value });
   };
 
-  const defaultEmptyStyle: React.CSSProperties = {
-    color: 'var(--reactflo-text-secondary, #666)',
-    textAlign: 'center',
-    marginTop: '20px',
-  };
+  // Render input control based on property type
+  const renderPropertyControl = (key: string, propDef: PropertyDefinition) => {
+    const value = propertyValues[key] !== undefined ? propertyValues[key] : propDef.defaultValue;
 
-  const defaultHeaderStyle: React.CSSProperties = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '15px',
-  };
+    switch (propDef.type) {
+      case 'select':
+        return (
+          <select
+            className="property-select"
+            value={String(value || '')}
+            onChange={(e) => handlePropertyChange(key, e.target.value)}
+          >
+            {propDef.options?.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        );
 
-  const defaultGroupStyle: React.CSSProperties = {
-    marginBottom: '12px',
-  };
+      case 'boolean':
+        return (
+          <label className="property-checkbox">
+            <input
+              type="checkbox"
+              className="property-checkbox__input"
+              checked={Boolean(value)}
+              onChange={(e) => handlePropertyChange(key, e.target.checked)}
+            />
+            <span className="property-checkbox__label">{propDef.label || key}</span>
+          </label>
+        );
 
-  const defaultLabelStyle: React.CSSProperties = {
-    display: 'block',
-    marginBottom: '4px',
-    fontSize: '13px',
-    fontWeight: 'bold',
-    color: 'var(--reactflo-text-primary, #333)',
-  };
+      case 'number':
+        return (
+          <input
+            type="number"
+            className="property-input"
+            value={Number(value || 0)}
+            min={propDef.min}
+            max={propDef.max}
+            step={propDef.step || 1}
+            onChange={(e) => handlePropertyChange(key, parseFloat(e.target.value))}
+          />
+        );
 
-  const defaultInputStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '6px',
-    border: '1px solid var(--reactflo-border-primary, #ccc)',
-    borderRadius: '4px',
-    backgroundColor: 'var(--reactflo-bg-primary, white)',
-    color: 'var(--reactflo-text-primary, #333)',
-    fontSize: '13px',
-    boxSizing: 'border-box',
+      case 'array':
+        return (
+          <div className="property-array">
+            <div className="property-array__input-row">
+              <input
+                type="text"
+                className="property-input property-array__input"
+                placeholder="Enter value and press Enter"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const input = e.target as HTMLInputElement;
+                    const text = input.value.trim();
+                    if (text) {
+                      const parsedValue = parseValue(text);
+                      const currentArray = Array.isArray(value) ? (value as unknown[]) : [];
+                      handlePropertyChange(key, [...currentArray, parsedValue]);
+                      input.value = '';
+                    }
+                  }
+                }}
+              />
+              <button
+                className="property-array__add-btn"
+                onClick={() => {
+                  const input = document.querySelector(
+                    `[placeholder="Enter value and press Enter"]`
+                  ) as HTMLInputElement;
+                  const text = input?.value.trim();
+                  if (text) {
+                    const parsedValue = parseValue(text);
+                    const currentArray = Array.isArray(value) ? (value as unknown[]) : [];
+                    handlePropertyChange(key, [...currentArray, parsedValue]);
+                    input.value = '';
+                  }
+                }}
+                type="button"
+              >
+                <FiPlus size={14} />
+                Add
+              </button>
+            </div>
+
+            {Array.isArray(value) && value.length > 0 ? (
+              <div className="property-array__list">
+                {value.map((item, index) => (
+                  <div key={index} className="property-array__item">
+                    <span className="property-array__item-value">{String(item)}</span>
+                    <button
+                      className="property-array__item-remove"
+                      onClick={() => {
+                        const newArray = (value as unknown[]).filter((_, i) => i !== index);
+                        handlePropertyChange(key, newArray);
+                      }}
+                      type="button"
+                      title="Remove item"
+                    >
+                      <FiTrash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="property-array__empty">No items yet</div>
+            )}
+          </div>
+        );
+
+      case 'string':
+      default:
+        return (
+          <input
+            type="text"
+            className="property-input"
+            value={String(value || '')}
+            onChange={(e) => handlePropertyChange(key, e.target.value)}
+          />
+        );
+    }
   };
 
   if (!node) {
     return (
       <div
-        className={cn(className, classes?.root)}
-        style={mergeStyles(defaultRootStyle, styles?.root, style)}
+        className={cn('property-panel', className, classes?.root)}
+        style={mergeStyles(styles?.root, style)}
       >
-        <p className={classes?.empty} style={mergeStyles(defaultEmptyStyle, styles?.empty)}>
-          Select a node to view properties
-        </p>
+        <div className="property-panel__empty">
+          <FiBox className="property-panel__empty-icon" size={48} />
+          <div>Select a node to view its properties</div>
+        </div>
       </div>
     );
   }
 
-  const { data } = node;
-  const nodeData = data as CustomNodeData;
+  const nodeData = node.data as CustomNodeData;
 
   return (
     <div
-      className={cn(className, classes?.root)}
-      style={mergeStyles(defaultRootStyle, { overflowY: 'auto' }, styles?.root, style)}
+      className={cn('property-panel', className, classes?.root)}
+      style={mergeStyles(styles?.root, style)}
     >
       {/* Header */}
-      <div className={classes?.header} style={mergeStyles(defaultHeaderStyle, styles?.header)}>
-        <h3 style={{ margin: 0 }}>Properties</h3>
+      <div className="property-panel__header">
+        <h3 className="property-panel__title">
+          <FiSettings className="property-panel__title-icon" size={18} />
+          Properties
+        </h3>
         {onClose && (
           <button
+            className="property-panel__close"
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '18px',
-              cursor: 'pointer',
-              padding: '0 5px',
-            }}
             title="Close properties panel"
+            type="button"
           >
-            ✕
+            <FiX size={18} />
           </button>
         )}
       </div>
 
-      {/* Node Info */}
-      <div
-        style={{
-          marginBottom: '20px',
-          padding: '10px',
-          background: 'var(--reactflo-bg-secondary, #f5f5f5)',
-          border: '1px solid var(--reactflo-border-secondary, #e0e0e0)',
-          borderRadius: '4px',
-        }}
-      >
-        <div style={{ marginBottom: '5px' }}>
-          <strong>Label:</strong> {nodeData.label}
-        </div>
-        <div style={{ marginBottom: '5px' }}>
-          <strong>Type:</strong> <code style={{ fontSize: '12px' }}>{nodeData.type}</code>
-        </div>
-        {nodeData.category && (
-          <div>
-            <strong>Category:</strong> {nodeData.category}
+      {/* Content */}
+      <div className="property-panel__content">
+        {/* Node Info Card */}
+        <div className="property-panel__node-info">
+          <div className="property-panel__node-info-row">
+            <span className="property-panel__node-info-label">Label:</span>
+            <span className="property-panel__node-info-value">{nodeData.label}</span>
           </div>
-        )}
-        {nodeData.description && (
-          <div
-            style={{
-              marginTop: '8px',
-              fontSize: '12px',
-              color: 'var(--reactflo-text-secondary, #666)',
-            }}
-          >
-            {nodeData.description}
+          <div className="property-panel__node-info-row">
+            <span className="property-panel__node-info-label">Type:</span>
+            <code className="property-panel__node-info-code">{nodeData.type}</code>
           </div>
-        )}
-      </div>
-
-      {/* Properties */}
-      {nodeData.properties && Object.keys(nodeData.properties).length > 0 && (
-        <div style={{ marginBottom: '20px' }}>
-          <h4 style={{ marginTop: 0, marginBottom: '10px' }}>Properties</h4>
-          {Object.entries(nodeData.properties).map(
-            ([key, propDef]: [string, PropertyDefinition]) => (
-              <div
-                key={key}
-                className={classes?.group}
-                style={mergeStyles(defaultGroupStyle, styles?.group)}
-              >
-                <label
-                  className={classes?.label}
-                  style={mergeStyles(defaultLabelStyle, styles?.label)}
-                >
-                  {propDef.label || key}
-                  {propDef.required && <span style={{ color: 'red' }}> *</span>}
-                </label>
-
-                {/* Render different control types based on property definition */}
-                {propDef.type === 'select' && propDef.options ? (
-                  <select
-                    value={
-                      propertyValues[key] !== undefined
-                        ? String(propertyValues[key])
-                        : String(propDef.defaultValue || '')
-                    }
-                    className={classes?.input}
-                    style={mergeStyles(defaultInputStyle, styles?.input)}
-                    onChange={(e) => {
-                      const value = e.target.value;
-
-                      // Update local state immediately for responsive UI
-                      setPropertyValues((prev) => ({ ...prev, [key]: value }));
-
-                      // Notify parent component
-                      if (onUpdate) {
-                        onUpdate({ [key]: value });
-                      }
-                    }}
-                  >
-                    {propDef.options.map((option: { value: string; label: string }) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                ) : propDef.type === 'boolean' ? (
-                  <input
-                    type="checkbox"
-                    checked={
-                      propertyValues[key] !== undefined
-                        ? Boolean(propertyValues[key])
-                        : Boolean(propDef.defaultValue)
-                    }
-                    style={{
-                      marginRight: '8px',
-                      transform: 'scale(1.2)',
-                    }}
-                    onChange={(e) => {
-                      const value = e.target.checked;
-
-                      // Update local state immediately for responsive UI
-                      setPropertyValues((prev) => ({ ...prev, [key]: value }));
-
-                      // Notify parent component
-                      if (onUpdate) {
-                        onUpdate({ [key]: value });
-                      }
-                    }}
-                  />
-                ) : propDef.type === 'array' ? (
-                  <div>
-                    {/* Input and Add button */}
-                    <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
-                      <input
-                        type="text"
-                        id={`${key}-input`}
-                        placeholder="Enter value"
-                        style={{
-                          flex: 1,
-                          padding: '6px',
-                          border: '1px solid #ccc',
-                          borderRadius: '4px',
-                          fontSize: '13px',
-                          boxSizing: 'border-box',
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            const input = e.target as HTMLInputElement;
-                            const text = input.value.trim();
-                            if (text) {
-                              // Parse value
-                              let value: unknown;
-                              const num = Number(text);
-                              if (!isNaN(num) && text !== '') {
-                                value = num;
-                              } else if (text === 'true') {
-                                value = true;
-                              } else if (text === 'false') {
-                                value = false;
-                              } else {
-                                value = text;
-                              }
-
-                              // Add to array
-                              const currentArray = Array.isArray(propertyValues[key])
-                                ? (propertyValues[key] as unknown[])
-                                : [];
-                              const newArray = [...currentArray, value];
-
-                              if (process.env.NODE_ENV === 'development') {
-                                console.warn(`Add to array property ${key}:`, newArray);
-                              }
-                              setPropertyValues((prev) => ({ ...prev, [key]: newArray }));
-                              if (onUpdate) {
-                                onUpdate({ [key]: newArray });
-                              }
-                              input.value = '';
-                            }
-                          }
-                        }}
-                      />
-                      <button
-                        style={{
-                          padding: '6px 12px',
-                          background: '#667eea',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          fontSize: '13px',
-                          cursor: 'pointer',
-                          fontWeight: 'bold',
-                        }}
-                        onClick={() => {
-                          const input = document.getElementById(`${key}-input`) as HTMLInputElement;
-                          const text = input.value.trim();
-                          if (text) {
-                            // Parse value
-                            let value: unknown;
-                            const num = Number(text);
-                            if (!isNaN(num) && text !== '') {
-                              value = num;
-                            } else if (text === 'true') {
-                              value = true;
-                            } else if (text === 'false') {
-                              value = false;
-                            } else {
-                              value = text;
-                            }
-
-                            // Add to array
-                            const currentArray = Array.isArray(propertyValues[key])
-                              ? (propertyValues[key] as unknown[])
-                              : [];
-                            const newArray = [...currentArray, value];
-
-                            if (process.env.NODE_ENV === 'development') {
-                              console.warn(`Add to array property ${key}:`, newArray);
-                            }
-                            setPropertyValues((prev) => ({ ...prev, [key]: newArray }));
-                            if (onUpdate) {
-                              onUpdate({ [key]: newArray });
-                            }
-                            input.value = '';
-                          }
-                        }}
-                      >
-                        + Add
-                      </button>
-                    </div>
-
-                    {/* Display list of values */}
-                    <div style={{ marginTop: '8px' }}>
-                      {Array.isArray(propertyValues[key]) &&
-                      (propertyValues[key] as unknown[]).length > 0 ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                          {(propertyValues[key] as unknown[]).map((item, index) => (
-                            <div
-                              key={index}
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                padding: '6px 8px',
-                                background: 'white',
-                                border: '1px solid #e0e0e0',
-                                borderRadius: '4px',
-                                fontSize: '13px',
-                              }}
-                            >
-                              <span style={{ flex: 1, fontFamily: 'monospace' }}>
-                                {JSON.stringify(item)}
-                              </span>
-                              <button
-                                style={{
-                                  padding: '2px 8px',
-                                  background: '#ff4444',
-                                  color: 'white',
-                                  border: 'none',
-                                  borderRadius: '3px',
-                                  fontSize: '11px',
-                                  cursor: 'pointer',
-                                  marginLeft: '8px',
-                                }}
-                                onClick={() => {
-                                  const currentArray = propertyValues[key] as unknown[];
-                                  const newArray = currentArray.filter((_, i) => i !== index);
-
-                                  if (process.env.NODE_ENV === 'development') {
-                                    console.warn(`Remove from array property ${key}:`, newArray);
-                                  }
-                                  setPropertyValues((prev) => ({ ...prev, [key]: newArray }));
-                                  if (onUpdate) {
-                                    onUpdate({ [key]: newArray });
-                                  }
-                                }}
-                                title="Remove"
-                              >
-                                ✕
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div
-                          style={{
-                            padding: '8px',
-                            background: '#f5f5f5',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            color: '#999',
-                            textAlign: 'center',
-                          }}
-                        >
-                          No items added
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <input
-                    type={propDef.type === 'number' ? 'number' : 'text'}
-                    value={
-                      propertyValues[key] !== undefined
-                        ? String(propertyValues[key])
-                        : String(propDef.defaultValue || '')
-                    }
-                    placeholder={`Enter ${propDef.type}`}
-                    min={propDef.min}
-                    max={propDef.max}
-                    step={propDef.step}
-                    className={classes?.input}
-                    style={mergeStyles(defaultInputStyle, styles?.input)}
-                    onChange={(e) => {
-                      const value =
-                        propDef.type === 'number' ? parseFloat(e.target.value) : e.target.value;
-                      if (process.env.NODE_ENV === 'development') {
-                        console.warn(`Update property ${key}:`, value);
-                      }
-
-                      // Update local state immediately for responsive UI
-                      setPropertyValues((prev) => ({ ...prev, [key]: value }));
-
-                      // Notify parent component
-                      if (onUpdate) {
-                        onUpdate({ [key]: value });
-                      }
-                    }}
-                  />
-                )}
-
-                {propDef.description && (
-                  <div
-                    style={{
-                      fontSize: '11px',
-                      color: 'var(--reactflo-text-secondary, #666)',
-                      marginTop: '2px',
-                    }}
-                  >
-                    {propDef.description}
-                  </div>
-                )}
-              </div>
-            )
+          {nodeData.category && (
+            <div className="property-panel__node-info-row">
+              <span className="property-panel__node-info-label">Category:</span>
+              <span className="property-panel__node-info-value">{nodeData.category}</span>
+            </div>
+          )}
+          {nodeData.description && (
+            <div className="property-panel__node-description">{nodeData.description}</div>
           )}
         </div>
-      )}
 
-      {/* Output Properties (read-only) */}
-      {nodeData.outputs && Object.keys(nodeData.outputs).length > 0 && (
-        <div>
-          <h4 style={{ marginTop: 0, marginBottom: '10px' }}>Outputs</h4>
-          {Object.entries(nodeData.outputs).map(([key, port]: [string, PortDefinition]) => (
-            <div
-              key={key}
-              style={{
-                marginBottom: '8px',
-                padding: '8px',
-                background: 'var(--reactflo-bg-secondary, #f5f5f5)',
-                border: '1px solid var(--reactflo-border-secondary, #e0e0e0)',
-                borderRadius: '4px',
-              }}
-            >
-              <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{port.label || key}</div>
-              <div style={{ fontSize: '11px', color: 'var(--reactflo-text-secondary, #666)' }}>
-                Type: {port.type}
-              </div>
-              {port.description && (
-                <div
-                  style={{
-                    fontSize: '11px',
-                    color: 'var(--reactflo-text-secondary, #666)',
-                    marginTop: '2px',
-                  }}
-                >
-                  {port.description}
+        {/* Properties Section */}
+        {nodeData.properties && Object.keys(nodeData.properties).length > 0 && (
+          <CollapsibleSection
+            title="Configuration"
+            icon={<FiZap size={16} />}
+            defaultExpanded={true}
+          >
+            {Object.entries(nodeData.properties).map(
+              ([key, propDef]: [string, PropertyDefinition]) => (
+                <div key={key} className="property-group">
+                  <label className="property-group__label">
+                    {propDef.label || key}
+                    {propDef.required && <span className="property-group__required">*</span>}
+                  </label>
+                  {renderPropertyControl(key, propDef)}
+                  {propDef.description && (
+                    <div className="property-group__description">{propDef.description}</div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+              )
+            )}
+          </CollapsibleSection>
+        )}
+      </div>
     </div>
   );
-};
+}
+
+// Helper function to parse string values
+function parseValue(text: string): unknown {
+  const num = Number(text);
+  if (!isNaN(num) && text !== '') {
+    return num;
+  }
+  if (text === 'true') return true;
+  if (text === 'false') return false;
+  return text;
+}

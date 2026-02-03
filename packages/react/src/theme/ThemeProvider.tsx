@@ -20,7 +20,7 @@ export interface ThemeProviderProps {
 
 /**
  * Flattens nested theme object into CSS custom property format
- * Example: { colors: { primary: { 500: '#2A41FF' } } } 
+ * Example: { colors: { primary: { 500: '#2A41FF' } } }
  * becomes: { '--theme-primary-500': '#2A41FF' }
  */
 function flattenTheme(obj: any, prefix = '--theme'): Record<string, string> {
@@ -48,7 +48,7 @@ function flattenTheme(obj: any, prefix = '--theme'): Record<string, string> {
 export function ThemeProvider({ children, theme: customTheme }: ThemeProviderProps) {
   const theme = useMemo(() => {
     if (!customTheme) return defaultTheme;
-    
+
     // Deep merge custom theme with default theme
     return {
       colors: { ...defaultTheme.colors, ...customTheme.colors },

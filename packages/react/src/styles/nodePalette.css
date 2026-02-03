@@ -1,0 +1,37 @@
+/* NodePalette modern styling */
+
+/* Smooth scrollbar */
+.reactflo-node-palette {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-medium) transparent;
+}
+
+.reactflo-node-palette::-webkit-scrollbar {
+  width: 6px;
+}
+
+.reactflo-node-palette::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.reactflo-node-palette::-webkit-scrollbar-thumb {
+  background: var(--color-border-medium);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast) var(--ease-out);
+}
+
+.reactflo-node-palette::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-strong);
+}
+
+/* Slide down animation for collapsible categories */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

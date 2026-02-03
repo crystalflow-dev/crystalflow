@@ -2,7 +2,6 @@ import React from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { PortDefinition, PropertyDefinition } from '@reactflo/types';
 import { NodeConstructor } from '@reactflo/core';
-import './CustomNode.css';
 
 /**
  * Custom node data
@@ -41,12 +40,18 @@ export interface CustomNodeData {
  * Default node content renderer
  */
 const defaultRenderNodeContent = (data: CustomNodeData): React.ReactNode => (
-  <div className="node-content" data-category={data.category}>
+  <div 
+    className="node-content" 
+    data-category={data.category}
+    style={{ '--node-color': data.color } as React.CSSProperties}
+  >
     <div className="node-header">
       {data.icon && <span className="node-icon">{data.icon}</span>}
       <span className="node-label">{data.label}</span>
     </div>
-    <div className="node-type">{data.type}</div>
+    <div className="node-body">
+      <div className="node-type">{data.type}</div>
+    </div>
   </div>
 );
 

@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { NodeConstructor } from '@reactflo/core';
 import { Node as ReactFlowNode, Edge, ReactFlowProvider } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-import './reactflow-theme.css';
+import { injectStyles } from '../../utils/injectStyles';
+import { globalStyles, componentStyles } from '../../styles/cssInJs';
 import { WorkflowCanvas } from '../WorkflowCanvas/WorkflowCanvas';
 import { NodePalette, NodePaletteProps } from '../NodePalette/NodePalette';
 import { PropertyPanel, PropertyPanelProps } from '../PropertyPanel/PropertyPanel';
 import { Toolbar, ToolbarProps, ToolbarOptions, ToolbarIcons } from '../Toolbar/Toolbar';
+import { ResizablePanel } from '../ResizablePanel/ResizablePanel';
 import { CustomNodeData } from '../Node/CustomNode';
 import {
   useReactFlowState,
@@ -270,6 +271,12 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
           : lightTheme
       : theme;
 
+  // Inject all ReactFlo styles once on mount
+  useEffect(() => {
+    injectStyles(globalStyles, 'reactflo-global');
+    injectStyles(componentStyles, 'reactflo-components');
+  }, []);
+
   // State for React Flow instance
   const [screenToFlowPosition, setScreenToFlowPosition] = useState<
     ((pos: { x: number; y: number }) => { x: number; y: number }) | undefined
@@ -409,14 +416,22 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
         <div style={mainContentStyle}>
           {/* Node Palette */}
           {showPalette && (
-            <NodePalette
-              nodes={nodePalette.paletteItems}
-              onNodeDragStart={nodePalette.onNodeDragStart}
-              className={classes?.palette}
-              style={styles?.palette}
-              renderPaletteItem={renderPaletteItem}
-              {...nodePaletteProps}
-            />
+            <ResizablePanel
+              minWidth={200}
+              maxWidth={400}
+              defaultWidth={280}
+              storageKey="reactflo-node-palette-width"
+              resizeHandle="right"
+            >
+              <NodePalette
+                nodes={nodePalette.paletteItems}
+                onNodeDragStart={nodePalette.onNodeDragStart}
+                className={classes?.palette}
+                style={styles?.palette}
+                renderPaletteItem={renderPaletteItem}
+                {...nodePaletteProps}
+              />
+            </ResizablePanel>
           )}
 
           {/* React Flow Canvas */}
@@ -439,14 +454,22 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
 
           {/* Property Panel */}
           {showProperties && reactFlowState.selectedNode && (
-            <PropertyPanel
-              node={reactFlowState.selectedNode}
-              onClose={handlePropertyPanelClose}
-              onUpdate={handlePropertyPanelUpdate}
-              className={classes?.properties}
-              style={styles?.properties}
-              {...propertyPanelProps}
-            />
+            <ResizablePanel
+              minWidth={250}
+              maxWidth={600}
+              defaultWidth={350}
+              storageKey="reactflo-property-panel-width"
+              resizeHandle="left"
+            >
+              <PropertyPanel
+                node={reactFlowState.selectedNode}
+                onClose={handlePropertyPanelClose}
+                onUpdate={handlePropertyPanelUpdate}
+                className={classes?.properties}
+                style={styles?.properties}
+                {...propertyPanelProps}
+              />
+            </ResizablePanel>
           )}
         </div>
       </div>

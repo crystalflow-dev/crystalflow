@@ -2,7 +2,6 @@ import { NodeConstructor } from '@reactflo/core';
 import React, { useMemo, useState } from 'react';
 import { NodePaletteClasses, NodePaletteStyles } from '../../types/styling';
 import { cn, mergeStyles } from '../../utils/styling';
-import './NodePalette.css';
 
 /**
  * Node palette item
@@ -77,8 +76,19 @@ export interface NodePaletteProps {
  */
 const defaultRenderPaletteItem = (item: NodePaletteItem): React.ReactNode => (
   <>
-    <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{item.label}</div>
-    <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>{item.type}</div>
+    <div style={{ fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-sm)' }}>
+      {item.label}
+    </div>
+    <div
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-tertiary)',
+        marginTop: 'var(--space-1)',
+        fontFamily: 'var(--font-family-mono)',
+      }}
+    >
+      {item.type}
+    </div>
   </>
 );
 
@@ -106,6 +116,19 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
   renderPaletteItem,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set());
+
+  const toggleCategory = (category: string) => {
+    setCollapsedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(category)) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
+  };
 
   // Filter nodes based on search
   const filteredNodes = useMemo(() => {
@@ -142,53 +165,84 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
   };
 
   const defaultRootStyle: React.CSSProperties = {
-    width: '250px',
-    padding: '10px',
-    borderRight: '1px solid var(--reactflo-border-primary, #ddd)',
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    borderRight: `1px solid var(--color-border-light)`,
     overflowY: 'auto',
-    backgroundColor: 'var(--reactflo-palette-bg, #f9f9f9)',
-    color: 'var(--reactflo-palette-text, #333)',
-    direction: 'rtl', // Move scrollbar to left
-    scrollbarWidth: 'thin', // Firefox
-    scrollbarColor: 'transparent transparent', // Firefox - hide by default
+    backgroundColor: 'var(--color-bg-primary)',
+    color: 'var(--color-text-primary)',
+    fontFamily: 'var(--font-family-base)',
   };
 
   const defaultContentStyle: React.CSSProperties = {
-    direction: 'ltr', // Reset content direction to normal
+    padding: 'var(--space-4)',
+    flex: 1,
+    overflowY: 'auto',
+  };
+
+  const defaultHeaderStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 'var(--space-4)',
+    margin: 0,
+    borderBottom: `1px solid var(--color-border-light)`,
+    background: 'var(--color-bg-secondary)',
+    fontSize: 'var(--font-size-base)',
+    fontWeight: 'var(--font-weight-semibold)',
+    color: 'var(--color-text-primary)',
+    flexShrink: 0,
   };
 
   const defaultSearchStyle: React.CSSProperties = {
     width: '100%',
-    padding: '6px',
-    marginBottom: '10px',
-    border: '1px solid var(--reactflo-border-primary, #ccc)',
-    borderRadius: '4px',
-    boxSizing: 'border-box',
-    backgroundColor: 'var(--reactflo-bg-primary, white)',
-    color: 'var(--reactflo-text-primary, #333)',
+    padding: 'var(--space-2) var(--space-3)',
+    marginBottom: 'var(--space-4)',
+    border: `1px solid var(--color-border-medium)`,
+    borderRadius: 'var(--radius-sm)',
+    backgroundColor: 'var(--color-bg-secondary)',
+    color: 'var(--color-text-primary)',
+    fontSize: 'var(--font-size-sm)',
+    fontFamily: 'var(--font-family-base)',
+    outline: 'none',
+    transition: 'all var(--transition-fast) var(--ease-out)',
   };
 
   const defaultCategoryHeaderStyle: React.CSSProperties = {
-    margin: '0 0 8px 0',
-    fontSize: '12px',
-    color: 'var(--reactflo-text-secondary, #666)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 'var(--space-2) var(--space-3)',
+    margin: '0 0 var(--space-2) 0',
+    fontSize: 'var(--font-size-sm)',
+    fontWeight: 'var(--font-weight-semibold)',
+    color: 'var(--color-text-secondary)',
+    background: 'var(--color-bg-secondary)',
+    borderRadius: 'var(--radius-sm)',
+    cursor: 'pointer',
+    userSelect: 'none',
+    transition: 'background var(--transition-fast) var(--ease-out)',
   };
 
   const defaultNodeItemStyle: React.CSSProperties = {
-    padding: '8px',
-    margin: '5px 0',
-    border: '1px solid var(--reactflo-border-primary, #ccc)',
-    borderRadius: '4px',
+    padding: 'var(--space-3)',
+    marginBottom: 'var(--space-2)',
+    border: `1px solid var(--color-border-light)`,
+    borderRadius: 'var(--radius-sm)',
     cursor: 'grab',
-    background: 'var(--reactflo-bg-primary, white)',
-    color: 'var(--reactflo-text-primary, #333)',
-    transition: 'all 0.2s',
+    background: 'var(--color-bg-elevated)',
+    color: 'var(--color-text-primary)',
+    transition: 'all var(--transition-fast) var(--ease-out)',
+    fontSize: 'var(--font-size-sm)',
   };
 
   const defaultEmptyStyle: React.CSSProperties = {
-    padding: '20px',
+    padding: 'var(--space-8)',
     textAlign: 'center',
-    color: 'var(--reactflo-text-disabled, #999)',
+    color: 'var(--color-text-tertiary)',
+    fontSize: 'var(--font-size-sm)',
   };
 
   return (
@@ -196,9 +250,13 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       className={cn('reactflo-node-palette', className, classes?.root)}
       style={mergeStyles(defaultRootStyle, styles?.root, style)}
     >
-      <div style={defaultContentStyle}>
-        <h3 style={{ margin: '0 0 10px 0' }}>Node Palette</h3>
+      {/* Header */}
+      <div style={defaultHeaderStyle}>
+        <span>Nodes</span>
+      </div>
 
+      {/* Content */}
+      <div style={defaultContentStyle}>
         {/* Search box */}
         <input
           type="text"
@@ -207,49 +265,93 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
           onChange={(e) => setSearchTerm(e.target.value)}
           className={classes?.search}
           style={mergeStyles(defaultSearchStyle, styles?.search)}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = 'var(--color-primary-500)';
+            e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-primary-50)';
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = 'var(--color-border-medium)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
         />
 
-        {/* Render grouped nodes */}
-        {Object.entries(groupedNodes).map(([category, categoryNodes]) => (
-          <div key={category} style={{ marginBottom: '15px' }}>
-            {groupByCategory && (
-              <h4
-                className={classes?.categoryHeader}
-                style={mergeStyles(defaultCategoryHeaderStyle, styles?.categoryHeader)}
-              >
-                {category}
-              </h4>
-            )}
+        {/* Render grouped nodes with collapsible categories */}
+        {Object.entries(groupedNodes).map(([category, categoryNodes]) => {
+          const isCollapsed = collapsedCategories.has(category);
+          return (
+            <div key={category} style={{ marginBottom: 'var(--space-4)' }}>
+              {groupByCategory && (
+                <div
+                  className={classes?.categoryHeader}
+                  style={mergeStyles(defaultCategoryHeaderStyle, styles?.categoryHeader)}
+                  onClick={() => toggleCategory(category)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--color-bg-tertiary)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'var(--color-bg-secondary)';
+                  }}
+                >
+                  <span>{category}</span>
+                  <span
+                    style={{
+                      transition: 'transform var(--transition-fast) var(--ease-out)',
+                      transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                      fontSize: 'var(--font-size-xs)',
+                    }}
+                  >
+                    ▶
+                  </span>
+                </div>
+              )}
 
-            {categoryNodes.map((node) => (
-              <div
-                key={node.type}
-                draggable
-                onDragStart={(e) => handleDragStart(e, node.type)}
-                title={node.description || node.label}
-                className={classes?.nodeItem}
-                data-category={node.category}
-                style={mergeStyles(
-                  defaultNodeItemStyle,
-                  {
-                    borderLeft: node.color ? `4px solid ${node.color}` : undefined,
-                  },
-                  styles?.nodeItem
-                )}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = 'none';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                {(renderPaletteItem || defaultRenderPaletteItem)(node)}
-              </div>
-            ))}
-          </div>
-        ))}
+              {!isCollapsed && (
+                <div
+                  style={{
+                    animation: 'slideDown 0.2s ease-out',
+                  }}
+                >
+                  {categoryNodes.map((node) => (
+                    <div
+                      key={node.type}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, node.type)}
+                      title={node.description || node.label}
+                      className={classes?.nodeItem}
+                      data-category={node.category}
+                      style={mergeStyles(
+                        defaultNodeItemStyle,
+                        {
+                          borderLeft: node.color ? `3px solid ${node.color}` : undefined,
+                        },
+                        styles?.nodeItem
+                      )}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                        e.currentTarget.style.transform = 'translateX(-2px)';
+                        e.currentTarget.style.borderTopColor = 'var(--color-border-medium)';
+                        e.currentTarget.style.borderRightColor = 'var(--color-border-medium)';
+                        e.currentTarget.style.borderBottomColor = 'var(--color-border-medium)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.boxShadow = 'none';
+                        e.currentTarget.style.transform = 'translateX(0)';
+                        e.currentTarget.style.borderTopColor = 'var(--color-border-light)';
+                        e.currentTarget.style.borderRightColor = 'var(--color-border-light)';
+                        e.currentTarget.style.borderBottomColor = 'var(--color-border-light)';
+                      }}
+                      onDragEnd={(e) => {
+                        e.currentTarget.style.cursor = 'grab';
+                      }}
+                    >
+                      {(renderPaletteItem || defaultRenderPaletteItem)(node)}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
 
         {filteredNodes.length === 0 && (
           <div className={classes?.empty} style={mergeStyles(defaultEmptyStyle, styles?.empty)}>

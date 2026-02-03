@@ -1,0 +1,44 @@
+/**
+ * MiniMap Component Styles
+ * Integrates with ReactFlo theme system for consistent appearance
+ */
+
+/* MiniMap container styling */
+.react-flow__minimap {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+/* Dark mode support */
+[data-theme="dark"] .react-flow__minimap {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-medium);
+}
+
+/* MiniMap nodes - enhance visibility */
+.react-flow__minimap-node {
+  opacity: 0.8;
+  stroke-width: 1px;
+}
+
+/* Selected node in minimap */
+.react-flow__minimap-node.selected {
+  opacity: 1;
+  stroke: var(--color-primary-500);
+  stroke-width: 2px;
+}
+
+/* MiniMap mask (viewport indicator) */
+.react-flow__minimap-mask {
+  fill: var(--color-primary-50);
+  stroke: var(--color-primary-500);
+  stroke-width: 1.5px;
+  opacity: 0.6;
+}
+
+[data-theme="dark"] .react-flow__minimap-mask {
+  fill: rgba(107, 138, 255, 0.15);
+  opacity: 0.8;
+}

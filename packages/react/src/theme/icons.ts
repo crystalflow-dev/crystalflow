@@ -9,17 +9,17 @@ import type { IconType } from 'react-icons';
 // Category icons for Node Palette
 export const categoryIcons: Record<string, IconType> = {
   'Data Processing': FiIcons.FiDatabase,
-  'Mathematics': FiIcons.FiHash,
-  'Math': FiIcons.FiHash,
-  'Network': FiIcons.FiGlobe,
-  'Logic': FiIcons.FiCode,
-  'Time': FiIcons.FiCalendar,
-  'Input': FiIcons.FiEdit3,
-  'Output': FiIcons.FiEye,
-  'Transform': FiIcons.FiRepeat,
-  'Analytics': FiIcons.FiTrendingUp,
-  'Control': FiIcons.FiSliders,
-  'Examples': FiIcons.FiLayers,
+  Mathematics: FiIcons.FiHash,
+  Math: FiIcons.FiHash,
+  Network: FiIcons.FiGlobe,
+  Logic: FiIcons.FiCode,
+  Time: FiIcons.FiCalendar,
+  Input: FiIcons.FiEdit3,
+  Output: FiIcons.FiEye,
+  Transform: FiIcons.FiRepeat,
+  Analytics: FiIcons.FiTrendingUp,
+  Control: FiIcons.FiSliders,
+  Examples: FiIcons.FiLayers,
 };
 
 // Node status icons
