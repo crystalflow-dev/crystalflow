@@ -167,7 +167,6 @@ describe('Executor', () => {
       node.b = 3;
 
       workflow['_nodes'].set('node1', node);
-      workflow['_graph'].addNode('node1');
 
       const result = await executor.execute(workflow);
 
@@ -194,8 +193,6 @@ describe('Executor', () => {
       // Add nodes to workflow
       workflow['_nodes'].set('node1', node1);
       workflow['_nodes'].set('node2', node2);
-      workflow['_graph'].addNode('node1');
-      workflow['_graph'].addNode('node2');
 
       // Connect: node1.result -> node2.a
       const connection = workflow.connect('node1', 'result', 'node2', 'a');
@@ -234,9 +231,6 @@ describe('Executor', () => {
       workflow['_nodes'].set('node1', node1);
       workflow['_nodes'].set('node2', node2);
       workflow['_nodes'].set('node3', node3);
-      workflow['_graph'].addNode('node1');
-      workflow['_graph'].addNode('node2');
-      workflow['_graph'].addNode('node3');
 
       // Connect: node1.result -> node3.a, node2.result -> node3.b
       workflow.connect('node1', 'result', 'node3', 'a');
@@ -268,13 +262,8 @@ describe('Executor', () => {
       workflow['_nodes'].set('node1', node1);
       workflow['_nodes'].set('error-node', errorNode);
       workflow['_nodes'].set('node3', node3);
-      workflow['_graph'].addNode('node1');
-      workflow['_graph'].addNode('error-node');
-      workflow['_graph'].addNode('node3');
 
       // Create dependency: node1 -> error-node -> node3
-      workflow['_graph'].addEdge('node1', 'error-node');
-      workflow['_graph'].addEdge('error-node', 'node3');
 
       const result = await executor.execute(workflow);
 
@@ -293,7 +282,6 @@ describe('Executor', () => {
       const errorNode = new ErrorNode('error-node');
 
       workflow['_nodes'].set('error-node', errorNode);
-      workflow['_graph'].addNode('error-node');
 
       const onError = jest.fn();
       const onNodeError = jest.fn();
@@ -316,7 +304,6 @@ describe('Executor', () => {
       asyncNode.delay = 500; // 500ms delay
 
       workflow['_nodes'].set('async-node', asyncNode);
-      workflow['_graph'].addNode('async-node');
 
       const result = await executor.execute(workflow, { timeout: 50 }); // 50ms timeout
 
@@ -329,7 +316,6 @@ describe('Executor', () => {
       const node = new AddNode('node1');
 
       workflow['_nodes'].set('node1', node);
-      workflow['_graph'].addNode('node1');
 
       const result = await executor.execute(workflow, {
         variables: { apiKey: 'test-key', userId: 123 },
@@ -347,7 +333,6 @@ describe('Executor', () => {
       const node = new AddNode('node1');
 
       workflow['_nodes'].set('node1', node);
-      workflow['_graph'].addNode('node1');
 
       const beforeExecute = jest.fn();
       const afterExecute = jest.fn();
@@ -368,8 +353,6 @@ describe('Executor', () => {
 
       workflow['_nodes'].set('node1', node1);
       workflow['_nodes'].set('node2', node2);
-      workflow['_graph'].addNode('node1');
-      workflow['_graph'].addNode('node2');
 
       const onNodeStart = jest.fn();
       const onNodeComplete = jest.fn();
@@ -391,7 +374,6 @@ describe('Executor', () => {
       asyncNode.delay = 50;
 
       workflow['_nodes'].set('async-node', asyncNode);
-      workflow['_graph'].addNode('async-node');
 
       const result = await executor.execute(workflow);
 
@@ -408,7 +390,6 @@ describe('Executor', () => {
       node.b = 20;
 
       workflow['_nodes'].set('node1', node);
-      workflow['_graph'].addNode('node1');
 
       const result = await executor.execute(workflow);
 
@@ -439,7 +420,6 @@ describe('Executor', () => {
       node.b = 3;
 
       workflow['_nodes'].set('node1', node);
-      workflow['_graph'].addNode('node1');
 
       const executionOrder: string[] = [];
 
@@ -465,7 +445,6 @@ describe('Executor', () => {
       const node = new AddNode('node1');
 
       workflow['_nodes'].set('node1', node);
-      workflow['_graph'].addNode('node1');
 
       const results: string[] = [];
 
@@ -498,7 +477,6 @@ describe('Executor', () => {
       const node = new AddNode('node1');
 
       workflow['_nodes'].set('node1', node);
-      workflow['_graph'].addNode('node1');
 
       const results: string[] = [];
 
@@ -533,8 +511,6 @@ describe('Executor', () => {
 
       workflow['_nodes'].set('node1', node1);
       workflow['_nodes'].set('node2', node2);
-      workflow['_graph'].addNode('node1');
-      workflow['_graph'].addNode('node2');
 
       const nodeExecutionLog: Array<{ nodeId: string; timestamp: number }> = [];
 
@@ -561,7 +537,6 @@ describe('Executor', () => {
       const node = new AddNode('node1');
 
       workflow['_nodes'].set('node1', node);
-      workflow['_graph'].addNode('node1');
 
       executor.on('onNodeStart', async () => {
         await new Promise((resolve) => setTimeout(resolve, 10));
@@ -581,7 +556,6 @@ describe('Executor', () => {
       const node = new AddNode('node1');
 
       workflow['_nodes'].set('node1', node);
-      workflow['_graph'].addNode('node1');
 
       const events: string[] = [];
 
@@ -605,7 +579,6 @@ describe('Executor', () => {
       const errorNode = new ErrorNode('error-node');
 
       workflow['_nodes'].set('error-node', errorNode);
-      workflow['_graph'].addNode('error-node');
 
       const events: string[] = [];
 
@@ -635,7 +608,6 @@ describe('Executor', () => {
       slowNode.stepDelay = 50;
 
       workflow['_nodes'].set('slow1', slowNode);
-      workflow['_graph'].addNode('slow1');
 
       expect(executor.isExecutionActive('exec-123')).toBe(false);
 
@@ -660,7 +632,6 @@ describe('Executor', () => {
       slowNode.stepDelay = 30;
 
       workflow['_nodes'].set('slow1', slowNode);
-      workflow['_graph'].addNode('slow1');
 
       const promise = executor.execute(workflow);
 
@@ -702,11 +673,6 @@ describe('Executor', () => {
       workflow['_nodes'].set('node1', node1);
       workflow['_nodes'].set('slow1', node2);
       workflow['_nodes'].set('node3', node3);
-      workflow['_graph'].addNode('node1');
-      workflow['_graph'].addNode('slow1');
-      workflow['_graph'].addNode('node3');
-      workflow['_graph'].addEdge('node1', 'slow1');
-      workflow['_graph'].addEdge('slow1', 'node3');
 
       const promise = executor.execute(workflow);
 
@@ -738,10 +704,8 @@ describe('Executor', () => {
       slow2.stepDelay = 50;
 
       workflow1['_nodes'].set('slow1', slow1);
-      workflow1['_graph'].addNode('slow1');
 
       workflow2['_nodes'].set('slow2', slow2);
-      workflow2['_graph'].addNode('slow2');
 
       const promise1 = executor1.execute(workflow1);
       const promise2 = executor1.execute(workflow2);
@@ -772,7 +736,6 @@ describe('Executor', () => {
       slowNode.stepDelay = 50;
 
       workflow['_nodes'].set('slow1', slowNode);
-      workflow['_graph'].addNode('slow1');
 
       const abortController = new AbortController();
 
@@ -801,7 +764,6 @@ describe('Executor', () => {
       slowNode.stepDelay = 50;
 
       workflow['_nodes'].set('slow1', slowNode);
-      workflow['_graph'].addNode('slow1');
 
       let cancellationEmitted = false;
       let emittedExecutionId = '';
@@ -839,7 +801,6 @@ describe('Executor', () => {
       slowNode.stepDelay = 50; // Faster steps so we can check cancellation more often
 
       workflow['_nodes'].set('slow1', slowNode);
-      workflow['_graph'].addNode('slow1');
 
       const result = await executor.execute(workflow, {
         timeout: 150, // Timeout after 150ms (should hit during execution)
@@ -857,7 +818,6 @@ describe('Executor', () => {
       slowNode.stepDelay = 50;
 
       workflow['_nodes'].set('slow1', slowNode);
-      workflow['_graph'].addNode('slow1');
 
       const promise = executor.execute(workflow);
 
@@ -881,7 +841,6 @@ describe('Executor', () => {
       slowNode.stepDelay = 50;
 
       workflow['_nodes'].set('slow1', slowNode);
-      workflow['_graph'].addNode('slow1');
 
       const result = await executor.execute(workflow, {
         timeout: 200, // Should timeout during execution
@@ -907,7 +866,6 @@ describe('Executor', () => {
       slowNode.stepDelay = 50;
 
       workflow['_nodes'].set('slow1', slowNode);
-      workflow['_graph'].addNode('slow1');
 
       const abortController = new AbortController();
 

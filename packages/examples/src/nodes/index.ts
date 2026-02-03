@@ -10,6 +10,10 @@ export { StringInputNode } from './input/StringInputNode';
 export { AddNode } from './math/AddNode';
 export { MultiplyNode } from './math/MultiplyNode';
 export { SubtractNode } from './math/SubtractNode';
+export { ModuloNode } from './math/ModuloNode';
+
+// Logic nodes
+export * from './logic';
 
 // Output nodes
 export { DisplayNode } from './output/DisplayNode';

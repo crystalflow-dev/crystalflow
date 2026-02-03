@@ -12,10 +12,10 @@ import { defineNode, Input, Node } from '@reactflo/core';
   color: '#FF9800',
 })
 export class DisplayNode extends Node {
-  @Input({ type: 'any', label: 'Value', required: true })
+  @Input({ type: 'any', label: 'Value', required: false })
   value: unknown;
 
   execute(): void {
-    alert(`Display: ${this.value}`);
+    alert(`Display: ${this.value ? this.value : 'no value'}`);
   }
 }

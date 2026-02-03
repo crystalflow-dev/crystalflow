@@ -7,4 +7,3 @@
 
 export { Workflow } from './Workflow';
 export { Connection } from './Connection';
-export { Graph } from './Graph';

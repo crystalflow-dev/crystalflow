@@ -34,6 +34,9 @@ export interface ExecutorEvents {
   beforeExecute: (context: ExecutionContext) => void | Promise<void>;
   afterExecute: (result: ExecutionResult) => void | Promise<void>;
   onPlanBuilt: (plan: ExecutionPlan) => void | Promise<void>;
+  onStepStart: (stepId: string, stepType: string) => void | Promise<void>;
+  onStepComplete: (stepId: string, stepType: string) => void | Promise<void>;
+  onStepError: (stepId: string, stepType: string, error: Error) => void | Promise<void>;
   onNodeStart: (nodeId: string, node: Node) => void | Promise<void>;
   onNodeComplete: (nodeId: string, result: NodeExecutionResult) => void | Promise<void>;
   onNodeError: (nodeId: string, error: Error) => void | Promise<void>;
@@ -43,6 +46,8 @@ export interface ExecutorEvents {
     reason: CancellationReason,
     cancelledAt: Date
   ) => void | Promise<void>;
+  onBranchEnter: (nodeId: string, branchId: string, condition: string) => void | Promise<void>;
+  onBranchExit: (nodeId: string, branchId: string) => void | Promise<void>;
 }
 
 /**

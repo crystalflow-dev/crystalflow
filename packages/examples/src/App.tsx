@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import SimpleWorkflow from './examples/SimpleWorkflow';
+import ConditionalNodesDemo from './examples/ConditionalNodesDemo';
 import { StyledWorkflow } from './examples/StyledWorkflow';
 import { CustomRenderWorkflow } from './examples/CustomRenderWorkflow';
 import { ThemeDemo } from './examples/ThemeDemo';
 import './App.css';
 
-type ExampleType = 'simple' | 'styled' | 'custom' | 'theme';
+type ExampleType = 'simple' | 'styled' | 'custom' | 'theme' | 'conditional';
 
 function App() {
   const [currentExample, setCurrentExample] = useState<ExampleType>('simple');
@@ -74,6 +75,20 @@ function App() {
           >
             Theme Demo
           </button>
+          <button
+            onClick={() => setCurrentExample('conditional')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: currentExample === 'conditional' ? '#3498db' : '#95a5a6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: currentExample === 'conditional' ? 'bold' : 'normal',
+            }}
+          >
+            Conditional Nodes Demo
+          </button>
         </div>
       </header>
 
@@ -82,6 +97,7 @@ function App() {
         {currentExample === 'styled' && <StyledWorkflow />}
         {currentExample === 'custom' && <CustomRenderWorkflow />}
         {currentExample === 'theme' && <ThemeDemo />}
+        {currentExample === 'conditional' && <ConditionalNodesDemo />}
       </div>
     </div>
   );

@@ -9,6 +9,8 @@ import {
   addEdge,
   Connection,
 } from '@xyflow/react';
+import { PortDefinition } from '@reactflo/types';
+import { NodeConstructor } from '@reactflo/core';
 
 /**
  * Hook for managing React Flow state (nodes, edges, selection)
@@ -46,7 +48,44 @@ export function useReactFlowState() {
 
   const updateNode = useCallback((nodeId: string, updates: Record<string, unknown>) => {
     setNodes((nds) =>
-      nds.map((n) => (n.id === nodeId ? { ...n, data: { ...n.data, ...updates } } : n))
+      nds.map((n) => {
+        if (n.id !== nodeId) return n;
+
+        const updatedData = { ...n.data, ...updates };
+
+        // If the node has a nodeClass with getOutputs(), recalculate dynamic outputs
+        if (updatedData.nodeClass && typeof updatedData.nodeClass === 'function') {
+          try {
+            // Create a temporary instance with updated properties
+            const tempInstance = new (updatedData.nodeClass as NodeConstructor)(
+              `temp-${Date.now()}`
+            );
+
+            // Apply all current properties to the instance
+            Object.keys(updatedData.properties || {}).forEach((key) => {
+              if (updatedData[key] !== undefined) {
+                tempInstance[key] = updatedData[key];
+              }
+            });
+
+            // Check if node has dynamic outputs (getOutputs method)
+            if (typeof tempInstance.getOutputs === 'function') {
+              const dynamicOutputs = tempInstance.getOutputs();
+              // Convert to outputs object
+              const outputs: Record<string, PortDefinition> = {};
+              dynamicOutputs.forEach((port) => {
+                outputs[port.id] = port;
+              });
+
+              updatedData.outputs = outputs;
+            }
+          } catch (error) {
+            console.warn('Failed to recalculate dynamic outputs:', error);
+          }
+        }
+
+        return { ...n, data: updatedData };
+      })
     );
   }, []);
 

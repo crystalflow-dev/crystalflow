@@ -52,6 +52,35 @@ export function convertNodeToReactFlow(
     outputs[port.id] = port;
   });
 
+  // Check if node has dynamic outputs (nodes with getOutputs method)
+  // For dynamic output nodes, we need to call getOutputs() with property values
+  try {
+    const tempInstance = new nodeClass(`temp-${Date.now()}`);
+
+    // Apply property default values to the instance
+    propertyDefinitions.forEach((prop) => {
+      if (prop.defaultValue !== undefined) {
+        tempInstance[prop.id] = prop.defaultValue;
+      }
+    });
+
+    // If node has getOutputs method, use it to get initial outputs
+    if (typeof tempInstance.getOutputs === 'function') {
+      const dynamicOutputs = tempInstance.getOutputs();
+
+      // Replace static outputs with dynamic ones
+      const dynOutputs: Record<string, PortDefinition> = {};
+      dynamicOutputs.forEach((port: PortDefinition) => {
+        dynOutputs[port.id] = port;
+      });
+
+      // Merge with any static outputs
+      Object.assign(outputs, dynOutputs);
+    }
+  } catch (error) {
+    console.warn('Could not instantiate node for dynamic outputs:', error);
+  }
+
   // Convert properties to object format
   const properties: Record<string, PropertyDefinition> = {};
   const propertyValues: Record<string, unknown> = {};
