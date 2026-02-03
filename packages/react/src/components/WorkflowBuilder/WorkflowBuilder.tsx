@@ -29,6 +29,11 @@ import {
 } from '../../types/theme';
 import { cn, mergeStyles } from '../../utils/styling';
 
+// Inject styles at module level to ensure they're loaded before any component renders
+// This prevents FOUC (Flash of Unstyled Content)
+injectStyles(globalStyles, 'reactflo-global');
+injectStyles(componentStyles, 'reactflo-components');
+
 /**
  * WorkflowBuilder Props
  */
@@ -270,12 +275,6 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
           ? darkTheme
           : lightTheme
       : theme;
-
-  // Inject all ReactFlo styles once on mount
-  useEffect(() => {
-    injectStyles(globalStyles, 'reactflo-global');
-    injectStyles(componentStyles, 'reactflo-components');
-  }, []);
 
   // State for React Flow instance
   const [screenToFlowPosition, setScreenToFlowPosition] = useState<
