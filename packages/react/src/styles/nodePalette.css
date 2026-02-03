@@ -1,27 +1,13 @@
 /* NodePalette modern styling */
 
-/* Smooth scrollbar */
+/* Hide scrollbar */
 .reactflo-node-palette {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-border-medium) transparent;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 .reactflo-node-palette::-webkit-scrollbar {
-  width: 6px;
-}
-
-.reactflo-node-palette::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.reactflo-node-palette::-webkit-scrollbar-thumb {
-  background: var(--color-border-medium);
-  border-radius: var(--radius-sm);
-  transition: background var(--transition-fast) var(--ease-out);
-}
-
-.reactflo-node-palette::-webkit-scrollbar-thumb:hover {
-  background: var(--color-border-strong);
+  display: none; /* Chrome, Safari, Opera */
 }
 
 /* Slide down animation for collapsible categories */

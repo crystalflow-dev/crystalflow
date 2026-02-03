@@ -28,7 +28,7 @@ const nodeClasses = [
 ];
 
 interface ThemeDemoProps {
-  theme?: 'light' | 'dark' | 'auto';
+  theme?: 'light' | 'dark';
 }
 
 /**

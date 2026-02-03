@@ -147,9 +147,17 @@ export function InfoPopup({ title, children }: InfoPopupProps) {
                 overflowY: 'auto',
                 flex: 1,
                 color: 'var(--color-text-primary)',
+                lineHeight: '1.6',
               }}
             >
-              {children}
+              <div
+                className="reactflo-info-content"
+                style={{
+                  fontSize: 'var(--font-size-base)',
+                }}
+              >
+                {children}
+              </div>
             </div>
           </div>
 
@@ -169,6 +177,60 @@ export function InfoPopup({ title, children }: InfoPopupProps) {
                   opacity: 1;
                   transform: translate(-50%, -50%);
                 }
+              }
+
+              /* InfoPopup content styling */
+              .reactflo-info-content p {
+                margin: 0 0 var(--space-3) 0;
+                line-height: 1.6;
+              }
+
+              .reactflo-info-content h3 {
+                margin: var(--space-5) 0 var(--space-3) 0;
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-text-primary);
+              }
+
+              .reactflo-info-content h3:first-child {
+                margin-top: 0;
+              }
+
+              .reactflo-info-content ul,
+              .reactflo-info-content ol {
+                margin: var(--space-3) 0;
+                padding-left: var(--space-6);
+              }
+
+              .reactflo-info-content li {
+                margin: var(--space-2) 0;
+                line-height: 1.6;
+              }
+
+              .reactflo-info-content code {
+                padding: 2px 6px;
+                background: var(--color-bg-tertiary);
+                border: 1px solid var(--color-border-light);
+                border-radius: var(--radius-sm);
+                font-family: var(--font-family-mono);
+                font-size: 0.9em;
+                color: var(--color-primary-600);
+              }
+
+              .reactflo-info-content strong {
+                font-weight: var(--font-weight-semibold);
+                color: var(--color-text-primary);
+              }
+
+              .reactflo-info-content a {
+                color: var(--color-primary-500);
+                text-decoration: none;
+                transition: color var(--transition-fast) var(--ease-out);
+              }
+
+              .reactflo-info-content a:hover {
+                color: var(--color-primary-600);
+                text-decoration: underline;
               }
             `}
           </style>

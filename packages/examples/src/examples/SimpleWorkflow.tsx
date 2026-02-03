@@ -17,14 +17,13 @@ import {
 } from '../nodes';
 
 interface SimpleWorkflowProps {
-  theme?: 'light' | 'dark' | 'auto';
+  theme?: 'light' | 'dark';
 }
 
 /**
  * Simple Workflow Example Component
  */
 function SimpleWorkflow({ theme = 'light' }: SimpleWorkflowProps) {
-
   return (
     <div className="example-container">
       <div className="workflow-container">
@@ -48,6 +47,7 @@ function SimpleWorkflow({ theme = 'light' }: SimpleWorkflowProps) {
             showLoad: true,
             showClear: true,
             showUndoRedo: true, // Enable undo/redo buttons
+            showUISettings: true, // Enable UI settings
           }}
         />
       </div>

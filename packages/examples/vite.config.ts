@@ -13,6 +13,7 @@ export default defineConfig({
     }),
   ],
   server: {
+    allowedHosts: ['.ngrok-free.app'],
     watch: {
       // Watch the dist folders of local packages
       ignored: ['!**/node_modules/@reactflo/**'],

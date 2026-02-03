@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FiSun, FiMoon } from 'react-icons/fi';
 import SimpleWorkflow from './examples/SimpleWorkflow';
 import ConditionalNodesDemo from './examples/ConditionalNodesDemo';
 import { StyledWorkflow } from './examples/StyledWorkflow';
@@ -160,12 +161,17 @@ const exampleInfo: Record<ExampleType, { title: string; content: React.ReactNode
 
 function App() {
   const [currentExample, setCurrentExample] = useState<ExampleType>('simple');
-  const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
   return (
     <div className="app" data-theme={theme}>
       <header className="app-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+          <div>
+            <h1>ReactFlo Examples</h1>
+            <p>Interactive workflow builder demonstrations</p>
+          </div>
+
           {/* Theme Switcher */}
           <div
             style={{
@@ -178,7 +184,7 @@ function App() {
               boxShadow: 'var(--shadow-sm)',
             }}
           >
-            {(['light', 'dark', 'auto'] as const).map((themeOption) => (
+            {(['light', 'dark'] as const).map((themeOption) => (
               <button
                 key={themeOption}
                 onClick={() => setTheme(themeOption)}
@@ -193,7 +199,9 @@ function App() {
                   fontSize: 'var(--font-size-xs)',
                   transition: 'all var(--transition-fast) var(--ease-out)',
                   fontWeight:
-                    theme === themeOption ? 'var(--font-weight-semibold)' : 'var(--font-weight-normal)',
+                    theme === themeOption
+                      ? 'var(--font-weight-semibold)'
+                      : 'var(--font-weight-normal)',
                 }}
                 onMouseEnter={(e) => {
                   if (theme !== themeOption) {
@@ -206,14 +214,9 @@ function App() {
                   }
                 }}
               >
-                {themeOption === 'light' ? '☀️' : themeOption === 'dark' ? '🌙' : '⚙️'}
+                {themeOption === 'light' ? <FiSun /> : <FiMoon />}
               </button>
             ))}
-          </div>
-
-          <div>
-            <h1>ReactFlo Examples</h1>
-            <p>Interactive workflow builder demonstrations</p>
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>

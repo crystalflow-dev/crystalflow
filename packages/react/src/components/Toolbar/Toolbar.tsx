@@ -1,7 +1,17 @@
 import React from 'react';
-import { IoPlay, IoSave, IoFolder, IoTrash, IoArrowUndo, IoArrowRedo } from 'react-icons/io5';
+import {
+  IoPlay,
+  IoSave,
+  IoFolder,
+  IoTrash,
+  IoArrowUndo,
+  IoArrowRedo,
+  IoMap,
+  IoGrid,
+} from 'react-icons/io5';
 import { ToolbarClasses, ToolbarStyles } from '../../types/styling';
 import { cn, mergeStyles } from '../../utils/styling';
+import { BiExitFullscreen, BiFullscreen } from 'react-icons/bi';
 
 /**
  * Toolbar Options - Configure which buttons to show
@@ -32,6 +42,11 @@ export interface ToolbarOptions {
    * @default false
    */
   showUndoRedo?: boolean;
+  /**
+   * Show UI settings section
+   * @default true
+   */
+  showUISettings?: boolean;
 }
 
 /**
@@ -69,6 +84,21 @@ export interface ToolbarIcons {
    * @default <IoArrowRedo />
    */
   redo?: React.ReactNode | null | false;
+  /**
+   * Minimap toggle icon
+   * @default <IoMap />
+   */
+  minimap?: React.ReactNode | null | false;
+  /**
+   * Flow controls toggle icon
+   * @default <IoGrid />
+   */
+  flowControls?: React.ReactNode | null | false;
+  /**
+   * Fullscreen toggle icon
+   * @default <IoExpand /> or <IoContract />
+   */
+  fullscreen?: React.ReactNode | null | false;
 }
 
 /**
@@ -126,6 +156,42 @@ export interface ToolbarProps {
   canRedo?: boolean;
 
   /**
+   * Whether minimap is shown
+   */
+  showMinimap?: boolean;
+
+  /**
+   * Callback for toggling minimap visibility
+   */
+  onToggleMinimap?: (show: boolean) => void;
+
+  /**
+   * Whether flow controls are shown
+   */
+  showFlowControls?: boolean;
+
+  /**
+   * Callback for toggling flow controls visibility
+   */
+  onToggleFlowControls?: (show: boolean) => void;
+
+  /**
+   * Whether workflow builder is in fullscreen mode
+   */
+  isFullscreen?: boolean;
+
+  /**
+   * Callback for toggling fullscreen mode
+   */
+  onToggleFullscreen?: () => void;
+
+  /**
+   * Custom UI settings component or element
+   * Use this to add more UI settings beyond minimap and flow controls
+   */
+  customUISettings?: React.ReactNode;
+
+  /**
    * Configure which toolbar buttons to show
    */
   options?: ToolbarOptions;
@@ -167,6 +233,7 @@ export interface ToolbarProps {
  * - Save/Load workflow
  * - Clear canvas
  * - Undo/Redo actions
+ * - UI Settings (minimap, flow controls)
  */
 export const Toolbar: React.FC<ToolbarProps> = ({
   canExecute = false,
@@ -179,6 +246,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onRedo,
   canUndo = false,
   canRedo = false,
+  showMinimap = true,
+  onToggleMinimap,
+  showFlowControls = true,
+  onToggleFlowControls,
+  isFullscreen = false,
+  onToggleFullscreen,
+  customUISettings,
   options,
   icons,
   style,
@@ -193,6 +267,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     showLoad = true,
     showClear = true,
     showUndoRedo = false,
+    showUISettings = true,
   } = options || {};
 
   // Helper function to render icon
@@ -213,6 +288,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   const clearIcon = renderIcon(icons?.clear, <IoTrash />);
   const undoIcon = renderIcon(icons?.undo, <IoArrowUndo />);
   const redoIcon = renderIcon(icons?.redo, <IoArrowRedo />);
+  const minimapIcon = renderIcon(icons?.minimap, <IoMap />);
+  const flowControlsIcon = renderIcon(icons?.flowControls, <IoGrid />);
+  const fullscreenIcon = renderIcon(
+    icons?.fullscreen,
+    isFullscreen ? <BiExitFullscreen /> : <BiFullscreen />
+  );
+
   const defaultRootStyle: React.CSSProperties = {
     padding: 'var(--space-4)',
     borderBottom: `1px solid var(--color-border-light)`,
@@ -256,110 +338,125 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     fontWeight: 'var(--font-weight-semibold)',
   };
 
+  const defaultSectionStyle: React.CSSProperties = {
+    display: 'flex',
+    gap: 'var(--space-3)',
+    alignItems: 'center',
+  };
+
+  const defaultDividerStyle: React.CSSProperties = {
+    width: '1px',
+    height: '24px',
+    background: 'var(--color-border-light)',
+  };
+
   return (
     <div
       className={cn(className, classes?.root)}
       style={mergeStyles(defaultRootStyle, styles?.root, style)}
     >
-      {/* Execute Button */}
-      {showExecute && (
-        <button
-          onClick={onExecute}
-          disabled={!canExecute || isExecuting}
-          className={cn(classes?.button, isExecuting && classes?.buttonActive)}
-          style={mergeStyles(
-            defaultButtonStyle,
-            canExecute && !isExecuting ? defaultActiveStyle : defaultDisabledStyle,
-            styles?.button,
-            isExecuting ? styles?.buttonActive : undefined
-          )}
-          title="Execute workflow"
-        >
-          {isExecuting ? (
-            '⏳ Executing...'
-          ) : (
+      {/* Left Section - Main Actions */}
+      <div style={defaultSectionStyle}>
+        {/* Execute Button */}
+        {showExecute && (
+          <button
+            onClick={onExecute}
+            disabled={!canExecute || isExecuting}
+            className={cn(classes?.button, isExecuting && classes?.buttonActive)}
+            style={mergeStyles(
+              defaultButtonStyle,
+              canExecute && !isExecuting ? defaultActiveStyle : defaultDisabledStyle,
+              styles?.button,
+              isExecuting ? styles?.buttonActive : undefined
+            )}
+            title="Execute workflow"
+          >
+            {isExecuting ? (
+              '⏳ Executing...'
+            ) : (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                {executeIcon}
+                <span>Execute</span>
+              </span>
+            )}
+          </button>
+        )}
+
+        {/* Save Button */}
+        {showSave && (
+          <button
+            onClick={onSave}
+            className={classes?.button}
+            style={mergeStyles(defaultButtonStyle, styles?.button)}
+            title="Save workflow"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--color-bg-tertiary)';
+              e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'var(--color-bg-elevated)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              {executeIcon}
-              <span>Execute</span>
+              {saveIcon}
+              <span>Save</span>
             </span>
-          )}
-        </button>
-      )}
+          </button>
+        )}
 
-      {/* Save Button */}
-      {showSave && (
-        <button
-          onClick={onSave}
-          className={classes?.button}
-          style={mergeStyles(defaultButtonStyle, styles?.button)}
-          title="Save workflow"
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'var(--color-bg-tertiary)';
-            e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'var(--color-bg-elevated)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-        >
-          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {saveIcon}
-            <span>Save</span>
-          </span>
-        </button>
-      )}
+        {/* Load Button */}
+        {showLoad && (
+          <button
+            onClick={onLoad}
+            className={classes?.button}
+            style={mergeStyles(defaultButtonStyle, styles?.button)}
+            title="Load workflow"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--color-bg-tertiary)';
+              e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'var(--color-bg-elevated)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {loadIcon}
+              <span>Load</span>
+            </span>
+          </button>
+        )}
 
-      {/* Load Button */}
-      {showLoad && (
-        <button
-          onClick={onLoad}
-          className={classes?.button}
-          style={mergeStyles(defaultButtonStyle, styles?.button)}
-          title="Load workflow"
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'var(--color-bg-tertiary)';
-            e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'var(--color-bg-elevated)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-        >
-          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {loadIcon}
-            <span>Load</span>
-          </span>
-        </button>
-      )}
-
-      {/* Clear Button */}
-      {showClear && (
-        <button
-          onClick={onClear}
-          className={classes?.button}
-          style={mergeStyles(defaultButtonStyle, styles?.button)}
-          title="Clear canvas"
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'var(--color-error-50)';
-            e.currentTarget.style.borderColor = 'var(--color-error-500)';
-            e.currentTarget.style.color = 'var(--color-error-600)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'var(--color-bg-elevated)';
-            e.currentTarget.style.borderColor = 'var(--color-border-medium)';
-            e.currentTarget.style.color = 'var(--color-text-primary)';
-          }}
-        >
-          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {clearIcon}
-            <span>Clear</span>
-          </span>
-        </button>
-      )}
+        {/* Clear Button */}
+        {showClear && (
+          <button
+            onClick={onClear}
+            className={classes?.button}
+            style={mergeStyles(defaultButtonStyle, styles?.button)}
+            title="Clear canvas"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--color-error-500)';
+              e.currentTarget.style.borderColor = 'var(--color-error-600)';
+              e.currentTarget.style.color = 'white';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'var(--color-bg-elevated)';
+              e.currentTarget.style.borderColor = 'var(--color-border-medium)';
+              e.currentTarget.style.color = 'var(--color-text-primary)';
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {clearIcon}
+              <span>Clear</span>
+            </span>
+          </button>
+        )}
+      </div>
 
       {showUndoRedo && (
         <>
-          <div style={{ width: '1px', height: '24px', background: '#ddd' }} />
+          <div style={defaultDividerStyle} />
 
           {/* Undo Button */}
           <button
@@ -399,6 +496,118 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             </span>
           </button>
         </>
+      )}
+
+      {/* Spacer to push UI settings to the right */}
+      <div style={{ flex: 1 }} />
+
+      {/* Right Section - UI Settings */}
+      {showUISettings && (
+        <div style={{ ...defaultSectionStyle, gap: '1px' }}>
+          {/* Minimap Toggle - Icon Only */}
+          {onToggleMinimap && (
+            <button
+              onClick={() => onToggleMinimap(!showMinimap)}
+              className={classes?.button}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 'var(--space-1)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: showMinimap ? 'var(--color-primary-600)' : 'var(--color-text-secondary)',
+                fontSize: 'var(--font-size-lg)',
+                transition: 'color var(--transition-fast) var(--ease-out)',
+              }}
+              title={showMinimap ? 'Hide minimap' : 'Show minimap'}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = showMinimap
+                  ? 'var(--color-primary-700)'
+                  : 'var(--color-text-primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = showMinimap
+                  ? 'var(--color-primary-600)'
+                  : 'var(--color-text-secondary)';
+              }}
+            >
+              {minimapIcon}
+            </button>
+          )}
+
+          {/* Flow Controls Toggle - Icon Only */}
+          {onToggleFlowControls && (
+            <button
+              onClick={() => onToggleFlowControls(!showFlowControls)}
+              className={classes?.button}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 'var(--space-1)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: showFlowControls
+                  ? 'var(--color-primary-600)'
+                  : 'var(--color-text-secondary)',
+                fontSize: 'var(--font-size-lg)',
+                transition: 'color var(--transition-fast) var(--ease-out)',
+              }}
+              title={showFlowControls ? 'Hide controls' : 'Show controls'}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = showFlowControls
+                  ? 'var(--color-primary-700)'
+                  : 'var(--color-text-primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = showFlowControls
+                  ? 'var(--color-primary-600)'
+                  : 'var(--color-text-secondary)';
+              }}
+            >
+              {flowControlsIcon}
+            </button>
+          )}
+
+          {/* Fullscreen Toggle - Icon Only */}
+          {onToggleFullscreen && (
+            <button
+              onClick={onToggleFullscreen}
+              className={classes?.button}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 'var(--space-1)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: isFullscreen ? 'var(--color-primary-600)' : 'var(--color-text-secondary)',
+                fontSize: 'var(--font-size-lg)',
+                transition: 'color var(--transition-fast) var(--ease-out)',
+              }}
+              title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = isFullscreen
+                  ? 'var(--color-primary-700)'
+                  : 'var(--color-text-primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = isFullscreen
+                  ? 'var(--color-primary-600)'
+                  : 'var(--color-text-secondary)';
+              }}
+            >
+              {fullscreenIcon}
+            </button>
+          )}
+
+          {/* Custom UI Settings */}
+          {customUISettings}
+        </div>
       )}
     </div>
   );

@@ -22,7 +22,7 @@ import {
 } from '../nodes';
 
 interface ConditionalNodesDemoProps {
-  theme?: 'light' | 'dark' | 'auto';
+  theme?: 'light' | 'dark';
 }
 
 /**

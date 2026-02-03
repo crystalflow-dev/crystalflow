@@ -170,7 +170,6 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
     display: 'flex',
     flexDirection: 'column',
     borderRight: `1px solid var(--color-border-light)`,
-    overflowY: 'auto',
     backgroundColor: 'var(--color-bg-primary)',
     color: 'var(--color-text-primary)',
     fontFamily: 'var(--font-family-base)',
@@ -178,8 +177,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
   const defaultContentStyle: React.CSSProperties = {
     padding: 'var(--space-4)',
+    paddingRight: 'var(--space-3)',
     flex: 1,
     overflowY: 'auto',
+    scrollbarWidth: 'none', // Firefox
+    msOverflowStyle: 'none', // IE/Edge
   };
 
   const defaultHeaderStyle: React.CSSProperties = {
@@ -322,7 +324,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                       style={mergeStyles(
                         defaultNodeItemStyle,
                         {
-                          borderLeft: node.color ? `3px solid ${node.color}` : undefined,
+                          borderLeft: `3px solid ${node.color || 'var(--color-border-strong)'}`,
                         },
                         styles?.nodeItem
                       )}

@@ -154,6 +154,32 @@ export interface WorkflowBuilderProps {
   toolbarIcons?: ToolbarIcons;
 
   /**
+   * UI settings configuration
+   * @example
+   * ```tsx
+   * uiSettings={{
+   *   minimap: true,
+   *   onMinimapChange: (show) => setMinimap(show),
+   *   controls: false,
+   *   onControlsChange: (show) => setControls(show),
+   *   customSettings: <button>Grid</button>
+   * }}
+   * ```
+   */
+  uiSettings?: {
+    /** Whether minimap is shown @default true */
+    minimap?: boolean;
+    /** Callback for toggling minimap visibility */
+    onMinimapChange?: (show: boolean) => void;
+    /** Whether flow controls are shown @default true */
+    controls?: boolean;
+    /** Callback for toggling flow controls visibility */
+    onControlsChange?: (show: boolean) => void;
+    /** Custom UI settings component for the toolbar */
+    customSettings?: React.ReactNode;
+  };
+
+  /**
    * Custom node content renderer
    * Allows complete control over what's rendered inside each node
    *
@@ -260,6 +286,7 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
   toolbarProps,
   toolbarOptions,
   toolbarIcons,
+  uiSettings,
   renderNodeContent,
   renderPaletteItem,
   renderToolbar,
@@ -280,6 +307,45 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
   const [screenToFlowPosition, setScreenToFlowPosition] = useState<
     ((pos: { x: number; y: number }) => { x: number; y: number }) | undefined
   >(undefined);
+
+  // State for UI settings (internal state as fallback)
+  const [internalShowMinimap, setInternalShowMinimap] = useState(true);
+  const [internalShowFlowControls, setInternalShowFlowControls] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Use controlled props if provided, otherwise use internal state
+  const showMinimap = uiSettings?.minimap ?? internalShowMinimap;
+  const showFlowControls = uiSettings?.controls ?? internalShowFlowControls;
+
+  // Create wrapper handlers that accept boolean values
+  const handleToggleMinimap = useCallback(
+    (show: boolean) => {
+      if (uiSettings?.onMinimapChange) {
+        uiSettings.onMinimapChange(show);
+      } else {
+        setInternalShowMinimap(show);
+      }
+    },
+    [uiSettings]
+  );
+
+  const handleToggleFlowControls = useCallback(
+    (show: boolean) => {
+      if (uiSettings?.onControlsChange) {
+        uiSettings.onControlsChange(show);
+      } else {
+        setInternalShowFlowControls(show);
+      }
+    },
+    [uiSettings]
+  );
+
+  const customUISettings = uiSettings?.customSettings;
+
+  // Fullscreen toggle handler
+  const handleToggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => !prev);
+  }, []);
 
   // State management hooks
   const reactFlowState = useReactFlowState();
@@ -357,6 +423,13 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
       onLoad={actions.onLoad}
       onExecute={actions.onExecute}
       canExecute={actions.canExecute}
+      showMinimap={showMinimap}
+      onToggleMinimap={handleToggleMinimap}
+      showFlowControls={showFlowControls}
+      onToggleFlowControls={handleToggleFlowControls}
+      isFullscreen={isFullscreen}
+      onToggleFullscreen={handleToggleFullscreen}
+      customUISettings={customUISettings}
       options={toolbarOptions}
       icons={toolbarIcons}
       className={classes?.toolbar}
@@ -371,9 +444,17 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
+      ...(isFullscreen && {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999,
+      }),
       ...themeToCSSVariables(resolvedTheme),
     }),
-    [resolvedTheme]
+    [resolvedTheme, isFullscreen]
   );
 
   const mainContentStyle = useMemo(
@@ -448,7 +529,13 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
             className={`${classes?.canvas || ''} reactflo-theme-${resolvedTheme.mode}`}
             style={styles?.canvas}
             colorMode={resolvedTheme.mode === 'dark' ? 'dark' : 'light'}
-            reactFlowCustomization={reactFlowCustomization}
+            reactFlowCustomization={{
+              ...reactFlowCustomization,
+              showMiniMap: showMinimap,
+              showControls: showFlowControls,
+              miniMapProps: reactFlowCustomization?.miniMapProps,
+              controlsProps: reactFlowCustomization?.controlsProps,
+            }}
           />
 
           {/* Property Panel */}
