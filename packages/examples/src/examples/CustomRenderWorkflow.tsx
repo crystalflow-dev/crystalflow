@@ -313,13 +313,6 @@ const renderToolbar = (actions: {
 export const CustomRenderWorkflow: React.FC = () => {
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '20px', backgroundColor: '#2c3e50', color: 'white' }}>
-        <h1 style={{ margin: 0, fontSize: '24px' }}>ReactFlo - Custom Node Rendering</h1>
-        <p style={{ margin: '10px 0 0 0', opacity: 0.9 }}>
-          Demonstrating complete control over node content with renderNodeContent
-        </p>
-      </div>
-
       <div style={{ flex: 1, minHeight: 0 }}>
         <WorkflowBuilder
           nodes={nodeClasses}
@@ -351,27 +344,6 @@ export const CustomRenderWorkflow: React.FC = () => {
             console.log('Workflow changed:', { nodeCount: nodes.length, edgeCount: edges.length });
           }}
         />
-      </div>
-
-      {/* Info Panel */}
-      <div
-        style={{
-          padding: '15px',
-          backgroundColor: '#34495e',
-          color: 'white',
-          borderTop: '2px solid #2c3e50',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <strong>Features Demonstrated:</strong> Custom node rendering with renderNodeContent,
-            custom palette rendering with renderPaletteItem, custom toolbar with renderToolbar,
-            category-based layouts, emoji icons, dynamic value display
-          </div>
-          <div style={{ fontSize: '12px', opacity: 0.8 }}>
-            ReactFlo v0.1.0 - Custom Render Example
-          </div>
-        </div>
       </div>
     </div>
   );
