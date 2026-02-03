@@ -58,18 +58,18 @@ export default function GettingStarted() {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.2 }}
-              className="relative"
+              className="relative w-full"
             >
-              <div className="flex flex-col md:flex-row gap-6 items-start">
+              <div className="flex flex-col md:flex-row gap-6 items-start w-full">
                 <div className="shrink-0">
-                  <div className="w-20 h-20 bg-dark-grey border-2 border-primary rounded-2xl flex items-center justify-center text-3xl font-bold text-primary">
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-dark-grey border-2 border-primary rounded-2xl flex items-center justify-center text-2xl md:text-3xl font-bold text-primary">
                     {step.number}
                   </div>
                 </div>
-                <div className="grow">
-                  <h3 className="text-2xl font-bold mb-2">{step.title}</h3>
-                  <p className="text-light-grey mb-4">{step.description}</p>
-                  <div className="bg-dark-grey border border-primary/20 rounded-lg overflow-hidden">
+                <div className="grow w-full min-w-0">
+                  <h3 className="text-xl md:text-2xl font-bold mb-2">{step.title}</h3>
+                  <p className="text-light-grey mb-4 text-sm md:text-base">{step.description}</p>
+                  <div className="bg-dark-grey border border-primary/20 rounded-lg overflow-x-auto">
                     <SyntaxHighlighter
                       language={index === 0 ? 'bash' : index === 1 ? 'typescript' : 'tsx'}
                       style={vscDarkPlus}
@@ -77,8 +77,10 @@ export default function GettingStarted() {
                         margin: 0,
                         padding: '1rem',
                         background: '#1E1E1E',
-                        fontSize: '0.875rem',
+                        fontSize: '0.75rem',
                       }}
+                      wrapLines={true}
+                      wrapLongLines={true}
                     >
                       {step.code}
                     </SyntaxHighlighter>

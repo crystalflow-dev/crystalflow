@@ -58,27 +58,30 @@ function MyApp() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="w-full"
           >
             <div className="mb-4">
               <span className="text-sm text-primary font-semibold">STEP 1</span>
-              <h3 className="text-2xl font-bold mt-2">Define Your Nodes</h3>
+              <h3 className="text-xl md:text-2xl font-bold mt-2">Define Your Nodes</h3>
             </div>
-            <div className="bg-black border border-primary/20 rounded-xl overflow-hidden">
+            <div className="bg-black border border-primary/20 rounded-xl overflow-x-auto">
               <SyntaxHighlighter
                 language="typescript"
                 style={vscDarkPlus}
                 customStyle={{
                   margin: 0,
-                  padding: '1.5rem',
+                  padding: '1rem',
                   background: '#000000',
-                  fontSize: '0.875rem',
+                  fontSize: '0.75rem',
                 }}
                 showLineNumbers
+                wrapLines={true}
+                wrapLongLines={true}
               >
                 {decoratorCode}
               </SyntaxHighlighter>
@@ -89,22 +92,25 @@ function MyApp() {
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.4 }}
+            className="w-full"
           >
             <div className="mb-4">
               <span className="text-sm text-secondary font-semibold">STEP 2</span>
-              <h3 className="text-2xl font-bold mt-2">Build Your UI</h3>
+              <h3 className="text-xl md:text-2xl font-bold mt-2">Build Your UI</h3>
             </div>
-            <div className="bg-black border border-secondary/20 rounded-xl overflow-hidden">
+            <div className="bg-black border border-secondary/20 rounded-xl overflow-x-auto">
               <SyntaxHighlighter
                 language="tsx"
                 style={vscDarkPlus}
                 customStyle={{
                   margin: 0,
-                  padding: '1.5rem',
+                  padding: '1rem',
                   background: '#000000',
-                  fontSize: '0.875rem',
+                  fontSize: '0.75rem',
                 }}
                 showLineNumbers
+                wrapLines={true}
+                wrapLongLines={true}
               >
                 {uiCode}
               </SyntaxHighlighter>

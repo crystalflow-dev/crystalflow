@@ -4,15 +4,21 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { FaGithub } from 'react-icons/fa';
+import { usePathname } from 'next/navigation';
+import { FaGithub, FaArrowLeft } from 'react-icons/fa';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const isDemoPage = pathname === '/demo';
 
   const navItems = [
     { label: 'Features', href: '#features' },
+    { label: 'Use Cases', href: '#use-cases' },
+    { label: 'Roadmap', href: '#roadmap' },
     { label: 'Examples', href: '#examples' },
     { label: 'Getting Started', href: '#getting-started' },
+    { label: 'Contributors', href: '#contributors' },
     { label: 'Docs', href: '/docs' },
   ];
 
@@ -35,7 +41,7 @@ export default function Navbar() {
       transition={{ duration: 0.6 }}
       className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-lg border-b border-light-grey/10"
     >
-      <div className="max-w-7xl mx-auto px-6 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
@@ -50,21 +56,36 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={(e) => handleNavClick(e, item.href)}
-                className="text-light-grey hover:text-white transition-colors duration-200"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems
+              .filter((item) => (isDemoPage ? !item.href.startsWith('#') : true))
+              .map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
+                  className="text-light-grey hover:text-white transition-colors duration-200"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            <Link
+              href={isDemoPage ? '/' : '/demo'}
+              className="px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:shadow-[0_0_20px_rgba(42,65,255,0.5)] transition-all duration-200 hover:scale-105"
+            >
+              {isDemoPage ? (
+                <span className="flex items-center gap-2">
+                  <FaArrowLeft />
+                  Go Back
+                </span>
+              ) : (
+                'Try Demo'
+              )}
+            </Link>
             <a
               href="https://github.com/fladeed/reactflo"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary/80 transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2 bg-transparent border border-light-grey/30 text-white rounded-lg font-semibold hover:border-primary transition-all duration-200"
             >
               <FaGithub className="text-lg" />
               GitHub
@@ -106,21 +127,36 @@ export default function Navbar() {
             className="md:hidden pt-4 pb-2"
           >
             <div className="flex flex-col gap-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
-                  className="text-light-grey hover:text-white transition-colors duration-200 py-2"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navItems
+                .filter((item) => (isDemoPage ? !item.href.startsWith('#') : true))
+                .map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
+                    className="text-light-grey hover:text-white transition-colors duration-200 py-2"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              <Link
+                href={isDemoPage ? '/' : '/demo'}
+                className="px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:shadow-[0_0_20px_rgba(42,65,255,0.5)] transition-all duration-200 text-center"
+              >
+                {isDemoPage ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <FaArrowLeft />
+                    Go Back
+                  </span>
+                ) : (
+                  'Try Demo'
+                )}
+              </Link>
               <a
                 href="https://github.com/fladeed/reactflo"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary/80 transition-all duration-200"
+                className="flex items-center justify-center gap-2 px-6 py-2 bg-transparent border border-light-grey/30 text-white rounded-lg font-semibold hover:border-primary transition-all duration-200"
               >
                 <FaGithub className="text-lg" />
                 GitHub

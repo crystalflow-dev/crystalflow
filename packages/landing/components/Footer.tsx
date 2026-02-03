@@ -3,9 +3,9 @@ import Image from 'next/image';
 
 export default function Footer() {
   return (
-    <footer className="bg-black border-t border-light-grey/10 py-12 px-6">
+    <footer className="bg-black border-t border-light-grey/10 py-8 sm:py-10 md:py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div className="space-y-4">
             <Image src="/logo/reactflo-logo-blue.svg" alt="ReactFlo Logo" width={150} height={45} />
             <p className="text-sm text-light-grey">
@@ -92,7 +92,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-light-grey/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-light-grey">
+        <div className="pt-6 sm:pt-8 border-t border-light-grey/10 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-light-grey">
           <div className="flex flex-col items-center md:items-start gap-2">
             <p>
               © 2026{' '}
