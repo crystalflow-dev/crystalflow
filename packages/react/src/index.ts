@@ -21,3 +21,4 @@ import '@xyflow/react/dist/style.css';
 import './components/Node/CustomNode.css';
 import './components/NodePalette/NodePalette.css';
 import './components/WorkflowBuilder/reactflow-theme.css';
+import './components/ResizablePanel/ResizablePanel.css';

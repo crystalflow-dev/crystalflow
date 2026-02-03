@@ -1,0 +1,70 @@
+/**
+ * Resizable Panel Styles
+ */
+
+.resizable-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-light);
+  transition: box-shadow var(--transition-fast) var(--ease-out);
+}
+
+.resizable-panel[data-resizing='true'] {
+  box-shadow: var(--shadow-lg);
+}
+
+.resizable-panel-content {
+  flex: 1;
+  overflow: auto;
+  height: 100%;
+}
+
+/* Resize Handle */
+.resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  z-index: 10;
+  transition: background-color var(--transition-fast) var(--ease-out);
+}
+
+.resize-handle:hover,
+.resize-handle[data-active='true'] {
+  background-color: var(--color-primary-100);
+}
+
+.resize-handle-left {
+  left: 0;
+}
+
+.resize-handle-right {
+  right: 0;
+}
+
+/* Resize Handle Indicator (visual line) */
+.resize-handle-indicator {
+  width: 2px;
+  height: 40px;
+  background-color: var(--color-gray-300);
+  border-radius: 2px;
+  transition: all var(--transition-fast) var(--ease-out);
+}
+
+.resize-handle:hover .resize-handle-indicator,
+.resize-handle[data-active='true'] .resize-handle-indicator {
+  background-color: var(--color-primary-500);
+  height: 60px;
+}
+
+/* Active state during drag */
+.resize-handle[data-active='true'] {
+  background-color: var(--color-primary-100);
+}
