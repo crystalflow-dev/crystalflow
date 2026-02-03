@@ -18,6 +18,8 @@ module.exports = {
           noUnusedLocals: false,
           noUnusedParameters: false,
           jsx: 'react-jsx',
+          module: 'esnext', // Allow import.meta usage
+          moduleResolution: 'bundler',
         },
       },
     ],
@@ -35,6 +37,11 @@ module.exports = {
     '^@reactflo/types$': '<rootDir>/packages/types/src',
     '^@reactflo/react$': '<rootDir>/packages/react/src',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    // Mock cssInJs module that uses Vite-specific imports
+    '^.*/styles/cssInJs$': '<rootDir>/packages/react/src/styles/__mocks__/cssInJs.ts',
+    // Mock Vite-specific imports in tests
+    '^@xyflow/react/dist/style\\.css\\?raw$':
+      '<rootDir>/packages/react/src/styles/__mocks__/cssInJs.ts',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };

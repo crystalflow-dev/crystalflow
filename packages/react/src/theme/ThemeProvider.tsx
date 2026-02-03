@@ -23,10 +23,10 @@ export interface ThemeProviderProps {
  * Example: { colors: { primary: { 500: '#2A41FF' } } }
  * becomes: { '--theme-primary-500': '#2A41FF' }
  */
-function flattenTheme(obj: any, prefix = '--theme'): Record<string, string> {
+function flattenTheme(obj: Record<string, unknown>, prefix = '--theme'): Record<string, string> {
   const result: Record<string, string> = {};
 
-  function flatten(current: any, path: string) {
+  function flatten(current: unknown, path: string) {
     if (typeof current === 'object' && current !== null && !Array.isArray(current)) {
       Object.entries(current).forEach(([key, value]) => {
         const newPath = path ? `${path}-${key}` : key;

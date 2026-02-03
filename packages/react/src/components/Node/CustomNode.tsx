@@ -40,8 +40,8 @@ export interface CustomNodeData {
  * Default node content renderer
  */
 const defaultRenderNodeContent = (data: CustomNodeData): React.ReactNode => (
-  <div 
-    className="node-content" 
+  <div
+    className="node-content"
     data-category={data.category}
     style={{ '--node-color': data.color } as React.CSSProperties}
   >
