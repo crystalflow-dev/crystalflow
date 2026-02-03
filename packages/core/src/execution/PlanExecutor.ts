@@ -176,8 +176,7 @@ export class PlanExecutor {
     }
 
     // Delegate to Executor's executeNode method
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (executor as any).executeNode(node, workflow, context);
+    await executor.executeNode(node, workflow, context);
   }
 
   /**
@@ -219,8 +218,7 @@ export class PlanExecutor {
     }
 
     // 1. Execute the conditional node to update its state
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (executor as any).executeNode(node, workflow, context);
+    await executor.executeNode(node, workflow, context);
 
     // 2. Call evaluateCondition() to determine which branch to take
     const activeOutputPort: string = (node as Node & IConditionalNode).evaluateCondition();
