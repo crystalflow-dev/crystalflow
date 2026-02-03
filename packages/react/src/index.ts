@@ -12,7 +12,11 @@ export * from './context';
 // Hooks
 export * from './hooks';
 
-// Import React Flow v12 styles and ReactFlo custom styles
+// Theme
+export * from './theme';
+
+// Import styles (order matters: base theme first, then component styles)
+import './theme/variables.css';
 import '@xyflow/react/dist/style.css';
 import './components/Node/CustomNode.css';
 import './components/NodePalette/NodePalette.css';
