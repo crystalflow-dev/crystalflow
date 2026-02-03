@@ -6,8 +6,6 @@ import { useRef, useState } from 'react';
 import { SandpackProvider, SandpackCodeEditor, SandpackLayout } from '@codesandbox/sandpack-react';
 import dynamic from 'next/dynamic';
 import type { NodeConstructor } from '@reactflo/core';
-import '@xyflow/react/dist/style.css';
-import '@reactflo/react/dist/react.css';
 import {
   MockAPINode,
   ExtractFieldNode,

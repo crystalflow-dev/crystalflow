@@ -27,3 +27,7 @@ export type { ToolbarProps, ToolbarOptions, ToolbarIcons } from './Toolbar';
 
 // Connection
 export { ConnectionLine } from './Connection';
+
+// Resizable Panel
+export { ResizablePanel } from './ResizablePanel';
+export type { ResizablePanelProps } from './ResizablePanel';

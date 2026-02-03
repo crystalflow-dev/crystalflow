@@ -1,0 +1,23 @@
+/* NodePalette modern styling */
+
+/* Hide scrollbar */
+.reactflo-node-palette {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.reactflo-node-palette::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Slide down animation for collapsible categories */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

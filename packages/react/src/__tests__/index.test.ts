@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import * as ReactFloReact from '../index';
 
 describe('@reactflo/react', () => {

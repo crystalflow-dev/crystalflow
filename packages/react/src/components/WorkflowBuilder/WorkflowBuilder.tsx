@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { NodeConstructor } from '@reactflo/core';
 import { Node as ReactFlowNode, Edge, ReactFlowProvider } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-import './reactflow-theme.css';
+import { injectStyles } from '../../utils/injectStyles';
+import { globalStyles, componentStyles } from '../../styles/cssInJs';
 import { WorkflowCanvas } from '../WorkflowCanvas/WorkflowCanvas';
 import { NodePalette, NodePaletteProps } from '../NodePalette/NodePalette';
 import { PropertyPanel, PropertyPanelProps } from '../PropertyPanel/PropertyPanel';
 import { Toolbar, ToolbarProps, ToolbarOptions, ToolbarIcons } from '../Toolbar/Toolbar';
+import { ResizablePanel } from '../ResizablePanel/ResizablePanel';
 import { CustomNodeData } from '../Node/CustomNode';
 import {
   useReactFlowState,
@@ -27,6 +28,11 @@ import {
   themeToCSSVariables,
 } from '../../types/theme';
 import { cn, mergeStyles } from '../../utils/styling';
+
+// Inject styles at module level to ensure they're loaded before any component renders
+// This prevents FOUC (Flash of Unstyled Content)
+injectStyles(globalStyles, 'reactflo-global');
+injectStyles(componentStyles, 'reactflo-components');
 
 /**
  * WorkflowBuilder Props
@@ -148,6 +154,32 @@ export interface WorkflowBuilderProps {
   toolbarIcons?: ToolbarIcons;
 
   /**
+   * UI settings configuration
+   * @example
+   * ```tsx
+   * uiSettings={{
+   *   minimap: true,
+   *   onMinimapChange: (show) => setMinimap(show),
+   *   controls: false,
+   *   onControlsChange: (show) => setControls(show),
+   *   customSettings: <button>Grid</button>
+   * }}
+   * ```
+   */
+  uiSettings?: {
+    /** Whether minimap is shown @default true */
+    minimap?: boolean;
+    /** Callback for toggling minimap visibility */
+    onMinimapChange?: (show: boolean) => void;
+    /** Whether flow controls are shown @default true */
+    controls?: boolean;
+    /** Callback for toggling flow controls visibility */
+    onControlsChange?: (show: boolean) => void;
+    /** Custom UI settings component for the toolbar */
+    customSettings?: React.ReactNode;
+  };
+
+  /**
    * Custom node content renderer
    * Allows complete control over what's rendered inside each node
    *
@@ -254,6 +286,7 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
   toolbarProps,
   toolbarOptions,
   toolbarIcons,
+  uiSettings,
   renderNodeContent,
   renderPaletteItem,
   renderToolbar,
@@ -274,6 +307,45 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
   const [screenToFlowPosition, setScreenToFlowPosition] = useState<
     ((pos: { x: number; y: number }) => { x: number; y: number }) | undefined
   >(undefined);
+
+  // State for UI settings (internal state as fallback)
+  const [internalShowMinimap, setInternalShowMinimap] = useState(true);
+  const [internalShowFlowControls, setInternalShowFlowControls] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Use controlled props if provided, otherwise use internal state
+  const showMinimap = uiSettings?.minimap ?? internalShowMinimap;
+  const showFlowControls = uiSettings?.controls ?? internalShowFlowControls;
+
+  // Create wrapper handlers that accept boolean values
+  const handleToggleMinimap = useCallback(
+    (show: boolean) => {
+      if (uiSettings?.onMinimapChange) {
+        uiSettings.onMinimapChange(show);
+      } else {
+        setInternalShowMinimap(show);
+      }
+    },
+    [uiSettings]
+  );
+
+  const handleToggleFlowControls = useCallback(
+    (show: boolean) => {
+      if (uiSettings?.onControlsChange) {
+        uiSettings.onControlsChange(show);
+      } else {
+        setInternalShowFlowControls(show);
+      }
+    },
+    [uiSettings]
+  );
+
+  const customUISettings = uiSettings?.customSettings;
+
+  // Fullscreen toggle handler
+  const handleToggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => !prev);
+  }, []);
 
   // State management hooks
   const reactFlowState = useReactFlowState();
@@ -351,6 +423,13 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
       onLoad={actions.onLoad}
       onExecute={actions.onExecute}
       canExecute={actions.canExecute}
+      showMinimap={showMinimap}
+      onToggleMinimap={handleToggleMinimap}
+      showFlowControls={showFlowControls}
+      onToggleFlowControls={handleToggleFlowControls}
+      isFullscreen={isFullscreen}
+      onToggleFullscreen={handleToggleFullscreen}
+      customUISettings={customUISettings}
       options={toolbarOptions}
       icons={toolbarIcons}
       className={classes?.toolbar}
@@ -365,9 +444,17 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
+      ...(isFullscreen && {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999,
+      }),
       ...themeToCSSVariables(resolvedTheme),
     }),
-    [resolvedTheme]
+    [resolvedTheme, isFullscreen]
   );
 
   const mainContentStyle = useMemo(
@@ -409,14 +496,22 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
         <div style={mainContentStyle}>
           {/* Node Palette */}
           {showPalette && (
-            <NodePalette
-              nodes={nodePalette.paletteItems}
-              onNodeDragStart={nodePalette.onNodeDragStart}
-              className={classes?.palette}
-              style={styles?.palette}
-              renderPaletteItem={renderPaletteItem}
-              {...nodePaletteProps}
-            />
+            <ResizablePanel
+              minWidth={200}
+              maxWidth={400}
+              defaultWidth={280}
+              storageKey="reactflo-node-palette-width"
+              resizeHandle="right"
+            >
+              <NodePalette
+                nodes={nodePalette.paletteItems}
+                onNodeDragStart={nodePalette.onNodeDragStart}
+                className={classes?.palette}
+                style={styles?.palette}
+                renderPaletteItem={renderPaletteItem}
+                {...nodePaletteProps}
+              />
+            </ResizablePanel>
           )}
 
           {/* React Flow Canvas */}
@@ -434,19 +529,33 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
             className={`${classes?.canvas || ''} reactflo-theme-${resolvedTheme.mode}`}
             style={styles?.canvas}
             colorMode={resolvedTheme.mode === 'dark' ? 'dark' : 'light'}
-            reactFlowCustomization={reactFlowCustomization}
+            reactFlowCustomization={{
+              ...reactFlowCustomization,
+              showMiniMap: showMinimap,
+              showControls: showFlowControls,
+              miniMapProps: reactFlowCustomization?.miniMapProps,
+              controlsProps: reactFlowCustomization?.controlsProps,
+            }}
           />
 
           {/* Property Panel */}
           {showProperties && reactFlowState.selectedNode && (
-            <PropertyPanel
-              node={reactFlowState.selectedNode}
-              onClose={handlePropertyPanelClose}
-              onUpdate={handlePropertyPanelUpdate}
-              className={classes?.properties}
-              style={styles?.properties}
-              {...propertyPanelProps}
-            />
+            <ResizablePanel
+              minWidth={250}
+              maxWidth={600}
+              defaultWidth={350}
+              storageKey="reactflo-property-panel-width"
+              resizeHandle="left"
+            >
+              <PropertyPanel
+                node={reactFlowState.selectedNode}
+                onClose={handlePropertyPanelClose}
+                onUpdate={handlePropertyPanelUpdate}
+                className={classes?.properties}
+                style={styles?.properties}
+                {...propertyPanelProps}
+              />
+            </ResizablePanel>
           )}
         </div>
       </div>

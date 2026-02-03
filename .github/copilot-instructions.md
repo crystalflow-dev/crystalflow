@@ -371,6 +371,169 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 - Use Monaco Editor for JSON editing
 - All components should be functional (no classes)
 - Use TypeScript generics for reusable components
+- **CSS files**: All component styles go in `src/styles/` folder (automatically imported via import.meta.glob)
+- **No manual CSS imports**: Just create `.css` files in styles folder—they're auto-detected and injected at runtime
+- **CSS-in-JS approach**: Styles are bundled as strings and injected when WorkflowBuilder mounts
+
+### Styling Consistency Rules (CRITICAL)
+
+**All React components and styles MUST follow these rules for consistency:**
+
+#### 1. CSS Variables Only - Zero Hardcoded Values
+- ❌ **NEVER** use hardcoded colors: `#1e1e1e`, `rgba(0,0,0,0.5)`, `white`, `black`
+- ❌ **NEVER** use old CSS custom properties: `--reactflo-*` prefix is deprecated
+- ✅ **ALWAYS** use theme variables from `src/styles/global.css`
+
+**Color Variables:**
+```css
+/* Backgrounds */
+--color-bg-primary, --color-bg-secondary, --color-bg-tertiary, --color-bg-elevated
+
+/* Text */
+--color-text-primary, --color-text-secondary, --color-text-tertiary
+
+/* Borders */
+--color-border-light, --color-border-medium, --color-border-strong
+
+/* Primary brand */
+--color-primary-50 through --color-primary-900
+
+/* Semantic colors */
+--color-error-*, --color-success-*, --color-warning-*
+```
+
+**Spacing Variables:**
+```css
+--space-1 (4px), --space-2 (8px), --space-3 (12px), --space-4 (16px),
+--space-5 (20px), --space-6 (24px), --space-7 (28px), --space-8 (32px)
+```
+
+**Typography Variables:**
+```css
+/* Families */
+--font-family-base, --font-family-mono
+
+/* Sizes */
+--font-size-xs, --font-size-sm, --font-size-base, --font-size-lg, --font-size-xl, --font-size-2xl, --font-size-3xl
+
+/* Weights */
+--font-weight-normal, --font-weight-medium, --font-weight-semibold, --font-weight-bold
+```
+
+**Other Variables:**
+```css
+/* Shadows */
+--shadow-sm, --shadow-md, --shadow-lg, --shadow-xl
+
+/* Border radius */
+--radius-sm, --radius-md, --radius-lg, --radius-full
+
+/* Transitions */
+--transition-fast (150ms), --transition-normal (300ms), --transition-slow (500ms)
+--ease-in, --ease-out, --ease-in-out
+```
+
+#### 2. Dark Mode Support
+- ✅ **ALWAYS** use `[data-theme="dark"]` selector for dark mode overrides
+- ❌ **NEVER** use `.react-flow.dark` or `.dark` selectors
+- ✅ Test all components in both light and dark modes
+
+```css
+/* Light mode (default in :root) */
+.component {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+/* Dark mode override */
+[data-theme="dark"] .component {
+  background: var(--color-bg-primary); /* Theme variable adjusts automatically */
+}
+```
+
+#### 3. Consistent Component Patterns
+
+**Headers:**
+```tsx
+<div style={{
+  padding: 'var(--space-4)',
+  borderBottom: '1px solid var(--color-border-light)',
+  background: 'var(--color-bg-secondary)',
+  fontWeight: 'var(--font-weight-semibold)',
+  fontSize: 'var(--font-size-base)',
+}}>
+```
+
+**Buttons:**
+```tsx
+<button style={{
+  padding: 'var(--space-2) var(--space-4)',
+  border: '1px solid var(--color-border-medium)',
+  borderRadius: 'var(--radius-md)',
+  background: 'var(--color-bg-elevated)',
+  color: 'var(--color-text-primary)',
+  fontSize: 'var(--font-size-sm)',
+  transition: 'all var(--transition-fast) var(--ease-out)',
+}}>
+```
+
+**Hover States:**
+```tsx
+onMouseEnter={(e) => {
+  e.currentTarget.style.background = 'var(--color-bg-tertiary)';
+  e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+}}
+onMouseLeave={(e) => {
+  e.currentTarget.style.background = 'var(--color-bg-elevated)';
+  e.currentTarget.style.boxShadow = 'none';
+}}
+```
+
+#### 4. Inline Styles Best Practices
+- When using inline styles, **ALWAYS** use CSS variable references
+- Keep hover state changes minimal and consistent
+- Use theme variables for all colors, spacing, typography
+
+```tsx
+// ✅ GOOD - Uses theme variables
+style={{
+  background: 'var(--color-bg-primary)',
+  padding: 'var(--space-4)',
+  borderRadius: 'var(--radius-md)',
+}}
+
+// ❌ BAD - Hardcoded values
+style={{
+  background: '#1e1e1e',
+  padding: '16px',
+  borderRadius: '8px',
+}}
+```
+
+#### 5. Before Making Style Changes - Checklist
+- [ ] Are you using CSS variables for ALL colors?
+- [ ] Are you using spacing variables (`--space-*`) not hardcoded pixels?
+- [ ] Are you using typography variables for fonts and sizes?
+- [ ] Have you added dark mode support with `[data-theme="dark"]`?
+- [ ] Are transitions using `--transition-*` and `--ease-*` variables?
+- [ ] Did you test in both light and dark modes?
+- [ ] Are you following the established component patterns?
+
+#### 6. Reference Documentation
+When making style changes, refer to:
+- **Theme System**: `packages/react/src/styles/global.css` - All available variables
+- **Consistency Audit**: `docs/STYLING_CONSISTENCY_AUDIT.md` - Component examples and patterns
+- **Component Examples**: PropertyPanel, NodePalette, CustomNode, Toolbar - All follow these rules
+
+#### 7. Adding New Components
+When creating new components:
+1. Use existing CSS variables exclusively
+2. Add to `src/styles/` folder if creating separate CSS file
+3. Follow established spacing/typography conventions
+4. Include dark mode support from the start
+5. Match existing component patterns (headers, buttons, panels)
+
+**This ensures a modern, consistent, startup-quality aesthetic across the entire framework.**
 
 ## Important Patterns
 
