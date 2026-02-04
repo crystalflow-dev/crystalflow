@@ -46,6 +46,7 @@
           {
             "group": "Advanced",
             "pages": [
+              "advanced/conditional-flow",
               "advanced/property-system",
               "advanced/inheritance",
               "advanced/error-handling",

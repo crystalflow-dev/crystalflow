@@ -438,51 +438,51 @@ This task adds comprehensive documentation for the Phase 2 Conditional Flow impl
 - [x] Update node categories list to include "Flow Control"
 - [x] Commit: "docs(site): add conditional nodes section to core concepts"
 
-**Subtask 2.17.3: Create Advanced Guide - Conditional Flow** [2.5 hours]
-- [ ] Create file: `packages/docs-site/advanced/conditional-flow.mdx`
-- [ ] Frontmatter: title "Conditional Flow", description, icon "code-branch"
-- [ ] Section 1: "Overview"
-  - [ ] What is conditional flow
-  - [ ] Use cases (validation, routing, branching logic)
-  - [ ] Architecture (IConditionalNode, ConditionalStep, branch execution)
-- [ ] Section 2: "IConditionalNode Interface"
-  - [ ] Full interface definition with JSDoc
-  - [ ] Explain `evaluateCondition()` method contract
-  - [ ] Return value must match output port name
-  - [ ] Show minimal example implementing interface
-- [ ] Section 3: "Built-in Conditional Nodes"
-  - [ ] Subsection: "IfNode"
+**Subtask 2.17.3: Create Advanced Guide - Conditional Flow** [2.5 hours] - ✅ COMPLETE
+- [x] Create file: `packages/docs-site/advanced/conditional-flow.mdx`
+- [x] Frontmatter: title "Conditional Flow", description, icon "code-branch"
+- [x] Section 1: "Overview"
+  - [x] What is conditional flow
+  - [x] Use cases (validation, routing, branching logic)
+  - [x] Architecture (IConditionalNode, ConditionalStep, branch execution)
+- [x] Section 2: "IConditionalNode Interface"
+  - [x] Full interface definition with JSDoc
+  - [x] Explain `evaluateCondition()` method contract
+  - [x] Return value must match output port name
+  - [x] Show minimal example implementing interface
+- [x] Section 3: "Built-in Conditional Nodes"
+  - [x] Subsection: "IfNode"
     * Full code example with inputs/outputs
     * Behavior: true → thenOutput, false → elseOutput
     * Common patterns (validation, filtering, error handling)
-  - [ ] Subsection: "SwitchNode"
+  - [x] Subsection: "SwitchNode"
     * Full code example with property and dynamic outputs
     * Behavior: strict equality matching, default fallback
     * Array property UI and dynamic output generation
     * Common patterns (routing, state machines, multi-way branching)
-- [ ] Section 4: "Creating Custom Conditional Nodes"
-  - [ ] Step-by-step guide
-  - [ ] Example: "GreaterThanNode" with 'greater' and 'lessOrEqual' branches
-  - [ ] Best practices (clear output naming, error handling, validation)
-- [ ] Section 5: "Branch Execution"
-  - [ ] How branches are built during plan creation
-  - [ ] How active branch is selected at runtime
-  - [ ] Only active branch executes (other branches skipped)
-  - [ ] Event emission (onBranchEnter, onBranchExit)
-- [ ] Section 6: "Nested Conditionals"
-  - [ ] Example: if inside if, switch inside if
-  - [ ] Execution flow diagram
-  - [ ] Performance considerations
-- [ ] Section 7: "Error Handling"
-  - [ ] What happens when evaluateCondition() returns invalid branch
-  - [ ] Error propagation from within branches
-  - [ ] Best practices for resilient conditional nodes
-- [ ] Section 8: "Testing Conditional Workflows"
-  - [ ] Unit testing conditional nodes
-  - [ ] Integration testing workflows with branches
-  - [ ] Verifying only active branch executes
-- [ ] Add callouts, warnings, code blocks, and diagrams throughout
-- [ ] Commit: "docs(site): add comprehensive conditional flow guide"
+- [x] Section 4: "Creating Custom Conditional Nodes"
+  - [x] Step-by-step guide
+  - [x] Example: "GreaterThanNode" with 'greater' and 'lessOrEqual' branches
+  - [x] Best practices (clear output naming, error handling, validation)
+- [x] Section 5: "Branch Execution"
+  - [x] How branches are built during plan creation
+  - [x] How active branch is selected at runtime
+  - [x] Only active branch executes (other branches skipped)
+  - [x] Event emission (onBranchEnter, onBranchExit)
+- [x] Section 6: "Nested Conditionals"
+  - [x] Example: if inside if, switch inside if
+  - [x] Execution flow diagram
+  - [x] Performance considerations
+- [x] Section 7: "Error Handling"
+  - [x] What happens when evaluateCondition() returns invalid branch
+  - [x] Error propagation from within branches
+  - [x] Best practices for resilient conditional nodes
+- [x] Section 8: "Testing Conditional Workflows"
+  - [x] Unit testing conditional nodes
+  - [x] Integration testing workflows with branches
+  - [x] Verifying only active branch executes
+- [x] Add callouts, warnings, code blocks, and diagrams throughout
+- [x] Commit: "docs(site): add comprehensive conditional flow guide"
 
 **Subtask 2.17.4: Update Examples - Conditional Logic** [1.5 hours]
 - [ ] File: `packages/docs-site/examples/conditional-logic.mdx`
