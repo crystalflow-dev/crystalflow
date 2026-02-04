@@ -484,33 +484,33 @@ This task adds comprehensive documentation for the Phase 2 Conditional Flow impl
 - [x] Add callouts, warnings, code blocks, and diagrams throughout
 - [x] Commit: "docs(site): add comprehensive conditional flow guide"
 
-**Subtask 2.17.4: Update Examples - Conditional Logic** [1.5 hours]
-- [ ] File: `packages/docs-site/examples/conditional-logic.mdx`
-- [ ] Remove "Work in Progress" warning (conditional flow is now implemented!)
-- [ ] Update "Overview" section with real working examples
-- [ ] Section 1: "Basic If/Else Flow"
-  - [ ] Replace "Planned Node Types" with real IfNode example
-  - [ ] Show BooleanInputNode → IfNode → DisplayNode workflow
-  - [ ] Full code with execution and expected output
-- [ ] Section 2: "Numeric Comparison"
-  - [ ] NumberInputNode → CompareNode → IfNode → DisplayNode
-  - [ ] Show different comparison operators (>, <, ==)
-- [ ] Section 3: "Switch/Case Routing"
-  - [ ] Remove "Planned" label
-  - [ ] Show real SwitchNode with cases property
-  - [ ] Example: routing by status ('pending', 'approved', 'rejected')
-  - [ ] Full workflow with multiple case handlers
-- [ ] Section 4: "Nested Conditionals"
-  - [ ] Show if inside if example
-  - [ ] Show switch inside if example
-  - [ ] Explain execution flow
-- [ ] Section 5: "Advanced Patterns"
-  - [ ] Multi-stage validation (check A → if true check B → if true proceed)
-  - [ ] State machine with SwitchNode
-  - [ ] Error handling with conditional fallback
-- [ ] Add link to ConditionalNodesDemo.tsx in examples package
-- [ ] Add "Try It Yourself" section with instructions
-- [ ] Commit: "docs(site): update conditional logic examples with real implementations"
+**Subtask 2.17.4: Update Examples - Conditional Logic** [1.5 hours] - ✅ COMPLETE
+- [x] File: `packages/docs-site/examples/conditional-logic.mdx`
+- [x] Remove "Work in Progress" warning (conditional flow is now implemented!)
+- [x] Update "Overview" section with real working examples
+- [x] Section 1: "Basic If/Else Flow"
+  - [x] Replace "Planned Node Types" with real IfNode example
+  - [x] Show BooleanInputNode → IfNode → DisplayNode workflow
+  - [x] Full code with execution and expected output
+- [x] Section 2: "Numeric Comparison"
+  - [x] NumberInputNode → CompareNode → IfNode → DisplayNode
+  - [x] Show different comparison operators (>, <, ==)
+- [x] Section 3: "Switch/Case Routing"
+  - [x] Remove "Planned" label
+  - [x] Show real SwitchNode with cases property
+  - [x] Example: routing by status ('pending', 'approved', 'rejected')
+  - [x] Full workflow with multiple case handlers
+- [x] Section 4: "Nested Conditionals"
+  - [x] Show if inside if example
+  - [x] Show switch inside if example
+  - [x] Explain execution flow
+- [x] Section 5: "Advanced Patterns"
+  - [x] Multi-stage validation (check A → if true check B → if true proceed)
+  - [x] State machine with SwitchNode
+  - [x] Error handling with conditional fallback
+- [x] Add link to ConditionalNodesDemo.tsx in examples package
+- [x] Add "Try It Yourself" section with instructions
+- [x] Commit: "docs(site): update conditional logic examples with real implementations"
 
 **Subtask 2.17.5: Update API Reference - Core Package** [1 hour]
 - [ ] File: `packages/docs-site/api-reference/core/node.mdx` (or create if missing)

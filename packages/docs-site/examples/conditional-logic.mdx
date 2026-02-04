@@ -4,382 +4,359 @@ description: "Build workflows with branching and conditional execution"
 icon: "code-branch"
 ---
 
-This example demonstrates building workflows with conditional logic and branching paths.
-
-<Warning>
-  **Work in Progress:** Control flow nodes (If/Else, Switch) are planned for a future release. This example shows the conceptual approach.
-</Warning>
+This example demonstrates building workflows with conditional logic using ReactFlo's built-in `IfNode` and `SwitchNode`.
 
 ## Overview
 
-Conditional workflows allow:
-1. Branch execution based on conditions
-2. Skip nodes when conditions aren't met
-3. Dynamic path selection
-4. Conditional data transformation
+Conditional workflows enable:
+1. **Branch execution** based on runtime conditions
+2. **Skip nodes** when conditions aren't met
+3. **Dynamic path selection** based on values
+4. **Multi-way routing** with switch/case logic
 
-## Planned Node Types
+## Basic If/Else Flow
 
-### IfNode (Planned)
-
-```typescript
-import { Node, defineNode, Input, Output, Property } from '@reactflo/core';
-
-@defineNode({
-  type: 'control.if',
-  label: 'If Condition',
-  category: 'Control Flow'
-})
-export class IfNode extends Node {
-  @Input({ type: 'any', label: 'Value' })
-  value: any;
-
-  @Property({
-    type: 'select',
-    label: 'Operator',
-    defaultValue: 'equals',
-    options: [
-      { value: 'equals', label: 'Equals' },
-      { value: 'notEquals', label: 'Not Equals' },
-      { value: 'greater', label: 'Greater Than' },
-      { value: 'less', label: 'Less Than' },
-      { value: 'truthy', label: 'Is Truthy' },
-      { value: 'falsy', label: 'Is Falsy' }
-    ]
-  })
-  operator: string = 'equals';
-
-  @Property({
-    type: 'string',
-    label: 'Compare Value',
-    defaultValue: ''
-  })
-  compareValue: string = '';
-
-  @Output({ type: 'boolean', label: 'Condition' })
-  condition: boolean;
-
-  @Output({ type: 'any', label: 'Then' })
-  thenOutput: any;
-
-  @Output({ type: 'any', label: 'Else' })
-  elseOutput: any;
-
-  execute() {
-    let result = false;
-
-    switch (this.operator) {
-      case 'equals':
-        result = this.value == this.compareValue;
-        break;
-      case 'notEquals':
-        result = this.value != this.compareValue;
-        break;
-      case 'greater':
-        result = this.value > Number(this.compareValue);
-        break;
-      case 'less':
-        result = this.value < Number(this.compareValue);
-        break;
-      case 'truthy':
-        result = !!this.value;
-        break;
-      case 'falsy':
-        result = !this.value;
-        break;
-    }
-
-    this.condition = result;
-    
-    if (result) {
-      this.thenOutput = this.value;
-      this.elseOutput = undefined;
-    } else {
-      this.thenOutput = undefined;
-      this.elseOutput = this.value;
-    }
-  }
-}
-```
-
----
-
-### SwitchNode (Planned)
+The `IfNode` provides classic if/else conditional branching:
 
 ```typescript
-@defineNode({
-  type: 'control.switch',
-  label: 'Switch',
-  category: 'Control Flow'
-})
-export class SwitchNode extends Node {
-  @Input({ type: 'any', label: 'Value' })
-  value: any;
+import { Workflow, IfNode, BooleanInputNode, DisplayNode } from '@reactflo/core';
 
-  @Property({
-    type: 'string',
-    label: 'Cases (comma-separated)',
-    defaultValue: 'case1,case2,case3'
-  })
-  cases: string = 'case1,case2,case3';
+const workflow = new Workflow('if-else-example');
 
-  @Output({ type: 'any', label: 'Case 1' })
-  case1: any;
-
-  @Output({ type: 'any', label: 'Case 2' })
-  case2: any;
-
-  @Output({ type: 'any', label: 'Case 3' })
-  case3: any;
-
-  @Output({ type: 'any', label: 'Default' })
-  default: any;
-
-  execute() {
-    const caseList = this.cases.split(',').map(c => c.trim());
-    
-    const matchIndex = caseList.indexOf(String(this.value));
-    
-    if (matchIndex >= 0) {
-      // Match found
-      this[`case${matchIndex + 1}`] = this.value;
-    } else {
-      // No match - use default
-      this.default = this.value;
-    }
-  }
-}
-```
-
-## Current Workaround: Filter-Based Branching
-
-While control flow nodes are in development, you can implement basic conditional logic using data filtering:
-
-### ConditionalFilterNode
-
-```typescript
-@defineNode({
-  type: 'data.conditional-filter',
-  label: 'Conditional Filter',
-  category: 'Data'
-})
-export class ConditionalFilterNode extends Node {
-  @Input({ type: 'any[]', label: 'Items' })
-  items: any[] = [];
-
-  @Property({
-    type: 'select',
-    label: 'Condition',
-    defaultValue: 'greater',
-    options: [
-      { value: 'greater', label: 'Greater Than' },
-      { value: 'less', label: 'Less Than' },
-      { value: 'equals', label: 'Equals' }
-    ]
-  })
-  condition: string = 'greater';
-
-  @Property({
-    type: 'number',
-    label: 'Threshold',
-    defaultValue: 10
-  })
-  threshold: number = 10;
-
-  @Output({ type: 'any[]', label: 'Passed' })
-  passed: any[];
-
-  @Output({ type: 'any[]', label: 'Failed' })
-  failed: any[];
-
-  execute() {
-    this.passed = [];
-    this.failed = [];
-
-    for (const item of this.items) {
-      let condition = false;
-
-      switch (this.condition) {
-        case 'greater':
-          condition = item > this.threshold;
-          break;
-        case 'less':
-          condition = item < this.threshold;
-          break;
-        case 'equals':
-          condition = item === this.threshold;
-          break;
-      }
-
-      if (condition) {
-        this.passed.push(item);
-      } else {
-        this.failed.push(item);
-      }
-    }
-  }
-}
-```
-
-### Example Usage
-
-```typescript
-import { Workflow } from '@reactflo/core';
-import {
-  DataSourceNode,
-  ConditionalFilterNode,
-  AggregateNode,
-  DisplayNode
-} from './nodes';
-
-const workflow = new Workflow('conditional-workflow', 'Conditional Processing');
-
-// Data source
-const source = workflow.addNode(DataSourceNode, {
-  position: { x: 100, y: 200 },
-  data: { dataJson: '[5, 15, 8, 20, 3, 12]' }
+// Input: true/false
+const boolInput = workflow.addNode(BooleanInputNode, {
+  position: { x: 100, y: 200 }
 });
 
-// Conditional filter (split at 10)
-const conditionalFilter = workflow.addNode(ConditionalFilterNode, {
-  position: { x: 350, y: 200 },
-  data: { condition: 'greater', threshold: 10 }
-});
-
-// Aggregate passed items
-const aggregateHigh = workflow.addNode(AggregateNode, {
-  position: { x: 600, y: 100 },
-  data: { aggregateFunc: 'sum' }
-});
-
-// Aggregate failed items
-const aggregateLow = workflow.addNode(AggregateNode, {
-  position: { x: 600, y: 300 },
-  data: { aggregateFunc: 'sum' }
-});
-
-// Display results
-const displayHigh = workflow.addNode(DisplayNode, {
-  position: { x: 850, y: 100 }
-});
-
-const displayLow = workflow.addNode(DisplayNode, {
-  position: { x: 850, y: 300 }
-});
-
-// Connect nodes
-workflow.connect(source.id, 'items', conditionalFilter.id, 'items');
-workflow.connect(conditionalFilter.id, 'passed', aggregateHigh.id, 'items');
-workflow.connect(conditionalFilter.id, 'failed', aggregateLow.id, 'items');
-workflow.connect(aggregateHigh.id, 'result', displayHigh.id, 'value');
-workflow.connect(aggregateLow.id, 'result', displayLow.id, 'value');
-
-// Execute
-await workflow.execute();
-// Passed (>10): [15, 20, 12] -> Sum: 47
-// Failed (≤10): [5, 8, 3] -> Sum: 16
-```
-
-## Future: Complete If/Else Workflow
-
-```typescript
-// This will work once IfNode is implemented
-
-const workflow = new Workflow('if-else-workflow', 'If/Else Example');
-
-// Input
-const input = workflow.addNode(NumberInputNode, {
-  position: { x: 100, y: 200 },
-  data: { value: 15 }
-});
-
-// If condition (check if > 10)
+// If node: routes based on condition
 const ifNode = workflow.addNode(IfNode, {
-  position: { x: 300, y: 200 },
-  data: {
-    operator: 'greater',
-    compareValue: '10'
-  }
+  position: { x: 300, y: 200 }
 });
 
-// Then branch (multiply by 2)
-const multiplyNode = workflow.addNode(MultiplyNode, {
+// Then branch
+const thenDisplay = workflow.addNode(DisplayNode, {
   position: { x: 500, y: 100 }
 });
 
-// Else branch (add 5)
-const addNode = workflow.addNode(AddNode, {
+// Else branch
+const elseDisplay = workflow.addNode(DisplayNode, {
   position: { x: 500, y: 300 }
 });
 
-// Display results
-const displayThen = workflow.addNode(DisplayNode, {
-  position: { x: 700, y: 100 }
+// Connect
+workflow.connect(boolInput.id, 'value', ifNode.id, 'condition');
+workflow.connect(boolInput.id, 'value', ifNode.id, 'value'); // Pass data through
+workflow.connect(ifNode.id, 'thenOutput', thenDisplay.id, 'message');
+workflow.connect(ifNode.id, 'elseOutput', elseDisplay.id, 'message');
+
+// Execute
+const result = await workflow.execute();
+// If condition = true: thenDisplay shows "true"
+// If condition = false: elseDisplay shows "false"
+```
+
+### How It Works
+
+1. `BooleanInputNode` provides the condition value (true/false)
+2. `IfNode` receives the condition and optional data
+3. Based on condition:
+   - `true` → Routes to `thenOutput`
+   - `false` → Routes to `elseOutput`
+4. Only the active branch executes - the other is skipped
+
+<Tip>
+  Only nodes connected to the active output execute. If condition is true,
+  nodes on the else branch never run!
+</Tip>
+
+## Numeric Comparison
+
+Use comparison nodes to generate boolean conditions:
+
+```typescript
+import { NumberInputNode, CompareNode, IfNode, DisplayNode } from '@reactflo/core';
+
+const workflow = new Workflow('comparison-example');
+
+// Input number
+const numberInput = workflow.addNode(NumberInputNode);
+
+// Compare: number > 10?
+const compareNode = workflow.addNode(CompareNode);
+compareNode.setProperty('operator', '>');
+compareNode.setProperty('b', 10);
+
+// If node
+const ifNode = workflow.addNode(IfNode);
+
+// Results
+const highDisplay = workflow.addNode(DisplayNode, {
+  data: { prefix: 'High: ' }
 });
 
-const displayElse = workflow.addNode(DisplayNode, {
-  position: { x: 700, y: 300 }
+const lowDisplay = workflow.addNode(DisplayNode, {
+  data: { prefix: 'Low: ' }
 });
 
 // Connect
-workflow.connect(input.id, 'value', ifNode.id, 'value');
-workflow.connect(ifNode.id, 'thenOutput', multiplyNode.id, 'a');
-workflow.connect(ifNode.id, 'elseOutput', addNode.id, 'a');
-workflow.connect(multiplyNode.id, 'result', displayThen.id, 'value');
-workflow.connect(addNode.id, 'result', displayElse.id, 'value');
+workflow.connect(numberInput.id, 'value', compareNode.id, 'a');
+workflow.connect(compareNode.id, 'result', ifNode.id, 'condition');
+workflow.connect(numberInput.id, 'value', ifNode.id, 'value');
+workflow.connect(ifNode.id, 'thenOutput', highDisplay.id, 'message');
+workflow.connect(ifNode.id, 'elseOutput', lowDisplay.id, 'message');
+
+// Execute with value = 15
+// Result: "High: 15" (because 15 > 10)
 ```
 
-## Conceptual Patterns
+### Available Comparison Operators
 
-<AccordionGroup>
-  <Accordion title="If/Then/Else" icon="code-branch">
-    Execute different paths based on a condition. Only one branch executes.
-  </Accordion>
+- `>` - Greater than
+- `>=` - Greater than or equal
+- `<` - Less than
+- `<=` - Less than or equal
+- `==` - Equal
+- `!=` - Not equal
 
-  <Accordion title="Switch/Case" icon="list">
-    Select one of many paths based on a value match.
-  </Accordion>
+## Switch/Case Routing
 
-  <Accordion title="Conditional Skip" icon="forward">
-    Skip node execution if condition is not met.
-  </Accordion>
+The `SwitchNode` provides multi-way branching:
 
-  <Accordion title="Multi-Branch" icon="code-compare">
-    Split data into multiple paths simultaneously (already supported via multiple outputs).
-  </Accordion>
-</AccordionGroup>
+```typescript
+import { Workflow, SwitchNode, StringInputNode, DisplayNode } from '@reactflo/core';
 
-## React Component
+const workflow = new Workflow('switch-example');
+
+// Input: status value
+const statusInput = workflow.addNode(StringInputNode);
+
+// Switch: route by status
+const switchNode = workflow.addNode(SwitchNode);
+switchNode.setProperty('cases', ['pending', 'approved', 'rejected']);
+
+// Handlers for each case
+const pendingHandler = workflow.addNode(DisplayNode, {
+  data: { prefix: 'Pending: ' }
+});
+
+const approvedHandler = workflow.addNode(DisplayNode, {
+  data: { prefix: 'Approved: ' }
+});
+
+const rejectedHandler = workflow.addNode(DisplayNode, {
+  data: { prefix: 'Rejected: ' }
+});
+
+const defaultHandler = workflow.addNode(DisplayNode, {
+  data: { prefix: 'Unknown: ' }
+});
+
+// Connect
+workflow.connect(statusInput.id, 'value', switchNode.id, 'value');
+workflow.connect(statusInput.id, 'value', switchNode.id, 'data');
+workflow.connect(switchNode.id, 'case_0', pendingHandler.id, 'message');   // 'pending'
+workflow.connect(switchNode.id, 'case_1', approvedHandler.id, 'message');  // 'approved'
+workflow.connect(switchNode.id, 'case_2', rejectedHandler.id, 'message');  // 'rejected'
+workflow.connect(switchNode.id, 'default', defaultHandler.id, 'message');
+
+// Execute with value = 'approved'
+// Result: "Approved: approved" (only approvedHandler runs)
+```
+
+### Dynamic Outputs
+
+`SwitchNode` generates outputs dynamically based on the `cases` property:
+
+- 3 cases → 4 outputs: `case_0`, `case_1`, `case_2`, `default`
+- Add case → new output appears automatically
+- Remove case → output disappears
+
+```typescript
+// Configure cases in property panel
+switchNode.setProperty('cases', ['apple', 'banana', 'orange', 'grape']);
+
+// Generates outputs:
+// - case_0 (apple)
+// - case_1 (banana)  
+// - case_2 (orange)
+// - case_3 (grape)
+// - default
+```
+
+## Nested Conditionals
+
+Conditional nodes can be nested for complex decision trees:
+
+### If Inside If
+
+```typescript
+const workflow = new Workflow('nested-if-example');
+
+// Check if positive
+const outerIf = workflow.addNode(IfNode);
+outerIf.name = 'CheckPositive';
+
+// Check if even (inside then branch)
+const innerIf = workflow.addNode(IfNode);
+innerIf.name = 'CheckEven';
+
+// Handlers
+const positiveEvenHandler = workflow.addNode(DisplayNode);
+const positiveOddHandler = workflow.addNode(DisplayNode);
+const negativeHandler = workflow.addNode(DisplayNode);
+
+// Connect outer if
+workflow.connect(numberInput.id, 'value', outerIf.id, 'condition'); // isPositive?
+workflow.connect(outerIf.id, 'thenOutput', innerIf.id, 'condition'); // isEven?
+workflow.connect(outerIf.id, 'elseOutput', negativeHandler.id, 'message');
+
+// Connect inner if
+workflow.connect(innerIf.id, 'thenOutput', positiveEvenHandler.id, 'message');
+workflow.connect(innerIf.id, 'elseOutput', positiveOddHandler.id, 'message');
+
+// Execution paths:
+// number > 0 AND even → positiveEvenHandler
+// number > 0 AND odd → positiveOddHandler  
+// number <= 0 → negativeHandler
+```
+
+### Switch Inside If
+
+```typescript
+const workflow = new Workflow('switch-in-if-example');
+
+// Authentication check
+const authCheck = workflow.addNode(IfNode);
+authCheck.name = 'CheckAuthenticated';
+
+// Role routing (inside then branch)
+const roleSwitch = workflow.addNode(SwitchNode);
+roleSwitch.setProperty('cases', ['admin', 'user', 'guest']);
+
+// Handlers
+const adminHandler = workflow.addNode(DisplayNode);
+const userHandler = workflow.addNode(DisplayNode);
+const guestHandler = workflow.addNode(DisplayNode);
+const loginHandler = workflow.addNode(DisplayNode);
+
+// Connect
+workflow.connect(authCheck.id, 'thenOutput', roleSwitch.id, 'value');
+workflow.connect(authCheck.id, 'elseOutput', loginHandler.id, 'message');
+workflow.connect(roleSwitch.id, 'case_0', adminHandler.id, 'message');
+workflow.connect(roleSwitch.id, 'case_1', userHandler.id, 'message');
+workflow.connect(roleSwitch.id, 'case_2', guestHandler.id, 'message');
+
+// Execution:
+// authenticated + role='admin' → adminHandler
+// authenticated + role='user' → userHandler
+// not authenticated → loginHandler
+```
+
+## Advanced Patterns
+
+### Multi-Stage Validation
+
+Validate data through multiple conditional checks:
+
+```typescript
+const workflow = new Workflow('validation-workflow');
+
+// Stage 1: Check if value exists
+const checkExists = workflow.addNode(IfNode);
+
+// Stage 2: Check if value is valid type
+const checkType = workflow.addNode(IfNode);
+
+// Stage 3: Check if value in range
+const checkRange = workflow.addNode(IfNode);
+
+// Handlers
+const successHandler = workflow.addNode(DisplayNode);
+const missingHandler = workflow.addNode(DisplayNode);
+const invalidTypeHandler = workflow.addNode(DisplayNode);
+const outOfRangeHandler = workflow.addNode(DisplayNode);
+
+// Connect: exists? → validType? → inRange? → success
+workflow.connect(checkExists.id, 'thenOutput', checkType.id, 'condition');
+workflow.connect(checkExists.id, 'elseOutput', missingHandler.id, 'message');
+workflow.connect(checkType.id, 'thenOutput', checkRange.id, 'condition');
+workflow.connect(checkType.id, 'elseOutput', invalidTypeHandler.id, 'message');
+workflow.connect(checkRange.id, 'thenOutput', successHandler.id, 'message');
+workflow.connect(checkRange.id, 'elseOutput', outOfRangeHandler.id, 'message');
+```
+
+### State Machine
+
+Implement state transitions with switch:
+
+```typescript
+const workflow = new Workflow('state-machine');
+
+const currentState = workflow.addNode(StringInputNode);
+const eventInput = workflow.addNode(StringInputNode);
+
+const stateSwitch = workflow.addNode(SwitchNode);
+stateSwitch.setProperty('cases', ['idle', 'loading', 'success', 'error']);
+
+// State handlers
+const idleHandler = workflow.addNode(ProcessIdleNode);
+const loadingHandler = workflow.addNode(ProcessLoadingNode);
+const successHandler = workflow.addNode(ProcessSuccessNode);
+const errorHandler = workflow.addNode(ProcessErrorNode);
+
+workflow.connect(currentState.id, 'value', stateSwitch.id, 'value');
+workflow.connect(eventInput.id, 'value', stateSwitch.id, 'data');
+workflow.connect(stateSwitch.id, 'case_0', idleHandler.id, 'event');
+workflow.connect(stateSwitch.id, 'case_1', loadingHandler.id, 'event');
+workflow.connect(stateSwitch.id, 'case_2', successHandler.id, 'event');
+workflow.connect(stateSwitch.id, 'case_3', errorHandler.id, 'event');
+
+// Each handler can transition to new state and emit events
+```
+
+## React Component Example
 
 ```tsx
 import React from 'react';
 import { WorkflowBuilder } from '@reactflo/react';
 import {
+  IfNode,
+  SwitchNode,
+  BooleanInputNode,
   NumberInputNode,
-  ConditionalFilterNode,
-  DataSourceNode,
-  AggregateNode,
+  StringInputNode,
+  CompareNode,
   DisplayNode
-} from './nodes';
+} from '@reactflo/core';
 
-function ConditionalWorkflow() {
+function ConditionalWorkflowExample() {
   const nodes = [
+    // Flow Control
+    IfNode,
+    SwitchNode,
+    
+    // Input nodes
+    BooleanInputNode,
     NumberInputNode,
-    ConditionalFilterNode,
-    DataSourceNode,
-    AggregateNode,
+    StringInputNode,
+    
+    // Logic nodes
+    CompareNode,
+    
+    // Output
     DisplayNode
   ];
 
   const handleExecute = (result) => {
-    console.log('Conditional workflow executed:', result);
+    console.log('Workflow executed:', result);
   };
 
   return (
-    <div className="conditional-workflow">
+    <div className="conditional-workflow-example">
       <h1>Conditional Logic Workflow</h1>
-      <p className="notice">
-        ⚠️ Full control flow nodes (If/Else, Switch) coming in future release
+      <p>
+        Drag IfNode and SwitchNode from the Flow Control category to create
+        branching workflows.
       </p>
       
       <WorkflowBuilder
@@ -389,51 +366,54 @@ function ConditionalWorkflow() {
         showPropertyPanel={true}
         style={{ height: '600px' }}
       />
+      
+      <div className="instructions">
+        <h3>Try These Workflows:</h3>
+        <ol>
+          <li><strong>Simple If/Else:</strong> BooleanInput → If → Display (then/else)</li>
+          <li><strong>Comparison:</strong> NumberInput → Compare → If → Display</li>
+          <li><strong>Switch Routing:</strong> StringInput → Switch (3 cases) → Multiple Displays</li>
+          <li><strong>Nested:</strong> If → If (nested in then branch)</li>
+        </ol>
+      </div>
     </div>
   );
 }
 
-export default ConditionalWorkflow;
+export default ConditionalWorkflowExample;
 ```
 
-## Roadmap
+## Try It Yourself
 
-<Steps>
-  <Step title="Phase 1: Data-Based Branching (Current)">
-    Use multiple outputs and filtering to simulate branching.
-  </Step>
+The ReactFlo examples package includes a complete `ConditionalNodesDemo.tsx` with:
 
-  <Step title="Phase 2: If/Else Nodes (Planned)">
-    Dedicated control flow nodes for conditional execution.
-  </Step>
+- All logic test nodes (CompareNode, IsPositiveNode, IsEvenNode, etc.)
+- IfNode and SwitchNode from @reactflo/core
+- 7 documented workflow scenarios
+- Full interactive UI with property panel for configuring cases
 
-  <Step title="Phase 3: Loop Nodes (Planned)">
-    For/While loops for iterative execution.
-  </Step>
+**Run the examples:**
 
-  <Step title="Phase 4: Parallel Execution (Planned)">
-    Execute multiple branches simultaneously with Race/Parallel nodes.
-  </Step>
-
-  <Step title="Phase 5: Advanced Control (Planned)">
-    Try/Catch for error handling, Break/Continue for loops.
-  </Step>
-</Steps>
+```bash
+cd packages/examples
+npm run dev
+# Navigate to the Conditional Flow demo
+```
 
 ## Key Concepts
 
 <CardGroup cols={2}>
-  <Card title="Multiple Outputs" icon="arrows-split-up-and-left">
-    Nodes can have multiple outputs that connect to different paths.
+  <Card title="Branch Evaluation">
+    `evaluateCondition()` determines which branch executes at runtime
   </Card>
-  <Card title="Conditional Outputs" icon="code-branch">
-    Outputs can be set conditionally based on logic in execute().
+  <Card title="Single Branch Execution">
+    Only the active branch runs - others are completely skipped
   </Card>
-  <Card title="Data Splitting" icon="scissors">
-    Split arrays into multiple groups based on conditions.
+  <Card title="Dynamic Outputs">
+    SwitchNode outputs update automatically when cases change
   </Card>
-  <Card title="Path Selection" icon="route">
-    Control which nodes receive data based on conditions.
+  <Card title="Nested Conditionals">
+    Conditionals can be nested arbitrarily deep for complex logic
   </Card>
 </CardGroup>
 
@@ -441,31 +421,27 @@ export default ConditionalWorkflow;
 
 <CardGroup cols={2}>
   <Card
-    title="Data Processing"
-    icon="database"
-    href="/examples/data-processing"
+    title="Conditional Flow Guide"
+    href="/advanced/conditional-flow"
   >
-    Advanced data transformations
+    Deep dive into conditional flow architecture
   </Card>
   <Card
-    title="Basic Math"
-    icon="calculator"
-    href="/examples/basic-math"
+    title="Built-in Nodes API"
+    href="/api-reference/core/builtin-nodes"
   >
-    Simple math workflows
+    Complete IfNode and SwitchNode API reference
   </Card>
   <Card
-    title="Control Flow Epic"
-    icon="book"
-    href="https://github.com/Fladeed/reactflo/issues"
-  >
-    Track control flow implementation (GitHub)
-  </Card>
-  <Card
-    title="Custom Nodes"
-    icon="wand-magic-sparkles"
+    title="Creating Custom Nodes"
     href="/guides/creating-custom-nodes"
   >
-    Build custom logic nodes
+    Build your own conditional nodes
+  </Card>
+  <Card
+    title="Data Processing"
+    href="/examples/data-processing"
+  >
+    More workflow examples
   </Card>
 </CardGroup>
