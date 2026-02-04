@@ -172,7 +172,7 @@ npm run dev
 
 Development mode runs all TypeScript watch modes in parallel with the Vite dev server. Changes to any package are automatically compiled and hot-reloaded.
 
-**See [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) for detailed development instructions.**
+**See [docs/development/development-workflow.md](docs/development/development-workflow.md) for detailed development instructions.**
 
 ### Key Commands
 
