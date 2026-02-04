@@ -527,41 +527,17 @@ This task adds comprehensive documentation for the Phase 2 Conditional Flow impl
 - [x] Link to guides and examples
 - [x] Commit: "docs(site): add API reference for conditional nodes"
 
-**Subtask 2.17.6: Update Navigation and Search** [0.5 hours]
-- [ ] File: `packages/docs-site/docs.json`
-- [ ] Add to "Advanced" group: `"advanced/conditional-flow"`
-- [ ] Add to "API Reference > Core Package" group: `"api-reference/core/builtin-nodes"`
-- [ ] Ensure "examples/conditional-logic" is in Examples tab
-- [ ] Verify all new pages have proper metadata for search indexing
-- [ ] Commit: "docs(site): update navigation for conditional flow docs"
-
-**Subtask 2.17.7: Create Visual Diagrams** [1 hour]
-- [ ] Create diagram: `packages/docs-site/images/conditional-execution-flow.svg`
-  - [ ] Show entry node → conditional node (diamond) → two branches → merge
-  - [ ] Highlight active vs inactive branch
-- [ ] Create diagram: `packages/docs-site/images/switch-execution-flow.svg`
-  - [ ] Show entry node → switch node (hexagon) → multiple case branches + default
-  - [ ] Label each branch with case value
-- [ ] Create diagram: `packages/docs-site/images/nested-conditional-flow.svg`
-  - [ ] Show if node with another if node inside then branch
-  - [ ] Show execution path highlighting
-- [ ] Reference diagrams in conditional-flow.mdx and execution-engine.mdx
-- [ ] Commit: "docs(site): add visual diagrams for conditional flow"
-
-**Subtask 2.17.8: Final Review and Testing** [0.5 hours]
-- [ ] Run docs site locally: `cd packages/docs-site && mint dev`
-- [ ] Verify all new pages render correctly
-- [ ] Check all internal links work
-- [ ] Verify code examples have correct syntax highlighting
-- [ ] Test search for "conditional", "if node", "switch"
-- [ ] Check mobile responsiveness
-- [ ] Run linter if available
-- [ ] Commit: "docs(site): final review and polish for conditional flow docs"
+**Subtask 2.17.6: Update Navigation and Search** [0.5 hours] - ✅ COMPLETE
+- [x] File: `packages/docs-site/docs.json`
+- [x] Add to "Advanced" group: `"advanced/conditional-flow"`
+- [x] Add to "API Reference > Core Package" group: `"api-reference/core/builtin-nodes"`
+- [x] Ensure "examples/conditional-logic" is in Examples tab
+- [x] Verify all new pages have proper metadata for search indexing
+- [x] Commit: "docs(site): update navigation for conditional flow docs"
 
 **Documentation Summary:**
 - **New Files**: 2 (advanced/conditional-flow.mdx, api-reference/core/builtin-nodes.mdx)
 - **Updated Files**: 5 (execution-engine.mdx, nodes.mdx, conditional-logic.mdx, node.mdx, docs.json)
-- **New Diagrams**: 3 (SVG files for execution flows)
 - **Total Estimated Time**: 8 hours
 - **Deliverable**: Complete documentation for Phase 2 Conditional Flow feature
 
@@ -599,8 +575,6 @@ This task adds comprehensive documentation for the Phase 2 Conditional Flow impl
 ### Phase 4: Parallel Execution (Week 7-8) - ⏳ PENDING
 
 ### Phase 5: Advanced Debugging (Week 9-10) - ⏳ PENDING
-
-### Phase 6: Testing & Documentation (Week 11-12) - ⏳ PENDING
 
 ---
 
@@ -2333,137 +2307,6 @@ interface ExecutorEvents {
 - Use step into to enter loop/conditional
 - Inspect variables and node outputs
 - Resume execution to completion
-
----
-
-### Phase 6: Testing, Polish & Documentation (Week 11-12)
-
-**Goal**: Comprehensive testing, optimization, and documentation.
-
-#### Week 11: Comprehensive Testing
-
-**Tasks**:
-
-1. **Unit test audit** [6 hours]
-   - Review all new unit tests
-   - Ensure 90%+ code coverage for new code
-   - Add missing test cases
-   - Add edge case tests
-   - Add error condition tests
-   - Run coverage report
-
-2. **Integration test suite** [8 hours]
-   - Test all control flow combinations:
-     - Conditional + Loop
-     - Loop + Parallel
-     - Nested conditionals (3+ levels)
-     - Nested loops (3+ levels)
-     - Parallel + Conditional
-   - Test error propagation through control flow
-   - Test cancellation in various scenarios
-   - Test timeout in long-running workflows
-   - Test memory usage with large workflows
-
-3. **Performance testing** [6 hours]
-   - Create benchmark workflows:
-     - 100 sequential nodes
-     - 10 nested loops (10 iterations each)
-     - 50 parallel branches
-     - Complex nested control flow
-   - Measure execution time
-   - Measure memory usage
-   - Profile plan building performance
-   - Identify and fix bottlenecks
-   - Document performance characteristics
-
-4. **End-to-end test suite** [8 hours]
-   - Create real-world workflow examples:
-     - Data processing pipeline with conditionals
-     - Batch processing with loops
-     - Fan-out/fan-in with parallel
-     - Complex business logic workflow
-   - Test in examples app
-   - Test with step debugging
-   - Test error recovery
-   - Test long-running workflows
-   - Test workflow serialization/deserialization
-
-**Deliverables**:
-
-- ✅ 90%+ code coverage
-- ✅ Comprehensive integration tests
-- ✅ Performance benchmarks
-- ✅ End-to-end test suite
-- ✅ 100+ total new tests
-
-#### Week 12: Polish & Documentation
-
-**Tasks**:
-
-1. **API polish** [4 hours]
-   - Review all new public APIs
-   - Ensure consistency with existing APIs
-   - Add JSDoc comments to all public methods
-   - Add TypeScript documentation comments
-   - Ensure proper type exports
-   - Update type definitions
-
-2. **Error messages improvement** [4 hours]
-   - Review all error messages
-   - Make errors more descriptive
-   - Add error codes for each error type
-   - Add suggestions for common errors
-   - Document error handling patterns
-   - Create error handling guide
-
-3. **Update main documentation** [6 hours]
-   - Update README.md with control flow features
-   - Update core-concepts.md with execution plan
-   - Update getting-started.md with examples
-   - Create execution-plan-guide.md (user-facing)
-   - Update API reference
-   - Add migration guide (from serial to plan execution)
-
-4. **Create tutorial series** [8 hours]
-   - Tutorial 1: "Your First Conditional Workflow"
-   - Tutorial 2: "Working with Loops"
-   - Tutorial 3: "Parallel Execution Patterns"
-   - Tutorial 4: "Debugging Workflows"
-   - Tutorial 5: "Complex Control Flow Patterns"
-   - Add tutorials to docs/tutorials/
-   - Link from main README
-
-5. **Example workflows** [6 hours]
-   - Polish existing examples
-   - Add comments to example code
-   - Create README for each example
-   - Add visual diagrams of workflows
-   - Test all examples work correctly
-   - Add to examples app with descriptions
-
-6. **Update PROJECT_STATUS.md** [2 hours]
-   - Mark Phase 3.5 as complete
-   - Update progress percentages
-   - Document new features
-   - Update roadmap
-   - Add Phase 4 details (React package completion)
-
-**Deliverables**:
-
-- ✅ Polished APIs with full documentation
-- ✅ Improved error messages
-- ✅ Updated documentation (all files)
-- ✅ Tutorial series (5 tutorials)
-- ✅ Polished examples
-- ✅ Updated project status
-
-**Validation**:
-
-- Review all documentation for accuracy
-- Test all code examples in documentation
-- Verify all tutorials work end-to-end
-- Get feedback from team/contributors
-- Run final test suite (all tests passing)
 
 ---
 
