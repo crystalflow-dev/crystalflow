@@ -128,6 +128,107 @@ result: string;
   Description of the output
 </ParamField>
 
+## Conditional Nodes
+
+Conditional nodes enable branching logic in workflows by implementing the `IConditionalNode` interface:
+
+```typescript
+import { Node, defineNode, Input, Output, IConditionalNode } from '@reactflo/core';
+
+@defineNode({
+  type: 'flow.if',
+  label: 'If',
+  category: 'Flow Control',
+})
+class IfNode extends Node implements IConditionalNode {
+  @Input({ type: 'boolean', label: 'Condition', required: true })
+  condition!: boolean;
+
+  @Output({ type: 'any', label: 'Then' })
+  thenOutput?: any;
+
+  @Output({ type: 'any', label: 'Else' })
+  elseOutput?: any;
+
+  execute() {
+    if (this.condition) {
+      this.thenOutput = this.value;
+    } else {
+      this.elseOutput = this.value;
+    }
+  }
+
+  evaluateCondition(): string {
+    return this.condition ? 'thenOutput' : 'elseOutput';
+  }
+}
+```
+
+### The IConditionalNode Interface
+
+```typescript
+interface IConditionalNode {
+  evaluateCondition(): string;
+}
+```
+
+Conditional nodes must implement `evaluateCondition()` which returns the name of the output port that should execute. The execution engine uses this to determine which branch to follow.
+
+<Tip>
+  The return value of `evaluateCondition()` must match an output port name.
+  For example, if a node has outputs 'thenOutput' and 'elseOutput', 
+  the method should return one of those strings.
+</Tip>
+
+### How Branches Work
+
+1. The conditional node executes normally (via `execute()` method)
+2. The execution engine calls `evaluateCondition()` to get the active branch
+3. Only nodes connected to the active output port execute
+4. Other branches are skipped entirely
+
+### Dynamic Outputs
+
+Some conditional nodes generate outputs dynamically based on configuration:
+
+```typescript
+@defineNode({
+  type: 'flow.switch',
+  label: 'Switch',
+  category: 'Flow Control',
+})
+class SwitchNode extends Node implements IConditionalNode {
+  @Property({ type: 'array', label: 'Cases', defaultValue: [] })
+  cases: any[] = [];
+
+  // Dynamically generate outputs based on cases
+  getOutputs(): PortDefinition[] {
+    const outputs = [];
+    for (let i = 0; i < this.cases.length; i++) {
+      outputs.push({ id: `case_${i}`, label: String(this.cases[i]), type: 'any' });
+    }
+    outputs.push({ id: 'default', label: 'Default', type: 'any' });
+    return outputs;
+  }
+
+  evaluateCondition(): string {
+    const index = this.cases.indexOf(this.value);
+    return index !== -1 ? `case_${index}` : 'default';
+  }
+}
+```
+
+<CardGroup cols={2}>
+  <Card title="Built-in Conditionals" icon="code-branch">
+    ReactFlo includes IfNode and SwitchNode for common branching patterns
+  </Card>
+  <Card title="Custom Conditionals" icon="wrench">
+    Implement IConditionalNode to create custom branching logic
+  </Card>
+</CardGroup>
+
+For more details, see the [Conditional Flow guide](/advanced/conditional-flow) and [Conditional Logic examples](/examples/conditional-logic).
+
 ## Properties
 
 Properties are static configuration values (not connected to other nodes):
@@ -240,14 +341,20 @@ Organize your nodes into logical categories:
   <Card title="Output" icon="right-from-bracket">
     Display results, save files, send data
   </Card>
-  <Card title="Logic" icon="code-branch">
-    Conditional flow and decision making
+  <Card title="Flow Control" icon="code-branch">
+    Conditional branching and decision making
+  </Card>
+  <Card title="Logic" icon="lightbulb">
+    Boolean operations and comparisons
   </Card>
   <Card title="Math" icon="calculator">
     Mathematical operations
   </Card>
   <Card title="String" icon="text">
     String manipulation
+  </Card>
+  <Card title="Data" icon="database">
+    Data transformation and filtering
   </Card>
 </CardGroup>
 

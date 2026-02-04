@@ -427,16 +427,16 @@ This task adds comprehensive documentation for the Phase 2 Conditional Flow impl
 - [x] Add visual diagram: linear execution vs conditional execution
 - [x] Commit: "docs(site): update execution engine with plan architecture and conditional flow"
 
-**Subtask 2.17.2: Update Core Concepts - Nodes** [1 hour]
-- [ ] File: `packages/docs-site/core-concepts/nodes.mdx`
-- [ ] Add new section: "Conditional Nodes" (after "Outputs" section)
-  - [ ] Explain IConditionalNode interface
-  - [ ] Show `evaluateCondition()` method signature
-  - [ ] Explain how conditional nodes enable branching
-  - [ ] Link to conditional-logic example and advanced guide
-- [ ] Add note about dynamic outputs (mention SwitchNode as example)
-- [ ] Update node categories list to include "Flow Control"
-- [ ] Commit: "docs(site): add conditional nodes section to core concepts"
+**Subtask 2.17.2: Update Core Concepts - Nodes** [1 hour] - ✅ COMPLETE
+- [x] File: `packages/docs-site/core-concepts/nodes.mdx`
+- [x] Add new section: "Conditional Nodes" (after "Outputs" section)
+  - [x] Explain IConditionalNode interface
+  - [x] Show `evaluateCondition()` method signature
+  - [x] Explain how conditional nodes enable branching
+  - [x] Link to conditional-logic example and advanced guide
+- [x] Add note about dynamic outputs (mention SwitchNode as example)
+- [x] Update node categories list to include "Flow Control"
+- [x] Commit: "docs(site): add conditional nodes section to core concepts"
 
 **Subtask 2.17.3: Create Advanced Guide - Conditional Flow** [2.5 hours]
 - [ ] Create file: `packages/docs-site/advanced/conditional-flow.mdx`
