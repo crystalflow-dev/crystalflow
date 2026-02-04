@@ -94,9 +94,9 @@ Each stream shows compile status and errors in real-time.
 
 ## Documentation
 
-- **Full Guide:** [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md)
-- **Project README:** [README.md](README.md) (updated with dev section)
-- **Quick Reference:** [QUICK_REFERENCE.md](QUICK_REFERENCE.md)
+- **Full Guide:** [docs/development/development-workflow.md](development-workflow.md)
+- **Project README:** [README.md](../../README.md) (updated with dev section)
+- **Quick Reference:** [docs/guides/quick-reference.md](../guides/quick-reference.md)
 
 ## Key Benefits
 

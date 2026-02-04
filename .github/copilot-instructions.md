@@ -18,6 +18,39 @@ ReactFlo is a declarative workflow builder framework that provides tools for cre
 
 Once version 1.0.0 is published, semantic versioning and backward compatibility rules will apply.
 
+## Documentation Organization Rules
+
+**File Placement:**
+- **README.md** and **CONTRIBUTING.md** should remain in the project root (uppercase)
+- **ALL other markdown files** must be placed in the `docs/` folder with proper categorization
+- Never create new markdown files in the root directory (except README.md and CONTRIBUTING.md)
+
+**Naming Convention:**
+- Use **kebab-case** (lowercase with dashes) for all markdown files
+- Examples: `get-started.md`, `development-workflow.md`, `project-status.md`
+- ❌ NEVER use: `GET_STARTED.md`, `DEVELOPMENT_WORKFLOW.md`, `Project_Status.md`
+- ✅ ALWAYS use: `get-started.md`, `development-workflow.md`, `project-status.md`
+
+**Documentation Categories:**
+- `docs/guides/` - Getting started guides and quick references for users
+- `docs/concepts/` - Core concepts, architecture, and technical explanations
+- `docs/advanced/` - Advanced topics and customization guides
+- `docs/development/` - Development workflow, setup, project status, and contributor docs
+- `docs/design/` - Brand guidelines and design documentation
+- `docs/design-notes/` - Design decisions and technical notes
+
+**When Creating New Documentation:**
+1. Determine the appropriate category folder
+2. Create file in the correct category folder with kebab-case naming
+3. Update `docs/documentation-index.md` with the new file reference
+4. Use relative paths when linking between docs
+
+**Reference Format:**
+- From root to docs: `[link text](docs/category/filename.md)`
+- From docs to root: `[link text](../README.md)` or `[link text](../CONTRIBUTING.md)`
+- Between docs (same category): `[link text](filename.md)`
+- Between docs (different categories): `[link text](../other-category/filename.md)`
+
 ## Architecture
 
 ```
@@ -324,7 +357,7 @@ Development mode uses `concurrently` to run all TypeScript watch modes in parall
 
 Changes to any package are automatically compiled and hot-reloaded in the browser.
 
-**See [DEVELOPMENT_WORKFLOW.md](../DEVELOPMENT_WORKFLOW.md) for detailed development instructions.**
+**See [docs/development-workflow.md](../docs/development-workflow.md) for detailed development instructions.**
 
 ### Key Commands
 
@@ -1141,6 +1174,6 @@ A future architectural enhancement to move workflow execution from client-side t
 Check these files:
 
 - `README.md` - Project overview
-- `GET_STARTED.md` - Comprehensive guide
-- `DOCUMENTATION_INDEX.md` - All documentation
-- `QUICK_REFERENCE.md` - Developer commands
+- `docs/guides/get-started.md` - Comprehensive guide
+- `docs/documentation-index.md` - All documentation
+- `docs/guides/quick-reference.md` - Developer commands
