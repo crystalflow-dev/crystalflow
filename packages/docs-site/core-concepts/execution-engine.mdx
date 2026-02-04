@@ -10,8 +10,11 @@ The **Execution Engine** is responsible for running workflows, managing node exe
 ReactFlo's execution engine provides:
 
 <CardGroup cols={2}>
-  <Card title="Serial Execution" icon="list-ol">
-    Nodes execute sequentially in topological order
+  <Card title="Plan-Based Execution" icon="diagram-project">
+    Build execution plan, then execute with full control
+  </Card>
+  <Card title="Conditional Flow" icon="code-branch">
+    Support for if/else and switch/case branching
   </Card>
   <Card title="Event System" icon="bolt">
     Comprehensive events for monitoring execution
@@ -57,27 +60,80 @@ const result = await executor.execute(workflow, {
   Optional AbortSignal for cancelling execution
 </ParamField>
 
+## Execution Plan Architecture
+
+ReactFlo uses a **plan-based execution architecture** that enables advanced control flow patterns:
+
+### How It Works
+
+1. **Build Phase**: The workflow graph is analyzed and converted into an execution plan
+2. **Execution Phase**: The plan is executed step-by-step with full control
+
+```typescript
+// Simplified internal flow
+const plan = planBuilder.build(workflow);
+const result = await planExecutor.execute(plan, workflow, context);
+```
+
+### Benefits
+
+<CardGroup cols={2}>
+  <Card title="Conditional Execution" icon="code-branch">
+    Native support for if/else, switch/case branching
+  </Card>
+  <Card title="Loop Support" icon="rotate">
+    Future support for for/while loops (planned)
+  </Card>
+  <Card title="Debugging" icon="bug">
+    Step-by-step debugging with breakpoints (planned)
+  </Card>
+  <Card title="Inspectability" icon="eye">
+    Full visibility into execution plan structure
+  </Card>
+</CardGroup>
+
+### Step Types
+
+The execution plan consists of different step types:
+
+- **NodeExecutionStep**: Execute a single node
+- **ConditionalStep**: Evaluate condition and execute matching branch
+- **LoopStep**: Execute steps repeatedly (planned)
+- **ParallelStep**: Execute multiple steps in parallel (planned)
+
+<Note>
+  The plan-based architecture is transparent to users - workflows execute smoothly
+  while supporting advanced control flow patterns like conditionals and future loop support.
+</Note>
+
+For a deep dive into the architecture, see the [execution-plan-architecture.md](https://github.com/Fladeed/reactflo/blob/main/docs/execution-plan-architecture.md) document.
+
 ## Execution Flow
 
 The execution follows these steps:
 
 <Steps>
   <Step title="Validation">
-    Workflow is validated (cycles, connections, required inputs)
+    Workflow is validated (connections, required inputs)
   </Step>
   <Step title="Context Creation">
     ExecutionContext is created with unique execution ID
   </Step>
-  <Step title="Topological Sort">
-    Nodes are sorted into execution order
+  <Step title="Build Execution Plan">
+    Workflow graph is analyzed and converted to execution plan with steps and branches
   </Step>
-  <Step title="Sequential Execution">
-    Each node executes in order:
-    - Check for cancellation
-    - Transfer data from predecessors
-    - Validate inputs
-    - Execute node logic
-    - Store results
+  <Step title="Step-by-Step Execution">
+    Each step executes in order:
+    - **Node Step**: Execute node, transfer data, validate, store results
+    - **Conditional Step**: Evaluate condition, select and execute matching branch
+    - Check for cancellation between steps
+  </Step>
+  <Step title="Branch Evaluation" subtitle="For Conditional Nodes">
+    When a conditional step is encountered:
+    - Execute the conditional node to update its state
+    - Call `evaluateCondition()` to get active branch
+    - Execute steps in the matching branch
+    - Skip other branches
   </Step>
   <Step title="Result Collection">
     All node results are collected and returned
@@ -128,6 +184,72 @@ executor.on('onError', (error) => {
   console.error('Workflow execution failed:', error);
 });
 ```
+
+### Step Events
+
+Monitor execution plan step execution:
+
+```typescript
+executor.on('onStepStart', (stepId, stepType) => {
+  console.log(`Starting step ${stepId} of type ${stepType}`);
+});
+
+executor.on('onStepComplete', (stepId, stepType) => {
+  console.log(`Step ${stepId} completed`);
+});
+
+executor.on('onStepError', (stepId, stepType, error) => {
+  console.error(`Step ${stepId} failed:`, error);
+});
+```
+
+Step types include:
+- `ExecutionStepType.Node` - Regular node execution
+- `ExecutionStepType.Conditional` - Conditional branch selection
+- `ExecutionStepType.Loop` - Loop execution (planned)
+- `ExecutionStepType.Parallel` - Parallel execution (planned)
+
+### Branch Events
+
+Track conditional branch execution:
+
+```typescript
+executor.on('onBranchEnter', (nodeId, branchId, condition) => {
+  console.log(`Entering ${condition} branch of ${nodeId}`);
+});
+
+executor.on('onBranchExit', (nodeId, branchId) => {
+  console.log(`Exiting branch ${branchId} of ${nodeId}`);
+});
+```
+
+**Example with IfNode:**
+
+```typescript
+const executor = new Executor();
+
+executor.on('onBranchEnter', (nodeId, branchId, condition) => {
+  // condition will be 'thenOutput' or 'elseOutput'
+  console.log(`IfNode ${nodeId} taking ${condition} branch`);
+});
+
+executor.on('onBranchExit', (nodeId, branchId) => {
+  console.log(`Completed ${branchId} branch of ${nodeId}`);
+});
+
+const result = await executor.execute(workflowWithIfNode);
+// Output:
+// "IfNode if-node-1 taking thenOutput branch"
+// "Completed branch-id branch of if-node-1"
+```
+
+<Tip>
+  Branch events are useful for:
+  - Debugging conditional logic
+  - Visualizing execution paths
+  - Tracking which branches execute in complex workflows
+  - Performance profiling of different branches
+</Tip>
 
 ### Async Event Listeners
 

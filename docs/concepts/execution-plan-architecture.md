@@ -381,35 +381,198 @@
 - [x] Commit 1: "fix(core): require explicit boolean for IfNode condition + add logic test nodes (Task 2.14.5)" (2fa8432)
 - [x] Commit 2: "feat(react): improve array property UI + dynamic outputs for SwitchNode (Task 2.14.5)" (41da50e)
 
-**Task 2.15: Update Documentation** [2 hours] - ⏳ PENDING
-- [ ] File: `packages/core/README.md`
-- [ ] Add section on conditional flow nodes
-- [ ] Document IfNode with usage example
-- [ ] Document SwitchNode with usage example
-- [ ] Document IConditionalNode interface for custom implementations
-- [ ] File: `docs/execution-plan-architecture.md`
-- [ ] Update Phase 2 status to COMPLETE
-- [ ] Add completion date
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Commit: "docs: update documentation for Phase 2 conditional flow implementation"
+**Task 2.15: Update Documentation** [2 hours] - ✅ COMPLETE
+- [x] File: `packages/core/README.md`
+- [x] Add section on conditional flow nodes
+- [x] Document IfNode with usage example
+- [x] Document SwitchNode with usage example
+- [x] Document IConditionalNode interface for custom implementations
+- [x] File: `docs/execution-plan-architecture.md`
+- [x] Update Phase 2 status to COMPLETE
+- [x] Add completion date
+- [x] Run lint: `npm run lint -w @reactflo/core`
+- [x] Commit: "docs: update documentation for Phase 2 conditional flow implementation"
 
-**Task 2.16: Final Phase 2 Validation** [2 hours] - ⏳ PENDING
-- [ ] Run full test suite: `npm test -w @reactflo/core`
-- [ ] Run full test suite: `npm test -w @reactflo/types`
-- [ ] Verify all tests pass (expect 380+ tests)
-- [ ] Run lint on all packages: `npm run lint`
-- [ ] Build all packages: `npm run build`
-- [ ] Review all commits for this phase
-- [ ] Create summary of changes
-- [ ] Commit: "chore: Phase 2 conditional flow implementation complete"
+**Task 2.16: Final Phase 2 Validation** [2 hours] - ✅ COMPLETE
+- [x] Run full test suite: `npm test -w @reactflo/core`
+- [x] Run full test suite: `npm test -w @reactflo/types`
+- [x] Verify all tests pass (expect 380+ tests)
+- [x] Run lint on all packages: `npm run lint`
+- [x] Build all packages: `npm run build`
+- [x] Review all commits for this phase
+- [x] Create summary of changes
+- [x] Commit: "chore: Phase 2 conditional flow implementation complete"
+
+**Task 2.17: Add Conditional Flow Documentation to Docs Site** [8 hours] - ⏳ PENDING
+
+This task adds comprehensive documentation for the Phase 2 Conditional Flow implementation to the official docs site (`packages/docs-site`).
+
+**Subtask 2.17.1: Update Core Concepts - Execution Engine** [1.5 hours] - ✅ COMPLETE
+- [x] File: `packages/docs-site/core-concepts/execution-engine.mdx`
+- [x] Remove outdated "Topological Sort" step from execution flow (replaced by execution plan)
+- [x] Add new section: "Execution Plan Architecture"
+  - [x] Explain plan-based execution (build plan → execute plan)
+  - [x] Benefits: enables conditionals, loops, debugging
+  - [x] Reference execution-plan-architecture.md for deep dive
+- [x] Update "Execution Flow" section:
+  - [x] Replace Step 3: "Topological Sort" → "Build Execution Plan"
+  - [x] Add Step 4.5: "Branch Evaluation" (for conditional nodes)
+  - [x] Explain conditional branch selection
+- [x] Add new "Step Events" section:
+  - [x] Document `onStepStart`, `onStepComplete`, `onStepError` events
+  - [x] Show examples with ExecutionStepType.Node and ExecutionStepType.Conditional
+- [x] Add new "Branch Events" section:
+  - [x] Document `onBranchEnter` and `onBranchExit` events
+  - [x] Show example with IfNode branches
+- [x] Add visual diagram: linear execution vs conditional execution
+- [x] Commit: "docs(site): update execution engine with plan architecture and conditional flow"
+
+**Subtask 2.17.2: Update Core Concepts - Nodes** [1 hour]
+- [ ] File: `packages/docs-site/core-concepts/nodes.mdx`
+- [ ] Add new section: "Conditional Nodes" (after "Outputs" section)
+  - [ ] Explain IConditionalNode interface
+  - [ ] Show `evaluateCondition()` method signature
+  - [ ] Explain how conditional nodes enable branching
+  - [ ] Link to conditional-logic example and advanced guide
+- [ ] Add note about dynamic outputs (mention SwitchNode as example)
+- [ ] Update node categories list to include "Flow Control"
+- [ ] Commit: "docs(site): add conditional nodes section to core concepts"
+
+**Subtask 2.17.3: Create Advanced Guide - Conditional Flow** [2.5 hours]
+- [ ] Create file: `packages/docs-site/advanced/conditional-flow.mdx`
+- [ ] Frontmatter: title "Conditional Flow", description, icon "code-branch"
+- [ ] Section 1: "Overview"
+  - [ ] What is conditional flow
+  - [ ] Use cases (validation, routing, branching logic)
+  - [ ] Architecture (IConditionalNode, ConditionalStep, branch execution)
+- [ ] Section 2: "IConditionalNode Interface"
+  - [ ] Full interface definition with JSDoc
+  - [ ] Explain `evaluateCondition()` method contract
+  - [ ] Return value must match output port name
+  - [ ] Show minimal example implementing interface
+- [ ] Section 3: "Built-in Conditional Nodes"
+  - [ ] Subsection: "IfNode"
+    * Full code example with inputs/outputs
+    * Behavior: true → thenOutput, false → elseOutput
+    * Common patterns (validation, filtering, error handling)
+  - [ ] Subsection: "SwitchNode"
+    * Full code example with property and dynamic outputs
+    * Behavior: strict equality matching, default fallback
+    * Array property UI and dynamic output generation
+    * Common patterns (routing, state machines, multi-way branching)
+- [ ] Section 4: "Creating Custom Conditional Nodes"
+  - [ ] Step-by-step guide
+  - [ ] Example: "GreaterThanNode" with 'greater' and 'lessOrEqual' branches
+  - [ ] Best practices (clear output naming, error handling, validation)
+- [ ] Section 5: "Branch Execution"
+  - [ ] How branches are built during plan creation
+  - [ ] How active branch is selected at runtime
+  - [ ] Only active branch executes (other branches skipped)
+  - [ ] Event emission (onBranchEnter, onBranchExit)
+- [ ] Section 6: "Nested Conditionals"
+  - [ ] Example: if inside if, switch inside if
+  - [ ] Execution flow diagram
+  - [ ] Performance considerations
+- [ ] Section 7: "Error Handling"
+  - [ ] What happens when evaluateCondition() returns invalid branch
+  - [ ] Error propagation from within branches
+  - [ ] Best practices for resilient conditional nodes
+- [ ] Section 8: "Testing Conditional Workflows"
+  - [ ] Unit testing conditional nodes
+  - [ ] Integration testing workflows with branches
+  - [ ] Verifying only active branch executes
+- [ ] Add callouts, warnings, code blocks, and diagrams throughout
+- [ ] Commit: "docs(site): add comprehensive conditional flow guide"
+
+**Subtask 2.17.4: Update Examples - Conditional Logic** [1.5 hours]
+- [ ] File: `packages/docs-site/examples/conditional-logic.mdx`
+- [ ] Remove "Work in Progress" warning (conditional flow is now implemented!)
+- [ ] Update "Overview" section with real working examples
+- [ ] Section 1: "Basic If/Else Flow"
+  - [ ] Replace "Planned Node Types" with real IfNode example
+  - [ ] Show BooleanInputNode → IfNode → DisplayNode workflow
+  - [ ] Full code with execution and expected output
+- [ ] Section 2: "Numeric Comparison"
+  - [ ] NumberInputNode → CompareNode → IfNode → DisplayNode
+  - [ ] Show different comparison operators (>, <, ==)
+- [ ] Section 3: "Switch/Case Routing"
+  - [ ] Remove "Planned" label
+  - [ ] Show real SwitchNode with cases property
+  - [ ] Example: routing by status ('pending', 'approved', 'rejected')
+  - [ ] Full workflow with multiple case handlers
+- [ ] Section 4: "Nested Conditionals"
+  - [ ] Show if inside if example
+  - [ ] Show switch inside if example
+  - [ ] Explain execution flow
+- [ ] Section 5: "Advanced Patterns"
+  - [ ] Multi-stage validation (check A → if true check B → if true proceed)
+  - [ ] State machine with SwitchNode
+  - [ ] Error handling with conditional fallback
+- [ ] Add link to ConditionalNodesDemo.tsx in examples package
+- [ ] Add "Try It Yourself" section with instructions
+- [ ] Commit: "docs(site): update conditional logic examples with real implementations"
+
+**Subtask 2.17.5: Update API Reference - Core Package** [1 hour]
+- [ ] File: `packages/docs-site/api-reference/core/node.mdx` (or create if missing)
+- [ ] Add section: "IConditionalNode Interface"
+  - [ ] Interface signature
+  - [ ] Method: `evaluateCondition(): string`
+  - [ ] Return value semantics
+  - [ ] Example implementation
+- [ ] File: `packages/docs-site/api-reference/core/builtin-nodes.mdx` (create new)
+- [ ] Document all builtin nodes:
+  - [ ] IfNode (full API with all inputs/outputs)
+  - [ ] SwitchNode (full API with property and dynamic outputs)
+- [ ] Add import examples from '@reactflo/core'
+- [ ] Link to guides and examples
+- [ ] Commit: "docs(site): add API reference for conditional nodes"
+
+**Subtask 2.17.6: Update Navigation and Search** [0.5 hours]
+- [ ] File: `packages/docs-site/docs.json`
+- [ ] Add to "Advanced" group: `"advanced/conditional-flow"`
+- [ ] Add to "API Reference > Core Package" group: `"api-reference/core/builtin-nodes"`
+- [ ] Ensure "examples/conditional-logic" is in Examples tab
+- [ ] Verify all new pages have proper metadata for search indexing
+- [ ] Commit: "docs(site): update navigation for conditional flow docs"
+
+**Subtask 2.17.7: Create Visual Diagrams** [1 hour]
+- [ ] Create diagram: `packages/docs-site/images/conditional-execution-flow.svg`
+  - [ ] Show entry node → conditional node (diamond) → two branches → merge
+  - [ ] Highlight active vs inactive branch
+- [ ] Create diagram: `packages/docs-site/images/switch-execution-flow.svg`
+  - [ ] Show entry node → switch node (hexagon) → multiple case branches + default
+  - [ ] Label each branch with case value
+- [ ] Create diagram: `packages/docs-site/images/nested-conditional-flow.svg`
+  - [ ] Show if node with another if node inside then branch
+  - [ ] Show execution path highlighting
+- [ ] Reference diagrams in conditional-flow.mdx and execution-engine.mdx
+- [ ] Commit: "docs(site): add visual diagrams for conditional flow"
+
+**Subtask 2.17.8: Final Review and Testing** [0.5 hours]
+- [ ] Run docs site locally: `cd packages/docs-site && mint dev`
+- [ ] Verify all new pages render correctly
+- [ ] Check all internal links work
+- [ ] Verify code examples have correct syntax highlighting
+- [ ] Test search for "conditional", "if node", "switch"
+- [ ] Check mobile responsiveness
+- [ ] Run linter if available
+- [ ] Commit: "docs(site): final review and polish for conditional flow docs"
+
+**Documentation Summary:**
+- **New Files**: 2 (advanced/conditional-flow.mdx, api-reference/core/builtin-nodes.mdx)
+- **Updated Files**: 5 (execution-engine.mdx, nodes.mdx, conditional-logic.mdx, node.mdx, docs.json)
+- **New Diagrams**: 3 (SVG files for execution flows)
+- **Total Estimated Time**: 8 hours
+- **Deliverable**: Complete documentation for Phase 2 Conditional Flow feature
 
 #### Phase 2 Summary
-- **Total Tasks**: 17 (16 + 1 UI integration task)
-- **Estimated Time**: 38 hours
-- **Files Created**: 6 new files
-- **Files Modified**: 8 existing files
-- **Tests Added**: 50+ new tests
+- **Total Tasks**: 18 (16 core + 1 UI integration + 1 documentation task)
+- **Estimated Time**: 48 hours (38 core + 2 validation + 8 documentation)
+- **Files Created**: 6 core files + 2 documentation files (8 total new files)
+- **Files Modified**: 8 core files + 5 documentation files (13 total modified files)
+- **Tests Added**: 100+ new tests (core package)
 - **Features**: If/Else conditionals, Switch/Case conditionals, Branch execution
+- **Documentation**: Comprehensive docs site updates with guides, examples, and API reference
 
 
 
