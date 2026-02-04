@@ -277,7 +277,118 @@ interface NodeJSON {
 }
 ```
 
-## Usage Examples
+## Interface: IConditionalNode
+
+Nodes implement this interface to enable conditional branching in workflows.
+
+```typescript
+interface IConditionalNode {
+  /**
+   * Evaluate the condition and return the name of the active branch.
+   * Must return a valid output port name.
+   * Called after execute() to determine which branch executes.
+   */
+  evaluateCondition(): string;
+}
+```
+
+### evaluateCondition()
+
+Determines which branch should execute based on the node's state.
+
+```typescript
+evaluateCondition(): string;
+```
+
+**Returns:** The name of the output port representing the active branch.
+
+**Requirements:**
+- Must return a string matching an existing output port name
+- Called after `execute()` completes
+- Must be deterministic based on node state
+- Should not modify node state or perform side effects
+
+**Example Implementation:**
+
+```typescript
+import { Node, defineNode, Input, Output, IConditionalNode } from '@reactflo/core';
+
+@defineNode({
+  type: 'flow.if',
+  label: 'If',
+  category: 'Flow Control',
+})
+export class IfNode extends Node implements IConditionalNode {
+  @Input({ type: 'boolean', label: 'Condition', required: true })
+  condition!: boolean;
+
+  @Output({ type: 'any', label: 'Then' })
+  thenOutput?: unknown;
+
+  @Output({ type: 'any', label: 'Else' })
+  elseOutput?: unknown;
+
+  execute(): void {
+    if (this.condition) {
+      this.thenOutput = this.value;
+    } else {
+      this.elseOutput = this.value;
+    }
+  }
+
+  evaluateCondition(): string {
+    // Return output port name based on condition
+    return this.condition ? 'thenOutput' : 'elseOutput';
+  }
+}
+```
+
+**Custom Conditional Node:**
+
+```typescript
+@defineNode({
+  type: 'logic.greater-than',
+  label: 'Greater Than',
+  category: 'Logic',
+})
+export class GreaterThanNode extends Node implements IConditionalNode {
+  @Input({ type: 'number', label: 'A', required: true })
+  a!: number;
+
+  @Input({ type: 'number', label: 'B', required: true })
+  b!: number;
+
+  @Output({ type: 'any', label: 'Greater' })
+  greater?: unknown;
+
+  @Output({ type: 'any', label: 'Less or Equal' })
+  lessOrEqual?: unknown;
+
+  execute(): void {
+    if (this.a > this.b) {
+      this.greater = { a: this.a, b: this.b, result: true };
+    } else {
+      this.lessOrEqual = { a: this.a, b: this.b, result: false };
+    }
+  }
+
+  evaluateCondition(): string {
+    return this.a > this.b ? 'greater' : 'lessOrEqual';
+  }
+}
+```
+
+<Note>
+  The execution engine uses `evaluateCondition()` to build and execute conditional
+  branches. Only nodes connected to the returned output port will execute.
+</Note>
+
+**See also:**
+- [Conditional Flow Guide](/advanced/conditional-flow) - Complete guide to conditional workflows
+- [Built-in Conditional Nodes](/api-reference/core/builtin-nodes) - IfNode and SwitchNode API
+- [Conditional Logic Examples](/examples/conditional-logic) - Working examples
+
+## Examples
 
 ### Basic Node
 

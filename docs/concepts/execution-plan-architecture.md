@@ -512,20 +512,20 @@ This task adds comprehensive documentation for the Phase 2 Conditional Flow impl
 - [x] Add "Try It Yourself" section with instructions
 - [x] Commit: "docs(site): update conditional logic examples with real implementations"
 
-**Subtask 2.17.5: Update API Reference - Core Package** [1 hour]
-- [ ] File: `packages/docs-site/api-reference/core/node.mdx` (or create if missing)
-- [ ] Add section: "IConditionalNode Interface"
-  - [ ] Interface signature
-  - [ ] Method: `evaluateCondition(): string`
-  - [ ] Return value semantics
-  - [ ] Example implementation
-- [ ] File: `packages/docs-site/api-reference/core/builtin-nodes.mdx` (create new)
-- [ ] Document all builtin nodes:
-  - [ ] IfNode (full API with all inputs/outputs)
-  - [ ] SwitchNode (full API with property and dynamic outputs)
-- [ ] Add import examples from '@reactflo/core'
-- [ ] Link to guides and examples
-- [ ] Commit: "docs(site): add API reference for conditional nodes"
+**Subtask 2.17.5: Update API Reference - Core Package** [1 hour] - ✅ COMPLETE
+- [x] File: `packages/docs-site/api-reference/core/node.mdx` (or create if missing)
+- [x] Add section: "IConditionalNode Interface"
+  - [x] Interface signature
+  - [x] Method: `evaluateCondition(): string`
+  - [x] Return value semantics
+  - [x] Example implementation
+- [x] File: `packages/docs-site/api-reference/core/builtin-nodes.mdx` (create new)
+- [x] Document all builtin nodes:
+  - [x] IfNode (full API with all inputs/outputs)
+  - [x] SwitchNode (full API with property and dynamic outputs)
+- [x] Add import examples from '@reactflo/core'
+- [x] Link to guides and examples
+- [x] Commit: "docs(site): add API reference for conditional nodes"
 
 **Subtask 2.17.6: Update Navigation and Search** [0.5 hours]
 - [ ] File: `packages/docs-site/docs.json`
