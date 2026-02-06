@@ -15,6 +15,7 @@ import {
   DisplayNode,
   ConfigDemoNode,
 } from '../nodes';
+import { simpleWorkflow } from '../workflows/defaultWorkflows';
 
 interface SimpleWorkflowProps {
   theme?: 'light' | 'dark';
@@ -37,6 +38,7 @@ function SimpleWorkflow({ theme = 'light' }: SimpleWorkflowProps) {
             DisplayNode,
             ConfigDemoNode,
           ]}
+          initialWorkflow={simpleWorkflow}
           showPalette={true}
           showProperties={true}
           showToolbar={true}

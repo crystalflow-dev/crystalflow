@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import SimpleWorkflow from './examples/SimpleWorkflow';
 import ConditionalNodesDemo from './examples/ConditionalNodesDemo';
+import AsyncExecutionDemo from './examples/AsyncExecutionDemo';
 import { StyledWorkflow } from './examples/StyledWorkflow';
 import { CustomRenderWorkflow } from './examples/CustomRenderWorkflow';
 import { InfoPopup } from './components/InfoPopup';
 import './App.css';
 
-type ExampleType = 'simple' | 'styled' | 'custom' | 'conditional';
+type ExampleType = 'simple' | 'styled' | 'custom' | 'conditional' | 'async';
 
 // Example information content
 const exampleInfo: Record<ExampleType, { title: string; content: React.ReactNode }> = {
@@ -41,6 +42,59 @@ const exampleInfo: Record<ExampleType, { title: string; content: React.ReactNode
           <li>Click "Execute" in the toolbar to run the workflow</li>
           <li>Use Save/Load to persist your workflow as JSON</li>
         </ol>
+      </>
+    ),
+  },
+  async: {
+    title: 'Async Execution Demo',
+    content: (
+      <>
+        <p>
+          This example demonstrates workflow execution with time-consuming nodes, perfect for
+          testing execution visualization and progress tracking.
+        </p>
+        <h3>Try these workflows:</h3>
+        <ul>
+          <li>
+            <strong>API Pipeline:</strong> FetchData → ProcessData → Display
+          </li>
+          <li>
+            <strong>Batch Processing:</strong> FetchData → BatchProcess → Display
+          </li>
+          <li>
+            <strong>Multi-Stage:</strong> FetchData → ProcessData → BatchProcess → Display
+          </li>
+          <li>
+            <strong>Slow Chain:</strong> Multiple SlowProcess nodes in sequence
+          </li>
+        </ul>
+        <h3>Available Nodes:</h3>
+        <ul>
+          <li>
+            <strong>Fetch Data:</strong> Simulates API calls with 1.5-4s delays based on data source
+          </li>
+          <li>
+            <strong>Process Data:</strong> Simulates data processing with 0.5-2s delays
+          </li>
+          <li>
+            <strong>Batch Process:</strong> Processes items in batches with configurable delays
+          </li>
+          <li>
+            <strong>Slow Process:</strong> Generic slow operation with configurable delay
+            (100ms-10s)
+          </li>
+          <li>
+            <strong>Display:</strong> Shows the final result
+          </li>
+        </ul>
+        <h3>Features to Test:</h3>
+        <ul>
+          <li>⏸️ Click "Execute" and watch nodes light up as they run</li>
+          <li>🛑 Click "Cancel" during execution to test cancellation</li>
+          <li>❌ Enable "Simulate Network Error" in Fetch Data to test error handling</li>
+          <li>📊 Enable "Enable Logging" in Process Data for console output</li>
+          <li>⏱️ Different nodes have different execution times (check properties)</li>
+        </ul>
       </>
     ),
   },
@@ -280,6 +334,20 @@ function App() {
           >
             Conditional Nodes
           </button>
+          <button
+            onClick={() => setCurrentExample('async')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: currentExample === 'async' ? '#3498db' : '#95a5a6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: currentExample === 'async' ? 'bold' : 'normal',
+            }}
+          >
+            ⏱️ Async Execution
+          </button>
         </div>
       </header>
 
@@ -288,6 +356,7 @@ function App() {
         {currentExample === 'styled' && <StyledWorkflow />}
         {currentExample === 'custom' && <CustomRenderWorkflow />}
         {currentExample === 'conditional' && <ConditionalNodesDemo theme={theme} />}
+        {currentExample === 'async' && <AsyncExecutionDemo theme={theme} />}
       </div>
     </div>
   );

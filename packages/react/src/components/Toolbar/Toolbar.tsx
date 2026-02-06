@@ -38,6 +38,11 @@ export interface ToolbarOptions {
    */
   showClear?: boolean;
   /**
+   * Show clear execution button
+   * @default true
+   */
+  showClearExecution?: boolean;
+  /**
    * Show undo/redo buttons
    * @default false
    */
@@ -74,6 +79,11 @@ export interface ToolbarIcons {
    * @default <IoTrash />
    */
   clear?: React.ReactNode | null | false;
+  /**
+   * Clear execution button icon
+   * @default 🔄
+   */
+  clearExecution?: React.ReactNode | null | false;
   /**
    * Undo button icon
    * @default <IoArrowUndo />
@@ -134,6 +144,11 @@ export interface ToolbarProps {
    * Callback for clear button
    */
   onClear?: () => void;
+
+  /**
+   * Callback for clearing execution visual state
+   */
+  onClearExecution?: () => void;
 
   /**
    * Callback for undo
@@ -242,6 +257,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onSave,
   onLoad,
   onClear,
+  onClearExecution,
   onUndo,
   onRedo,
   canUndo = false,
@@ -266,6 +282,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     showSave = true,
     showLoad = true,
     showClear = true,
+    showClearExecution = false,
     showUndoRedo = false,
     showUISettings = true,
   } = options || {};
@@ -286,6 +303,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   const saveIcon = renderIcon(icons?.save, <IoSave />);
   const loadIcon = renderIcon(icons?.load, <IoFolder />);
   const clearIcon = renderIcon(icons?.clear, <IoTrash />);
+  const clearExecutionIcon = renderIcon(icons?.clearExecution, '\ud83d\udd04');
   const undoIcon = renderIcon(icons?.undo, <IoArrowUndo />);
   const redoIcon = renderIcon(icons?.redo, <IoArrowRedo />);
   const minimapIcon = renderIcon(icons?.minimap, <IoMap />);
@@ -449,6 +467,29 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               {clearIcon}
               <span>Clear</span>
+            </span>
+          </button>
+        )}
+
+        {/* Clear Execution Button */}
+        {showClearExecution && (
+          <button
+            onClick={onClearExecution}
+            className={classes?.button}
+            style={mergeStyles(defaultButtonStyle, styles?.button)}
+            title="Clear execution visual state"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--color-bg-tertiary)';
+              e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'var(--color-bg-elevated)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {clearExecutionIcon}
+              <span>Clear Execution</span>
             </span>
           </button>
         )}

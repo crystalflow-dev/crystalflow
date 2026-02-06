@@ -16,6 +16,6 @@ export class DisplayNode extends Node {
   value: unknown;
 
   execute(): void {
-    alert(`Display: ${this.value ? this.value : 'no value'}`);
+    console.log('DisplayNode output:', this.value);
   }
 }

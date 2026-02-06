@@ -23,5 +23,8 @@ export { MockAPINode } from './data/MockAPINode';
 export { ExtractFieldNode } from './data/ExtractFieldNode';
 export { FormatTextNode } from './data/FormatTextNode';
 
+// Async nodes (for testing execution visualization)
+export * from './async';
+
 // Demo nodes
 export { ConfigDemoNode } from './ConfigDemoNode';

@@ -9,4 +9,11 @@ export { useReactFlowState } from './useReactFlowState';
 export { useWorkflowExecution } from './useWorkflowExecution';
 export { useWorkflowFileOperations } from './useWorkflowFileOperations';
 export { useNodePalette } from './useNodePalette';
+export { useExecutionVisuals } from './useExecutionVisuals';
 export type { ExecutionOptions } from './useExecution';
+export type {
+  EdgeVisualState,
+  NodeVisualData,
+  ReactFlowExecutionState,
+  UseExecutionVisualsOptions,
+} from './useExecutionVisuals';

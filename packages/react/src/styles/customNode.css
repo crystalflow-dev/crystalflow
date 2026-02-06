@@ -13,16 +13,55 @@
   color: var(--color-text-primary);
   min-width: 200px;
   box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition-fast) var(--ease-out),
-              border-color var(--transition-fast) var(--ease-out);
+  transition: all var(--transition-fast) var(--ease-out);
   font-family: var(--font-family-base);
 }
 
-/* Hover effect - lift and glow */
-.react-flow__node-custom:hover {
+/* Execution status: queued - warning yellow border */
+.react-flow__node-custom:has(.execution-queued) {
+  border-color: var(--color-warning-500);
+  box-shadow: 0 0 0 2px var(--color-warning-100), var(--shadow-sm);
+}
+
+/* Execution status: running - animated blue border */
+.react-flow__node-custom:has(.execution-running) {
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 2px var(--color-primary-100), var(--shadow-md);
+  animation: pulse-border-running 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-border-running {
+  0%, 100% {
+    box-shadow: 0 0 0 2px var(--color-primary-100), var(--shadow-md);
+  }
+  50% {
+    box-shadow: 0 0 0 3px var(--color-primary-200), var(--shadow-lg);
+  }
+}
+
+/* Execution status: success - green border */
+.react-flow__node-custom:has(.execution-success) {
+  border-color: var(--color-success-500);
+  box-shadow: 0 0 0 2px var(--color-success-100), var(--shadow-sm);
+}
+
+/* Execution status: error - red border with shake */
+.react-flow__node-custom:has(.execution-error) {
+  border-color: var(--color-error-500);
+  box-shadow: 0 0 0 2px var(--color-error-100), var(--shadow-md);
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Hover effect - lift and glow (but preserve execution status borders) */
+.react-flow__node-custom:hover:not(:has(.execution-queued, .execution-running, .execution-success, .execution-error)) {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
   border-color: var(--color-border-medium);
+}
+
+/* Hover on executing nodes - just lift */
+.react-flow__node-custom:hover:has(.execution-queued, .execution-running, .execution-success, .execution-error) {
+  transform: translateY(-1px);
 }
 
 /* Selected state - animated border */
@@ -160,50 +199,9 @@
   right: -6px;
 }
 
-/* Execution status indicator */
-.node-status {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid var(--color-bg-elevated);
-  background: var(--color-gray-400);
-  transition: all var(--transition-fast) var(--ease-out);
-}
-
-.node-status--idle {
-  background: var(--color-gray-400);
-}
-
-.node-status--running {
-  background: var(--color-primary-500);
-  animation: pulse-status 1s ease-in-out infinite;
-}
-
-.node-status--success {
-  background: var(--color-success-500);
-}
-
-.node-status--error {
-  background: var(--color-error-500);
-  animation: shake 0.5s ease-in-out;
-}
-
-@keyframes pulse-status {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.8;
-  }
-}
-
+/* Shake animation for error state */
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
+  0%, 100% { transform: translateX(0) translateY(-1px); }
+  25% { transform: translateX(-3px) translateY(-1px); }
+  75% { transform: translateX(3px) translateY(-1px); }
 }

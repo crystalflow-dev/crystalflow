@@ -1,0 +1,214 @@
+/**
+ * Execution Edge Styles
+ * Visual feedback for data flow during workflow execution
+ */
+
+/* ============================================================================
+   Base Edge Styles
+   ============================================================================ */
+
+.react-flow__edge-path {
+  stroke: var(--color-border-medium);
+  stroke-width: 2px;
+  transition: stroke var(--transition-fast) var(--ease-out),
+              stroke-width var(--transition-fast) var(--ease-out);
+}
+
+/* ============================================================================
+   Active Edge - Data Currently Flowing
+   ============================================================================ */
+
+.react-flow__edge.edge-active .react-flow__edge-path {
+  stroke: var(--color-success-500);
+  stroke-width: 3px;
+  stroke-dasharray: 8 4;
+  animation: dash-flow 1s linear infinite;
+}
+
+/* Dark mode - brighter stroke */
+[data-theme="dark"] .react-flow__edge.edge-active .react-flow__edge-path {
+  stroke: var(--color-success-400);
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -24px;
+  }
+}
+
+/* ============================================================================
+   Completed Edge - Data Transfer Complete
+   ============================================================================ */
+
+.react-flow__edge.edge-completed .react-flow__edge-path {
+  stroke: var(--color-success-400);
+  stroke-width: 2.5px;
+}
+
+[data-theme="dark"] .react-flow__edge.edge-completed .react-flow__edge-path {
+  stroke: var(--color-success-300);
+}
+
+/* ============================================================================
+   Flow Particle Animation
+   Visual indicator of data moving along the edge
+   ============================================================================ */
+
+/* Create animated particle using SVG marker */
+.react-flow__edge.edge-active .react-flow__edge-path {
+  marker-mid: url(#flow-particle);
+}
+
+/* Particle glow effect */
+.react-flow__edge.edge-active::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--color-success-500);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--color-success-500),
+              0 0 12px var(--color-success-400);
+  opacity: 0;
+  animation: particle-flow 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .react-flow__edge.edge-active::before {
+  background: var(--color-success-400);
+  box-shadow: 0 0 10px var(--color-success-400),
+              0 0 16px var(--color-success-300);
+}
+
+@keyframes particle-flow {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  10% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+/* ============================================================================
+   Edge Labels - Enhanced for Execution State
+   ============================================================================ */
+
+.react-flow__edge.edge-active .react-flow__edge-label {
+  background: var(--color-success-50);
+  border: 1px solid var(--color-success-500);
+  color: var(--color-success-700);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xs);
+  animation: label-pulse 1s ease-in-out infinite;
+}
+
+[data-theme="dark"] .react-flow__edge.edge-active .react-flow__edge-label {
+  background: var(--color-success-900);
+  border-color: var(--color-success-400);
+  color: var(--color-success-100);
+}
+
+@keyframes label-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.react-flow__edge.edge-completed .react-flow__edge-label {
+  background: var(--color-success-100);
+  border: 1px solid var(--color-success-300);
+  color: var(--color-success-800);
+}
+
+[data-theme="dark"] .react-flow__edge.edge-completed .react-flow__edge-label {
+  background: var(--color-success-800);
+  border-color: var(--color-success-500);
+  color: var(--color-success-50);
+}
+
+/* ============================================================================
+   Hover States - Enhanced for Execution
+   ============================================================================ */
+
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke-width: 3px;
+}
+
+.react-flow__edge.edge-active:hover .react-flow__edge-path {
+  stroke-width: 4px;
+}
+
+/* ============================================================================
+   Error State - If Connection Fails
+   ============================================================================ */
+
+.react-flow__edge.edge-error .react-flow__edge-path {
+  stroke: var(--color-error-500);
+  stroke-width: 3px;
+  stroke-dasharray: 4 4;
+  animation: error-flash 0.5s ease-in-out 3;
+}
+
+[data-theme="dark"] .react-flow__edge.edge-error .react-flow__edge-path {
+  stroke: var(--color-error-400);
+}
+
+@keyframes error-flash {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ============================================================================
+   Accessibility - Reduced Motion
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__edge.edge-active .react-flow__edge-path {
+    animation: none;
+    stroke-dasharray: none;
+  }
+  
+  .react-flow__edge.edge-active::before {
+    animation: none;
+    opacity: 0;
+  }
+  
+  .react-flow__edge.edge-active .react-flow__edge-label {
+    animation: none;
+  }
+  
+  .react-flow__edge.edge-error .react-flow__edge-path {
+    animation: none;
+  }
+}
+
+/* ============================================================================
+   Performance Optimization
+   ============================================================================ */
+
+.react-flow__edge {
+  will-change: auto;
+}
+
+.react-flow__edge.edge-active {
+  will-change: stroke, stroke-width;
+}

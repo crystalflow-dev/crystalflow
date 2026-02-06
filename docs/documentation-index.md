@@ -17,6 +17,7 @@ Welcome to CrystalFlow! This index will help you navigate all project documentat
 - **[docs/guides/getting-started.md](guides/getting-started.md)** - How to use CrystalFlow in your project
 - **[docs/guides/get-started.md](guides/get-started.md)** - Complete overview and quick start guide
 - **[docs/guides/quick-reference.md](guides/quick-reference.md)** - Commands, conventions, and best practices
+- **[docs/guides/storybook-quick-ref.md](guides/storybook-quick-ref.md)** - Storybook quick reference
 
 ### Core Concepts
 
@@ -40,10 +41,19 @@ Welcome to CrystalFlow! This index will help you navigate all project documentat
 - **[docs/development/setup-summary.md](development/setup-summary.md)** - Setup instructions and next steps
 - **[docs/development/setup-complete.md](development/setup-complete.md)** - Post-setup information
 - **[docs/development/checklist.md](development/checklist.md)** - Development checklist
+- **[docs/development/visual-execution-complete.md](development/visual-execution-complete.md)** - Visual execution implementation status
+- **[docs/development/storybook-setup.md](development/storybook-setup.md)** - Storybook configuration and setup
 
 ### Design & Branding
 
 - **[docs/design/brand-guidelines.md](design/brand-guidelines.md)** - Brand and design guidelines
+
+### Design Notes
+
+- **[docs/design-notes/multiple-entry-points.md](design-notes/multiple-entry-points.md)** - Multiple entry points architecture
+- **[docs/design-notes/visual-execution-plan.md](design-notes/visual-execution-plan.md)** - Visual execution architecture plan
+- **[docs/design-notes/control-flow-state-tracking.md](design-notes/control-flow-state-tracking.md)** - Control flow state tracking analysis
+- **[docs/design-notes/workflow-single-source-of-truth.md](design-notes/workflow-single-source-of-truth.md)** - Workflow architecture refactor
 
 ## 📦 Package Documentation
 

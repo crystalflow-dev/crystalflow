@@ -1,6 +1,6 @@
 import React from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
-import { PortDefinition, PropertyDefinition } from '@crystalflow/types';
+import { NodeExecutionStatus, PortDefinition, PropertyDefinition } from '@crystalflow/types';
 import { NodeConstructor } from '@crystalflow/core';
 
 /**
@@ -19,6 +19,9 @@ export interface CustomNodeData {
   properties?: Record<string, PropertyDefinition>;
   nodeClass?: NodeConstructor;
   renderNodeContent?: (data: CustomNodeData) => React.ReactNode;
+  // Execution state
+  executionStatus?: NodeExecutionStatus;
+  executionOutputs?: Record<string, unknown>;
   [key: string]: unknown;
 }
 
@@ -41,7 +44,7 @@ export interface CustomNodeData {
  */
 const defaultRenderNodeContent = (data: CustomNodeData): React.ReactNode => (
   <div
-    className="node-content"
+    className={`node-content ${data.executionStatus ? `execution-${data.executionStatus}` : ''}`}
     data-category={data.category}
     style={{ '--node-color': data.color } as React.CSSProperties}
   >
@@ -51,6 +54,46 @@ const defaultRenderNodeContent = (data: CustomNodeData): React.ReactNode => (
     </div>
     <div className="node-body">
       <div className="node-type">{data.type}</div>
+      {data.executionOutputs && Object.keys(data.executionOutputs).length > 0 && (
+        <div
+          className="node-execution-preview"
+          style={{
+            marginTop: 'var(--space-2)',
+            padding: 'var(--space-2)',
+            background: 'var(--color-bg-tertiary)',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: 'var(--font-size-xs)',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          <div
+            style={{ fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-1)' }}
+          >
+            Output Preview:
+          </div>
+          {Object.entries(data.executionOutputs).map(([key, value]) => (
+            <div
+              key={key}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: 'var(--space-2)',
+              }}
+            >
+              <span style={{ opacity: 0.7 }}>{key}:</span>
+              <span
+                style={{
+                  fontFamily: 'var(--font-family-mono)',
+                  fontWeight: 'var(--font-weight-medium)',
+                }}
+              >
+                {String(value).slice(0, 20)}
+                {String(value).length > 20 ? '...' : ''}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   </div>
 );
