@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { NodeExecutionStatus, PortDefinition, PropertyDefinition } from '@crystalflow/types';
 import { NodeConstructor } from '@crystalflow/core';
@@ -105,6 +105,22 @@ export const CustomNode: React.FC<NodeProps> = ({ data }) => {
   const outputs = nodeData.outputs ? Object.entries(nodeData.outputs) : [];
   const renderContent = nodeData.renderNodeContent || defaultRenderNodeContent;
 
+  // Memoize the rendered content with explicit dependencies on execution state
+  // This ensures the component re-renders when execution status or outputs change
+  const renderedContent = useMemo(() => {
+    return renderContent(nodeData);
+  }, [
+    renderContent,
+    nodeData.executionStatus,
+    nodeData.executionOutputs,
+    nodeData.label,
+    nodeData.type,
+    nodeData.category,
+    nodeData.description,
+    nodeData.icon,
+    nodeData.color,
+  ]);
+
   return (
     <>
       {/* Input Handles */}
@@ -124,7 +140,7 @@ export const CustomNode: React.FC<NodeProps> = ({ data }) => {
       })}
 
       {/* Node Content */}
-      {renderContent(nodeData)}
+      {renderedContent}
 
       {/* Output Handles */}
       {outputs.map(([key, port], index) => {

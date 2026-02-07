@@ -386,7 +386,15 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
         // Convert workflow to React Flow format
         const result = loadFromData(initialWorkflow);
         if (result.success && result.nodes) {
-          reactFlowState.loadWorkflow(result.nodes);
+          // Inject renderNodeContent into all loaded nodes
+          const nodesWithRenderer = renderNodeContent
+            ? result.nodes.map((node) => ({
+                ...node,
+                data: { ...node.data, renderNodeContent },
+              }))
+            : result.nodes;
+
+          reactFlowState.loadWorkflow(nodesWithRenderer);
           // Force re-render to sync edges from workflow connections
           setWorkflowVersion((v) => v + 1);
         }
@@ -394,7 +402,15 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
         console.error('Failed to load initial workflow:', error);
       }
     }
-  }, [initialWorkflow, isInitialized, loadFromData, reactFlowState, workflow, workflowState]);
+  }, [
+    initialWorkflow,
+    isInitialized,
+    loadFromData,
+    reactFlowState,
+    workflow,
+    workflowState,
+    renderNodeContent,
+  ]);
 
   // Execution visual state hook
   const [executor] = useState(() => new Executor());

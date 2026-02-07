@@ -259,7 +259,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
       proOptions: { hideAttribution: true },
       minZoom: 0.1,
       maxZoom: 4,
-      nodeOrigin: [0.5, 0.5] as [number, number], // Center origin for better drag performance
+      nodeOrigin: [0, 0] as [number, number], // Top-left origin for accurate positioning
       defaultEdgeOptions: {
         type: 'smoothstep',
         animated: false,

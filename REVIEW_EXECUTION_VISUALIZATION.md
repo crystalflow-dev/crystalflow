@@ -74,23 +74,27 @@ This feature adds **real-time visual feedback during workflow execution** with a
 ### 🎯 Core Package (`@crystalflow/core`)
 
 #### **1. NEW: `ExecutionStateTracker.ts`** (336 lines)
+
 📁 `packages/core/src/execution/ExecutionStateTracker.ts`
 
 **Purpose**: Framework-agnostic execution state tracking.
 
 **Key Features**:
+
 - Tracks node states (idle → queued → running → success/error)
 - Tracks connection states (idle → active → completed)
 - Records node outputs and execution progress
 - Serializable to/from JSON
 
 **Review Points**:
+
 - ✅ Zero external dependencies (framework-agnostic)
 - ✅ Immutable state queries (returns copies)
 - ✅ Full serialization support
 - ⚠️ Note: Nodes are NOT pre-queued to support conditional branches
 
 **Code Highlights**:
+
 ```typescript
 // Create tracker
 const tracker = new ExecutionStateTracker('exec-123', 'workflow-456');
@@ -108,20 +112,24 @@ const state = tracker.getState();
 ---
 
 #### **2. MODIFIED: `Executor.ts`** (+160 lines)
+
 📁 `packages/core/src/execution/Executor.ts`
 
 **Changes**:
+
 - ✅ Integrated `ExecutionStateTracker` into executor lifecycle
 - ✅ New events: `onStateChange`, `onConnectionActive`, `onConnectionComplete`
 - ✅ Data transfer now tracked with `transferNodeDataWithTracking()`
 - ✅ Small delays for visual feedback (150ms queued, 100ms per connection)
 
 **Review Points**:
+
 - ✅ All event listeners can be async (executor waits)
 - ✅ State tracker cleaned up after execution
 - ⚠️ Added delays for visualization - configurable in future
 
 **Code Highlights**:
+
 ```typescript
 // New event listeners
 executor.on('onStateChange', async (state) => {
@@ -140,21 +148,26 @@ executor.on('onConnectionComplete', async (connection) => {
 ---
 
 #### **3. MODIFIED: `Workflow.ts`** (+9 lines)
+
 📁 `packages/core/src/workflow/Workflow.ts`
 
 **Changes**:
+
 - ✅ New method: `addNodeInstance()` to add existing node instances
 
 **Review Points**:
+
 - ✅ Enables syncing React Flow nodes with workflow nodes
 - ✅ Simple addition, no breaking changes
 
 ---
 
 #### **4. NEW: Tests - `ExecutionStateTracker.test.ts`** (38 tests, 331 lines)
+
 📁 `packages/core/src/execution/__tests__/ExecutionStateTracker.test.ts`
 
 **Coverage**:
+
 - ✅ Initialization and state queries
 - ✅ Node state transitions
 - ✅ Connection tracking
@@ -168,11 +181,13 @@ executor.on('onConnectionComplete', async (connection) => {
 ### 🎨 Types Package (`@crystalflow/types`)
 
 #### **5. NEW: `execution-state.ts`** (88 lines)
+
 📁 `packages/types/src/execution-state.ts`
 
 **Purpose**: Type definitions for execution state.
 
 **Key Types**:
+
 ```typescript
 // Node status during execution
 type NodeExecutionStatus = 'idle' | 'queued' | 'running' | 'success' | 'error';
@@ -201,6 +216,7 @@ interface ExecutionState {
 ```
 
 **Review Points**:
+
 - ✅ Clean type definitions
 - ✅ Serializable format included
 - ✅ Documented with JSDoc
@@ -210,11 +226,13 @@ interface ExecutionState {
 ### ⚛️ React Package (`@crystalflow/react`)
 
 #### **6. NEW: `useExecutionVisuals.ts`** (246 lines)
+
 📁 `packages/react/src/hooks/useExecutionVisuals.ts`
 
 **Purpose**: Subscribe to core execution events and transform to React Flow visual states.
 
 **Key Features**:
+
 - Listens to `onStateChange`, `onConnectionActive`, `onConnectionComplete` events
 - Maps workflow connections to React Flow edge IDs
 - Provides node visual data (status, outputs)
@@ -223,13 +241,12 @@ interface ExecutionState {
 - Manual reset function
 
 **Usage**:
+
 ```typescript
-const executionVisuals = useExecutionVisuals(
-  executor,
-  nodes,
-  workflow.connections,
-  { autoReset: false, autoResetDelay: 3000 }
-);
+const executionVisuals = useExecutionVisuals(executor, nodes, workflow.connections, {
+  autoReset: false,
+  autoResetDelay: 3000,
+});
 
 // Returns:
 // - edgeStates: Map<edgeId, { isActive, isCompleted }>
@@ -240,6 +257,7 @@ const executionVisuals = useExecutionVisuals(
 ```
 
 **Review Points**:
+
 - ✅ Framework bridge: core → React
 - ✅ Proper cleanup on unmount
 - ✅ Memoized for performance
@@ -248,15 +266,18 @@ const executionVisuals = useExecutionVisuals(
 ---
 
 #### **7. MODIFIED: `useReactFlowState.ts`** (+80 lines)
+
 📁 `packages/react/src/hooks/useReactFlowState.ts`
 
 **Changes**:
+
 - ✅ Now accepts `workflow` parameter
 - ✅ Edges derived from `workflow.connections` via `useMemo`
 - ✅ Syncs deletions back to workflow
 - ✅ `onConnect` is now a no-op (parent handles)
 
 **Review Points**:
+
 - ✅ Implements single source of truth pattern
 - ✅ Automatic edge synchronization
 - ⚠️ Breaking change: signature changed
@@ -264,23 +285,28 @@ const executionVisuals = useExecutionVisuals(
 ---
 
 #### **8. MODIFIED: `useWorkflowExecution.ts`** (+23 lines)
+
 📁 `packages/react/src/hooks/useWorkflowExecution.ts`
 
 **Changes**:
+
 - ✅ Added `WorkflowExecutionOptions` interface
 - ✅ Supports custom `Executor` instance
 - ✅ Supports timeout and variables
 
 **Review Points**:
+
 - ✅ Backward compatible (executor optional)
 - ✅ Enables using single executor instance
 
 ---
 
 #### **9. MODIFIED: `WorkflowBuilder.tsx`** (+120 lines)
+
 📁 `packages/react/src/components/WorkflowBuilder/WorkflowBuilder.tsx`
 
 **Changes**:
+
 - ✅ Uses `useWorkflow()` to create workflow instance
 - ✅ Passes workflow to `useReactFlowState()`
 - ✅ Passes workflow connections to `useExecutionVisuals()`
@@ -292,6 +318,7 @@ const executionVisuals = useExecutionVisuals(
 - ✅ Forces re-render when workflow mutates
 
 **Review Points**:
+
 - ✅ Orchestrates all execution visual components
 - ✅ Single executor instance for consistency
 - ⚠️ Property sync logic added (review carefully)
@@ -299,9 +326,11 @@ const executionVisuals = useExecutionVisuals(
 ---
 
 #### **10. MODIFIED: `WorkflowCanvas.tsx`** (+140 lines)
+
 📁 `packages/react/src/components/WorkflowCanvas/WorkflowCanvas.tsx`
 
 **Changes**:
+
 - ✅ Accepts `executionState` prop
 - ✅ Enhances nodes with execution status and outputs
 - ✅ Enhances edges with visual states (inline styles)
@@ -309,6 +338,7 @@ const executionVisuals = useExecutionVisuals(
 - ✅ Uses inline styles for execution edges (more reliable)
 
 **Review Points**:
+
 - ✅ Pure visual layer (no business logic)
 - ✅ Memoized node/edge transformations
 - ⚠️ Button visibility logic (only when execution cache exists)
@@ -316,15 +346,18 @@ const executionVisuals = useExecutionVisuals(
 ---
 
 #### **11. MODIFIED: `CustomNode.tsx`** (+50 lines)
+
 📁 `packages/react/src/components/Node/CustomNode.tsx`
 
 **Changes**:
+
 - ✅ Accepts `executionStatus` in node data
 - ✅ Accepts `executionOutputs` in node data
 - ✅ Renders execution status CSS class
 - ✅ Renders output preview panel (compact)
 
 **Review Points**:
+
 - ✅ Uses theme CSS variables
 - ✅ Truncates long output values
 - ⚠️ Output preview always visible (could be toggled)
@@ -332,42 +365,50 @@ const executionVisuals = useExecutionVisuals(
 ---
 
 #### **12. MODIFIED: `Toolbar.tsx`** (+50 lines)
+
 📁 `packages/react/src/components/Toolbar/Toolbar.tsx`
 
 **Changes**:
+
 - ✅ New prop: `onClearExecution` callback
 - ✅ New option: `showClearExecution` (default: false)
 - ✅ New icon: `clearExecution` (🔄 emoji)
 - ✅ Clear Execution button with hover effects
 
 **Review Points**:
+
 - ✅ Follows existing toolbar pattern
 - ✅ Consistent styling
 
 ---
 
 #### **13. NEW: `connectionConverter.ts`** (85 lines)
+
 📁 `packages/react/src/utils/connectionConverter.ts`
 
 **Purpose**: Convert workflow connections to React Flow edges.
 
 **Functions**:
+
 - `connectionsToEdges()`: Main conversion function
 - `buildEdgeId()`: Generate React Flow edge ID
 - `findConnectionId()`: Reverse lookup
 
 **Review Points**:
+
 - ✅ Uses connection.id as edge ID
 - ✅ Maintains all connection metadata
 
 ---
 
 #### **14. NEW: `executionEdges.css`** (214 lines)
+
 📁 `packages/react/src/styles/executionEdges.css`
 
 **Purpose**: Visual styles for execution animations.
 
 **Features**:
+
 - Active edge: Animated dash flow, green stroke, thicker
 - Completed edge: Softer green, persistent
 - Hover effects
@@ -375,6 +416,7 @@ const executionVisuals = useExecutionVisuals(
 - Reduced motion support
 
 **Review Points**:
+
 - ✅ Uses theme CSS variables
 - ✅ Dark mode support
 - ✅ Accessibility (prefers-reduced-motion)
@@ -383,15 +425,18 @@ const executionVisuals = useExecutionVisuals(
 ---
 
 #### **15. MODIFIED: `customNode.css`** (+60 lines, -50 lines)
+
 📁 `packages/react/src/styles/customNode.css`
 
 **Changes**:
+
 - ✅ Node border colors change based on execution status
 - ✅ Animated border for running nodes (pulse)
 - ✅ Shake animation for error nodes
 - ✅ Hover effects preserve execution status borders
 
 **Review Points**:
+
 - ✅ Uses CSS `:has()` selector (modern)
 - ⚠️ Browser support: Chrome 105+, Firefox 121+, Safari 15.4+
 
@@ -400,9 +445,11 @@ const executionVisuals = useExecutionVisuals(
 ### 📦 Examples Package
 
 #### **16. MODIFIED: `DisplayNode.ts`** (1 line)
+
 📁 `packages/examples/src/nodes/output/DisplayNode.ts`
 
 **Changes**:
+
 - Changed `alert()` to `console.log()` for better UX during execution
 
 ---
@@ -410,9 +457,11 @@ const executionVisuals = useExecutionVisuals(
 ### 📄 Documentation Files
 
 #### **17. NEW: `workflow-single-source-of-truth.md`** (377 lines)
+
 📁 `docs/design-notes/workflow-single-source-of-truth.md`
 
 **Content**:
+
 - Problem statement (connections disappearing)
 - Architecture before/after diagrams
 - Implementation details
@@ -421,9 +470,11 @@ const executionVisuals = useExecutionVisuals(
 ---
 
 #### **18. NEW: `storybook-setup.md`** (194 lines)
+
 📁 `docs/development/storybook-setup.md`
 
 **Content**:
+
 - Storybook installation and configuration
 - Story files created
 - Features and usage
@@ -432,9 +483,11 @@ const executionVisuals = useExecutionVisuals(
 ---
 
 #### **19. NEW: `visual-execution-complete.md`** (255 lines)
+
 📁 `docs/development/visual-execution-complete.md`
 
 **Content**:
+
 - Complete implementation overview
 - Architecture diagrams
 - Usage examples
@@ -444,9 +497,11 @@ const executionVisuals = useExecutionVisuals(
 ---
 
 #### **20. NEW: `storybook-quick-ref.md`** (330 lines)
+
 📁 `docs/guides/storybook-quick-ref.md`
 
 **Content**:
+
 - Quick reference for Storybook usage
 - Story creation patterns
 - Control types
@@ -455,9 +510,11 @@ const executionVisuals = useExecutionVisuals(
 ---
 
 #### **21. MODIFIED: `documentation-index.md`** (+10 lines)
+
 📁 `docs/documentation-index.md`
 
 **Changes**:
+
 - Added links to new documentation files
 
 ---
@@ -467,6 +524,7 @@ const executionVisuals = useExecutionVisuals(
 ### 1. Real-Time Execution Visualization
 
 **Node Status Indicators**:
+
 - **Idle** (gray): Node not executed
 - **Queued** (yellow): Node queued for execution
 - **Running** (blue, pulsing): Node currently executing
@@ -474,10 +532,12 @@ const executionVisuals = useExecutionVisuals(
 - **Error** (red, shake): Node failed
 
 **Connection Animations**:
+
 - **Active** (animated green dash): Data flowing
 - **Completed** (solid green): Data transferred
 
 **Output Preview**:
+
 - Shows node outputs in real-time
 - Truncates long values
 - Monaco-style font

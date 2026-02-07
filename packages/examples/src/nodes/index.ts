@@ -26,5 +26,8 @@ export { FormatTextNode } from './data/FormatTextNode';
 // Async nodes (for testing execution visualization)
 export * from './async';
 
+// Automation nodes (n8n-style)
+export * from './automation';
+
 // Demo nodes
 export { ConfigDemoNode } from './ConfigDemoNode';

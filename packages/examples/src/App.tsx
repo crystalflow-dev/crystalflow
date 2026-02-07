@@ -5,10 +5,11 @@ import ConditionalNodesDemo from './examples/ConditionalNodesDemo';
 import AsyncExecutionDemo from './examples/AsyncExecutionDemo';
 import { StyledWorkflow } from './examples/StyledWorkflow';
 import { CustomRenderWorkflow } from './examples/CustomRenderWorkflow';
+import { N8NStyleWorkflow } from './examples/N8NStyleWorkflow';
 import { InfoPopup } from './components/InfoPopup';
 import './App.css';
 
-type ExampleType = 'simple' | 'styled' | 'custom' | 'conditional' | 'async';
+type ExampleType = 'simple' | 'styled' | 'custom' | 'conditional' | 'async' | 'n8n';
 
 // Example information content
 const exampleInfo: Record<ExampleType, { title: string; content: React.ReactNode }> = {
@@ -211,6 +212,59 @@ const exampleInfo: Record<ExampleType, { title: string; content: React.ReactNode
       </>
     ),
   },
+  n8n: {
+    title: 'n8n-Style Workflow Builder',
+    content: (
+      <>
+        <p>
+          This example recreates the distinctive look and feel of n8n's popular workflow automation
+          tool, demonstrating ReactFlo's powerful customization system.
+        </p>
+        <h3>Design Features:</h3>
+        <ul>
+          <li>
+            <strong>Clean Interface:</strong> Light gray background with white components
+          </li>
+          <li>
+            <strong>Category Colors:</strong> Coral triggers, teal actions, orange transforms, green
+            logic
+          </li>
+          <li>
+            <strong>Purple Branding:</strong> Accent color (#EA4B71) for buttons and selections
+          </li>
+          <li>
+            <strong>Smooth Interactions:</strong> Bezier connections, hover effects, transitions
+          </li>
+          <li>
+            <strong>Modern Aesthetics:</strong> Rounded corners, subtle shadows, polished appearance
+          </li>
+        </ul>
+        <h3>Available Automation Nodes:</h3>
+        <ul>
+          <li>
+            <strong>Triggers:</strong> Webhook, Schedule - Start workflows from external events
+          </li>
+          <li>
+            <strong>Actions:</strong> HTTP Request, Send Email, Slack - Integrate with external
+            services
+          </li>
+          <li>
+            <strong>Transform:</strong> Transform Data - Manipulate and shape data
+          </li>
+          <li>
+            <strong>Logic:</strong> IF/Conditional Split - Route data based on conditions
+          </li>
+        </ul>
+        <h3>Try Building:</h3>
+        <ul>
+          <li>📝 Webhook → Transform Data → Send Email</li>
+          <li>⏰ Schedule → HTTP Request → Slack Message</li>
+          <li>🔀 Webhook → IF Node → (Email | Slack)</li>
+          <li>🔄 Schedule → HTTP Request → Transform → Display</li>
+        </ul>
+      </>
+    ),
+  },
 };
 
 function App() {
@@ -348,6 +402,20 @@ function App() {
           >
             ⏱️ Async Execution
           </button>
+          <button
+            onClick={() => setCurrentExample('n8n')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: currentExample === 'n8n' ? '#EA4B71' : '#95a5a6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: currentExample === 'n8n' ? 'bold' : 'normal',
+            }}
+          >
+            🎨 n8n Style
+          </button>
         </div>
       </header>
 
@@ -357,6 +425,7 @@ function App() {
         {currentExample === 'custom' && <CustomRenderWorkflow />}
         {currentExample === 'conditional' && <ConditionalNodesDemo theme={theme} />}
         {currentExample === 'async' && <AsyncExecutionDemo theme={theme} />}
+        {currentExample === 'n8n' && <N8NStyleWorkflow theme={theme} />}
       </div>
     </div>
   );

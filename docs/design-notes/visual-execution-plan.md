@@ -1,7 +1,9 @@
 # Visual Execution Plan
 
 ## Overview
+
 Implement real-time visual feedback during workflow execution, showing:
+
 - ✅ Live execution path with animated connections
 - ✅ Node execution status (idle → running → success/error)
 - ✅ Data flow animation between nodes
@@ -16,18 +18,19 @@ Implement real-time visual feedback during workflow execution, showing:
 **Location:** `@crystalflow/core` - Enhanced `Executor` class + new `ExecutionStateTracker`
 
 **State to Track (Core):**
+
 ```typescript
 // In @crystalflow/core
 interface ExecutionState {
   // Node execution states
   nodeStates: Map<string, NodeExecutionStatus>; // 'idle' | 'queued' | 'running' | 'success' | 'error'
-  
+
   // Connection states (source->target pairs)
   connectionStates: Map<string, ConnectionExecutionState>; // connectionId -> state
-  
+
   // Data being transferred (for inspection)
   nodeOutputs: Map<string, Record<string, unknown>>; // nodeId -> { outputPort: value }
-  
+
   // Overall execution state
   isExecuting: boolean;
   currentNodeId: string | null;
@@ -48,6 +51,7 @@ type NodeExecutionStatus = 'idle' | 'queued' | 'running' | 'success' | 'error';
 ```
 
 **Core Responsibilities:**
+
 - Track execution state in a framework-agnostic way
 - Emit state change events (new events: `onStateChange`, `onConnectionActive`, `onConnectionComplete`)
 - Provide `getExecutionState()` method for state queries
@@ -56,6 +60,7 @@ type NodeExecutionStatus = 'idle' | 'queued' | 'running' | 'success' | 'error';
 - Reset state after execution completes
 
 **Benefits:**
+
 - ✅ Framework-agnostic (works with React, Vue, Angular, CLI, etc.)
 - ✅ Single source of truth for execution state
 - ✅ Can be used for debugging, logging, monitoring
@@ -68,23 +73,24 @@ type NodeExecutionStatus = 'idle' | 'queued' | 'running' | 'success' | 'error';
 **Location:** New hook `useExecutionVisuals.ts` in `@crystalflow/react`
 
 **React-Specific State:**
+
 ```typescript
 // In @crystalflow/react - transforms core state to React Flow visual state
 interface ReactFlowExecutionState {
   // Edge visual states (maps to React Flow edge IDs)
   edgeStates: Map<string, EdgeVisualState>;
-  
+
   // Node visual data (additional data for React Flow nodes)
   nodeVisualData: Map<string, NodeVisualData>;
-  
+
   // Execution metadata for UI
   executionProgress: { current: number; total: number };
   isExecuting: boolean;
 }
 
 interface EdgeVisualState {
-  isActive: boolean;      // Currently transferring data
-  isCompleted: boolean;   // Has transferred data
+  isActive: boolean; // Currently transferring data
+  isCompleted: boolean; // Has transferred data
   animationDelay?: number; // For staggered animations
 }
 
@@ -96,6 +102,7 @@ interface NodeVisualData {
 ```
 
 **React Layer Responsibilities:**
+
 - Subscribe to core execution state changes
 - Transform core `ConnectionExecutionState` → React Flow edge visual states
 - Transform core `NodeExecutionStatus` → React Flow node visual data
@@ -107,37 +114,45 @@ interface NodeVisualData {
 ### 2. Visual Updates
 
 #### 2.1. Node Visual States
+
 **Files to modify:**
+
 - `CustomNode.tsx` - Add execution status indicator
 - `customNode.css` - Already has status styles (✅ existing)
 
 **Implementation:**
+
 ```tsx
 // CustomNode.tsx - Add status indicator
 <div className={`node-status node-status--${executionStatus}`} />
 ```
 
 **CSS Classes (Already exist in customNode.css):**
+
 - `.node-status--idle` - Gray (default)
 - `.node-status--running` - Blue with pulse animation
 - `.node-status--success` - Green
 - `.node-status--error` - Red with shake animation
 
 #### 2.2. Edge Visual States
+
 **Files to modify:**
+
 - `WorkflowCanvas.tsx` - Apply dynamic edge styles
 - New CSS file: `executionEdges.css`
 
 **Edge States:**
+
 ```typescript
 interface EdgeVisualState {
-  isActive: boolean;      // Currently transferring data
-  isCompleted: boolean;   // Has transferred data
+  isActive: boolean; // Currently transferring data
+  isCompleted: boolean; // Has transferred data
   animationDelay?: number; // For staggered animations
 }
 ```
 
 **CSS Classes to Add:**
+
 ```css
 /* Default edge */
 .react-flow__edge-path {
@@ -167,14 +182,17 @@ interface EdgeVisualState {
 ```
 
 #### 2.3. Data Flow Animation
+
 **Animated particle/pulse traveling along edges**
 
 Options:
+
 1. **CSS-based**: Animated dot using `::after` pseudo-element
 2. **SVG-based**: Animated circle element on the edge path
 3. **React Flow EdgeMarker**: Custom animated marker
 
 **Recommended: CSS Pseudo-element**
+
 ```css
 .react-flow__edge.edge-active::after {
   content: '';
@@ -210,21 +228,22 @@ Options:
 ### 3. Component Integration
 
 #### 3.1. WorkflowBuilder Integration
+
 **File:** `WorkflowBuilder.tsx`
 
 **Changes:**
+
 1. Use `useExecutionVisuals` hook (which subscribes to core state)
 2. Pass execution states to child components
 3. Core Executor automatically tracks state
 
 ```tsx
 // WorkflowBuilder now uses the hook that subscribes to core state
-const { 
-  edgeStates, 
-  nodeVisualData, 
-  isExecuting, 
-  executionProgress 
-} = useExecutionVisuals(executor, nodes, edges);
+const { edgeStates, nodeVisualData, isExecuting, executionProgress } = useExecutionVisuals(
+  executor,
+  nodes,
+  edges
+);
 
 // No manual event handlers needed - core tracks state automatically!
 // Just execute the workflow:
@@ -241,51 +260,58 @@ const handleExecute = useCallback(async () => {
 ```
 
 **Benefits:**
+
 - ✅ No manual state management in React layer
 - ✅ Core handles all execution logic
 - ✅ React layer just visualizes core state
 - ✅ Can add other visualizations (Vue, Angular) easily
 
 #### 3.2. WorkflowCanvas Updates
+
 **File:** `WorkflowCanvas.tsx`
 
 **Changes:**
+
 1. Apply edge classes based on execution state
 2. Apply node data updates for execution status
 
 ```tsx
 // Transform edges with execution state
-const styledEdges = useMemo(() => 
-  edges.map(edge => ({
-    ...edge,
-    className: cn(
-      edge.className,
-      executionState.activeConnections.has(edge.id) && 'edge-active',
-      executionState.completedConnections.has(edge.id) && 'edge-completed'
-    ),
-    animated: executionState.activeConnections.has(edge.id)
-  })),
+const styledEdges = useMemo(
+  () =>
+    edges.map((edge) => ({
+      ...edge,
+      className: cn(
+        edge.className,
+        executionState.activeConnections.has(edge.id) && 'edge-active',
+        executionState.completedConnections.has(edge.id) && 'edge-completed'
+      ),
+      animated: executionState.activeConnections.has(edge.id),
+    })),
   [edges, executionState]
 );
 
 // Update node data with execution status
-const styledNodes = useMemo(() =>
-  nodes.map(node => ({
-    ...node,
-    data: {
-      ...node.data,
-      executionStatus: executionState.nodeStates.get(node.id) || 'idle',
-      outputs: executionState.nodeOutputs.get(node.id)
-    }
-  })),
+const styledNodes = useMemo(
+  () =>
+    nodes.map((node) => ({
+      ...node,
+      data: {
+        ...node.data,
+        executionStatus: executionState.nodeStates.get(node.id) || 'idle',
+        outputs: executionState.nodeOutputs.get(node.id),
+      },
+    })),
   [nodes, executionState]
 );
 ```
 
 #### 3.3. CustomNode Updates
+
 **File:** `CustomNode.tsx`
 
 **Changes:**
+
 1. Read executionStatus from node data
 2. Render status indicator
 3. Optional: Show output preview
@@ -300,19 +326,19 @@ export interface CustomNodeData {
 export const CustomNode: React.FC<NodeProps> = ({ data }) => {
   const nodeData = data as CustomNodeData;
   const executionStatus = nodeData.executionStatus || 'idle';
-  
+
   return (
     <>
       {/* Execution status indicator */}
       {executionStatus !== 'idle' && (
-        <div 
+        <div
           className={`node-status node-status--${executionStatus}`}
           title={`Status: ${executionStatus}`}
         />
       )}
-      
+
       {/* ... rest of node content */}
-      
+
       {/* Optional: Output preview */}
       {nodeData.outputs && (
         <div className="node-outputs-preview">
@@ -334,6 +360,7 @@ export const CustomNode: React.FC<NodeProps> = ({ data }) => {
 ### 4. Timing & Animation Strategy
 
 #### 4.1. Execution Flow Timing
+
 ```
 Node A starts → Edge A→B animates (0.8s) → Node B starts → Edge B→C animates (0.8s) → Node C starts
      ↓              ↓                           ↓              ↓                           ↓
@@ -343,12 +370,14 @@ Node A starts → Edge A→B animates (0.8s) → Node B starts → Edge B→C an
 ```
 
 #### 4.2. Animation Delays
+
 - **Edge activation**: Instant (when source node completes)
 - **Edge animation duration**: 800ms (particle flow)
 - **Node status transition**: Instant with CSS transition
 - **Cleanup**: After execution completes, fade out after 2s (optional)
 
 #### 4.3. Auto-Cleanup (Optional Feature)
+
 ```typescript
 // Reset visual state after execution completes
 useEffect(() => {
@@ -360,10 +389,10 @@ useEffect(() => {
         completedConnections: new Set(),
         nodeOutputs: new Map(),
         isExecuting: false,
-        executionProgress: { current: 0, total: 0 }
+        executionProgress: { current: 0, total: 0 },
       });
     }, 3000); // Keep highlighted for 3s after completion
-    
+
     return () => clearTimeout(timeout);
   }
 }, [executionState.isExecuting]);
@@ -451,6 +480,7 @@ useEffect(() => {
 - [x] Update `useWorkflowExecution` to accept custom executor
 
 ### Phase 7: End-to-End Testing
+
 **Both Packages**
 
 - [ ] Test with simple workflow (2-3 nodes) ⏳
@@ -463,6 +493,7 @@ useEffect(() => {
 - [ ] Performance optimization (memoization)
 
 ### Phase 8: Documentation
+
 **Both Packages**
 
 - [ ] Document `ExecutionStateTracker` API in core docs
@@ -473,6 +504,7 @@ useEffect(() => {
 - [ ] Update architecture diagrams
 
 ### Phase 9: Advanced Features (Optional - Future)
+
 - [ ] Add execution progress indicator in toolbar
 - [ ] Add data flow tooltip on hover
 - [ ] Add execution playback controls (pause/step/speed)
@@ -486,6 +518,7 @@ useEffect(() => {
 ## Technical Decisions
 
 ### ✅ Decisions Made
+
 1. **State Management**: Core package manages state, React package visualizes it
 2. **Architecture**: Framework-agnostic core + React visualization layer
 3. **Animation Approach**: CSS-based for performance
@@ -496,6 +529,7 @@ useEffect(() => {
 8. **State Access**: Core provides `getExecutionState()` method for queries
 
 ### 🤔 Questions to Resolve
+
 1. **Auto-cleanup**: Should execution state auto-reset or manual reset only?
 2. **Output preview**: Always show or toggle via button?
 3. **Animation speed**: Fixed or user-configurable?
@@ -550,6 +584,7 @@ useEffect(() => {
 - ✅ All exports configured
 
 **Next Steps:**
+
 1. Start Phase 2 - React Package Integration Hook
 2. Create `useExecutionVisuals` hook
 3. Subscribe to core execution events
@@ -559,20 +594,24 @@ useEffect(() => {
 ## Notes & Considerations
 
 ### Performance
+
 - Use `useMemo` for edge/node transformations
 - Avoid re-rendering all nodes on every state change
 - Consider `React.memo` for CustomNode if needed
 
 ### Accessibility
+
 - Add ARIA labels for execution status
 - Ensure color contrast meets WCAG standards
 - Support keyboard navigation during execution
 
 ### Browser Compatibility
+
 - CSS animations supported in all modern browsers
 - Fallback for older browsers: No animation, just color changes
 
 ### Future Enhancements
+
 - WebSocket support for remote execution
 - Execution recording/playback
 - Performance metrics display
@@ -583,38 +622,40 @@ useEffect(() => {
 ## Core Package API Design
 
 ### ExecutionStateTracker Class
+
 ```typescript
 // @crystalflow/core/src/execution/ExecutionStateTracker.ts
 
 export class ExecutionStateTracker {
   private state: ExecutionState;
-  
+
   constructor() {
     this.state = this.createInitialState();
   }
-  
+
   // State queries
   getState(): ExecutionState;
   getNodeState(nodeId: string): NodeExecutionStatus;
   getConnectionState(connectionId: string): ConnectionExecutionState | undefined;
-  
+
   // State updates (called by Executor)
   setNodeState(nodeId: string, status: NodeExecutionStatus): void;
   setConnectionActive(connectionId: string, data: unknown): void;
   setConnectionCompleted(connectionId: string): void;
   setNodeOutput(nodeId: string, outputs: Record<string, unknown>): void;
-  
+
   // Lifecycle
   startExecution(executionOrder: string[]): void;
   completeExecution(): void;
   reset(): void;
-  
+
   // Serialization (for debugging/logging)
   toJSON(): object;
 }
 ```
 
 ### Enhanced Executor Events
+
 ```typescript
 // New events added to Executor class
 
@@ -635,6 +676,7 @@ executor.on('onConnectionComplete', (connection: ConnectionExecutionState) => {
 ```
 
 ### Usage Example (Non-React)
+
 ```typescript
 import { Workflow, Executor } from '@crystalflow/core';
 
@@ -665,10 +707,11 @@ console.log('Final outputs:', finalState.nodeOutputs);
 **Last Updated:** 2026-02-03
 **Status:** Phases 1-6 COMPLETE ✅ | Phase 7 Testing In Progress ⏳
 **Completed:**
+
 - ✅ Core execution state tracking (Phase 1)
 - ✅ React integration hook (Phase 2)
 - ✅ CSS animations and styles (Phase 3)
 - ✅ Node status indicators (Phase 4)
 - ✅ Edge animation system (Phase 5)
 - ✅ WorkflowBuilder integration (Phase 6)
-**Next:** End-to-end testing with example workflows
+  **Next:** End-to-end testing with example workflows

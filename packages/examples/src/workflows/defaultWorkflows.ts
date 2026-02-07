@@ -246,3 +246,153 @@ export const conditionalWorkflow: WorkflowData = {
   ],
   metadata: {},
 };
+
+/**
+ * Default workflow for N8NStyleWorkflow
+ * Creates an automation pipeline: Webhook → HTTP Request → Transform → Conditional → [Email | Slack] → Display
+ */
+export const n8nStyleWorkflow: WorkflowData = {
+  version: '1.0.0',
+  id: 'n8n-style-demo',
+  name: 'API to Notification Pipeline',
+  nodes: [
+    {
+      id: 'webhook-1',
+      type: 'automation.webhook-trigger',
+      position: { x: 100, y: 200 },
+      data: {
+        id: 'webhook-1',
+        type: 'automation.webhook-trigger',
+        state: 'idle',
+        data: {
+          method: 'POST',
+          path: '/webhook',
+        },
+      },
+    },
+    {
+      id: 'http-1',
+      type: 'automation.http-request',
+      position: { x: 350, y: 200 },
+      data: {
+        id: 'http-1',
+        type: 'automation.http-request',
+        state: 'idle',
+        data: {
+          method: 'GET',
+          url: 'https://api.example.com/data',
+          sendBody: false,
+        },
+      },
+    },
+    {
+      id: 'transform-1',
+      type: 'automation.data-transform',
+      position: { x: 600, y: 200 },
+      data: {
+        id: 'transform-1',
+        type: 'automation.data-transform',
+        state: 'idle',
+        data: {
+          operation: 'extract',
+          fieldPath: 'data.items',
+        },
+      },
+    },
+    {
+      id: 'if-1',
+      type: 'automation.conditional-split',
+      position: { x: 850, y: 200 },
+      data: {
+        id: 'if-1',
+        type: 'automation.conditional-split',
+        state: 'idle',
+        data: {
+          conditionType: 'equals',
+          fieldToCheck: 'success',
+          compareValue: 'true',
+        },
+      },
+    },
+    {
+      id: 'email-1',
+      type: 'automation.send-email',
+      position: { x: 1100, y: 100 },
+      data: {
+        id: 'email-1',
+        type: 'automation.send-email',
+        state: 'idle',
+        data: {
+          to: 'success@example.com',
+          subject: 'API Success',
+          defaultBody: 'The API request was successful!',
+        },
+      },
+    },
+    {
+      id: 'slack-1',
+      type: 'automation.slack-message',
+      position: { x: 1100, y: 300 },
+      data: {
+        id: 'slack-1',
+        type: 'automation.slack-message',
+        state: 'idle',
+        data: {
+          channel: '#alerts',
+          botName: 'Alert Bot',
+          defaultMessage: 'API request failed - check logs',
+          includeTimestamp: true,
+        },
+      },
+    },
+    {
+      id: 'display-1',
+      type: 'output.display',
+      position: { x: 1400, y: 200 },
+      data: {
+        id: 'display-1',
+        type: 'output.display',
+        state: 'idle',
+        data: {},
+      },
+    },
+  ],
+  connections: [
+    {
+      id: 'conn-1',
+      source: { nodeId: 'webhook-1', portId: 'body' },
+      target: { nodeId: 'http-1', portId: 'body' },
+    },
+    {
+      id: 'conn-2',
+      source: { nodeId: 'http-1', portId: 'response' },
+      target: { nodeId: 'transform-1', portId: 'data' },
+    },
+    {
+      id: 'conn-3',
+      source: { nodeId: 'transform-1', portId: 'result' },
+      target: { nodeId: 'if-1', portId: 'inputData' },
+    },
+    {
+      id: 'conn-4',
+      source: { nodeId: 'if-1', portId: 'trueBranch' },
+      target: { nodeId: 'email-1', portId: 'bodyInput' },
+    },
+    {
+      id: 'conn-5',
+      source: { nodeId: 'if-1', portId: 'falseBranch' },
+      target: { nodeId: 'slack-1', portId: 'messageInput' },
+    },
+    {
+      id: 'conn-6',
+      source: { nodeId: 'email-1', portId: 'messageId' },
+      target: { nodeId: 'display-1', portId: 'value' },
+    },
+    {
+      id: 'conn-7',
+      source: { nodeId: 'slack-1', portId: 'timestamp' },
+      target: { nodeId: 'display-1', portId: 'value' },
+    },
+  ],
+  metadata: {},
+};

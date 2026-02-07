@@ -21,17 +21,20 @@ Once version 1.0.0 is published, semantic versioning and backward compatibility 
 ## Documentation Organization Rules
 
 **File Placement:**
+
 - **README.md** and **CONTRIBUTING.md** should remain in the project root (uppercase)
 - **ALL other markdown files** must be placed in the `docs/` folder with proper categorization
 - Never create new markdown files in the root directory (except README.md and CONTRIBUTING.md)
 
 **Naming Convention:**
+
 - Use **kebab-case** (lowercase with dashes) for all markdown files
 - Examples: `get-started.md`, `development-workflow.md`, `project-status.md`
 - ❌ NEVER use: `GET_STARTED.md`, `DEVELOPMENT_WORKFLOW.md`, `Project_Status.md`
 - ✅ ALWAYS use: `get-started.md`, `development-workflow.md`, `project-status.md`
 
 **Documentation Categories:**
+
 - `docs/guides/` - Getting started guides and quick references for users
 - `docs/concepts/` - Core concepts, architecture, and technical explanations
 - `docs/advanced/` - Advanced topics and customization guides
@@ -40,12 +43,14 @@ Once version 1.0.0 is published, semantic versioning and backward compatibility 
 - `docs/design-notes/` - Design decisions and technical notes
 
 **When Creating New Documentation:**
+
 1. Determine the appropriate category folder
 2. Create file in the correct category folder with kebab-case naming
 3. Update `docs/documentation-index.md` with the new file reference
 4. Use relative paths when linking between docs
 
 **Reference Format:**
+
 - From root to docs: `[link text](docs/category/filename.md)`
 - From docs to root: `[link text](../README.md)` or `[link text](../CONTRIBUTING.md)`
 - Between docs (same category): `[link text](filename.md)`
@@ -413,11 +418,13 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 **All React components and styles MUST follow these rules for consistency:**
 
 #### 1. CSS Variables Only - Zero Hardcoded Values
+
 - ❌ **NEVER** use hardcoded colors: `#1e1e1e`, `rgba(0,0,0,0.5)`, `white`, `black`
 - ❌ **NEVER** use old CSS custom properties: `--crystalflow-*` prefix is deprecated
 - ✅ **ALWAYS** use theme variables from `src/styles/global.css`
 
 **Color Variables:**
+
 ```css
 /* Backgrounds */
 --color-bg-primary, --color-bg-secondary, --color-bg-tertiary, --color-bg-elevated
@@ -436,12 +443,14 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 ```
 
 **Spacing Variables:**
+
 ```css
 --space-1 (4px), --space-2 (8px), --space-3 (12px), --space-4 (16px),
 --space-5 (20px), --space-6 (24px), --space-7 (28px), --space-8 (32px)
 ```
 
 **Typography Variables:**
+
 ```css
 /* Families */
 --font-family-base, --font-family-mono
@@ -454,6 +463,7 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 ```
 
 **Other Variables:**
+
 ```css
 /* Shadows */
 --shadow-sm, --shadow-md, --shadow-lg, --shadow-xl
@@ -467,6 +477,7 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 ```
 
 #### 2. Dark Mode Support
+
 - ✅ **ALWAYS** use `[data-theme="dark"]` selector for dark mode overrides
 - ❌ **NEVER** use `.react-flow.dark` or `.dark` selectors
 - ✅ Test all components in both light and dark modes
@@ -479,7 +490,7 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 }
 
 /* Dark mode override */
-[data-theme="dark"] .component {
+[data-theme='dark'] .component {
   background: var(--color-bg-primary); /* Theme variable adjusts automatically */
 }
 ```
@@ -487,6 +498,7 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 #### 3. Consistent Component Patterns
 
 **Headers:**
+
 ```tsx
 <div style={{
   padding: 'var(--space-4)',
@@ -498,6 +510,7 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 ```
 
 **Buttons:**
+
 ```tsx
 <button style={{
   padding: 'var(--space-2) var(--space-4)',
@@ -511,6 +524,7 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 ```
 
 **Hover States:**
+
 ```tsx
 onMouseEnter={(e) => {
   e.currentTarget.style.background = 'var(--color-bg-tertiary)';
@@ -523,6 +537,7 @@ onMouseLeave={(e) => {
 ```
 
 #### 4. Inline Styles Best Practices
+
 - When using inline styles, **ALWAYS** use CSS variable references
 - Keep hover state changes minimal and consistent
 - Use theme variables for all colors, spacing, typography
@@ -544,6 +559,7 @@ style={{
 ```
 
 #### 5. Before Making Style Changes - Checklist
+
 - [ ] Are you using CSS variables for ALL colors?
 - [ ] Are you using spacing variables (`--space-*`) not hardcoded pixels?
 - [ ] Are you using typography variables for fonts and sizes?
@@ -553,13 +569,17 @@ style={{
 - [ ] Are you following the established component patterns?
 
 #### 6. Reference Documentation
+
 When making style changes, refer to:
+
 - **Theme System**: `packages/react/src/styles/global.css` - All available variables
 - **Consistency Audit**: `docs/STYLING_CONSISTENCY_AUDIT.md` - Component examples and patterns
 - **Component Examples**: PropertyPanel, NodePalette, CustomNode, Toolbar - All follow these rules
 
 #### 7. Adding New Components
+
 When creating new components:
+
 1. Use existing CSS variables exclusively
 2. Add to `src/styles/` folder if creating separate CSS file
 3. Follow established spacing/typography conventions
