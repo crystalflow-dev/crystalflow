@@ -1,0 +1,866 @@
+---
+title: "Conditional Flow"
+description: "Build workflows with branching logic and conditional execution"
+---
+
+Conditional flow enables your workflows to make decisions and follow different execution paths based on runtime conditions. This guide covers everything you need to know about building intelligent, branching workflows.
+
+## Overview
+
+Conditional flow allows workflows to:
+- **Branch execution** based on runtime conditions
+- **Route data** through different processing paths
+- **Skip nodes** when conditions aren't met
+- **Implement business logic** with if/else and switch/case patterns
+
+### Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Validation" icon="shield-check">
+    Check data validity and route to error handling or success paths
+  </Card>
+  <Card title="Routing" icon="route">
+    Direct data to different processors based on type or status
+  </Card>
+  <Card title="Error Handling" icon="triangle-exclamation">
+    Implement fallback logic when operations fail
+  </Card>
+  <Card title="Business Rules" icon="briefcase">
+    Encode complex decision trees and approval workflows
+  </Card>
+</CardGroup>
+
+## Architecture
+
+ReactFlo's conditional flow is built on three key components:
+
+### 1. IConditionalNode Interface
+
+Nodes implement this interface to enable branching:
+
+```typescript
+interface IConditionalNode {
+  /**
+   * Evaluate the condition and return the active branch name.
+   * The return value must match an output port name.
+   */
+  evaluateCondition(): string;
+}
+```
+
+The `evaluateCondition()` method:
+- Is called after the node's `execute()` method runs
+- Returns the name of the output port representing the active branch
+- Must return a valid output port name (e.g., 'thenOutput', 'elseOutput', 'case_0', 'default')
+
+### 2. ConditionalStep
+
+The execution engine builds conditional steps for branching nodes:
+
+```typescript
+interface ConditionalStep {
+  type: ExecutionStepType.Conditional;
+  id: string;
+  nodeId: string;
+  branches: ConditionalBranch[];
+  defaultBranch?: string;
+}
+
+interface ConditionalBranch {
+  id: string;
+  condition: string;  // Output port name (e.g., 'thenOutput', 'case_0')
+  steps: ExecutionPlanStep[];  // Steps to execute in this branch
+}
+```
+
+### 3. Branch Execution
+
+At runtime:
+1. The conditional node executes (via `execute()` method)
+2. `evaluateCondition()` is called to determine the active branch
+3. Only the matching branch's steps execute
+4. Other branches are completely skipped
+
+<Note>
+  Only the active branch executes - inactive branches are never run, making
+  conditional workflows efficient even with many branches.
+</Note>
+
+## Built-in Conditional Nodes
+
+ReactFlo includes two powerful conditional nodes out of the box.
+
+### IfNode
+
+The `IfNode` provides classic if/else conditional logic:
+
+```typescript
+import { IfNode } from '@reactflo/core';
+
+@defineNode({
+  type: 'flow.if',
+  label: 'If',
+  category: 'Flow Control',
+  description: 'Routes execution based on a boolean condition (if/else)',
+})
+export class IfNode extends Node implements IConditionalNode {
+  @Input({ type: 'boolean', label: 'Condition', required: true })
+  condition!: boolean;
+
+  @Input({ type: 'any', label: 'Value', required: false })
+  value?: unknown;
+
+  @Output({ type: 'any', label: 'Then' })
+  thenOutput?: unknown;
+
+  @Output({ type: 'any', label: 'Else' })
+  elseOutput?: unknown;
+
+  execute(): void {
+    if (this.condition) {
+      this.thenOutput = this.value;
+    } else {
+      this.elseOutput = this.value;
+    }
+  }
+
+  evaluateCondition(): string {
+    return this.condition ? 'thenOutput' : 'elseOutput';
+  }
+}
+```
+
+**Behavior:**
+- `condition = true` → Routes to `thenOutput` (then branch)
+- `condition = false` → Routes to `elseOutput` (else branch)
+- Optional `value` input passes data through to active branch
+
+**Common Patterns:**
+
+<Tabs>
+  <Tab title="Validation">
+    ```typescript
+    // Check if user is authenticated
+    BooleanInput(true) → If.condition
+    UserData → If.value
+    
+    If.thenOutput → ProcessAuthenticatedUser
+    If.elseOutput → ShowLoginError
+    ```
+  </Tab>
+  <Tab title="Filtering">
+    ```typescript
+    // Process only positive numbers
+    NumberInput → IsPositive → If.condition
+    NumberInput → If.value
+    
+    If.thenOutput → ProcessPositive
+    If.elseOutput → RejectNegative
+    ```
+  </Tab>
+  <Tab title="Error Handling">
+    ```typescript
+    // Try operation, fallback on error
+    TryOperation → CheckSuccess → If.condition
+    
+    If.thenOutput → HandleSuccess
+    If.elseOutput → HandleError
+    ```
+  </Tab>
+</Tabs>
+
+### SwitchNode
+
+The `SwitchNode` provides multi-way branching with case matching:
+
+```typescript
+import { SwitchNode } from '@reactflo/core';
+
+@defineNode({
+  type: 'flow.switch',
+  label: 'Switch',
+  category: 'Flow Control',
+  description: 'Routes execution based on matching case values (switch/case)',
+})
+export class SwitchNode extends Node implements IConditionalNode {
+  @Input({ type: 'any', label: 'Value', required: true })
+  value: unknown;
+
+  @Property({ type: 'array', label: 'Cases', defaultValue: [] })
+  cases: unknown[] = [];
+
+  @Input({ type: 'any', label: 'Data', required: false })
+  data?: unknown;
+
+  getOutputs(): PortDefinition[] {
+    const outputs: PortDefinition[] = [];
+    
+    // Generate output for each case
+    for (let i = 0; i < this.cases.length; i++) {
+      outputs.push({
+        id: `case_${i}`,
+        label: String(this.cases[i]),
+        type: 'any',
+      });
+    }
+    
+    // Always include default output
+    outputs.push({
+      id: 'default',
+      label: 'Default',
+      type: 'any',
+    });
+    
+    return outputs;
+  }
+
+  execute(): void {
+    // Find matching case
+    const matchIndex = this.cases.findIndex(c => c === this.value);
+    
+    // Clear all outputs
+    this.cases.forEach((_, i) => delete (this as any)[`case_${i}`]);
+    delete (this as any)['default'];
+    
+    // Set only the matching output
+    if (matchIndex !== -1) {
+      (this as any)[`case_${matchIndex}`] = this.data;
+    } else {
+      (this as any)['default'] = this.data;
+    }
+  }
+
+  evaluateCondition(): string {
+    const matchIndex = this.cases.findIndex(c => c === this.value);
+    return matchIndex !== -1 ? `case_${matchIndex}` : 'default';
+  }
+}
+```
+
+**Behavior:**
+- Compares `value` against each case using strict equality (`===`)
+- Routes to matching `case_X` output
+- Falls back to `default` output if no match
+- Optional `data` input passes through to active branch
+
+**Dynamic Outputs:**
+
+The `cases` property determines the number of outputs. When you add or remove cases, the node automatically updates its output ports.
+
+```typescript
+// 3 cases = 4 outputs (case_0, case_1, case_2, default)
+cases: ['pending', 'approved', 'rejected']
+
+// Add a case → automatically adds case_3 output
+cases: ['pending', 'approved', 'rejected', 'cancelled']
+```
+
+**Common Patterns:**
+
+<Tabs>
+  <Tab title="Status Routing">
+    ```typescript
+    // Route by order status
+    Order.status → Switch.value
+    Order → Switch.data
+    
+    cases: ['pending', 'processing', 'shipped', 'delivered']
+    
+    Switch.case_0 → PendingHandler
+    Switch.case_1 → ProcessingHandler
+    Switch.case_2 → ShippedHandler
+    Switch.case_3 → DeliveredHandler
+    Switch.default → InvalidStatusHandler
+    ```
+  </Tab>
+  <Tab title="Type Routing">
+    ```typescript
+    // Route by data type
+    Data.type → Switch.value
+    Data → Switch.data
+    
+    cases: ['string', 'number', 'boolean', 'object']
+    
+    Switch.case_0 → StringProcessor
+    Switch.case_1 → NumberProcessor
+    Switch.case_2 → BooleanProcessor
+    Switch.case_3 → ObjectProcessor
+    ```
+  </Tab>
+  <Tab title="State Machine">
+    ```typescript
+    // Implement state machine
+    CurrentState → Switch.value
+    Event → Switch.data
+    
+    cases: ['idle', 'loading', 'success', 'error']
+    
+    Switch.case_0 → IdleStateHandler
+    Switch.case_1 → LoadingStateHandler
+    Switch.case_2 → SuccessStateHandler
+    Switch.case_3 → ErrorStateHandler
+    ```
+  </Tab>
+</Tabs>
+
+## Creating Custom Conditional Nodes
+
+You can create custom conditional nodes for specialized branching logic:
+
+### Example: GreaterThanNode
+
+```typescript
+import { Node, defineNode, Input, Output, IConditionalNode } from '@reactflo/core';
+
+@defineNode({
+  type: 'logic.greater-than',
+  label: 'Greater Than',
+  category: 'Logic',
+  description: 'Routes based on numeric comparison',
+})
+export class GreaterThanNode extends Node implements IConditionalNode {
+  @Input({ type: 'number', label: 'A', required: true })
+  a!: number;
+
+  @Input({ type: 'number', label: 'B', required: true })
+  b!: number;
+
+  @Input({ type: 'any', label: 'Value', required: false })
+  value?: unknown;
+
+  @Output({ type: 'any', label: 'Greater' })
+  greater?: unknown;
+
+  @Output({ type: 'any', label: 'Less or Equal' })
+  lessOrEqual?: unknown;
+
+  execute(): void {
+    if (this.a > this.b) {
+      this.greater = this.value;
+      this.lessOrEqual = undefined;
+    } else {
+      this.greater = undefined;
+      this.lessOrEqual = this.value;
+    }
+  }
+
+  evaluateCondition(): string {
+    return this.a > this.b ? 'greater' : 'lessOrEqual';
+  }
+}
+```
+
+### Example: MultiConditionNode
+
+For complex branching with multiple conditions:
+
+```typescript
+@defineNode({
+  type: 'flow.multi-condition',
+  label: 'Multi Condition',
+  category: 'Flow Control',
+})
+export class MultiConditionNode extends Node implements IConditionalNode {
+  @Input({ type: 'number', label: 'Value', required: true })
+  value!: number;
+
+  @Output({ type: 'any', label: 'Negative' })
+  negative?: unknown;
+
+  @Output({ type: 'any', label: 'Zero' })
+  zero?: unknown;
+
+  @Output({ type: 'any', label: 'Positive' })
+  positive?: unknown;
+
+  execute(): void {
+    // Clear all outputs
+    this.negative = this.zero = this.positive = undefined;
+    
+    // Set only the matching output
+    if (this.value < 0) {
+      this.negative = this.value;
+    } else if (this.value === 0) {
+      this.zero = this.value;
+    } else {
+      this.positive = this.value;
+    }
+  }
+
+  evaluateCondition(): string {
+    if (this.value < 0) return 'negative';
+    if (this.value === 0) return 'zero';
+    return 'positive';
+  }
+}
+```
+
+### Best Practices
+
+<AccordionGroup>
+  <Accordion title="Clear Output Names" icon="tag">
+    Use descriptive output port names that clearly indicate what each branch represents.
+    Good: 'thenOutput', 'elseOutput', 'validOutput', 'invalidOutput'
+    Bad: 'out1', 'out2', 'output'
+  </Accordion>
+
+  <Accordion title="Error Handling" icon="shield-check">
+    Validate inputs and throw meaningful errors:
+    ```typescript
+    evaluateCondition(): string {
+      if (typeof this.condition !== 'boolean') {
+        throw new Error('Condition must be a boolean value');
+      }
+      return this.condition ? 'thenOutput' : 'elseOutput';
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Consistent Return Values" icon="check-double">
+    Always return a valid output port name. The execution engine will error if
+    the returned value doesn't match any output port.
+  </Accordion>
+
+  <Accordion title="Document Behavior" icon="book">
+    Use JSDoc comments to explain what each branch represents and when it executes.
+  </Accordion>
+</AccordionGroup>
+
+## Branch Execution
+
+Understanding how branches are built and executed is key to effective conditional workflows.
+
+### Plan Building
+
+During workflow validation, the execution engine:
+
+1. Detects conditional nodes (nodes implementing IConditionalNode)
+2. For each output port of the conditional node:
+   - Finds all downstream nodes connected to that port
+   - Recursively builds execution steps for those nodes
+   - Creates a `ConditionalBranch` with those steps
+3. Stores all branches in a `ConditionalStep`
+
+```typescript
+// Simplified plan structure
+{
+  type: 'conditional',
+  nodeId: 'if-node-1',
+  branches: [
+    {
+      id: 'branch-then',
+      condition: 'thenOutput',
+      steps: [
+        { type: 'node', nodeId: 'node-2' },
+        { type: 'node', nodeId: 'node-3' }
+      ]
+    },
+    {
+      id: 'branch-else',
+      condition: 'elseOutput',
+      steps: [
+        { type: 'node', nodeId: 'node-4' }
+      ]
+    }
+  ]
+}
+```
+
+### Runtime Execution
+
+When a conditional step executes:
+
+1. **Execute the node**: The conditional node's `execute()` method runs
+2. **Evaluate condition**: `evaluateCondition()` is called to get the active branch
+3. **Find matching branch**: The engine finds the branch with matching condition
+4. **Execute branch steps**: Only the matching branch's steps execute recursively
+5. **Skip other branches**: All other branches are completely ignored
+
+```typescript
+// Execution flow
+async executeConditionalStep(step, workflow, context) {
+  // 1. Execute the conditional node
+  await this.executeNode(step.nodeId, workflow, context);
+  
+  // 2. Evaluate condition
+  const node = workflow.getNode(step.nodeId);
+  const activeBranch = node.evaluateCondition();
+  
+  // 3. Find matching branch
+  const branch = step.branches.find(b => b.condition === activeBranch);
+  
+  if (branch) {
+    // 4. Emit branch enter event
+    await executor.emitAsync('onBranchEnter', step.nodeId, branch.id, activeBranch);
+    
+    // 5. Execute branch steps recursively
+    for (const branchStep of branch.steps) {
+      await this.executeStep(branchStep, workflow, context);
+    }
+    
+    // 6. Emit branch exit event
+    await executor.emitAsync('onBranchExit', step.nodeId, branch.id);
+  }
+}
+```
+
+### Events
+
+The execution engine emits events for branch execution:
+
+```typescript
+const executor = new Executor();
+
+// Track which branches execute
+executor.on('onBranchEnter', (nodeId, branchId, condition) => {
+  console.log(`Entering branch '${condition}' of node ${nodeId}`);
+});
+
+executor.on('onBranchExit', (nodeId, branchId) => {
+  console.log(`Exiting branch ${branchId} of node ${nodeId}`);
+});
+
+// Example output:
+// "Entering branch 'thenOutput' of node if-node-1"
+// "Exiting branch branch-then of node if-node-1"
+```
+
+<Tip>
+  Use branch events for:
+  - Debugging which path your workflow takes
+  - Visualizing execution flow in UI
+  - Performance profiling of different branches
+  - Logging business logic decisions
+</Tip>
+
+## Nested Conditionals
+
+Conditional nodes can be nested inside branches for complex decision trees:
+
+### If Inside If
+
+```typescript
+// Workflow structure
+NumberInput → CheckPositive (If) → CheckEven (If) → Display
+
+// Execution flow:
+// 1. CheckPositive evaluates: number > 0?
+//    - If true: enter then branch → CheckEven
+//    - If false: enter else branch (skip CheckEven)
+// 2. CheckEven evaluates: number % 2 === 0?
+//    - If true: "Positive Even"
+//    - If false: "Positive Odd"
+```
+
+**Code Example:**
+
+```typescript
+// Create workflow
+const workflow = new Workflow();
+
+const numberInput = workflow.addNode(NumberInputNode);
+const checkPositive = workflow.addNode(IfNode);
+const checkEven = workflow.addNode(IfNode);
+const displayEven = workflow.addNode(DisplayNode);
+const displayOdd = workflow.addNode(DisplayNode);
+const displayNegative = workflow.addNode(DisplayNode);
+
+// Connect: number → checkPositive
+workflow.connect(numberInput.id, 'value', checkPositive.id, 'condition');
+
+// Connect: checkPositive.then → checkEven (nested)
+workflow.connect(checkPositive.id, 'thenOutput', checkEven.id, 'condition');
+
+// Connect: checkEven.then → displayEven
+workflow.connect(checkEven.id, 'thenOutput', displayEven.id, 'message');
+
+// Connect: checkEven.else → displayOdd
+workflow.connect(checkEven.id, 'elseOutput', displayOdd.id, 'message');
+
+// Connect: checkPositive.else → displayNegative
+workflow.connect(checkPositive.id, 'elseOutput', displayNegative.id, 'message');
+```
+
+### Switch Inside If
+
+```typescript
+// Route by authentication status, then by user role
+AuthCheck (If) → thenOutput → RoleSwitch (Switch) → Admin/User/Guest
+                → elseOutput → ShowLogin
+```
+
+### Deep Nesting
+
+ReactFlo supports arbitrary nesting depth:
+
+```typescript
+If → then → If → then → If → then → ProcessNode
+                      → else → ErrorNode
+           → else → Switch → case_0 → Handler1
+                           → case_1 → Handler2
+                           → default → DefaultHandler
+   → else → FallbackNode
+```
+
+<Warning>
+  While ReactFlo supports deep nesting, consider refactoring complex decision
+  trees into smaller, reusable workflows for better maintainability.
+</Warning>
+
+## Error Handling
+
+Proper error handling ensures robust conditional workflows.
+
+### Invalid Branch Name
+
+If `evaluateCondition()` returns a branch that doesn't exist:
+
+```typescript
+evaluateCondition(): string {
+  return 'nonExistentBranch'; // ❌ Error: no output port with this name
+}
+```
+
+**Result:** Execution fails with:
+```
+ExecutionError: Branch 'nonExistentBranch' not found for node 'if-node-1'
+```
+
+**Solution:** Ensure return value matches an output port name:
+```typescript
+evaluateCondition(): string {
+  return this.condition ? 'thenOutput' : 'elseOutput'; // ✅ Valid
+}
+```
+
+### Error Propagation
+
+Errors inside branches propagate normally:
+
+```typescript
+// If ProcessNode throws an error inside the 'then' branch
+NumberInput → If → thenOutput → ProcessNode (throws error)
+                 → elseOutput → SafeNode (never executes)
+
+// Execution stops at ProcessNode
+// SafeNode never runs (even if it's after the conditional)
+```
+
+**Handling Branch Errors:**
+
+```typescript
+const executor = new Executor();
+
+executor.on('onNodeError', (nodeId, error) => {
+  console.error(`Node ${nodeId} failed: ${error.message}`);
+  // You can identify which branch failed using nodeId
+});
+
+try {
+  await executor.execute(workflow);
+} catch (error) {
+  if (error instanceof NodeExecutionError) {
+    console.log('Failed in branch after node:', error.nodeId);
+  }
+}
+```
+
+### Validation Errors
+
+Conditional nodes should validate their inputs:
+
+```typescript
+execute(): void {
+  if (typeof this.condition !== 'boolean') {
+    throw new Error(
+      `IfNode requires a boolean condition. Got: ${typeof this.condition}`
+    );
+  }
+  // ... rest of execution
+}
+
+evaluateCondition(): string {
+  if (typeof this.condition !== 'boolean') {
+    throw new Error('Invalid condition type');
+  }
+  return this.condition ? 'thenOutput' : 'elseOutput';
+}
+```
+
+<Check>
+  Always validate inputs in both `execute()` and `evaluateCondition()` for
+  robust error handling.
+</Check>
+
+## Testing Conditional Workflows
+
+Effective testing ensures your conditional logic works correctly.
+
+### Unit Testing Conditional Nodes
+
+```typescript
+describe('IfNode', () => {
+  it('should route to then branch when condition is true', () => {
+    const node = new IfNode('if-1');
+    node.condition = true;
+    node.value = { data: 'test' };
+    
+    node.execute();
+    
+    expect(node.evaluateCondition()).toBe('thenOutput');
+    expect(node.thenOutput).toEqual({ data: 'test' });
+    expect(node.elseOutput).toBeUndefined();
+  });
+
+  it('should route to else branch when condition is false', () => {
+    const node = new IfNode('if-1');
+    node.condition = false;
+    node.value = { data: 'test' };
+    
+    node.execute();
+    
+    expect(node.evaluateCondition()).toBe('elseOutput');
+    expect(node.elseOutput).toEqual({ data: 'test' });
+    expect(node.thenOutput).toBeUndefined();
+  });
+});
+```
+
+### Integration Testing Workflows
+
+```typescript
+describe('Conditional Workflow', () => {
+  it('should execute only the active branch', async () => {
+    const workflow = new Workflow();
+    
+    // Build workflow: Input → If → Then/Else branches
+    const input = workflow.addNode(BooleanInputNode);
+    const ifNode = workflow.addNode(IfNode);
+    const thenNode = workflow.addNode(SpyNode); // Track if executed
+    const elseNode = workflow.addNode(SpyNode);
+    
+    workflow.connect(input.id, 'value', ifNode.id, 'condition');
+    workflow.connect(ifNode.id, 'thenOutput', thenNode.id, 'input');
+    workflow.connect(ifNode.id, 'elseOutput', elseNode.id, 'input');
+    
+    // Set condition to true
+    workflow.getNode(input.id).value = true;
+    
+    // Execute
+    const executor = new Executor();
+    const result = await executor.execute(workflow);
+    
+    // Verify: then branch executed, else branch skipped
+    expect(thenNode.executed).toBe(true);
+    expect(elseNode.executed).toBe(false);
+    expect(result.status).toBe('success');
+  });
+});
+```
+
+### Testing Nested Conditionals
+
+```typescript
+it('should handle nested conditionals correctly', async () => {
+  const workflow = new Workflow();
+  
+  // Outer If
+  const outerIf = workflow.addNode(IfNode);
+  outerIf.condition = true;
+  
+  // Inner If (inside then branch)
+  const innerIf = workflow.addNode(IfNode);
+  innerIf.condition = false;
+  
+  // Handlers
+  const innerThen = workflow.addNode(SpyNode);
+  const innerElse = workflow.addNode(SpyNode);
+  const outerElse = workflow.addNode(SpyNode);
+  
+  // Connect
+  workflow.connect(outerIf.id, 'thenOutput', innerIf.id, 'condition');
+  workflow.connect(innerIf.id, 'thenOutput', innerThen.id, 'input');
+  workflow.connect(innerIf.id, 'elseOutput', innerElse.id, 'input');
+  workflow.connect(outerIf.id, 'elseOutput', outerElse.id, 'input');
+  
+  // Execute
+  const result = await executor.execute(workflow);
+  
+  // Verify execution path: outer.then → inner → inner.else
+  expect(innerElse.executed).toBe(true);  // ✓ Executed
+  expect(innerThen.executed).toBe(false); // ✗ Skipped
+  expect(outerElse.executed).toBe(false); // ✗ Skipped (outer condition true)
+});
+```
+
+<Tip>
+  Create "spy" or "mock" nodes that track whether they executed. This makes
+  it easy to verify that only the expected branches ran.
+</Tip>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Keep Conditions Simple" icon="lightbulb">
+    Use dedicated logic nodes (CompareNode, IsPositiveNode) to compute boolean
+    conditions. Keep conditional nodes focused on routing, not complex logic.
+  </Accordion>
+
+  <Accordion title="Name Branches Clearly" icon="tag">
+    Use descriptive output port names: 'validOutput'/'invalidOutput' is better
+    than 'output1'/'output2'.
+  </Accordion>
+
+  <Accordion title="Handle All Cases" icon="check-circle">
+    For SwitchNode, always handle the default case. Don't assume value will
+    always match one of your cases.
+  </Accordion>
+
+  <Accordion title="Test All Branches" icon="vial">
+    Write tests that exercise each branch of your conditional logic to ensure
+    all paths work correctly.
+  </Accordion>
+
+  <Accordion title="Limit Nesting Depth" icon="layer-group">
+    Deeply nested conditionals are hard to maintain. Consider refactoring into
+    smaller workflows or using switch nodes for multi-way branching.
+  </Accordion>
+
+  <Accordion title="Use Events for Debugging" icon="bug">
+    Listen to branch events during development to understand which paths execute
+    and debug unexpected behavior.
+  </Accordion>
+</AccordionGroup>
+
+## Examples
+
+<CardGroup cols={2}>
+  <Card
+    title="Conditional Logic Examples"
+    icon="code-branch"
+    href="/examples/conditional-logic"
+  >
+    See working examples with If and Switch nodes
+  </Card>
+  <Card
+    title="Built-in Conditional Nodes"
+    icon="boxes-stacked"
+    href="/api-reference/core/builtin-nodes"
+  >
+    Complete API reference for IfNode and SwitchNode
+  </Card>
+  <Card
+    title="Creating Custom Nodes"
+    icon="hammer"
+    href="/guides/creating-custom-nodes"
+  >
+    Learn to build your own conditional nodes
+  </Card>
+  <Card
+    title="Execution Engine"
+    icon="gears"
+    href="/core-concepts/execution-engine"
+  >
+    Deep dive into execution plan architecture
+  </Card>
+</CardGroup>

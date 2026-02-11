@@ -1,0 +1,307 @@
+---
+title: "Built-in Nodes"
+description: "API reference for ReactFlo's built-in nodes"
+---
+
+ReactFlo includes built-in nodes for common workflow patterns. These nodes are production-ready and fully tested.
+
+## Flow Control Nodes
+
+### IfNode
+
+Classic if/else conditional branching.
+
+```typescript
+import { IfNode } from '@reactflo/core';
+```
+
+**Type:** `'flow.if'`  
+**Category:** `'Flow Control'`  
+**Implements:** `IConditionalNode`
+
+#### Inputs
+
+<ParamField path="condition" type="boolean" required>
+  Boolean condition that determines which branch to execute.
+  - `true` → routes to `thenOutput`
+  - `false` → routes to `elseOutput`
+</ParamField>
+
+<ParamField path="value" type="any">
+  Optional data to pass through to the active branch. The value is set on either
+  `thenOutput` or `elseOutput` depending on the condition.
+</ParamField>
+
+#### Outputs
+
+<ParamField path="thenOutput" type="any">
+  Output for the 'then' branch (when condition is true). Contains the passthrough
+  value if provided, otherwise undefined.
+</ParamField>
+
+<ParamField path="elseOutput" type="any">
+  Output for the 'else' branch (when condition is false). Contains the passthrough
+  value if provided, otherwise undefined.
+</ParamField>
+
+#### Methods
+
+```typescript
+execute(): void
+```
+
+Sets the active output (thenOutput or elseOutput) based on the condition value.
+The inactive output is set to undefined.
+
+```typescript
+evaluateCondition(): string
+```
+
+Returns `'thenOutput'` if condition is true, `'elseOutput'` if false.
+
+**Throws:** Error if condition is not a boolean value.
+
+#### Example
+
+```typescript
+import { Workflow, IfNode, BooleanInputNode, DisplayNode } from '@reactflo/core';
+
+const workflow = new Workflow();
+
+// Create nodes
+const boolInput = workflow.addNode(BooleanInputNode);
+const ifNode = workflow.addNode(IfNode);
+const thenDisplay = workflow.addNode(DisplayNode);
+const elseDisplay = workflow.addNode(DisplayNode);
+
+// Connect
+workflow.connect(boolInput.id, 'value', ifNode.id, 'condition');
+workflow.connect(boolInput.id, 'value', ifNode.id, 'value');
+workflow.connect(ifNode.id, 'thenOutput', thenDisplay.id, 'message');
+workflow.connect(ifNode.id, 'elseOutput', elseDisplay.id, 'message');
+
+// Execute
+await workflow.execute();
+// If condition = true: only thenDisplay executes
+// If condition = false: only elseDisplay executes
+```
+
+#### Usage in WorkflowBuilder
+
+```tsx
+import { WorkflowBuilder } from '@reactflo/react';
+import { IfNode } from '@reactflo/core';
+
+<WorkflowBuilder
+  nodes={[IfNode, /* other nodes */]}
+/>
+```
+
+The IfNode appears in the "Flow Control" category of the node palette.
+
+---
+
+### SwitchNode
+
+Multi-way branching with case matching (switch/case pattern).
+
+```typescript
+import { SwitchNode } from '@reactflo/core';
+```
+
+**Type:** `'flow.switch'`  
+**Category:** `'Flow Control'`  
+**Implements:** `IConditionalNode`
+
+#### Inputs
+
+<ParamField path="value" type="any" required>
+  Value to match against case values. Compared using strict equality (`===`).
+</ParamField>
+
+<ParamField path="data" type="any">
+  Optional data to pass through to the matching branch. The data is set on the
+  matching case output or default output.
+</ParamField>
+
+#### Properties
+
+<ParamField path="cases" type="any[]" default="[]">
+  Array of case values to match against. The number of cases determines how many
+  output ports are created (`case_0`, `case_1`, ..., `case_N`, `default`).
+  
+  **Dynamic Outputs:** When cases are added or removed, the node automatically
+  updates its output ports.
+</ParamField>
+
+#### Outputs
+
+**Dynamic:** Outputs are generated based on the `cases` property.
+
+<ParamField path="case_0, case_1, ..., case_N" type="any">
+  One output for each case in the cases array. The label shows the actual case
+  value (e.g., if cases[0] is 'apple', the label is 'apple').
+</ParamField>
+
+<ParamField path="default" type="any">
+  Default output used when no case matches. Always present regardless of the
+  number of cases.
+</ParamField>
+
+#### Methods
+
+```typescript
+getOutputs(): PortDefinition[]
+```
+
+Dynamically generates output port definitions based on the cases array.
+
+```typescript
+execute(): void
+```
+
+Clears all outputs, then finds the matching case and sets only that output
+(or the default output if no match).
+
+```typescript
+evaluateCondition(): string
+```
+
+Returns `'case_X'` where X is the index of the matching case, or `'default'`
+if no case matches.
+
+#### Example
+
+```typescript
+import { Workflow, SwitchNode, StringInputNode, DisplayNode } from '@reactflo/core';
+
+const workflow = new Workflow();
+
+// Create switch node with 3 cases
+const statusInput = workflow.addNode(StringInputNode);
+const switchNode = workflow.addNode(SwitchNode);
+switchNode.setProperty('cases', ['pending', 'approved', 'rejected']);
+
+// Create handlers
+const pendingHandler = workflow.addNode(DisplayNode);
+const approvedHandler = workflow.addNode(DisplayNode);
+const rejectedHandler = workflow.addNode(DisplayNode);
+const defaultHandler = workflow.addNode(DisplayNode);
+
+// Connect
+workflow.connect(statusInput.id, 'value', switchNode.id, 'value');
+workflow.connect(statusInput.id, 'value', switchNode.id, 'data');
+workflow.connect(switchNode.id, 'case_0', pendingHandler.id, 'message');   // 'pending'
+workflow.connect(switchNode.id, 'case_1', approvedHandler.id, 'message');  // 'approved'
+workflow.connect(switchNode.id, 'case_2', rejectedHandler.id, 'message');  // 'rejected'
+workflow.connect(switchNode.id, 'default', defaultHandler.id, 'message');
+
+// Execute with value = 'approved'
+await workflow.execute();
+// Result: Only approvedHandler executes
+```
+
+#### Dynamic Outputs Example
+
+```typescript
+const switchNode = new SwitchNode();
+
+// Start with 2 cases
+switchNode.setProperty('cases', ['option1', 'option2']);
+console.log(switchNode.getOutputs());
+// [
+//   { id: 'case_0', label: 'option1', type: 'any' },
+//   { id: 'case_1', label: 'option2', type: 'any' },
+//   { id: 'default', label: 'Default', type: 'any' }
+// ]
+
+// Add a third case
+switchNode.setProperty('cases', ['option1', 'option2', 'option3']);
+console.log(switchNode.getOutputs());
+// [
+//   { id: 'case_0', label: 'option1', type: 'any' },
+//   { id: 'case_1', label: 'option2', type: 'any' },
+//   { id: 'case_2', label: 'option3', type: 'any' },
+//   { id: 'default', label: 'Default', type: 'any' }
+// ]
+```
+
+#### Usage in WorkflowBuilder
+
+```tsx
+import { WorkflowBuilder } from '@reactflo/react';
+import { SwitchNode } from '@reactflo/core';
+
+<WorkflowBuilder
+  nodes={[SwitchNode, /* other nodes */]}
+/>
+```
+
+The SwitchNode appears in the "Flow Control" category. The property panel shows
+an array editor for the `cases` property, allowing you to add/remove cases
+interactively. Outputs update in real-time as cases change.
+
+---
+
+## Comparison
+
+| Feature | IfNode | SwitchNode |
+|---------|--------|------------|
+| **Branches** | 2 (then/else) | N + 1 (cases + default) |
+| **Condition Type** | Boolean | Any (strict equality) |
+| **Dynamic Outputs** | No | Yes |
+| **Use Case** | Simple binary decisions | Multi-way routing |
+| **Example** | Valid/Invalid, Yes/No | Status routing, Type routing |
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use IfNode for Binary Decisions">
+    For simple true/false or valid/invalid scenarios, IfNode is clearer and
+    more efficient than SwitchNode with 2 cases.
+  </Accordion>
+
+  <Accordion title="Use SwitchNode for Multi-Way Routing">
+    When you have 3+ possible values to route on, SwitchNode is more maintainable
+    than nested IfNodes.
+  </Accordion>
+
+  <Accordion title="Always Handle Default Case">
+    Connect a handler to the default output of SwitchNode to gracefully handle
+    unexpected values.
+  </Accordion>
+
+  <Accordion title="Type-Safe Matching">
+    SwitchNode uses strict equality (===). Ensure your values and cases are the
+    same type ('1' !== 1).
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card
+    title="Conditional Flow Guide"
+    href="/advanced/conditional-flow"
+  >
+    Complete guide to conditional workflows
+  </Card>
+  <Card
+    title="IConditionalNode"
+    href="/api-reference/core/node#interface-iconditionalnode"
+  >
+    Interface for creating custom conditional nodes
+  </Card>
+  <Card
+    title="Conditional Logic Examples"
+    href="/examples/conditional-logic"
+  >
+    Working examples with If and Switch nodes
+  </Card>
+  <Card
+    title="Creating Custom Nodes"
+    href="/guides/creating-custom-nodes"
+  >
+    Build your own conditional nodes
+  </Card>
+</CardGroup>

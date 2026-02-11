@@ -46,6 +46,7 @@
           {
             "group": "Advanced",
             "pages": [
+              "advanced/conditional-flow",
               "advanced/property-system",
               "advanced/inheritance",
               "advanced/error-handling",
@@ -63,7 +64,8 @@
               "api-reference/core/node",
               "api-reference/core/workflow",
               "api-reference/core/executor",
-              "api-reference/core/decorators"
+              "api-reference/core/decorators",
+              "api-reference/core/builtin-nodes"
             ]
           },
           {

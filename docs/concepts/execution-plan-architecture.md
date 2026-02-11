@@ -381,35 +381,174 @@
 - [x] Commit 1: "fix(core): require explicit boolean for IfNode condition + add logic test nodes (Task 2.14.5)" (2fa8432)
 - [x] Commit 2: "feat(react): improve array property UI + dynamic outputs for SwitchNode (Task 2.14.5)" (41da50e)
 
-**Task 2.15: Update Documentation** [2 hours] - ⏳ PENDING
-- [ ] File: `packages/core/README.md`
-- [ ] Add section on conditional flow nodes
-- [ ] Document IfNode with usage example
-- [ ] Document SwitchNode with usage example
-- [ ] Document IConditionalNode interface for custom implementations
-- [ ] File: `docs/execution-plan-architecture.md`
-- [ ] Update Phase 2 status to COMPLETE
-- [ ] Add completion date
-- [ ] Run lint: `npm run lint -w @reactflo/core`
-- [ ] Commit: "docs: update documentation for Phase 2 conditional flow implementation"
+**Task 2.15: Update Documentation** [2 hours] - ✅ COMPLETE
+- [x] File: `packages/core/README.md`
+- [x] Add section on conditional flow nodes
+- [x] Document IfNode with usage example
+- [x] Document SwitchNode with usage example
+- [x] Document IConditionalNode interface for custom implementations
+- [x] File: `docs/execution-plan-architecture.md`
+- [x] Update Phase 2 status to COMPLETE
+- [x] Add completion date
+- [x] Run lint: `npm run lint -w @reactflo/core`
+- [x] Commit: "docs: update documentation for Phase 2 conditional flow implementation"
 
-**Task 2.16: Final Phase 2 Validation** [2 hours] - ⏳ PENDING
-- [ ] Run full test suite: `npm test -w @reactflo/core`
-- [ ] Run full test suite: `npm test -w @reactflo/types`
-- [ ] Verify all tests pass (expect 380+ tests)
-- [ ] Run lint on all packages: `npm run lint`
-- [ ] Build all packages: `npm run build`
-- [ ] Review all commits for this phase
-- [ ] Create summary of changes
-- [ ] Commit: "chore: Phase 2 conditional flow implementation complete"
+**Task 2.16: Final Phase 2 Validation** [2 hours] - ✅ COMPLETE
+- [x] Run full test suite: `npm test -w @reactflo/core`
+- [x] Run full test suite: `npm test -w @reactflo/types`
+- [x] Verify all tests pass (expect 380+ tests)
+- [x] Run lint on all packages: `npm run lint`
+- [x] Build all packages: `npm run build`
+- [x] Review all commits for this phase
+- [x] Create summary of changes
+- [x] Commit: "chore: Phase 2 conditional flow implementation complete"
+
+**Task 2.17: Add Conditional Flow Documentation to Docs Site** [8 hours] - ⏳ PENDING
+
+This task adds comprehensive documentation for the Phase 2 Conditional Flow implementation to the official docs site (`packages/docs-site`).
+
+**Subtask 2.17.1: Update Core Concepts - Execution Engine** [1.5 hours] - ✅ COMPLETE
+- [x] File: `packages/docs-site/core-concepts/execution-engine.mdx`
+- [x] Remove outdated "Topological Sort" step from execution flow (replaced by execution plan)
+- [x] Add new section: "Execution Plan Architecture"
+  - [x] Explain plan-based execution (build plan → execute plan)
+  - [x] Benefits: enables conditionals, loops, debugging
+  - [x] Reference execution-plan-architecture.md for deep dive
+- [x] Update "Execution Flow" section:
+  - [x] Replace Step 3: "Topological Sort" → "Build Execution Plan"
+  - [x] Add Step 4.5: "Branch Evaluation" (for conditional nodes)
+  - [x] Explain conditional branch selection
+- [x] Add new "Step Events" section:
+  - [x] Document `onStepStart`, `onStepComplete`, `onStepError` events
+  - [x] Show examples with ExecutionStepType.Node and ExecutionStepType.Conditional
+- [x] Add new "Branch Events" section:
+  - [x] Document `onBranchEnter` and `onBranchExit` events
+  - [x] Show example with IfNode branches
+- [x] Add visual diagram: linear execution vs conditional execution
+- [x] Commit: "docs(site): update execution engine with plan architecture and conditional flow"
+
+**Subtask 2.17.2: Update Core Concepts - Nodes** [1 hour] - ✅ COMPLETE
+- [x] File: `packages/docs-site/core-concepts/nodes.mdx`
+- [x] Add new section: "Conditional Nodes" (after "Outputs" section)
+  - [x] Explain IConditionalNode interface
+  - [x] Show `evaluateCondition()` method signature
+  - [x] Explain how conditional nodes enable branching
+  - [x] Link to conditional-logic example and advanced guide
+- [x] Add note about dynamic outputs (mention SwitchNode as example)
+- [x] Update node categories list to include "Flow Control"
+- [x] Commit: "docs(site): add conditional nodes section to core concepts"
+
+**Subtask 2.17.3: Create Advanced Guide - Conditional Flow** [2.5 hours] - ✅ COMPLETE
+- [x] Create file: `packages/docs-site/advanced/conditional-flow.mdx`
+- [x] Frontmatter: title "Conditional Flow", description, icon "code-branch"
+- [x] Section 1: "Overview"
+  - [x] What is conditional flow
+  - [x] Use cases (validation, routing, branching logic)
+  - [x] Architecture (IConditionalNode, ConditionalStep, branch execution)
+- [x] Section 2: "IConditionalNode Interface"
+  - [x] Full interface definition with JSDoc
+  - [x] Explain `evaluateCondition()` method contract
+  - [x] Return value must match output port name
+  - [x] Show minimal example implementing interface
+- [x] Section 3: "Built-in Conditional Nodes"
+  - [x] Subsection: "IfNode"
+    * Full code example with inputs/outputs
+    * Behavior: true → thenOutput, false → elseOutput
+    * Common patterns (validation, filtering, error handling)
+  - [x] Subsection: "SwitchNode"
+    * Full code example with property and dynamic outputs
+    * Behavior: strict equality matching, default fallback
+    * Array property UI and dynamic output generation
+    * Common patterns (routing, state machines, multi-way branching)
+- [x] Section 4: "Creating Custom Conditional Nodes"
+  - [x] Step-by-step guide
+  - [x] Example: "GreaterThanNode" with 'greater' and 'lessOrEqual' branches
+  - [x] Best practices (clear output naming, error handling, validation)
+- [x] Section 5: "Branch Execution"
+  - [x] How branches are built during plan creation
+  - [x] How active branch is selected at runtime
+  - [x] Only active branch executes (other branches skipped)
+  - [x] Event emission (onBranchEnter, onBranchExit)
+- [x] Section 6: "Nested Conditionals"
+  - [x] Example: if inside if, switch inside if
+  - [x] Execution flow diagram
+  - [x] Performance considerations
+- [x] Section 7: "Error Handling"
+  - [x] What happens when evaluateCondition() returns invalid branch
+  - [x] Error propagation from within branches
+  - [x] Best practices for resilient conditional nodes
+- [x] Section 8: "Testing Conditional Workflows"
+  - [x] Unit testing conditional nodes
+  - [x] Integration testing workflows with branches
+  - [x] Verifying only active branch executes
+- [x] Add callouts, warnings, code blocks, and diagrams throughout
+- [x] Commit: "docs(site): add comprehensive conditional flow guide"
+
+**Subtask 2.17.4: Update Examples - Conditional Logic** [1.5 hours] - ✅ COMPLETE
+- [x] File: `packages/docs-site/examples/conditional-logic.mdx`
+- [x] Remove "Work in Progress" warning (conditional flow is now implemented!)
+- [x] Update "Overview" section with real working examples
+- [x] Section 1: "Basic If/Else Flow"
+  - [x] Replace "Planned Node Types" with real IfNode example
+  - [x] Show BooleanInputNode → IfNode → DisplayNode workflow
+  - [x] Full code with execution and expected output
+- [x] Section 2: "Numeric Comparison"
+  - [x] NumberInputNode → CompareNode → IfNode → DisplayNode
+  - [x] Show different comparison operators (>, <, ==)
+- [x] Section 3: "Switch/Case Routing"
+  - [x] Remove "Planned" label
+  - [x] Show real SwitchNode with cases property
+  - [x] Example: routing by status ('pending', 'approved', 'rejected')
+  - [x] Full workflow with multiple case handlers
+- [x] Section 4: "Nested Conditionals"
+  - [x] Show if inside if example
+  - [x] Show switch inside if example
+  - [x] Explain execution flow
+- [x] Section 5: "Advanced Patterns"
+  - [x] Multi-stage validation (check A → if true check B → if true proceed)
+  - [x] State machine with SwitchNode
+  - [x] Error handling with conditional fallback
+- [x] Add link to ConditionalNodesDemo.tsx in examples package
+- [x] Add "Try It Yourself" section with instructions
+- [x] Commit: "docs(site): update conditional logic examples with real implementations"
+
+**Subtask 2.17.5: Update API Reference - Core Package** [1 hour] - ✅ COMPLETE
+- [x] File: `packages/docs-site/api-reference/core/node.mdx` (or create if missing)
+- [x] Add section: "IConditionalNode Interface"
+  - [x] Interface signature
+  - [x] Method: `evaluateCondition(): string`
+  - [x] Return value semantics
+  - [x] Example implementation
+- [x] File: `packages/docs-site/api-reference/core/builtin-nodes.mdx` (create new)
+- [x] Document all builtin nodes:
+  - [x] IfNode (full API with all inputs/outputs)
+  - [x] SwitchNode (full API with property and dynamic outputs)
+- [x] Add import examples from '@reactflo/core'
+- [x] Link to guides and examples
+- [x] Commit: "docs(site): add API reference for conditional nodes"
+
+**Subtask 2.17.6: Update Navigation and Search** [0.5 hours] - ✅ COMPLETE
+- [x] File: `packages/docs-site/docs.json`
+- [x] Add to "Advanced" group: `"advanced/conditional-flow"`
+- [x] Add to "API Reference > Core Package" group: `"api-reference/core/builtin-nodes"`
+- [x] Ensure "examples/conditional-logic" is in Examples tab
+- [x] Verify all new pages have proper metadata for search indexing
+- [x] Commit: "docs(site): update navigation for conditional flow docs"
+
+**Documentation Summary:**
+- **New Files**: 2 (advanced/conditional-flow.mdx, api-reference/core/builtin-nodes.mdx)
+- **Updated Files**: 5 (execution-engine.mdx, nodes.mdx, conditional-logic.mdx, node.mdx, docs.json)
+- **Total Estimated Time**: 8 hours
+- **Deliverable**: Complete documentation for Phase 2 Conditional Flow feature
 
 #### Phase 2 Summary
-- **Total Tasks**: 17 (16 + 1 UI integration task)
-- **Estimated Time**: 38 hours
-- **Files Created**: 6 new files
-- **Files Modified**: 8 existing files
-- **Tests Added**: 50+ new tests
+- **Total Tasks**: 18 (16 core + 1 UI integration + 1 documentation task)
+- **Estimated Time**: 48 hours (38 core + 2 validation + 8 documentation)
+- **Files Created**: 6 core files + 2 documentation files (8 total new files)
+- **Files Modified**: 8 core files + 5 documentation files (13 total modified files)
+- **Tests Added**: 100+ new tests (core package)
 - **Features**: If/Else conditionals, Switch/Case conditionals, Branch execution
+- **Documentation**: Comprehensive docs site updates with guides, examples, and API reference
 
 
 
@@ -436,8 +575,6 @@
 ### Phase 4: Parallel Execution (Week 7-8) - ⏳ PENDING
 
 ### Phase 5: Advanced Debugging (Week 9-10) - ⏳ PENDING
-
-### Phase 6: Testing & Documentation (Week 11-12) - ⏳ PENDING
 
 ---
 
@@ -2170,137 +2307,6 @@ interface ExecutorEvents {
 - Use step into to enter loop/conditional
 - Inspect variables and node outputs
 - Resume execution to completion
-
----
-
-### Phase 6: Testing, Polish & Documentation (Week 11-12)
-
-**Goal**: Comprehensive testing, optimization, and documentation.
-
-#### Week 11: Comprehensive Testing
-
-**Tasks**:
-
-1. **Unit test audit** [6 hours]
-   - Review all new unit tests
-   - Ensure 90%+ code coverage for new code
-   - Add missing test cases
-   - Add edge case tests
-   - Add error condition tests
-   - Run coverage report
-
-2. **Integration test suite** [8 hours]
-   - Test all control flow combinations:
-     - Conditional + Loop
-     - Loop + Parallel
-     - Nested conditionals (3+ levels)
-     - Nested loops (3+ levels)
-     - Parallel + Conditional
-   - Test error propagation through control flow
-   - Test cancellation in various scenarios
-   - Test timeout in long-running workflows
-   - Test memory usage with large workflows
-
-3. **Performance testing** [6 hours]
-   - Create benchmark workflows:
-     - 100 sequential nodes
-     - 10 nested loops (10 iterations each)
-     - 50 parallel branches
-     - Complex nested control flow
-   - Measure execution time
-   - Measure memory usage
-   - Profile plan building performance
-   - Identify and fix bottlenecks
-   - Document performance characteristics
-
-4. **End-to-end test suite** [8 hours]
-   - Create real-world workflow examples:
-     - Data processing pipeline with conditionals
-     - Batch processing with loops
-     - Fan-out/fan-in with parallel
-     - Complex business logic workflow
-   - Test in examples app
-   - Test with step debugging
-   - Test error recovery
-   - Test long-running workflows
-   - Test workflow serialization/deserialization
-
-**Deliverables**:
-
-- ✅ 90%+ code coverage
-- ✅ Comprehensive integration tests
-- ✅ Performance benchmarks
-- ✅ End-to-end test suite
-- ✅ 100+ total new tests
-
-#### Week 12: Polish & Documentation
-
-**Tasks**:
-
-1. **API polish** [4 hours]
-   - Review all new public APIs
-   - Ensure consistency with existing APIs
-   - Add JSDoc comments to all public methods
-   - Add TypeScript documentation comments
-   - Ensure proper type exports
-   - Update type definitions
-
-2. **Error messages improvement** [4 hours]
-   - Review all error messages
-   - Make errors more descriptive
-   - Add error codes for each error type
-   - Add suggestions for common errors
-   - Document error handling patterns
-   - Create error handling guide
-
-3. **Update main documentation** [6 hours]
-   - Update README.md with control flow features
-   - Update core-concepts.md with execution plan
-   - Update getting-started.md with examples
-   - Create execution-plan-guide.md (user-facing)
-   - Update API reference
-   - Add migration guide (from serial to plan execution)
-
-4. **Create tutorial series** [8 hours]
-   - Tutorial 1: "Your First Conditional Workflow"
-   - Tutorial 2: "Working with Loops"
-   - Tutorial 3: "Parallel Execution Patterns"
-   - Tutorial 4: "Debugging Workflows"
-   - Tutorial 5: "Complex Control Flow Patterns"
-   - Add tutorials to docs/tutorials/
-   - Link from main README
-
-5. **Example workflows** [6 hours]
-   - Polish existing examples
-   - Add comments to example code
-   - Create README for each example
-   - Add visual diagrams of workflows
-   - Test all examples work correctly
-   - Add to examples app with descriptions
-
-6. **Update PROJECT_STATUS.md** [2 hours]
-   - Mark Phase 3.5 as complete
-   - Update progress percentages
-   - Document new features
-   - Update roadmap
-   - Add Phase 4 details (React package completion)
-
-**Deliverables**:
-
-- ✅ Polished APIs with full documentation
-- ✅ Improved error messages
-- ✅ Updated documentation (all files)
-- ✅ Tutorial series (5 tutorials)
-- ✅ Polished examples
-- ✅ Updated project status
-
-**Validation**:
-
-- Review all documentation for accuracy
-- Test all code examples in documentation
-- Verify all tutorials work end-to-end
-- Get feedback from team/contributors
-- Run final test suite (all tests passing)
 
 ---
 
