@@ -4,65 +4,40 @@
 
 <br/>
 
+<p align="center">
+  <a href="https://github.com/reactflo/reactflo/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/reactflo/reactflo/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
+  <a href="https://github.com/reactflo/reactflo/releases"><img src="https://img.shields.io/github/v/release/reactflo/reactflo?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
+</p>
+
 # ReactFlo
 
-**Build your own AI automation platform, workflow builder, or no-code tool.**
+**A declarative framework for building visual workflow editors.**
 
-ReactFlo is a **declarative framework** for building visual workflow editors—like Make.com, Zapier, n8n, or LangFlow. Stop building workflow infrastructure from scratch. Focus on your unique features while ReactFlo handles the complexity.
-
-## 🎯 Vision
-
-The AI automation space is exploding. Everyone needs workflow builders:
-
-- **AI Developers** building agent orchestration platforms
-- **No-Code Entrepreneurs** creating automation tools
-- **Data Teams** building ETL and pipeline tools
-- **Enterprises** automating business processes
-
-But building a workflow editor is hard. You need:
-
-- Visual canvas with drag-and-drop
-- Execution engine with error handling
-- JSON serialization for storage
-- Type-safe connections
-- Real-time updates
-- Undo/redo, validation, debugging...
-
-**ReactFlo gives you all of this.** Stop reinventing the wheel.
+ReactFlo gives you everything needed to build custom workflow applications—AI agent platforms, automation tools, data pipelines, or no-code builders. Define nodes with TypeScript decorators, get a production-ready visual editor with execution engine included.
 
 **We build the how, you focus on the what.**
 
-ReactFlo is a framework, not a finished product. It provides everything you need to build custom workflow applications for your specific domain—whether that's AI agent automation, business process tools, data pipelines, or creative workflows.
+Built on React Flow. Inspired by Node-RED, LangFlow, and modern automation platforms.
 
-## ✨ Key Features
+## Vision
 
-### 🤖 Perfect for AI & Automation
+The AI automation space is exploding. Every team needs workflow builders:
 
-- **AI Agent Workflows** - Build LangChain/LangGraph visual tools, RAG pipelines, multi-agent systems
-- **No-Code Automation** - Create Zapier/Make.com alternatives for non-technical users
-- **Data Pipelines** - Visual ETL for data scientists and analysts
+- AI developers building agent orchestration platforms
+- No-code entrepreneurs creating automation tools
+- Data teams building ETL and pipeline tools
+- Enterprises automating business processes
 
-### 🚀 Developer Experience
+But building a workflow editor is hard. Visual canvas, execution engine, JSON serialization, type-safe connections, validation, debugging—it's a lot.
 
-- **Declarative Node System** - Define nodes using TypeScript decorators (@defineNode, @Input, @Output, @Property)
-- **Automatic Discovery** - Nodes are automatically detected and registered—no manual wiring
-- **Type-Safe Connections** - Built-in validation for node inputs and outputs
-- **Zero UI Boilerplate** - Declare your nodes, ReactFlo generates the UI automatically
+**ReactFlo gives you all of this.** Stop reinventing the wheel.
 
-### 🎨 Production-Ready UI
+ReactFlo is a framework, not a finished product. It provides the infrastructure so you can focus on your unique features and domain-specific nodes.
 
-- **Visual Workflow Builder** - Built on React Flow for production-ready UI
-- **Flexible Styling System** - Comprehensive customization with classNames, styles, and ReactFlow props
-- **Dual-Mode Editing** - Visual builder + JSON editor with real-time sync
+## Quick Start
 
-### ⚡ Robust Execution
-
-- **Execution Engine** - Handles workflow execution, async operations, and error handling
-- **JSON Workflow Format** - Import/export workflows as well-structured JSON
-- **Real-Time Events** - Monitor execution with event hooks
-- **Extensible** - Plugin system for custom node types and behaviors
-
-## 🚀 Quick Start
+**Define nodes with decorators:**
 
 ```typescript
 import { Node, Input, Output, defineNode } from '@reactflo/core';
@@ -73,14 +48,9 @@ import { Node, Input, Output, defineNode } from '@reactflo/core';
   category: 'Math',
 })
 class AddNode extends Node {
-  @Input({ type: 'number', label: 'A' })
-  a: number;
-
-  @Input({ type: 'number', label: 'B' })
-  b: number;
-
-  @Output({ type: 'number', label: 'Result' })
-  result: number;
+  @Input({ type: 'number', label: 'A' }) a: number;
+  @Input({ type: 'number', label: 'B' }) b: number;
+  @Output({ type: 'number', label: 'Result' }) result: number;
 
   execute() {
     this.result = this.a + this.b;
@@ -88,284 +58,99 @@ class AddNode extends Node {
 }
 ```
 
+**Get a visual builder:**
+
 ```tsx
 import { WorkflowBuilder } from '@reactflo/react';
 
-function App() {
-  return (
-    <WorkflowBuilder
-      nodes={[AddNode]}
-      showJsonEditor={true} // Built-in JSON editor
-      editorMode="split" // Visual + JSON side-by-side
-      onWorkflowChange={(workflow) => {
-        console.log('Workflow JSON:', workflow);
-      }}
-    />
-  );
-}
+<WorkflowBuilder
+  nodes={[AddNode]}
+  onWorkflowChange={(workflow) => console.log(workflow)}
+/>
 ```
 
-## 🤖 What Can You Build?
+Full guide: [Getting Started](docs/guides/get-started.md)
 
-ReactFlo is perfect for building:
-
-### AI & Automation Platforms
-
-- **AI Agent Orchestration** - Build LangFlow/Flowise alternatives
-- **ChatGPT Workflow Builders** - Let users chain AI prompts visually
-- **RAG Pipeline Builders** - Visual tools for retrieval-augmented generation
-- **Multi-Agent Systems** - Coordinate multiple AI agents
-
-### No-Code/Low-Code Tools
-
-- **Automation Platforms** - Your own Zapier, Make.com, or n8n
-- **Business Process Automation** - Workflow tools for enterprises
-- **Integration Platforms** - Connect APIs and webhooks visually
-
-### Data & Analytics
-
-- **ETL Tools** - Visual data transformation pipelines
-- **Data Processing** - Real-time data enrichment and routing
-- **Analytics Workflows** - Build data analysis tools
-
-### Developer Tools
-
-- **CI/CD Pipelines** - Visual deployment workflows
-- **Testing Automation** - Orchestrate test suites
-- **DevOps Tools** - Infrastructure automation
-
-### IoT & Smart Systems
-
-- **Smart Home Automation** - Visual programming for IoT
-- **Edge Computing** - Workflow processing on edge devices
-- **Sensor Data Processing** - Real-time IoT data flows
-
-## 📦 Packages
-
-ReactFlo is organized as a monorepo with multiple packages:
-
-- `@reactflo/core` ✅ - Core workflow engine and node system (100% complete)
-- `@reactflo/types` ✅ - TypeScript type definitions (100% complete)
-- `@reactflo/react` 🚧 - React components bridging decorators to React Flow (80% complete)
-- `@reactflo/examples` 🚧 - Example applications and demos (in progress)
-- `@reactflo/landing` 🚧 - Marketing/landing page (Next.js)
-- `@reactflo/docs-site` ✅ - Official documentation site (Mintlify)
-- `@reactflo/cli` ⏳ - Command-line tools for scaffolding and development (planned)
-- `@reactflo/plugins` ⏳ - Official plugin collection (planned)
-
-**Built on:** React Flow (for canvas/UI), TypeScript (with decorators)
-
-## �️ Development
-
-### Quick Start
+## Getting Started
 
 ```bash
-# Install dependencies
 npm install
 
-# Build all packages
 npm run build
 
-# Start development mode (watch all packages + examples dev server)
 npm run dev
 ```
 
-Development mode runs all TypeScript watch modes in parallel with the Vite dev server. Changes to any package are automatically compiled and hot-reloaded.
+The dev command starts watch mode for all packages plus the examples dev server with hot-reload.
 
-**See [docs/development/development-workflow.md](docs/development/development-workflow.md) for detailed development instructions.**
+More details: [Development Workflow](docs/development/development-workflow.md)
 
-### Key Commands
+## Documentation
 
-- `npm run dev` - Watch mode for all packages + examples dev server
-- `npm run build` - Build all packages
-- `npm test` - Run all tests
-- `npm run lint` - Lint all packages
-- `npm run clean` - Clean all build artifacts
+- [Framework Documentation](docs/guides/get-started.md) - Complete guide to using ReactFlo
+- [Developer Documentation](docs/development/development-workflow.md) - Development workflow and best practices
+- [Roadmap & Status](docs/development/project-status.md) - Current progress and future plans
+- [Documentation Index](docs/documentation-index.md) - Full documentation directory
 
-## �🗺️ Roadmap
+## What You Can Build
 
-### ✅ Phase 1: Core Node System (100% Complete)
+ReactFlo is perfect for:
 
-- [x] Project setup and repository structure
-- [x] Core workflow engine
-  - [x] Node base class with decorator metadata
-  - [x] NodeRegistry for registration and factory functionality
-  - [x] Decorator system (@defineNode, @Input, @Output)
-  - [x] Node type definitions and validation
-  - [x] Comprehensive unit tests (139 tests passing)
-- [x] JSON Schema definition
-- [x] TypeScript support with strict mode
+- AI agent orchestration platforms (LangFlow/Flowise alternatives)
+- No-code automation tools (Zapier, Make.com, n8n alternatives)
+- Data pipelines and ETL tools
+- Business process automation
+- CI/CD workflow builders
+- IoT and smart home automation
+- Visual programming environments
 
-### ✅ Phase 2: Workflow System (100% Complete)
+## Packages
 
-- [x] Workflow orchestration
-  - [x] Workflow class for managing nodes and connections
-  - [x] Connection validation with type checking
-  - [x] Graph structure with dependency tracking
-  - [x] Circular dependency detection
-  - [x] Topological sorting for execution order
-  - [x] JSON serialization/deserialization
-  - [x] Comprehensive validation system
+ReactFlo is organized as a monorepo:
 
-### ✅ Phase 3: Execution Engine (100% Complete)
+- `@reactflo/core` - Core workflow engine and node system
+- `@reactflo/types` - TypeScript type definitions
+- `@reactflo/react` - React components bridging decorators to React Flow
+- `@reactflo/examples` - Example applications
+- `@reactflo/landing` - Marketing/landing page
+- `@reactflo/docs-site` - Official documentation site
+- `@reactflo/cli` - CLI tools (planned)
+- `@reactflo/plugins` - Official plugins (planned)
 
-- [x] Workflow execution
-  - [x] Executor class for workflow orchestration
-  - [x] ExecutionContext for runtime state management
-  - [x] AsyncEventEmitter for async-aware event system
-  - [x] Serial execution strategy
-  - [x] Async/await support for nodes and event listeners
-  - [x] Event system for lifecycle hooks (beforeExecute, afterExecute, onNodeStart, etc.)
-  - [x] Error handling with detailed context
-  - [x] Timing and duration tracking
-- [x] Performance optimization
-  - [x] Execution monitoring with events
-  - [x] AbortSignal support for cancellation
-  - [x] Async event listener support (waits for all listeners to complete)
+**Built on:** React Flow, TypeScript with decorators
 
-### 🚧 Phase 4: React Package (80% Complete - Q1 2026)
+## Architecture
 
-- [x] Package structure initialization
-  - [x] React Flow 11.10.0 integration
-  - [x] Monaco Editor 4.6.0 integration
-  - [x] Component structure created
-  - [x] Context providers implemented
-  - [x] Custom hooks implemented
-- [x] React workflow builder component
-  - [x] Integrate React Flow
-  - [x] Bridge decorated nodes to React Flow nodes
-  - [x] Custom node renderer from decorator metadata
-  - [x] Node palette with drag-and-drop
-  - [x] Property inspector for node editing
-  - [x] Toolbar with workflow actions
-  - [x] Node converter utilities
-  - [x] Workflow serialization utilities
-- [x] Examples package
-  - [x] Package structure with Vite
-  - [x] Example nodes (Math, Input, Output)
-  - [x] Simple workflow demo
-  - [x] Integrated with development workflow
-- [ ] Advanced UI features (Next)
-  - [ ] Undo/redo system
-  - [ ] Keyboard shortcuts
-  - [ ] Connection validation visual feedback
-  - [ ] JSON editor integration (Monaco)
-  - [ ] Dual-mode editing with sync
+ReactFlo adds a declarative layer and execution engine on top of React Flow:
 
-### Phase 5: Type System & Utilities (Q2 2026)
-
-- [ ] Enhanced type system
-  - [ ] DataType class implementation
-  - [ ] TypeValidator for advanced validation
-  - [ ] Built-in types (primitives, objects, arrays)
-- [ ] Utility framework
-  - [ ] Custom error classes
-  - [ ] Logger utility
-  - [ ] Serialization utilities
-
-### Phase 6: Developer Experience (Q3 2026)
-
-- [ ] CLI tools
-  - [ ] Project scaffolding
-  - [ ] Node generator templates
-  - [ ] Development server
-  - [ ] Build and bundle tools
-- [ ] Development tools
-  - [ ] VS Code extension
-  - [ ] Node debugging interface
-  - [ ] Hot reload support
-  - [ ] Testing utilities
-
-### Phase 7: Ecosystem & Content (Q3-Q4 2026)
-
-- [ ] Documentation and examples
-  - [ ] Interactive documentation website
-  - [ ] Comprehensive API reference
-  - [ ] Tutorial series and guides
-  - [ ] Example applications showcase
-- [ ] Official node libraries
-  - [ ] Math operations
-  - [ ] HTTP/REST nodes
-  - [ ] Data transformation
-  - [ ] Logic and control flow
-
-### Phase 8: Production Ready (Q4 2026)
-
-- [ ] Quality assurance
-  - [ ] 80%+ test coverage across all packages
-  - [ ] Integration and E2E tests
-  - [ ] Performance benchmarks
-  - [ ] Security audit
-- [ ] Release preparation
-  - [ ] Migration guides
-  - [ ] Production deployment examples
-  - [ ] v1.0.0 stable release
-
-### Phase 9: Server-Side Execution Architecture (Future)
-
-- [ ] Server infrastructure
-  - [ ] Create @reactflo/server package
-  - [ ] Design REST API specification (OpenAPI)
-  - [ ] Implement workflow management endpoints
-  - [ ] Implement execution endpoints
-  - [ ] Build execution queue system
-  - [ ] Add real-time event streaming (WebSocket/SSE)
-- [ ] Client integration
-  - [ ] Create @reactflo/client SDK
-  - [ ] Implement adapter pattern for local/remote execution
-  - [ ] Update @reactflo/react for remote execution support
-- [ ] Production features
-  - [ ] Authentication & authorization (JWT, API keys)
-  - [ ] Workflow persistence (database integration)
-  - [ ] Error handling & monitoring
-  - [ ] Server deployment configuration
-- [ ] Documentation & migration
-  - [ ] API documentation (Swagger UI)
-  - [ ] Client SDK documentation
-  - [ ] Migration guide from local to remote
-  - [ ] Integration & E2E tests
-
-## 🏗️ Architecture
-
-ReactFlo builds on top of React Flow, adding a **declarative layer** and execution engine:
-
-**For Developers:** Declare nodes with decorators, not manual UI code.  
-**For Non-Developers:** Visual drag-and-drop workflow builder—no coding required.
-
-```
-┌──────────────────────────────────────────────┐
-│         User Applications                    │
-│  (Define nodes with @decorators)             │
-├──────────────────────────────────────────────┤
-│    @reactflo/react (Workflow Builder)        │
-│  (Bridges decorators ↔ React Flow)           │
-├──────────────────────────────────────────────┤
-│         React Flow                           │
-│  (Canvas, UI, pan/zoom, rendering)           │
-├──────────────────────────────────────────────┤
-│   @reactflo/core (Workflow Engine)           │
-│  (Node system, execution, validation)        │
-└──────────────────────────────────────────────┘
+```mermaid
+graph TD
+    A["User Applications<br/>(Define nodes with @decorators)"]
+    B["@reactflo/react<br/>(Workflow Builder)<br/>Bridges decorators ↔ React Flow"]
+    C["React Flow<br/>(Canvas, UI, pan/zoom, rendering)"]
+    D["@reactflo/core<br/>(Workflow Engine)<br/>Node system, execution, validation"]
+    
+    A --> B
+    B --> C
+    B --> D
+    
+    style A fill:#e3f2fd
+    style B fill:#bbdefb
+    style C fill:#90caf9
+    style D fill:#64b5f6
 ```
 
-**Why React Flow?** We leverage React Flow for the UI layer (canvas, connections, rendering) and focus ReactFlo on what's missing: declarative node definitions, automatic registration, and powerful execution.
+We leverage React Flow for the UI layer and focus ReactFlo on declarative node definitions, automatic registration, and powerful execution.
 
-## 🤝 Contributing
+## Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-## 📄 License
+## License
 
 MIT License - see [LICENSE](LICENSE) for details.
-
-## 🙏 Acknowledgments
-
-Inspired by Node-RED, React Flow, and modern workflow automation tools.
 
 ---
 
 **We build the how, you focus on the what.**
 
-**Status:** ✅ **Phases 1-3 Complete** | 🚧 **Phase 4 80% Complete** | 3.8/8 major phases done
-
-**Next Milestone:** React Package Completion & Advanced Features (Q1 2026)
