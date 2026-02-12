@@ -69,7 +69,7 @@ import { WorkflowBuilder } from '@reactflo/react';
 />
 ```
 
-Full guide: [Getting Started](docs/guides/get-started.md)
+Full guide: [Getting Started](docs/guides/getting-started.md)
 
 ## Getting Started
 
@@ -124,20 +124,23 @@ ReactFlo is organized as a monorepo:
 ReactFlo adds a declarative layer and execution engine on top of React Flow:
 
 ```mermaid
-graph TD
-    A["User Applications<br/>(Define nodes with @decorators)"]
-    B["@reactflo/react<br/>(Workflow Builder)<br/>Bridges decorators ↔ React Flow"]
-    C["React Flow<br/>(Canvas, UI, pan/zoom, rendering)"]
-    D["@reactflo/core<br/>(Workflow Engine)<br/>Node system, execution, validation"]
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e8f4f8','primaryTextColor':'#1a1a1a','primaryBorderColor':'#2563eb','lineColor':'#2563eb','secondaryColor':'#f0fdf4','tertiaryColor':'#fef3c7'}}}%%
+graph TB
+    A["<b>👤 User Applications</b><br/><br/>Define nodes with @decorators<br/>TypeScript classes with metadata"]
+    B["<b>🔗 @reactflo/react</b><br/><br/>Workflow Builder Component<br/>Bridges decorators ↔ React Flow<br/>Visual editor, palette, properties"]
+    C["<b>🎨 React Flow</b><br/><br/>Canvas & UI Layer<br/>Pan, zoom, drag & drop<br/>Node & edge rendering"]
+    D["<b>⚙️ @reactflo/core</b><br/><br/>Workflow Engine<br/>Node system & registry<br/>Execution & validation"]
     
-    A --> B
-    B --> C
-    B --> D
+    A -->|"registers nodes"| B
+    B -->|"renders UI"| C
+    B -->|"executes workflows"| D
     
-    style A fill:#e3f2fd
-    style B fill:#bbdefb
-    style C fill:#90caf9
-    style D fill:#64b5f6
+    style A fill:#dcfce7,stroke:#16a34a,stroke-width:3px,color:#14532d,rx:25,ry:25
+    style B fill:#dbeafe,stroke:#2563eb,stroke-width:3px,color:#1e3a8a,rx:25,ry:25
+    style C fill:#f3e8ff,stroke:#9333ea,stroke-width:3px,color:#581c87,rx:25,ry:25
+    style D fill:#fed7aa,stroke:#ea580c,stroke-width:3px,color:#7c2d12,rx:25,ry:25
+    
+    classDef default font-size:14px,font-family:system-ui
 ```
 
 We leverage React Flow for the UI layer and focus ReactFlo on declarative node definitions, automatic registration, and powerful execution.
