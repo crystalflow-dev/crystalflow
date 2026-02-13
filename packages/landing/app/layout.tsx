@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     siteName: 'ReactFlo',
     images: [
       {
-        url: '/logo/reactflo-logo.svg',
+        url: '/logo/crystalflow-logo-blue-dark.svg',
         width: 1200,
         height: 630,
         alt: 'ReactFlo Logo',
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     title: 'ReactFlo - Declarative Workflow Builder Framework',
     description:
       'Build powerful workflow applications with TypeScript decorators, visual editing, and JSON serialization.',
-    images: ['/logo/reactflo-logo.svg'],
+    images: ['/logo/crystalflow-logo-blue-dark.svg'],
   },
   icons: {
     icon: '/favicon.ico',

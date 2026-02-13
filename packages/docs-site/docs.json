@@ -1,13 +1,13 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "ReactFlo",
+  "name": "CrystalFlow",
   "colors": {
     "primary": "#3B82F6",
     "light": "#60A5FA",
     "dark": "#2563EB"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/crystalflow-favicon.svg",
   "navigation": {
     "tabs": [
       {
@@ -112,8 +112,8 @@
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/crystalflow-logo-mono-light.svg",
+    "dark": "/logo/crystalflow-logo-mono-dark.svg"
   },
   "navbar": {
     "links": [

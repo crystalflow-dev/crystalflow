@@ -295,10 +295,10 @@ module.exports = {
 ### Logo Files Needed
 
 - `reactflo-logo.svg` - Primary logo (vector)
-- `reactflo-logo-blue.png` - Blue version (1024x1024)
+- `crystalflow-logo-blue.png` - Blue version (1024x1024)
 - `reactflo-logo-green.png` - Green version (1024x1024)
 - `reactflo-logo-mono.png` - Monochrome (1024x1024)
-- `reactflo-icon.svg` - Icon only (vector)
+- `crystalflow-icon.svg` - Icon only (vector)
 - `favicon.ico` - Favicon (32x32, 16x16)
 
 ### Social Media Assets

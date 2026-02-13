@@ -46,7 +46,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
-              src="/logo/reactflo-logo-blue.svg"
+              src="/logo/crystalflow-logo-blue-dark.svg"
               alt="ReactFlo"
               width={140}
               height={40}

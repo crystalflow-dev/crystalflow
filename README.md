@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo/reactflo-logo-blue.png" alt="ReactFlo Logo" width="500" />
+  <img src="assets/logo/crystalflow-logo-blue-dark.png" alt="ReactFlo Logo" width="500" />
 </div>
 
 <br/>

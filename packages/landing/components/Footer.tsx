@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div className="space-y-4">
-            <Image src="/logo/reactflo-logo-blue.svg" alt="ReactFlo Logo" width={150} height={45} />
+            <Image src="/logo/crystalflow-logo-blue-dark.svg" alt="ReactFlo Logo" width={150} height={45} />
             <p className="text-sm text-light-grey">
               Declarative workflow builder framework for modern web applications.
             </p>
