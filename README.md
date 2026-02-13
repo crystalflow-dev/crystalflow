@@ -5,8 +5,8 @@
 <br/>
 
 <p align="center">
-  <a href="https://github.com/reactflo/reactflo/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/reactflo/reactflo/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
-  <a href="https://github.com/reactflo/reactflo/releases"><img src="https://img.shields.io/github/v/release/reactflo/reactflo?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
+  <a href="https://github.com/fladeed/reactflo/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/reactflo/reactflo/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
+  <a href="https://github.com/fladeed/reactflo/releases"><img src="https://img.shields.io/github/v/release/reactflo/reactflo?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
 </p>
 
@@ -69,7 +69,7 @@ import { WorkflowBuilder } from '@reactflo/react';
 />
 ```
 
-Full guide: [Getting Started](docs/guides/getting-started.md)
+Full guide: [Getting Started](https://docs.crystalflow.dev/getting-started)
 
 ## Getting Started
 
@@ -83,14 +83,14 @@ npm run dev
 
 The dev command starts watch mode for all packages plus the examples dev server with hot-reload.
 
-More details: [Development Workflow](docs/development/development-workflow.md)
+More details: [Development Workflow](https://docs.crystalflow.dev/guides/development-workflow)
 
 ## Documentation
 
-- [Framework Documentation](docs/guides/get-started.md) - Complete guide to using ReactFlo
-- [Developer Documentation](docs/development/development-workflow.md) - Development workflow and best practices
-- [Roadmap & Status](docs/development/project-status.md) - Current progress and future plans
-- [Documentation Index](docs/documentation-index.md) - Full documentation directory
+- [Getting Started](https://docs.crystalflow.dev/getting-started) - Complete guide to using ReactFlo
+- [Core Concepts](https://docs.crystalflow.dev/core-concepts) - Nodes, workflows, and execution
+- [API Reference](https://docs.crystalflow.dev/api-reference) - Complete API documentation
+- [Examples](https://docs.crystalflow.dev/examples) - Sample workflows and use cases
 
 ## What You Can Build
 
