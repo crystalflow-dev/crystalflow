@@ -1,8 +1,17 @@
 # Getting Started with ReactFlo
 
-This guide will help you get started with ReactFlo, a declarative workflow builder framework.
+This guide will help you get started with ReactFlo, a declarative workflow builder framework. Choose your path:
 
-## Installation
+- **Visual Builder** - Drag-and-drop UI for building workflows (recommended for most users)
+- **Core** - Programmatic workflow creation and execution
+
+---
+
+## Getting Started with Visual Builder
+
+The visual builder provides a drag-and-drop interface for creating workflows with zero configuration.
+
+### Installation
 
 ```bash
 npm install @reactflo/core @reactflo/react
@@ -14,9 +23,34 @@ Or using yarn:
 yarn add @reactflo/core @reactflo/react
 ```
 
-## Your First Node
+### Using the Visual Builder
 
-Let's create a simple node that adds two numbers:
+Create a React component with the WorkflowBuilder:
+
+```tsx
+import React from 'react';
+import { WorkflowBuilder } from '@reactflo/react';
+import { AddNode } from './nodes/AddNode';
+
+function App() {
+  return (
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <WorkflowBuilder
+        nodes={[AddNode]}
+        onWorkflowChange={(workflow) => {
+          console.log('Workflow changed:', workflow);
+        }}
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+### Creating Custom Nodes
+
+Define nodes using decorators to use them in the visual builder:
 
 ```typescript
 import { Node, defineNode, Input, Output } from '@reactflo/core';
@@ -54,7 +88,73 @@ export class AddNode extends Node {
 }
 ```
 
-## Creating a Workflow
+Nodes you define will automatically appear in the node palette and can be dragged onto the canvas.
+
+### Next Steps
+
+- [Property System](../concepts/node-properties.md) - Add configurable properties to your nodes
+- [Styling Customization](../advanced/styling-customization.md) - Customize the visual builder appearance
+- [Examples](../examples/) - See complete example applications
+
+---
+
+## Getting Started with Core
+
+Use the core package for programmatic workflow creation and execution without a UI.
+
+### Installation
+
+```bash
+npm install @reactflo/core
+```
+
+Or using yarn:
+
+```bash
+yarn add @reactflo/core
+```
+
+### Creating Your First Node
+
+Define nodes using decorators:
+
+```typescript
+import { Node, defineNode, Input, Output } from '@reactflo/core';
+
+@defineNode({
+  type: 'math.add',
+  label: 'Add Numbers',
+  category: 'Math',
+  description: 'Adds two numbers together',
+})
+export class AddNode extends Node {
+  @Input({
+    type: 'number',
+    label: 'First Number',
+    required: true,
+  })
+  a: number = 0;
+
+  @Input({
+    type: 'number',
+    label: 'Second Number',
+    required: true,
+  })
+  b: number = 0;
+
+  @Output({
+    type: 'number',
+    label: 'Sum',
+  })
+  result: number;
+
+  execute() {
+    this.result = this.a + this.b;
+  }
+}
+```
+
+### Building and Executing a Workflow
 
 ```typescript
 import { Workflow } from '@reactflo/core';
@@ -77,42 +177,24 @@ node1.inputs.a = 5;
 node1.inputs.b = 3;
 
 // Connect nodes
-workflow.connect({ nodeId: node1.id, portId: 'result' }, { nodeId: node2.id, portId: 'a' });
+workflow.connect(
+  { nodeId: node1.id, portId: 'result' },
+  { nodeId: node2.id, portId: 'a' }
+);
 
 // Execute workflow
-await workflow.execute();
+const result = await workflow.execute();
 
 console.log(node2.outputs.result); // Output: 8
+console.log(result.status); // 'success'
+console.log(result.duration); // execution time in ms
 ```
 
-## Using the Visual Builder
+### Next Steps
 
-```tsx
-import React from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
-import { AddNode } from './nodes/AddNode';
-
-function App() {
-  return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <WorkflowBuilder
-        nodes={[AddNode]}
-        onWorkflowChange={(workflow) => {
-          console.log('Workflow changed:', workflow);
-        }}
-      />
-    </div>
-  );
-}
-
-export default App;
-```
-
-## Next Steps
-
-- [Core Concepts](./core-concepts.md) - Learn about nodes, workflows, and execution
-- [API Reference](./api-reference/) - Detailed API documentation
-- [Examples](./examples/) - More examples and use cases
+- [Execution Engine](../concepts/execution-engine.md) - Learn about workflow execution
+- [Error Handling](../advanced/error-handling.md) - Handle errors and timeouts
+- [JSON Schema](../concepts/json-schema.md) - Serialize and deserialize workflows
 
 ## Need Help?
 
