@@ -1,4 +1,4 @@
-import { defineNode, Input, Output, Node, Property } from '@reactflo/core';
+import { defineNode, Input, Output, Node, Property } from '@crystalflow/core';
 
 type CompareOperation = 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'neq';
 

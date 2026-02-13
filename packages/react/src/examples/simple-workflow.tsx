@@ -5,7 +5,7 @@
  * with custom nodes using decorators.
  */
 
-import { defineNode, Input, Output, Node } from '@reactflo/core';
+import { defineNode, Input, Output, Node } from '@crystalflow/core';
 import { WorkflowBuilder } from '../components/WorkflowBuilder/WorkflowBuilder';
 
 // Example Node 1: Add Numbers

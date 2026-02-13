@@ -1,5 +1,5 @@
 /**
- * Default theme for ReactFlo
+ * Default theme for CrystalFlow
  * This theme is used when no custom theme is provided
  */
 

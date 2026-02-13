@@ -15,10 +15,10 @@ import {
   ExecutionPlanStep,
   NodeExecutionStep,
   ConditionalStep,
-} from '@reactflo/types';
+} from '@crystalflow/types';
 import { ExecutionError, CancellationError, TimeoutError, UserCancelledError } from './errors';
 import type { Executor } from './Executor';
-import type { IConditionalNode } from '@reactflo/types';
+import type { IConditionalNode } from '@crystalflow/types';
 import type { Node } from '../node/Node';
 
 /**

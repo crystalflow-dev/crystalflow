@@ -1,10 +1,10 @@
-# ReactFlo Landing Page
+# CrystalFlow Landing Page
 
-The official landing page for ReactFlo - a declarative workflow builder framework for React applications.
+The official landing page for CrystalFlow - a declarative workflow builder framework for React applications.
 
 ## Overview
 
-This is a Next.js-based marketing website showcasing ReactFlo's features, capabilities, and providing an interactive demo of the workflow builder.
+This is a Next.js-based marketing website showcasing CrystalFlow's features, capabilities, and providing an interactive demo of the workflow builder.
 
 ## Features
 
@@ -20,13 +20,13 @@ This is a Next.js-based marketing website showcasing ReactFlo's features, capabi
 - **Styling**: Tailwind CSS
 - **Language**: TypeScript
 - **UI Components**: Custom React components
-- **Workflow Engine**: @reactflo/react and @reactflo/core
+- **Workflow Engine**: @crystalflow/react and @crystalflow/core
 
 ## Getting Started
 
 ### Prerequisites
 
-Make sure you're in the ReactFlo monorepo root and have built all packages:
+Make sure you're in the CrystalFlow monorepo root and have built all packages:
 
 ```bash
 # From monorepo root
@@ -73,14 +73,14 @@ packages/landing/
 │   ├── Navbar.tsx        # Navigation
 │   └── Footer.tsx        # Footer
 └── public/
-    └── logo/             # ReactFlo branding assets
+    └── logo/             # CrystalFlow branding assets
 ```
 
 ## Key Components
 
 ### InteractiveDemo
 
-The interactive demo component integrates the full ReactFlo workflow builder, allowing visitors to:
+The interactive demo component integrates the full CrystalFlow workflow builder, allowing visitors to:
 
 - Drag and drop nodes from the palette
 - Connect nodes to create workflows
@@ -97,7 +97,7 @@ Eye-catching hero section with:
 
 ### Features
 
-Highlights ReactFlo's core capabilities:
+Highlights CrystalFlow's core capabilities:
 
 - Declarative node definitions with TypeScript decorators
 - Visual workflow builder with React Flow

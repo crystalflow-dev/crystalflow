@@ -9,7 +9,7 @@ import { Node } from '../../node/Node';
 import { NodeRegistry } from '../../node/NodeRegistry';
 import { defineNode, Input, Output } from '../../node/decorators';
 import { ExecutionPlan } from '../../execution/ExecutionPlan';
-import { ExecutionStepType } from '@reactflo/types';
+import { ExecutionStepType } from '@crystalflow/types';
 
 // Test node
 @defineNode({

@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
-import { Executor, Node } from '@reactflo/core';
-import type { Workflow, ExecutionContext } from '@reactflo/core';
-import type { ExecutionResult, NodeExecutionResult } from '@reactflo/types';
+import { Executor, Node } from '@crystalflow/core';
+import type { Workflow, ExecutionContext } from '@crystalflow/core';
+import type { ExecutionResult, NodeExecutionResult } from '@crystalflow/types';
 
 /**
  * Execution options

@@ -151,7 +151,7 @@ export function InfoPopup({ title, children }: InfoPopupProps) {
               }}
             >
               <div
-                className="reactflo-info-content"
+                className="crystalflow-info-content"
                 style={{
                   fontSize: 'var(--font-size-base)',
                 }}
@@ -180,34 +180,34 @@ export function InfoPopup({ title, children }: InfoPopupProps) {
               }
 
               /* InfoPopup content styling */
-              .reactflo-info-content p {
+              .crystalflow-info-content p {
                 margin: 0 0 var(--space-3) 0;
                 line-height: 1.6;
               }
 
-              .reactflo-info-content h3 {
+              .crystalflow-info-content h3 {
                 margin: var(--space-5) 0 var(--space-3) 0;
                 font-size: var(--font-size-lg);
                 font-weight: var(--font-weight-bold);
                 color: var(--color-text-primary);
               }
 
-              .reactflo-info-content h3:first-child {
+              .crystalflow-info-content h3:first-child {
                 margin-top: 0;
               }
 
-              .reactflo-info-content ul,
-              .reactflo-info-content ol {
+              .crystalflow-info-content ul,
+              .crystalflow-info-content ol {
                 margin: var(--space-3) 0;
                 padding-left: var(--space-6);
               }
 
-              .reactflo-info-content li {
+              .crystalflow-info-content li {
                 margin: var(--space-2) 0;
                 line-height: 1.6;
               }
 
-              .reactflo-info-content code {
+              .crystalflow-info-content code {
                 padding: 2px 6px;
                 background: var(--color-bg-tertiary);
                 border: 1px solid var(--color-border-light);
@@ -217,18 +217,18 @@ export function InfoPopup({ title, children }: InfoPopupProps) {
                 color: var(--color-primary-600);
               }
 
-              .reactflo-info-content strong {
+              .crystalflow-info-content strong {
                 font-weight: var(--font-weight-semibold);
                 color: var(--color-text-primary);
               }
 
-              .reactflo-info-content a {
+              .crystalflow-info-content a {
                 color: var(--color-primary-500);
                 text-decoration: none;
                 transition: color var(--transition-fast) var(--ease-out);
               }
 
-              .reactflo-info-content a:hover {
+              .crystalflow-info-content a:hover {
                 color: var(--color-primary-600);
                 text-decoration: underline;
               }

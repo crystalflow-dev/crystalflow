@@ -9,7 +9,7 @@ import {
   ConditionalStep,
   LoopStep,
   ParallelStep,
-} from '@reactflo/types';
+} from '@crystalflow/types';
 
 describe('ExecutionPlan', () => {
   describe('constructor', () => {

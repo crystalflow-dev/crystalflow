@@ -7,12 +7,12 @@ import {
   PortDefinition,
   PropertyDefinition,
   CancellationReason,
-} from '@reactflo/types';
+} from '@crystalflow/types';
 import type { ExecutionContext } from '../execution/ExecutionContext';
 import { CancellationError, UserCancelledError, TimeoutError } from '../execution/errors';
 
 /**
- * Abstract base class for all nodes in ReactFlo.
+ * Abstract base class for all nodes in CrystalFlow.
  *
  * Nodes are the building blocks of workflows. Each node represents a single
  * operation or task that can be connected to other nodes to form a workflow.

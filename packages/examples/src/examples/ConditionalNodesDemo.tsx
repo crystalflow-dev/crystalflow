@@ -5,8 +5,8 @@
  * It shows how to create workflows that make decisions and route data based on conditions.
  */
 
-import { WorkflowBuilder } from '@reactflo/react';
-import { IfNode, SwitchNode } from '@reactflo/core';
+import { WorkflowBuilder } from '@crystalflow/react';
+import { IfNode, SwitchNode } from '@crystalflow/core';
 import {
   NumberInputNode,
   StringInputNode,

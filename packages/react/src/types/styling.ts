@@ -1,5 +1,5 @@
 /**
- * Styling system for ReactFlo components
+ * Styling system for CrystalFlow components
  *
  * Provides a flexible API for customizing component styles and classnames,
  * similar to popular UI libraries like Material-UI and Chakra UI.

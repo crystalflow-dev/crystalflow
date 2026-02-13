@@ -1,15 +1,15 @@
-# ReactFlo Project Structure
+# CrystalFlow Project Structure
 
-This document outlines the complete file and directory structure for the ReactFlo framework.
+This document outlines the complete file and directory structure for the CrystalFlow framework.
 
 ## Overview
 
-ReactFlo is organized as a monorepo using npm workspaces (or pnpm/yarn workspaces). This allows us to maintain multiple related packages in a single repository.
+CrystalFlow is organized as a monorepo using npm workspaces (or pnpm/yarn workspaces). This allows us to maintain multiple related packages in a single repository.
 
 ## Directory Structure
 
 ```
-reactflo/
+crystalflow/
 ├── packages/
 │   ├── core/                          # Core workflow engine
 │   │   ├── src/
@@ -119,7 +119,7 @@ reactflo/
 │   │   │   └── config/                # CLI configuration
 │   │   │       └── defaults.ts
 │   │   ├── bin/                       # Executable files
-│   │   │   └── reactflo.js
+│   │   │   └── crystalflow.js
 │   │   ├── package.json
 │   │   ├── tsconfig.json
 │   │   └── README.md
@@ -186,9 +186,9 @@ reactflo/
 
 ## Package Descriptions
 
-### @reactflo/core
+### @crystalflow/core
 
-The core engine that powers ReactFlo. Contains:
+The core engine that powers CrystalFlow. Contains:
 
 - Node registration and management
 - Workflow graph structure
@@ -198,7 +198,7 @@ The core engine that powers ReactFlo. Contains:
 
 **Dependencies:** None (zero dependencies)
 
-### @reactflo/react
+### @crystalflow/react
 
 React components for building workflow UIs. Contains:
 
@@ -208,9 +208,9 @@ React components for building workflow UIs. Contains:
 - Connection drawing
 - Property inspector
 
-**Dependencies:** react, react-dom, @reactflo/core
+**Dependencies:** react, react-dom, @crystalflow/core
 
-### @reactflo/cli
+### @crystalflow/cli
 
 Command-line tools for developers. Contains:
 
@@ -219,19 +219,19 @@ Command-line tools for developers. Contains:
 - Development server
 - Build tools
 
-**Dependencies:** commander, inquirer, @reactflo/core
+**Dependencies:** commander, inquirer, @crystalflow/core
 
-### @reactflo/types
+### @crystalflow/types
 
 Shared TypeScript type definitions used across all packages.
 
 **Dependencies:** None
 
-### @reactflo/plugins
+### @crystalflow/plugins
 
 Collection of official pre-built nodes for common use cases.
 
-**Dependencies:** @reactflo/core
+**Dependencies:** @crystalflow/core
 
 ## Development Workflow
 

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { defineNode, Input, Output, Node } from '@reactflo/core';
+import { defineNode, Input, Output, Node } from '@crystalflow/core';
 import { WorkflowBuilder } from './WorkflowBuilder';
 
 // Example Nodes for the stories
@@ -64,7 +64,7 @@ class DisplayNode extends Node {
 }
 
 /**
- * WorkflowBuilder is the main component that integrates React Flow with ReactFlo's
+ * WorkflowBuilder is the main component that integrates React Flow with CrystalFlow's
  * decorator-based node system. It provides a complete visual workflow editor with
  * node palette, property panel, and optional JSON editor.
  */

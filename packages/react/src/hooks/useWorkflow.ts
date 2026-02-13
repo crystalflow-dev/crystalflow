@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { Workflow, Node } from '@reactflo/core';
-import type { WorkflowData, ExecutionResult, ExecutionOptions } from '@reactflo/types';
+import { Workflow, Node } from '@crystalflow/core';
+import type { WorkflowData, ExecutionResult, ExecutionOptions } from '@crystalflow/types';
 
 /**
  * Hook for managing workflow state

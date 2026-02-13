@@ -100,12 +100,12 @@
       "anchors": [
         {
           "anchor": "GitHub",
-          "href": "https://github.com/Fladeed/reactflo",
+          "href": "https://github.com/Fladeed/crystalflow",
           "icon": "github"
         },
         {
           "anchor": "Community",
-          "href": "https://github.com/Fladeed/reactflo/discussions",
+          "href": "https://github.com/Fladeed/crystalflow/discussions",
           "icon": "comments"
         }
       ]
@@ -119,7 +119,7 @@
     "links": [
       {
         "label": "GitHub",
-        "href": "https://github.com/Fladeed/reactflo"
+        "href": "https://github.com/Fladeed/crystalflow"
       }
     ],
     "primary": {
@@ -133,8 +133,8 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/Fladeed/reactflo",
-      "twitter": "https://twitter.com/reactflo"
+      "github": "https://github.com/Fladeed/crystalflow",
+      "twitter": "https://twitter.com/crystalflow"
     }
   }
 }

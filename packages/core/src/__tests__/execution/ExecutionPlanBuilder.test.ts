@@ -7,7 +7,7 @@ import { Workflow } from '../../workflow/Workflow';
 import { Node } from '../../node/Node';
 import { NodeRegistry } from '../../node/NodeRegistry';
 import { defineNode, Input, Output } from '../../node/decorators';
-import { ExecutionStepType, IConditionalNode } from '@reactflo/types';
+import { ExecutionStepType, IConditionalNode } from '@crystalflow/types';
 
 // Test node classes
 @defineNode({

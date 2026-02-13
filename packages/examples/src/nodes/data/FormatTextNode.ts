@@ -1,4 +1,4 @@
-import { Node, Input, Output, Property, defineNode } from '@reactflo/core';
+import { Node, Input, Output, Property, defineNode } from '@crystalflow/core';
 
 /**
  * Format Text Node - Formats text with a custom template

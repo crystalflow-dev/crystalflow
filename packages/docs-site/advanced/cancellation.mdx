@@ -3,7 +3,7 @@ title: "Cancellation"
 description: "Cancel workflow execution and long-running operations"
 ---
 
-ReactFlo provides comprehensive cancellation support for stopping workflow execution when needed.
+CrystalFlow provides comprehensive cancellation support for stopping workflow execution when needed.
 
 ## Cancellation Mechanisms
 
@@ -27,7 +27,7 @@ ReactFlo provides comprehensive cancellation support for stopping workflow execu
 Set a timeout when executing:
 
 ```typescript
-import { Executor, TimeoutError } from '@reactflo/core';
+import { Executor, TimeoutError } from '@crystalflow/core';
 
 const executor = new Executor();
 
@@ -48,7 +48,7 @@ try {
 Cancel an execution manually:
 
 ```typescript
-import { Executor, CancellationReason } from '@reactflo/core';
+import { Executor, CancellationReason } from '@crystalflow/core';
 
 const executor = new Executor();
 
@@ -206,7 +206,7 @@ Implement cancellation in React components:
 
 ```tsx
 import React, { useState, useRef } from 'react';
-import { Executor, CancellationReason } from '@reactflo/core';
+import { Executor, CancellationReason } from '@crystalflow/core';
 
 function WorkflowExecutor({ workflow }) {
   const [isExecuting, setIsExecuting] = useState(false);
@@ -324,7 +324,7 @@ import {
   CancellationReason,
   CancellationError,
   TimeoutError
-} from '@reactflo/core';
+} from '@crystalflow/core';
 
 async function executeWithCancellation(workflow, maxDuration = 60000) {
   const executor = new Executor();

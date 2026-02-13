@@ -12,10 +12,10 @@ npm run dev
 
 This will:
 
-- ✅ Watch `@reactflo/types` and rebuild on changes
-- ✅ Watch `@reactflo/core` and rebuild on changes
-- ✅ Watch `@reactflo/react` and rebuild on changes
-- ✅ Start Vite dev server for `@reactflo/examples`
+- ✅ Watch `@crystalflow/types` and rebuild on changes
+- ✅ Watch `@crystalflow/core` and rebuild on changes
+- ✅ Watch `@crystalflow/react` and rebuild on changes
+- ✅ Start Vite dev server for `@crystalflow/examples`
 - ✅ Auto-reload browser when packages are rebuilt
 
 **No more clearing cache!** Changes to any package are automatically compiled and hot-reloaded in the examples app.
@@ -24,7 +24,7 @@ This will:
 
 1. **TypeScript Watch Mode**: Each package runs `tsc --watch` to automatically rebuild on file changes
 2. **Built Package Consumption**: Examples app consumes the built `dist/` folders (not source)
-3. **Vite HMR**: Vite watches `node_modules/@reactflo/*/dist` and triggers HMR when files change
+3. **Vite HMR**: Vite watches `node_modules/@crystalflow/*/dist` and triggers HMR when files change
 4. **Concurrently**: All watch processes run in parallel with color-coded output
 
 ### Terminal Output
@@ -47,15 +47,15 @@ npm run build
 ### Build Individual Package
 
 ```bash
-npm run build -w @reactflo/core
-npm run build -w @reactflo/react
-npm run build -w @reactflo/types
+npm run build -w @crystalflow/core
+npm run build -w @crystalflow/react
+npm run build -w @crystalflow/types
 ```
 
 ### Watch Individual Package
 
 ```bash
-npm run dev -w @reactflo/core
+npm run dev -w @crystalflow/core
 ```
 
 ### Run Examples Only
@@ -90,7 +90,7 @@ npm run dev
 
 1. **Removed Vite Source Aliases**: Examples no longer uses `resolve.alias` to point to `src/` folders
 2. **Package.json Exports**: Packages export `dist/index.js` and `dist/index.d.ts`
-3. **Vite Watch Config**: Configured to watch `node_modules/@reactflo/*/dist`
+3. **Vite Watch Config**: Configured to watch `node_modules/@crystalflow/*/dist`
 4. **Concurrently**: Added to root package to orchestrate all watch processes
 
 ### Benefits
@@ -129,4 +129,4 @@ npm run dev
 1. **Always use `npm run dev`** at the root for development
 2. **Don't manually clear Vite cache** - it's no longer needed
 3. **Check watch output** for TypeScript errors
-4. **Test in production mode** periodically: `npm run build -w @reactflo/examples && npm run preview -w @reactflo/examples`
+4. **Test in production mode** periodically: `npm run build -w @crystalflow/examples && npm run preview -w @crystalflow/examples`

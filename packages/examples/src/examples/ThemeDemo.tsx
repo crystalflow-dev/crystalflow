@@ -1,11 +1,11 @@
 /**
  * Theme Demo Example
  *
- * Demonstrates ReactFlo's built-in theme system with light/dark modes
+ * Demonstrates CrystalFlow's built-in theme system with light/dark modes
  */
 
 import React from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { BackgroundVariant } from 'reactflow';
 
 // Import example nodes

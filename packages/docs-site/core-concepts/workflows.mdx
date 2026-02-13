@@ -21,7 +21,7 @@ Think of a workflow as a graph where:
 ## Creating a Workflow
 
 ```typescript
-import { Workflow } from '@reactflo/core';
+import { Workflow } from '@crystalflow/core';
 import { AddNode, MultiplyNode } from './nodes';
 
 const workflow = new Workflow();
@@ -211,7 +211,7 @@ Workflows execute nodes in **topological order**:
 4. Repeat until all nodes are executed
 
 ```typescript
-import { Executor } from '@reactflo/core';
+import { Executor } from '@crystalflow/core';
 
 const executor = new Executor();
 const result = await executor.execute(workflow);
@@ -247,7 +247,7 @@ Workflows can be serialized to/from JSON:
 ### To JSON
 
 ```typescript
-import { serializeWorkflow } from '@reactflo/core';
+import { serializeWorkflow } from '@crystalflow/core';
 
 const json = serializeWorkflow(workflow.toJSON());
 console.log(json); // JSON string
@@ -256,7 +256,7 @@ console.log(json); // JSON string
 ### From JSON
 
 ```typescript
-import { deserializeWorkflow, Workflow } from '@reactflo/core';
+import { deserializeWorkflow, Workflow } from '@crystalflow/core';
 
 const workflowData = deserializeWorkflow(json);
 const workflow = Workflow.fromJSON(workflowData);
@@ -321,7 +321,7 @@ const workflow = Workflow.fromJSON(workflowData);
   </Accordion>
 
   <Accordion title="Handle Cycles" icon="arrows-rotate">
-    Design workflows without circular dependencies. ReactFlo will detect and reject cycles.
+    Design workflows without circular dependencies. CrystalFlow will detect and reject cycles.
   </Accordion>
 
   <Accordion title="Test Incrementally" icon="vial">
@@ -336,7 +336,7 @@ const workflow = Workflow.fromJSON(workflowData);
 ## Example: Data Processing Workflow
 
 ```typescript
-import { Workflow } from '@reactflo/core';
+import { Workflow } from '@crystalflow/core';
 
 // Create workflow
 const workflow = new Workflow({ name: 'Data Processing' });

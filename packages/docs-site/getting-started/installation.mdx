@@ -1,16 +1,16 @@
 ---
 title: "Installation"
-description: "Install ReactFlo packages for visual builder or core-only use"
+description: "Install CrystalFlow packages for visual builder or core-only use"
 ---
 
 ## Choose Your Path
 
 <CardGroup cols={2}>
   <Card title="Visual Workflow Builder" icon="diagram-project" href="#visual-builder-installation">
-    **@reactflo/react + core** - For building visual workflow applications with React
+    **@crystalflow/react + core** - For building visual workflow applications with React
   </Card>
   <Card title="Core Package Only" icon="cube" href="#core-only-installation">
-    **@reactflo/core** - For backend workflows, automation, and custom UIs
+    **@crystalflow/core** - For backend workflows, automation, and custom UIs
   </Card>
 </CardGroup>
 
@@ -35,17 +35,17 @@ description: "Install ReactFlo packages for visual builder or core-only use"
 <Tabs>
   <Tab title="npm">
     ```bash
-    npm install @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+    npm install @crystalflow/react @crystalflow/core @crystalflow/types reflect-metadata
     ```
   </Tab>
   <Tab title="pnpm">
     ```bash
-    pnpm add @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+    pnpm add @crystalflow/react @crystalflow/core @crystalflow/types reflect-metadata
     ```
   </Tab>
   <Tab title="yarn">
     ```bash
-    yarn add @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+    yarn add @crystalflow/react @crystalflow/core @crystalflow/types reflect-metadata
     ```
   </Tab>
 </Tabs>
@@ -67,17 +67,17 @@ description: "Install ReactFlo packages for visual builder or core-only use"
 <Tabs>
   <Tab title="npm">
     ```bash
-    npm install @reactflo/core @reactflo/types reflect-metadata
+    npm install @crystalflow/core @crystalflow/types reflect-metadata
     ```
   </Tab>
   <Tab title="pnpm">
     ```bash
-    pnpm add @reactflo/core @reactflo/types reflect-metadata
+    pnpm add @crystalflow/core @crystalflow/types reflect-metadata
     ```
   </Tab>
   <Tab title="yarn">
     ```bash
-    yarn add @reactflo/core @reactflo/types reflect-metadata
+    yarn add @crystalflow/core @crystalflow/types reflect-metadata
     ```
   </Tab>
 </Tabs>
@@ -88,7 +88,7 @@ description: "Install ReactFlo packages for visual builder or core-only use"
 
 **Required for both paths.**
 
-ReactFlo requires specific TypeScript compiler options. Update your `tsconfig.json`:
+CrystalFlow requires specific TypeScript compiler options. Update your `tsconfig.json`:
 
 ```json tsconfig.json
 {
@@ -118,13 +118,13 @@ Add this import at the very top of your application entry point:
 
 ```typescript main.ts
 import 'reflect-metadata';
-import { Node, defineNode } from '@reactflo/core';
+import { Node, defineNode } from '@crystalflow/core';
 
 // Rest of your code...
 ```
 
 <Warning>
-  This import **must** come before any other ReactFlo imports to ensure decorators work correctly.
+  This import **must** come before any other CrystalFlow imports to ensure decorators work correctly.
 </Warning>
 
 ## Verify Installation
@@ -133,7 +133,7 @@ Create a simple test to verify everything is working:
 
 ```typescript test.ts
 import 'reflect-metadata';
-import { Node, defineNode, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'test.hello',
@@ -152,7 +152,7 @@ class HelloNode extends Node {
   }
 }
 
-console.log('ReactFlo installed successfully!');
+console.log('CrystalFlow installed successfully!');
 ```
 
 Run the test:
@@ -161,7 +161,7 @@ Run the test:
 npx tsx test.ts
 ```
 
-If you see "ReactFlo installed successfully!", you're ready to go!
+If you see "CrystalFlow installed successfully!", you're ready to go!
 
 ## Next Steps
 

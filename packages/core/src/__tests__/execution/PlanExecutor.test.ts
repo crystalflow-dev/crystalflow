@@ -15,7 +15,7 @@ import {
   NodeExecutionStep,
   ConditionalStep,
   IConditionalNode,
-} from '@reactflo/types';
+} from '@crystalflow/types';
 
 // Test nodes
 @defineNode({

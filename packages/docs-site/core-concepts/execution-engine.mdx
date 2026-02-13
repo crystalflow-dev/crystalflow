@@ -1,13 +1,13 @@
 ---
 title: "Execution Engine"
-description: "Understanding how ReactFlo executes workflows"
+description: "Understanding how CrystalFlow executes workflows"
 ---
 
 The **Execution Engine** is responsible for running workflows, managing node execution, propagating data, and handling errors.
 
 ## Overview
 
-ReactFlo's execution engine provides:
+CrystalFlow's execution engine provides:
 
 <CardGroup cols={2}>
   <Card title="Plan-Based Execution" icon="diagram-project">
@@ -32,7 +32,7 @@ ReactFlo's execution engine provides:
 The `Executor` class orchestrates workflow execution:
 
 ```typescript
-import { Executor } from '@reactflo/core';
+import { Executor } from '@crystalflow/core';
 
 const executor = new Executor();
 const result = await executor.execute(workflow);
@@ -62,7 +62,7 @@ const result = await executor.execute(workflow, {
 
 ## Execution Plan Architecture
 
-ReactFlo uses a **plan-based execution architecture** that enables advanced control flow patterns:
+CrystalFlow uses a **plan-based execution architecture** that enables advanced control flow patterns:
 
 ### How It Works
 
@@ -106,7 +106,7 @@ The execution plan consists of different step types:
   while supporting advanced control flow patterns like conditionals and future loop support.
 </Note>
 
-For a deep dive into the architecture, see the [execution-plan-architecture.md](https://github.com/Fladeed/reactflo/blob/main/docs/execution-plan-architecture.md) document.
+For a deep dive into the architecture, see the [execution-plan-architecture.md](https://github.com/Fladeed/crystalflow/blob/main/docs/execution-plan-architecture.md) document.
 
 ## Execution Flow
 
@@ -324,7 +324,7 @@ The execution engine provides robust error handling:
 ### Node Execution Errors
 
 ```typescript
-import { NodeExecutionError } from '@reactflo/core';
+import { NodeExecutionError } from '@crystalflow/core';
 
 try {
   const result = await executor.execute(workflow);
@@ -341,7 +341,7 @@ try {
 ### Validation Errors
 
 ```typescript
-import { ValidationError } from '@reactflo/core';
+import { ValidationError } from '@crystalflow/core';
 
 try {
   const result = await executor.execute(workflow);
@@ -355,7 +355,7 @@ try {
 ### Timeout Errors
 
 ```typescript
-import { TimeoutError } from '@reactflo/core';
+import { TimeoutError } from '@crystalflow/core';
 
 try {
   const result = await executor.execute(workflow, { timeout: 5000 });
@@ -513,7 +513,7 @@ result.nodeResults.forEach((nodeResult, nodeId) => {
 ## Example: Complete Execution
 
 ```typescript
-import { Executor, CancellationReason } from '@reactflo/core';
+import { Executor, CancellationReason } from '@crystalflow/core';
 
 async function runWorkflow(workflow) {
   const executor = new Executor();

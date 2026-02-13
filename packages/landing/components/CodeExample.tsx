@@ -30,7 +30,7 @@ class AddNode extends Node {
   }
 }`;
 
-  const uiCode = `import { WorkflowBuilder } from '@reactflo/react';
+  const uiCode = `import { WorkflowBuilder } from '@crystalflow/react';
 
 function MyApp() {
   return (

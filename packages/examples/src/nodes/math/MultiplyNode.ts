@@ -1,4 +1,4 @@
-import { defineNode, Input, Output, Node } from '@reactflo/core';
+import { defineNode, Input, Output, Node } from '@crystalflow/core';
 
 /**
  * Multiply Numbers Node

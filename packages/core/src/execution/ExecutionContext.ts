@@ -5,7 +5,7 @@ import {
   ExecutionStatus,
   NodeExecutionResult,
   CancellationReason,
-} from '@reactflo/types';
+} from '@crystalflow/types';
 import { ExecutionPlan } from './ExecutionPlan';
 
 /**

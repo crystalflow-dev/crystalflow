@@ -1,5 +1,5 @@
 import { Node } from '../node/Node';
-import { ConnectionData, ValidationResult, ValidationError } from '@reactflo/types';
+import { ConnectionData, ValidationResult, ValidationError } from '@crystalflow/types';
 
 /**
  * Connection represents a data link between two nodes in a workflow.

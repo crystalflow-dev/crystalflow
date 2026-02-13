@@ -1,5 +1,5 @@
 import { ExecutionContext } from '../../execution/ExecutionContext';
-import { ExecutionStatus, NodeState, CancellationReason } from '@reactflo/types';
+import { ExecutionStatus, NodeState, CancellationReason } from '@crystalflow/types';
 
 describe('ExecutionContext', () => {
   let context: ExecutionContext;

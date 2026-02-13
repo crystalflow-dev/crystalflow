@@ -34,7 +34,7 @@ import {
   ConditionalStep,
   LoopStep,
   ParallelStep,
-} from '@reactflo/types';
+} from '@crystalflow/types';
 
 /**
  * Serialized representation of an execution plan

@@ -1,7 +1,7 @@
 {
-  "name": "@reactflo/types",
+  "name": "@crystalflow/types",
   "version": "0.1.0",
-  "description": "TypeScript type definitions for ReactFlo",
+  "description": "TypeScript type definitions for CrystalFlow",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -16,9 +16,9 @@
   "keywords": [
     "types",
     "typescript",
-    "reactflo"
+    "crystalflow"
   ],
-  "author": "ReactFlo Team",
+  "author": "CrystalFlow Team",
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.3.0"

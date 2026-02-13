@@ -9,7 +9,7 @@ import {
   ValidationError,
   ExecutionOptions,
   ExecutionResult,
-} from '@reactflo/types';
+} from '@crystalflow/types';
 import { Executor } from '../execution/Executor';
 
 /**

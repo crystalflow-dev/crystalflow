@@ -3,7 +3,7 @@ title: "Components"
 description: "Individual React components API reference"
 ---
 
-ReactFlo provides individual components that can be composed to build custom workflow UIs.
+CrystalFlow provides individual components that can be composed to build custom workflow UIs.
 
 ## NodePalette
 
@@ -34,7 +34,7 @@ function NodePalette(props: NodePaletteProps): JSX.Element;
 **Example:**
 
 ```tsx
-import { NodePalette } from '@reactflo/react';
+import { NodePalette } from '@crystalflow/react';
 import { AddNode, MultiplyNode } from './nodes';
 
 <NodePalette
@@ -70,7 +70,7 @@ function PropertyPanel(props: PropertyPanelProps): JSX.Element;
 **Example:**
 
 ```tsx
-import { PropertyPanel } from '@reactflo/react';
+import { PropertyPanel } from '@crystalflow/react';
 
 <PropertyPanel
   selectedNode={selectedNode}
@@ -108,7 +108,7 @@ function WorkflowCanvas(props: WorkflowCanvasProps): JSX.Element;
 **Example:**
 
 ```tsx
-import { WorkflowCanvas } from '@reactflo/react';
+import { WorkflowCanvas } from '@crystalflow/react';
 
 <WorkflowCanvas
   workflow={workflow}
@@ -157,7 +157,7 @@ function Toolbar(props: ToolbarProps): JSX.Element;
 **Example:**
 
 ```tsx
-import { Toolbar } from '@reactflo/react';
+import { Toolbar } from '@crystalflow/react';
 
 <Toolbar
   onExecute={handleExecute}
@@ -201,7 +201,7 @@ Component showing workflow execution progress.
 </Warning>
 
 ```tsx
-import { ExecutionProgress } from '@reactflo/react';
+import { ExecutionProgress } from '@crystalflow/react';
 
 <ExecutionProgress
   isExecuting={isExecuting}
@@ -221,7 +221,7 @@ Component for displaying execution errors.
 </Warning>
 
 ```tsx
-import { ErrorDisplay } from '@reactflo/react';
+import { ErrorDisplay } from '@crystalflow/react';
 
 <ErrorDisplay error={error} onDismiss={() => setError(null)} />
 ```
@@ -239,7 +239,7 @@ import {
   Toolbar,
   useWorkflow,
   useExecution
-} from '@reactflo/react';
+} from '@crystalflow/react';
 import { AddNode, MultiplyNode, DisplayNode } from './nodes';
 
 function CustomWorkflowUI() {

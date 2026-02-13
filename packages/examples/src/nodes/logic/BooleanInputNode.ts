@@ -1,4 +1,4 @@
-import { defineNode, Output, Node, Property } from '@reactflo/core';
+import { defineNode, Output, Node, Property } from '@crystalflow/core';
 
 /**
  * Manual boolean input node for testing

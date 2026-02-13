@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { defineNode, Input, Output } from '../node/decorators';
 import { Node } from '../node/Node';
-import { NodeMetadata, PortDefinition } from '@reactflo/types';
+import { NodeMetadata, PortDefinition } from '@crystalflow/types';
 
 describe('Decorators', () => {
   describe('@defineNode', () => {

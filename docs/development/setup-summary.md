@@ -1,4 +1,4 @@
-# ReactFlo - Project Initialization Summary
+# CrystalFlow - Project Initialization Summary
 
 ## ✅ What Has Been Created
 
@@ -23,7 +23,7 @@
 
 ### 📦 Package Structure
 
-#### @reactflo/core
+#### @crystalflow/core
 
 - `packages/core/package.json`
 - `packages/core/tsconfig.json`
@@ -31,7 +31,7 @@
 - `packages/core/README.md`
 - `packages/core/src/index.ts` - Main entry point with exports
 
-#### @reactflo/types
+#### @crystalflow/types
 
 - `packages/types/package.json`
 - `packages/types/tsconfig.json`
@@ -105,7 +105,7 @@
 
 ### Phase 3: React Components (After Core)
 
-1. **Create @reactflo/react package**
+1. **Create @crystalflow/react package**
    ```
    packages/react/
    ├── src/
@@ -119,7 +119,7 @@
 
 ### Phase 4: CLI Tools
 
-1. **Create @reactflo/cli package**
+1. **Create @crystalflow/cli package**
    ```
    packages/cli/
    ├── src/
@@ -188,18 +188,18 @@ npm run typecheck       # Type check all packages
 ```
 ┌─────────────────────────────────────────────────┐
 │          User Applications                      │
-│  (Developers using ReactFlo in their apps)      │
+│  (Developers using CrystalFlow in their apps)      │
 └─────────────────────────────────────────────────┘
                      │
                      ↓
 ┌─────────────────────────────────────────────────┐
-│        @reactflo/react                          │
+│        @crystalflow/react                          │
 │  (Visual workflow builder components)           │
 └─────────────────────────────────────────────────┘
                      │
                      ↓
 ┌─────────────────────────────────────────────────┐
-│         @reactflo/core                          │
+│         @crystalflow/core                          │
 │  (Workflow engine & node system)                │
 │  ┌──────────────┬──────────────┬──────────────┐│
 │  │ Node System  │  Workflow    │  Execution   ││
@@ -209,14 +209,14 @@ npm run typecheck       # Type check all packages
                      │
                      ↓
 ┌─────────────────────────────────────────────────┐
-│        @reactflo/types                          │
+│        @crystalflow/types                          │
 │  (Shared TypeScript type definitions)           │
 └─────────────────────────────────────────────────┘
 ```
 
 ## 🎯 Key Design Principles
 
-1. **Zero Dependencies** - @reactflo/core has no external dependencies
+1. **Zero Dependencies** - @crystalflow/core has no external dependencies
 2. **Type Safety** - Full TypeScript support with strict typing
 3. **Decorator-Based** - Simple, declarative API using decorators
 4. **Event-Driven** - Extensible through event system
@@ -239,4 +239,4 @@ The foundation is in place. You can now start implementing the core functionalit
 3. Build the workflow engine (`packages/core/src/workflow/Workflow.ts`)
 4. Create the executor (`packages/core/src/execution/Executor.ts`)
 
-Good luck building ReactFlo! 🚀
+Good luck building CrystalFlow! 🚀

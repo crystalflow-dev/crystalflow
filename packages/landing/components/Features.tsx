@@ -95,7 +95,7 @@ export default function Features() {
           <p className="text-base sm:text-lg md:text-xl text-light-grey max-w-2xl mx-auto px-4">
             Whether you're building AI agent platforms, no-code tools, or data pipelines—
             <br className="hidden sm:block" />
-            ReactFlo handles the complexity so you can ship faster.
+            CrystalFlow handles the complexity so you can ship faster.
           </p>
         </motion.div>
 

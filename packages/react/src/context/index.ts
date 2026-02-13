@@ -1,5 +1,5 @@
 /**
- * React Context providers for ReactFlo
+ * React Context providers for CrystalFlow
  */
 
 export { WorkflowProvider, useWorkflowContext } from './WorkflowContext';

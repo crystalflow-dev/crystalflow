@@ -65,7 +65,7 @@ function WorkflowBuilder(props: WorkflowBuilderProps): JSX.Element;
 
 ```tsx
 import React from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { AddNode, MultiplyNode, DisplayNode } from './nodes';
 
 function App() {
@@ -92,7 +92,7 @@ function App() {
 ## With Initial Workflow
 
 ```tsx
-import { Workflow } from '@reactflo/core';
+import { Workflow } from '@crystalflow/core';
 
 const initialWorkflow = new Workflow('my-workflow', 'My Workflow');
 // Add nodes and connections...
@@ -229,8 +229,8 @@ The WorkflowBuilder uses CSS modules and can be customized:
 
 ```tsx
 import React, { useState, useCallback } from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
-import { Workflow, ExecutionResult } from '@reactflo/core';
+import { WorkflowBuilder } from '@crystalflow/react';
+import { Workflow, ExecutionResult } from '@crystalflow/core';
 import {
   NumberInputNode,
   AddNode,

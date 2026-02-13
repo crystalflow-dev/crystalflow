@@ -1,12 +1,12 @@
 ---
 title: "Core-Only Quick Start"
-description: "Use ReactFlo core package for backend workflows in 5 minutes"
+description: "Use CrystalFlow core package for backend workflows in 5 minutes"
 ---
 
-Get up and running with ReactFlo's core package for backend workflows, automation, and CLI tools.
+Get up and running with CrystalFlow's core package for backend workflows, automation, and CLI tools.
 
 <Info>
-  This guide is for using **@reactflo/core only** (no UI). For visual workflow builders with React, see [Visual Builder Quick Start](/getting-started/visual-builder-quickstart).
+  This guide is for using **@crystalflow/core only** (no UI). For visual workflow builders with React, see [Visual Builder Quick Start](/getting-started/visual-builder-quickstart).
 </Info>
 
 ## When to Use Core-Only
@@ -23,7 +23,7 @@ Let's create a simple math node that adds two numbers:
 
 ```typescript AddNode.ts
 import 'reflect-metadata';
-import { Node, defineNode, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'math.add',
@@ -61,7 +61,7 @@ export default AddNode;
 Before using nodes, register them with the NodeRegistry:
 
 ```typescript registry.ts
-import { NodeRegistry } from '@reactflo/core';
+import { NodeRegistry } from '@crystalflow/core';
 import AddNode from './AddNode';
 
 const registry = NodeRegistry.getInstance();
@@ -75,7 +75,7 @@ export default registry;
 Now create a workflow and add nodes:
 
 ```typescript workflow.ts
-import { Workflow } from '@reactflo/core';
+import { Workflow } from '@crystalflow/core';
 import './registry'; // Ensure nodes are registered
 import AddNode from './AddNode';
 
@@ -103,7 +103,7 @@ console.log('Workflow created successfully!');
 Execute the workflow and get results:
 
 ```typescript execute.ts
-import { Executor } from '@reactflo/core';
+import { Executor } from '@crystalflow/core';
 import workflow from './workflow';
 
 const executor = new Executor();
@@ -125,7 +125,7 @@ console.log('Results:', result.nodeResults);
 Save your workflow as JSON:
 
 ```typescript serialize.ts
-import { serializeWorkflow } from '@reactflo/core';
+import { serializeWorkflow } from '@crystalflow/core';
 import workflow from './workflow';
 
 // Convert workflow to JSON
@@ -144,7 +144,7 @@ Here's everything together:
 
 ```typescript index.ts
 import 'reflect-metadata';
-import { Node, defineNode, Input, Output, Workflow, Executor, NodeRegistry } from '@reactflo/core';
+import { Node, defineNode, Input, Output, Workflow, Executor, NodeRegistry } from '@crystalflow/core';
 
 // 1. Define a node
 @defineNode({
@@ -186,11 +186,11 @@ executor.execute(workflow).then(result => {
 
 ## With React UI
 
-If you're using `@reactflo/react`, you can create a visual workflow builder:
+If you're using `@crystalflow/react`, you can create a visual workflow builder:
 
 ```tsx App.tsx
 import React from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import AddNode from './AddNode';
 
 function App() {

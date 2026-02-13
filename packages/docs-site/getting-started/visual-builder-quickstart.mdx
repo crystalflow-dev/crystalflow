@@ -3,7 +3,7 @@ title: "Visual Builder Quick Start"
 description: "Build your first visual workflow in 5 minutes"
 ---
 
-Get started with ReactFlo's visual workflow builder in 5 minutes.
+Get started with CrystalFlow's visual workflow builder in 5 minutes.
 
 <Info>
   This guide is for building **visual workflow applications** with React. For backend-only workflows, see [Core-Only Quick Start](/getting-started/core-only-quickstart).
@@ -19,15 +19,15 @@ Get started with ReactFlo's visual workflow builder in 5 minutes.
 
 <CodeGroup>
 ```bash npm
-npm install @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+npm install @crystalflow/react @crystalflow/core @crystalflow/types reflect-metadata
 ```
 
 ```bash pnpm
-pnpm add @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+pnpm add @crystalflow/react @crystalflow/core @crystalflow/types reflect-metadata
 ```
 
 ```bash yarn
-yarn add @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+yarn add @crystalflow/react @crystalflow/core @crystalflow/types reflect-metadata
 ```
 </CodeGroup>
 
@@ -51,7 +51,7 @@ Add to your `tsconfig.json`:
 Create a few simple nodes:
 
 ```typescript src/nodes/AddNode.ts
-import { Node, defineNode, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'math.add',
@@ -75,7 +75,7 @@ export class AddNode extends Node {
 ```
 
 ```typescript src/nodes/NumberInputNode.ts
-import { Node, defineNode, Property, Output } from '@reactflo/core';
+import { Node, defineNode, Property, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'input.number',
@@ -100,7 +100,7 @@ export class NumberInputNode extends Node {
 ```
 
 ```typescript src/nodes/DisplayNode.ts
-import { Node, defineNode, Input } from '@reactflo/core';
+import { Node, defineNode, Input } from '@crystalflow/core';
 
 @defineNode({
   type: 'output.display',
@@ -128,7 +128,7 @@ export { DisplayNode } from './DisplayNode';
 ```tsx src/App.tsx
 import React from 'react';
 import 'reflect-metadata';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { NumberInputNode, AddNode, DisplayNode } from './nodes';
 import 'reactflow/dist/style.css';
 

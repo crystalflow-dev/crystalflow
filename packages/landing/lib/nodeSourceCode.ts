@@ -3,7 +3,7 @@
  * These are manually copied to work with Next.js build
  */
 
-export const MockAPINodeCode = `import { Node, Output, Property, defineNode } from '@reactflo/core';
+export const MockAPINodeCode = `import { Node, Output, Property, defineNode } from '@crystalflow/core';
 
 /**
  * Mock API Node - Simulates an API response with user data
@@ -58,7 +58,7 @@ export class MockAPINode extends Node {
         status: 200,
         data: {
           id: 101,
-          title: 'Getting Started with ReactFlo',
+          title: 'Getting Started with CrystalFlow',
           content: 'Build visual workflows with ease...',
           author: 'John Doe',
           likes: 245,
@@ -81,7 +81,7 @@ export class MockAPINode extends Node {
   }
 }`;
 
-export const ExtractFieldNodeCode = `import { Node, Input, Output, Property, defineNode } from '@reactflo/core';
+export const ExtractFieldNodeCode = `import { Node, Input, Output, Property, defineNode } from '@crystalflow/core';
 
 /**
  * Extract Field Node - Extracts a specific field from a JSON object
@@ -130,7 +130,7 @@ export class ExtractFieldNode extends Node {
   }
 }`;
 
-export const FormatTextNodeCode = `import { Node, Input, Output, Property, defineNode } from '@reactflo/core';
+export const FormatTextNodeCode = `import { Node, Input, Output, Property, defineNode } from '@crystalflow/core';
 
 /**
  * Format Text Node - Formats text with a custom template
@@ -172,7 +172,7 @@ export class FormatTextNode extends Node {
   }
 }`;
 
-export const DisplayNodeCode = `import { defineNode, Input, Node } from '@reactflo/core';
+export const DisplayNodeCode = `import { defineNode, Input, Node } from '@crystalflow/core';
 
 /**
  * Display Result Node

@@ -1,10 +1,10 @@
-# ReactFlo Brand Guidelines
+# CrystalFlow Brand Guidelines
 
 _Version 1.0 - January 2026_
 
 ## 🎯 Brand Overview
 
-**ReactFlo** is a declarative workflow builder framework that empowers developers to create custom workflow applications using TypeScript decorators, React Flow for UI, and a complete execution engine with JSON serialization.
+**CrystalFlow** is a declarative workflow builder framework that empowers developers to create custom workflow applications using TypeScript decorators, React Flow for UI, and a complete execution engine with JSON serialization.
 
 **Core Principle:** _"We build the how, you focus on the what."_
 
@@ -16,7 +16,7 @@ _Version 1.0 - January 2026_
 
 ### Primary Logo
 
-The ReactFlo logo consists of a connected node network pattern representing workflow connections and data flow.
+The CrystalFlow logo consists of a connected node network pattern representing workflow connections and data flow.
 
 **Logo Variants:**
 
@@ -51,13 +51,13 @@ Maintain a clear space around the logo equal to the height of one node circle (a
 
 ### Primary Colors
 
-**ReactFlo Blue**
+**CrystalFlow Blue**
 
 - Hex: `#2563eb`
 - RGB: 37, 99, 235
 - Usage: Primary brand color, CTAs, links, primary logo
 
-**ReactFlo Green**
+**CrystalFlow Green**
 
 - Hex: `#10b981`
 - RGB: 16, 185, 129
@@ -171,7 +171,7 @@ Code: 0.875rem (14px) - JetBrains Mono - 1.6 line height
 ### Key Messaging
 
 **Primary Value Prop:**
-_"Build custom workflow applications with the power of TypeScript decorators and React Flow - focus on your business logic while ReactFlo handles the execution."_
+_"Build custom workflow applications with the power of TypeScript decorators and React Flow - focus on your business logic while CrystalFlow handles the execution."_
 
 **Key Benefits:**
 
@@ -189,15 +189,15 @@ _"Build custom workflow applications with the power of TypeScript decorators and
 
 **Header Style:**
 
-- ReactFlo logo + wordmark on left
-- Navigation with ReactFlo Blue links
+- CrystalFlow logo + wordmark on left
+- Navigation with CrystalFlow Blue links
 - Clean, minimal design with lots of whitespace
 
 **Content Style:**
 
 - Inter typography throughout
 - Code samples with syntax highlighting
-- ReactFlo Blue for primary actions
+- CrystalFlow Blue for primary actions
 - Consistent spacing using 8px grid
 
 ### GitHub & Social Media
@@ -211,14 +211,14 @@ _"Build custom workflow applications with the power of TypeScript decorators and
 **Social Media Profiles:**
 
 - Logo as profile picture
-- ReactFlo Blue in cover images
+- CrystalFlow Blue in cover images
 - Consistent bio: "Declarative workflow builder for React developers"
 
 ### Marketing Materials
 
 **Presentations:**
 
-- Dark theme with ReactFlo Blue accents
+- Dark theme with CrystalFlow Blue accents
 - Node network patterns as backgrounds
 - Consistent typography scale
 
@@ -226,7 +226,7 @@ _"Build custom workflow applications with the power of TypeScript decorators and
 
 - Hero images with node patterns
 - Code samples with proper syntax highlighting
-- ReactFlo brand colors for emphasis
+- CrystalFlow brand colors for emphasis
 
 ---
 
@@ -237,14 +237,14 @@ _"Build custom workflow applications with the power of TypeScript decorators and
 ```css
 :root {
   /* Colors */
-  --reactflo-blue: #2563eb;
-  --reactflo-green: #10b981;
-  --reactflo-gray: #6b7280;
-  --reactflo-dark: #374151;
-  --reactflo-light: #f9fafb;
-  --reactflo-red: #ef4444;
-  --reactflo-orange: #f59e0b;
-  --reactflo-purple: #8b5cf6;
+  --crystalflow-blue: #2563eb;
+  --crystalflow-green: #10b981;
+  --crystalflow-gray: #6b7280;
+  --crystalflow-dark: #374151;
+  --crystalflow-light: #f9fafb;
+  --crystalflow-red: #ef4444;
+  --crystalflow-orange: #f59e0b;
+  --crystalflow-purple: #8b5cf6;
 
   /* Typography */
   --font-sans: 'Inter', system-ui, sans-serif;
@@ -268,7 +268,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        reactflo: {
+        crystalflow: {
           blue: '#2563eb',
           green: '#10b981',
           gray: '#6b7280',
@@ -294,10 +294,10 @@ module.exports = {
 
 ### Logo Files Needed
 
-- `reactflo-logo.svg` - Primary logo (vector)
+- `crystalflow-logo.svg` - Primary logo (vector)
 - `crystalflow-logo-blue.png` - Blue version (1024x1024)
-- `reactflo-logo-green.png` - Green version (1024x1024)
-- `reactflo-logo-mono.png` - Monochrome (1024x1024)
+- `crystalflow-logo-green.png` - Green version (1024x1024)
+- `crystalflow-logo-mono.png` - Monochrome (1024x1024)
 - `crystalflow-icon.svg` - Icon only (vector)
 - `favicon.ico` - Favicon (32x32, 16x16)
 
@@ -319,7 +319,7 @@ module.exports = {
 
 ## ✅ Brand Checklist
 
-Before publishing any ReactFlo content, verify:
+Before publishing any CrystalFlow content, verify:
 
 - [ ] Logo used correctly with proper clear space
 - [ ] Colors match brand palette exactly
@@ -338,10 +338,10 @@ Before publishing any ReactFlo content, verify:
 For questions about brand usage or to request additional assets:
 
 - **Team**: Fladeed
-- **Project**: ReactFlo
-- **Repository**: github.com/fladeed-org/reactflo
+- **Project**: CrystalFlow
+- **Repository**: github.com/fladeed-org/crystalflow
 - **Guidelines Version**: 1.0 (January 2026)
 
 ---
 
-_These guidelines ensure consistent ReactFlo branding across all touchpoints while maintaining the developer-first, declarative identity that makes ReactFlo unique in the workflow automation space._
+_These guidelines ensure consistent CrystalFlow branding across all touchpoints while maintaining the developer-first, declarative identity that makes CrystalFlow unique in the workflow automation space._

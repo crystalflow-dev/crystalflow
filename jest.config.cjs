@@ -33,9 +33,9 @@ module.exports = {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
   moduleNameMapper: {
-    '^@reactflo/core$': '<rootDir>/packages/core/src',
-    '^@reactflo/types$': '<rootDir>/packages/types/src',
-    '^@reactflo/react$': '<rootDir>/packages/react/src',
+    '^@crystalflow/core$': '<rootDir>/packages/core/src',
+    '^@crystalflow/types$': '<rootDir>/packages/types/src',
+    '^@crystalflow/react$': '<rootDir>/packages/react/src',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     // Mock cssInJs module that uses Vite-specific imports
     '^.*/styles/cssInJs$': '<rootDir>/packages/react/src/styles/__mocks__/cssInJs.ts',

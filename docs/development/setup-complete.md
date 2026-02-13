@@ -2,15 +2,15 @@
 
 ## What Changed
 
-Your ReactFlo monorepo now has proper watch-mode development that automatically reflects changes without clearing cache!
+Your CrystalFlow monorepo now has proper watch-mode development that automatically reflects changes without clearing cache!
 
 ### Configuration Updates
 
 1. **Removed Vite Source Aliases**
    - File: [`packages/examples/vite.config.ts`](packages/examples/vite.config.ts)
    - Removed `resolve.alias` that pointed to `src/` folders
-   - Added watch config to monitor `node_modules/@reactflo/*/dist`
-   - Excluded `@reactflo/*` packages from Vite's optimizeDeps
+   - Added watch config to monitor `node_modules/@crystalflow/*/dist`
+   - Excluded `@crystalflow/*` packages from Vite's optimizeDeps
 
 2. **Fixed Package Exports**
    - Files: `packages/core/package.json`, `packages/react/package.json`
@@ -38,9 +38,9 @@ npm run dev
 
 This single command:
 
-- ✅ Watches `@reactflo/types` and rebuilds on changes
-- ✅ Watches `@reactflo/core` and rebuilds on changes
-- ✅ Watches `@reactflo/react` and rebuilds on changes
+- ✅ Watches `@crystalflow/types` and rebuilds on changes
+- ✅ Watches `@crystalflow/core` and rebuilds on changes
+- ✅ Watches `@crystalflow/react` and rebuilds on changes
 - ✅ Starts Vite dev server for examples app
 - ✅ Auto-reloads browser when packages change
 
@@ -54,7 +54,7 @@ This single command:
 │                      ↓                                │
 │  TypeScript watch (tsc --watch) rebuilds dist/       │
 │                      ↓                                │
-│  Vite detects node_modules/@reactflo/core/dist       │
+│  Vite detects node_modules/@crystalflow/core/dist       │
 │  change                                               │
 │                      ↓                                │
 │  HMR updates browser automatically                    │

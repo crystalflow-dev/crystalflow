@@ -1,8 +1,8 @@
 /**
- * Execution error classes for ReactFlo execution engine
+ * Execution error classes for CrystalFlow execution engine
  */
 
-import { CancellationReason } from '@reactflo/types';
+import { CancellationReason } from '@crystalflow/types';
 
 /**
  * Base error class for execution-related errors

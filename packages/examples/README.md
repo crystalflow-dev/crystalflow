@@ -1,6 +1,6 @@
-# @reactflo/examples
+# @crystalflow/examples
 
-Example applications and demos showcasing ReactFlo workflow builder capabilities.
+Example applications and demos showcasing CrystalFlow workflow builder capabilities.
 
 ## Running Examples
 

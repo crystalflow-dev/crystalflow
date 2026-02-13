@@ -7,7 +7,7 @@ import { Workflow } from '../../workflow/Workflow';
 import { Node } from '../../node/Node';
 import { defineNode, Input, Output } from '../../node/decorators';
 import { NodeRegistry } from '../../node/NodeRegistry';
-import { ExecutionStatus } from '@reactflo/types';
+import { ExecutionStatus } from '@crystalflow/types';
 
 // Test nodes for integration tests
 @defineNode({

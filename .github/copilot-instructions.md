@@ -1,8 +1,8 @@
-# GitHub Copilot Instructions for ReactFlo
+# GitHub Copilot Instructions for CrystalFlow
 
 ## Project Overview
 
-ReactFlo is a declarative workflow builder framework that provides tools for creating custom workflow applications. It uses TypeScript decorators for node definitions, React Flow for the UI layer, and includes a complete execution engine with JSON serialization.
+CrystalFlow is a declarative workflow builder framework that provides tools for creating custom workflow applications. It uses TypeScript decorators for node definitions, React Flow for the UI layer, and includes a complete execution engine with JSON serialization.
 
 **Core Principle:** "We build the how, you focus on the what."
 
@@ -56,11 +56,11 @@ Once version 1.0.0 is published, semantic versioning and backward compatibility 
 ```
 User Applications (decorated nodes)
          ↓
-@reactflo/react (bridges decorators → React Flow)
+@crystalflow/react (bridges decorators → React Flow)
          ↓
 React Flow (canvas, rendering, UI primitives)
          ↓
-@reactflo/core (execution engine, validation)
+@crystalflow/core (execution engine, validation)
 ```
 
 ## Technology Stack
@@ -80,7 +80,7 @@ packages/
 ├── core/          # Node system, workflow engine, execution (zero dependencies)
 ├── types/         # Shared TypeScript type definitions
 ├── react/         # React components (depends on React Flow + Monaco)
-├── examples/      # Example applications demonstrating ReactFlo usage
+├── examples/      # Example applications demonstrating CrystalFlow usage
 ├── landing/       # Marketing/landing page (Next.js with conditional navigation)
 ├── docs-site/     # Official documentation (Mintlify)
 ├── cli/           # CLI tools (future)
@@ -304,7 +304,7 @@ The UI supports:
 ### Error Handling
 
 ```typescript
-import { ExecutionError, NodeExecutionError, ValidationError, TimeoutError } from '@reactflo/core';
+import { ExecutionError, NodeExecutionError, ValidationError, TimeoutError } from '@crystalflow/core';
 
 // Execution errors include context
 throw new NodeExecutionError(`Failed to execute node ${nodeId}`, {
@@ -350,10 +350,10 @@ npm run dev
 
 Development mode uses `concurrently` to run all TypeScript watch modes in parallel with the Vite dev server:
 
-- Watches `@reactflo/types` and rebuilds on changes (cyan output)
-- Watches `@reactflo/core` and rebuilds on changes (magenta output)
-- Watches `@reactflo/react` and rebuilds on changes (blue output)
-- Runs Vite dev server for `@reactflo/examples` (green output)
+- Watches `@crystalflow/types` and rebuilds on changes (cyan output)
+- Watches `@crystalflow/core` and rebuilds on changes (magenta output)
+- Watches `@crystalflow/react` and rebuilds on changes (blue output)
+- Runs Vite dev server for `@crystalflow/examples` (green output)
 
 Changes to any package are automatically compiled and hot-reloaded in the browser.
 
@@ -371,7 +371,7 @@ Changes to any package are automatically compiled and hot-reloaded in the browse
 
 - **Root tsconfig.json**: `moduleResolution: "bundler"` (changed from "node")
 - **Build configs**: Override with `moduleResolution: "node"` for library builds
-- **Vite config**: Watches `node_modules/@reactflo/*/dist` for hot-reload
+- **Vite config**: Watches `node_modules/@crystalflow/*/dist` for hot-reload
 - **No Vite aliases**: Examples consume built packages (production-like)
 - **Concurrently**: Color-coded output for easy debugging
 
@@ -381,7 +381,7 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 
 ## Package-Specific Guidelines
 
-### @reactflo/core
+### @crystalflow/core
 
 - **Zero external dependencies** (except reflect-metadata) - keep it lightweight
 - All exports must be in `src/index.ts`
@@ -391,13 +391,13 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 - Use index signature `[key: string]: unknown` for dynamic properties
 - Prefer `unknown` over `any` for type safety
 
-### @reactflo/types
+### @crystalflow/types
 
 - Pure type definitions only
 - No runtime code
 - Export all types from `src/index.ts`
 
-### @reactflo/react
+### @crystalflow/react
 
 - Use React 18+ features (hooks, concurrent mode)
 - Leverage React Flow - don't rebuild canvas
@@ -414,7 +414,7 @@ The root `tsconfig.json` was updated from `moduleResolution: "node"` to `moduleR
 
 #### 1. CSS Variables Only - Zero Hardcoded Values
 - ❌ **NEVER** use hardcoded colors: `#1e1e1e`, `rgba(0,0,0,0.5)`, `white`, `black`
-- ❌ **NEVER** use old CSS custom properties: `--reactflo-*` prefix is deprecated
+- ❌ **NEVER** use old CSS custom properties: `--crystalflow-*` prefix is deprecated
 - ✅ **ALWAYS** use theme variables from `src/styles/global.css`
 
 **Color Variables:**
@@ -573,7 +573,7 @@ When creating new components:
 ### Node Registration
 
 ```typescript
-import { NodeRegistry } from '@reactflo/core';
+import { NodeRegistry } from '@crystalflow/core';
 
 const registry = NodeRegistry.getInstance();
 registry.register(AddNode);
@@ -583,7 +583,7 @@ registry.register(MultiplyNode);
 ### Workflow Creation and Execution
 
 ```typescript
-import { Workflow, Executor } from '@reactflo/core';
+import { Workflow, Executor } from '@crystalflow/core';
 
 const workflow = new Workflow();
 workflow.addNode(AddNode, { position: { x: 100, y: 100 } });
@@ -606,7 +606,7 @@ const result = await executor.execute(workflow, options);
 ### Serialization
 
 ```typescript
-import { serializeWorkflow, deserializeWorkflow } from '@reactflo/core';
+import { serializeWorkflow, deserializeWorkflow } from '@crystalflow/core';
 
 // Export
 const json = serializeWorkflow(workflow.toJSON());
@@ -619,7 +619,7 @@ const workflow = Workflow.fromJSON(workflowData);
 ### React Component Usage
 
 ```tsx
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 
 <WorkflowBuilder
   nodes={[AddNode, MultiplyNode]}
@@ -680,7 +680,7 @@ describe('NodeRegistry', () => {
 
 1. **Type Everything** - Leverage TypeScript fully
 2. **Document Public APIs** - Use JSDoc comments
-3. **Keep Core Lightweight** - @reactflo/core has zero deps
+3. **Keep Core Lightweight** - @crystalflow/core has zero deps
 4. **Validate Inputs** - Check types and required fields
 5. **Use Decorators for Nodes** - Not for React components
 6. **Leverage React Flow** - Don't rebuild canvas features
@@ -708,7 +708,7 @@ test(executor): add async execution tests
 ## What NOT to Do
 
 ❌ Don't use default exports
-❌ Don't add dependencies to @reactflo/core
+❌ Don't add dependencies to @crystalflow/core
 ❌ Don't use decorators on React components
 ❌ Don't rebuild canvas/pan/zoom (use React Flow)
 ❌ Don't use `any` type without good reason
@@ -854,7 +854,7 @@ interface NodeExecutionResult {
 
 ### Cancellation System (ENHANCED - Phase 5 COMPLETE)
 
-ReactFlo provides comprehensive cancellation support:
+CrystalFlow provides comprehensive cancellation support:
 
 **Cancellation Mechanisms:**
 
@@ -1005,7 +1005,7 @@ The React package has been substantially refactored and improved with:
 5. Add connection validation visual feedback
 6. Create additional example workflows
 
-## Control Flow Epic (REACTFLO-50)
+## Control Flow Epic (CRYSTALFLOW-50)
 
 The Control Flow & Advanced Execution epic includes:
 
@@ -1026,7 +1026,7 @@ A future architectural enhancement to move workflow execution from client-side t
 ```
 ┌─────────────────────┐
 │   React Client      │
-│  (@reactflo/react)  │
+│  (@crystalflow/react)  │
 │  - Visual Builder   │
 │  - UI Components    │
 └──────────┬──────────┘
@@ -1034,7 +1034,7 @@ A future architectural enhancement to move workflow execution from client-side t
            │ REST API
 ┌──────────▼──────────┐
 │   API Server        │
-│ (@reactflo/server)  │
+│ (@crystalflow/server)  │
 │  - REST Endpoints   │
 │  - WebSocket/SSE    │
 │  - Auth & Security  │
@@ -1042,7 +1042,7 @@ A future architectural enhancement to move workflow execution from client-side t
            │
 ┌──────────▼──────────┐
 │  Execution Engine   │
-│  (@reactflo/core)   │
+│  (@crystalflow/core)   │
 │  - Workflow Engine  │
 │  - Node Execution   │
 └─────────────────────┘
@@ -1059,7 +1059,7 @@ A future architectural enhancement to move workflow execution from client-side t
 
 **Story 2: Server Package Foundation**
 
-- Create @reactflo/server package with Express/Fastify
+- Create @crystalflow/server package with Express/Fastify
 - Basic middleware setup (CORS, error handling, logging)
 - Environment configuration
 - Health check endpoints
@@ -1099,7 +1099,7 @@ A future architectural enhancement to move workflow execution from client-side t
 
 **Story 8: Client SDK Implementation**
 
-- Create @reactflo/client package with HTTP and WebSocket clients
+- Create @crystalflow/client package with HTTP and WebSocket clients
 - TypeScript types for all API responses
 - Retry logic with exponential backoff
 - Connection state management

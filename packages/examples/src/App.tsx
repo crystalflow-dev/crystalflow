@@ -129,7 +129,7 @@ const exampleInfo: Record<ExampleType, { title: string; content: React.ReactNode
     content: (
       <>
         <p>
-          This example demonstrates the extensive styling customization capabilities of ReactFlo.
+          This example demonstrates the extensive styling customization capabilities of CrystalFlow.
         </p>
         <h3>Customization Options:</h3>
         <ul>
@@ -168,7 +168,7 @@ function App() {
       <header className="app-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
           <div>
-            <h1>ReactFlo Examples</h1>
+            <h1>CrystalFlow Examples</h1>
             <p>Interactive workflow builder demonstrations</p>
           </div>
 

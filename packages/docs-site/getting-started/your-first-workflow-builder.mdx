@@ -46,10 +46,10 @@ cd my-workflow-app
 npm install
 ```
 
-## Step 2: Install ReactFlo
+## Step 2: Install CrystalFlow
 
 ```bash
-npm install @reactflo/react @reactflo/core @reactflo/types reflect-metadata
+npm install @crystalflow/react @crystalflow/core @crystalflow/types reflect-metadata
 npm install reactflow
 ```
 
@@ -95,7 +95,7 @@ Create a `src/nodes` directory for your workflow nodes.
 
 ```typescript src/nodes/NumberInputNode.ts
 import 'reflect-metadata';
-import { Node, defineNode, Property, Output } from '@reactflo/core';
+import { Node, defineNode, Property, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'input.number',
@@ -124,7 +124,7 @@ export class NumberInputNode extends Node {
 ### Math Nodes
 
 ```typescript src/nodes/MathNodes.ts
-import { Node, defineNode, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'math.add',
@@ -190,7 +190,7 @@ export class SubtractNode extends Node {
 ### Display Node
 
 ```typescript src/nodes/DisplayNode.ts
-import { Node, defineNode, Input } from '@reactflo/core';
+import { Node, defineNode, Input } from '@crystalflow/core';
 
 @defineNode({
   type: 'output.display',
@@ -218,13 +218,13 @@ export { DisplayNode } from './DisplayNode';
 
 ## Step 5: Create the Main App Component
 
-Now let's create the React component that uses ReactFlo's visual builder:
+Now let's create the React component that uses CrystalFlow's visual builder:
 
 ```tsx src/App.tsx
 import React, { useState } from 'react';
 import 'reflect-metadata';
-import { WorkflowBuilder } from '@reactflo/react';
-import { ExecutionResult } from '@reactflo/core';
+import { WorkflowBuilder } from '@crystalflow/react';
+import { ExecutionResult } from '@crystalflow/core';
 import {
   NumberInputNode,
   AddNode,

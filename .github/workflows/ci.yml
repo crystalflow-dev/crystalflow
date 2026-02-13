@@ -29,16 +29,16 @@ jobs:
         run: npm run lint
 
       - name: Build types package
-        run: npm run build --workspace=@reactflo/types
+        run: npm run build --workspace=@crystalflow/types
 
       - name: Build core package
-        run: npm run build --workspace=@reactflo/core
+        run: npm run build --workspace=@crystalflow/core
 
       - name: Build react package
-        run: npm run build --workspace=@reactflo/react
+        run: npm run build --workspace=@crystalflow/react
 
       - name: Build landing package
-        run: npm run build --workspace=@reactflo/landing
+        run: npm run build --workspace=@crystalflow/landing
 
       - name: Build docs-site
         run: |

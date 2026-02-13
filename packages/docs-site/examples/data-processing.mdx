@@ -19,7 +19,7 @@ We'll create nodes that:
 ### DataSourceNode
 
 ```typescript
-import { Node, defineNode, Property, Output } from '@reactflo/core';
+import { Node, defineNode, Property, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'data.source',
@@ -64,7 +64,7 @@ export class DataSourceNode extends Node {
 ### FilterNode
 
 ```typescript
-import { Node, defineNode, Input, Output, Property } from '@reactflo/core';
+import { Node, defineNode, Input, Output, Property } from '@crystalflow/core';
 
 @defineNode({
   type: 'data.filter',
@@ -128,7 +128,7 @@ export class FilterNode extends Node {
 ### MapNode
 
 ```typescript
-import { Node, defineNode, Input, Output, Property } from '@reactflo/core';
+import { Node, defineNode, Input, Output, Property } from '@crystalflow/core';
 
 @defineNode({
   type: 'data.map',
@@ -188,7 +188,7 @@ export class MapNode extends Node {
 ### AggregateNode
 
 ```typescript
-import { Node, defineNode, Input, Output, Property } from '@reactflo/core';
+import { Node, defineNode, Input, Output, Property } from '@crystalflow/core';
 
 @defineNode({
   type: 'data.aggregate',
@@ -245,7 +245,7 @@ export class AggregateNode extends Node {
 ### Filter and Sum Even Numbers
 
 ```typescript
-import { Workflow } from '@reactflo/core';
+import { Workflow } from '@crystalflow/core';
 import { DataSourceNode, FilterNode, AggregateNode, DisplayNode } from './nodes';
 
 const workflow = new Workflow('data-processing', 'Data Processing');
@@ -339,7 +339,7 @@ await workflow.execute();
 
 ```tsx
 import React, { useState } from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import {
   DataSourceNode,
   FilterNode,

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Setup script for ReactFlo development
+# Setup script for CrystalFlow development
 
 set -e
 
-echo "🚀 Setting up ReactFlo development environment..."
+echo "🚀 Setting up CrystalFlow development environment..."
 
 # Check Node version
 echo "📋 Checking Node.js version..."

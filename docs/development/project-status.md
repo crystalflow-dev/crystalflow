@@ -1,7 +1,7 @@
-# ReactFlo - Current Structure
+# CrystalFlow - Current Structure
 
 ```
-reactflo/
+crystalflow/
 │
 ├── 📄 README.md                      ✅ Main project documentation
 ├── 📄 PROJECT_STRUCTURE.md           ✅ Detailed structure guide
@@ -97,9 +97,9 @@ reactflo/
 - [x] Project documentation (README, Contributing, License)
 - [x] Build configuration (TypeScript, ESLint, Prettier, Jest)
 - [x] Monorepo setup with workspace configuration
-- [x] @reactflo/types package (fully implemented)
-- [x] @reactflo/core package structure
-- [x] @reactflo/react package structure (with React Flow integration)
+- [x] @crystalflow/types package (fully implemented)
+- [x] @crystalflow/core package structure
+- [x] @crystalflow/react package structure (with React Flow integration)
 - [x] Build and test scripts
 - [x] GitHub workflows (CI/CD)
 - [x] Getting started documentation
@@ -140,7 +140,7 @@ reactflo/
 - [x] Async event listener support
 - [x] Comprehensive test suite (243 tests passing)
 
-#### Phase 3.5: Control Flow & Advanced Execution (Epic REACTFLO-50) - NEXT
+#### Phase 3.5: Control Flow & Advanced Execution (Epic CRYSTALFLOW-50) - NEXT
 
 - [ ] `packages/core/src/execution/ConditionalExecutor.ts` - Branching support
 - [ ] `packages/core/src/execution/LoopExecutor.ts` - Loop execution
@@ -170,7 +170,7 @@ reactflo/
 1. **Run Setup**
 
    ```bash
-   cd /home/hamza-ben-yazid/Fladeed/reactflo
+   cd /home/hamza-ben-yazid/Fladeed/crystalflow
    ./scripts/setup.sh
    ```
 

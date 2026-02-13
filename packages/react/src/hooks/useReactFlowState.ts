@@ -9,8 +9,8 @@ import {
   addEdge,
   Connection,
 } from '@xyflow/react';
-import { PortDefinition } from '@reactflo/types';
-import { NodeConstructor } from '@reactflo/core';
+import { PortDefinition } from '@crystalflow/types';
+import { NodeConstructor } from '@crystalflow/core';
 
 /**
  * Hook for managing React Flow state (nodes, edges, selection)

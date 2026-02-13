@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Workflow, Node } from '@reactflo/core';
-import type { WorkflowData, ExecutionResult } from '@reactflo/types';
+import { Workflow, Node } from '@crystalflow/core';
+import type { WorkflowData, ExecutionResult } from '@crystalflow/types';
 
 /**
  * Workflow context state

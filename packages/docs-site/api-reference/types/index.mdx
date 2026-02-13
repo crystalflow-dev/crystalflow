@@ -3,12 +3,12 @@ title: "Types"
 description: "TypeScript type definitions reference"
 ---
 
-The `@reactflo/types` package contains all shared TypeScript type definitions.
+The `@crystalflow/types` package contains all shared TypeScript type definitions.
 
 ## Installation
 
 ```bash
-npm install @reactflo/types
+npm install @crystalflow/types
 ```
 
 ## Core Types
@@ -204,7 +204,7 @@ import {
   ExecutionResult,
   ExecutionOptions,
   CancellationReason
-} from '@reactflo/types';
+} from '@crystalflow/types';
 
 // Use in function signatures
 function executeWorkflow(
@@ -235,7 +235,7 @@ const metadata: NodeMetadata = {
 Utility type guards for runtime type checking:
 
 ```typescript
-import { isNodeExecutionResult, isExecutionResult } from '@reactflo/types';
+import { isNodeExecutionResult, isExecutionResult } from '@crystalflow/types';
 
 function processResult(result: unknown) {
   if (isExecutionResult(result)) {

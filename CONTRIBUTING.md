@@ -1,6 +1,6 @@
-# Contributing to ReactFlo
+# Contributing to CrystalFlow
 
-Thank you for your interest in contributing to ReactFlo! We welcome contributions from the community.
+Thank you for your interest in contributing to CrystalFlow! We welcome contributions from the community.
 
 ## Getting Started
 
@@ -20,7 +20,7 @@ Thank you for your interest in contributing to ReactFlo! We welcome contribution
 
 ## Project Structure
 
-ReactFlo is organized as a monorepo with multiple packages:
+CrystalFlow is organized as a monorepo with multiple packages:
 
 - `packages/core` - Core workflow engine
 - `packages/react` - React UI components
@@ -101,4 +101,4 @@ Be respectful and constructive in all interactions. We aim to foster a welcoming
 
 ## License
 
-By contributing to ReactFlo, you agree that your contributions will be licensed under the MIT License.
+By contributing to CrystalFlow, you agree that your contributions will be licensed under the MIT License.

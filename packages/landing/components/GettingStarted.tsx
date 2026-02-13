@@ -14,9 +14,9 @@ export default function GettingStarted() {
   const steps = [
     {
       number: '01',
-      title: 'Install ReactFlo',
-      description: 'Add ReactFlo to your project with npm or yarn',
-      code: 'npm install @reactflo/core @reactflo/react',
+      title: 'Install CrystalFlow',
+      description: 'Add CrystalFlow to your project with npm or yarn',
+      code: 'npm install @crystalflow/core @crystalflow/react',
     },
     {
       number: '02',
@@ -101,7 +101,7 @@ export default function GettingStarted() {
           className="text-center mt-16"
         >
           <Link
-            href="https://github.com/fladeed/reactflo"
+            href="https://github.com/fladeed/crystalflow"
             className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-lg font-semibold text-lg hover:bg-primary/80 transition-all duration-300 hover:shadow-[0_0_30px_rgba(42,65,255,0.5)]"
           >
             View Documentation

@@ -1,11 +1,11 @@
 /**
  * Styled Workflow Example
  *
- * Demonstrates the extensive styling customization capabilities of ReactFlo
+ * Demonstrates the extensive styling customization capabilities of CrystalFlow
  */
 
 import React from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { BackgroundVariant } from '@xyflow/react';
 import './StyledWorkflow.css';
 

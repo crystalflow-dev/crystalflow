@@ -1,5 +1,5 @@
 /**
- * Example nodes for ReactFlo demos
+ * Example nodes for CrystalFlow demos
  */
 
 // Input nodes

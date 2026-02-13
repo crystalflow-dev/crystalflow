@@ -1,9 +1,9 @@
 ---
 title: "Decorators"
-description: "Understanding ReactFlo's decorator system for defining nodes"
+description: "Understanding CrystalFlow's decorator system for defining nodes"
 ---
 
-ReactFlo uses **TypeScript decorators** to define nodes declaratively. Decorators provide metadata about nodes, inputs, outputs, and properties without cluttering your business logic.
+CrystalFlow uses **TypeScript decorators** to define nodes declaratively. Decorators provide metadata about nodes, inputs, outputs, and properties without cluttering your business logic.
 
 ## What are Decorators?
 
@@ -26,7 +26,7 @@ class AddNode extends Node {
 
 ## @defineNode
 
-The `@defineNode` decorator registers a node class with ReactFlo:
+The `@defineNode` decorator registers a node class with CrystalFlow:
 
 ```typescript
 @defineNode({
@@ -452,7 +452,7 @@ Here's a complete node using all decorators:
 
 ```typescript
 import 'reflect-metadata';
-import { Node, defineNode, Property, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Property, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'text.replace',
