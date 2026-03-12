@@ -16,11 +16,11 @@ export default defineConfig({
     allowedHosts: ['.ngrok-free.app'],
     watch: {
       // Watch the dist folders of local packages
-      ignored: ['!**/node_modules/@reactflo/**'],
+      ignored: ['!**/node_modules/@crystalflow/**'],
     },
   },
   optimizeDeps: {
-    exclude: ['@reactflo/core', '@reactflo/types', '@reactflo/react'],
+    exclude: ['@crystalflow/core', '@crystalflow/types', '@crystalflow/react'],
   },
   build: {
     cssMinify: 'lightningcss',

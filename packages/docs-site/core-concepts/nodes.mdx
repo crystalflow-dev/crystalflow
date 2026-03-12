@@ -1,9 +1,9 @@
 ---
 title: "Nodes"
-description: "Understanding the fundamental building blocks of ReactFlo workflows"
+description: "Understanding the fundamental building blocks of CrystalFlow workflows"
 ---
 
-Nodes are the fundamental building blocks of ReactFlo workflows. Each node represents a single operation or task in your workflow.
+Nodes are the fundamental building blocks of CrystalFlow workflows. Each node represents a single operation or task in your workflow.
 
 ## What is a Node?
 
@@ -17,7 +17,7 @@ A **Node** is a TypeScript class that:
 ## Anatomy of a Node
 
 ```typescript
-import { Node, defineNode, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'math.add',           // Unique identifier
@@ -133,7 +133,7 @@ result: string;
 Conditional nodes enable branching logic in workflows by implementing the `IConditionalNode` interface:
 
 ```typescript
-import { Node, defineNode, Input, Output, IConditionalNode } from '@reactflo/core';
+import { Node, defineNode, Input, Output, IConditionalNode } from '@crystalflow/core';
 
 @defineNode({
   type: 'flow.if',
@@ -220,7 +220,7 @@ class SwitchNode extends Node implements IConditionalNode {
 
 <CardGroup cols={2}>
   <Card title="Built-in Conditionals" icon="code-branch">
-    ReactFlo includes IfNode and SwitchNode for common branching patterns
+    CrystalFlow includes IfNode and SwitchNode for common branching patterns
   </Card>
   <Card title="Custom Conditionals" icon="wrench">
     Implement IConditionalNode to create custom branching logic
@@ -310,7 +310,7 @@ async execute() {
 
 ## Type Safety
 
-ReactFlo uses TypeScript for type safety:
+CrystalFlow uses TypeScript for type safety:
 
 ```typescript
 // Type-safe inputs

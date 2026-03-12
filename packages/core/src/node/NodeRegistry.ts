@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Node } from './Node';
-import { NodeType, NodeDefinition, NodeMetadata } from '@reactflo/types';
+import { NodeType, NodeDefinition, NodeMetadata } from '@crystalflow/types';
 
 /**
  * Type for a Node constructor

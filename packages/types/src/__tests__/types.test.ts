@@ -1,6 +1,6 @@
 import { WorkflowData, NodeData, ConnectionData } from '../index';
 
-describe('@reactflo/types', () => {
+describe('@crystalflow/types', () => {
   it('should export WorkflowData interface', () => {
     const workflow: WorkflowData = {
       id: 'test',

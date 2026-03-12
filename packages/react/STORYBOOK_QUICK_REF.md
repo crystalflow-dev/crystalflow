@@ -8,7 +8,7 @@ cd packages/react
 npm run storybook
 
 # From root
-npm run storybook --workspace=@reactflo/react
+npm run storybook --workspace=@crystalflow/react
 ```
 
 **URL:** http://localhost:6006/
@@ -267,8 +267,8 @@ export const HiddenStory: Story = {
 Storybook is configured with path aliases:
 
 ```typescript
-import { Node } from '@reactflo/core';
-import { NodeMetadata } from '@reactflo/types';
+import { Node } from '@crystalflow/core';
+import { NodeMetadata } from '@crystalflow/types';
 ```
 
 These resolve to the source files in sibling packages.

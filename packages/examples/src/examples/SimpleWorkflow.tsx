@@ -5,7 +5,7 @@
  * with custom nodes using decorators.
  */
 
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import {
   NumberInputNode,
   StringInputNode,

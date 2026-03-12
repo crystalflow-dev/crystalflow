@@ -1,13 +1,13 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "ReactFlo",
+  "name": "CrystalFlow",
   "colors": {
     "primary": "#3B82F6",
     "light": "#60A5FA",
     "dark": "#2563EB"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/crystalflow-favicon.svg",
   "navigation": {
     "tabs": [
       {
@@ -100,26 +100,26 @@
       "anchors": [
         {
           "anchor": "GitHub",
-          "href": "https://github.com/Fladeed/reactflo",
+          "href": "https://github.com/Fladeed/crystalflow",
           "icon": "github"
         },
         {
           "anchor": "Community",
-          "href": "https://github.com/Fladeed/reactflo/discussions",
+          "href": "https://github.com/Fladeed/crystalflow/discussions",
           "icon": "comments"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/crystalflow-logo-mono-light.svg",
+    "dark": "/logo/crystalflow-logo-mono-dark.svg"
   },
   "navbar": {
     "links": [
       {
         "label": "GitHub",
-        "href": "https://github.com/Fladeed/reactflo"
+        "href": "https://github.com/Fladeed/crystalflow"
       }
     ],
     "primary": {
@@ -133,8 +133,8 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/Fladeed/reactflo",
-      "twitter": "https://twitter.com/reactflo"
+      "github": "https://github.com/Fladeed/crystalflow",
+      "twitter": "https://twitter.com/crystalflow"
     }
   }
 }

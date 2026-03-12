@@ -1,6 +1,6 @@
-# @reactflo/react
+# @crystalflow/react
 
-React components for ReactFlo workflow builder, built on top of React Flow.
+React components for CrystalFlow workflow builder, built on top of React Flow.
 
 ## Overview
 
@@ -21,14 +21,14 @@ This package provides production-ready React components that bridge your decorat
 ## Installation
 
 ```bash
-npm install @reactflo/react @reactflo/core @reactflo/types react react-dom @xyflow/react
+npm install @crystalflow/react @crystalflow/core @crystalflow/types react react-dom @xyflow/react
 ```
 
 ## Quick Start
 
 ```tsx
 import React from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { AddNode, MultiplyNode } from './nodes';
 
 function App() {
@@ -108,7 +108,7 @@ src/
 Main component that orchestrates the entire workflow builder:
 
 ```tsx
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 
 <WorkflowBuilder
   // Node configuration
@@ -151,7 +151,7 @@ import { WorkflowBuilder } from '@reactflo/react';
 Pure React Flow rendering component (used internally by WorkflowBuilder):
 
 ```tsx
-import { WorkflowCanvas } from '@reactflo/react';
+import { WorkflowCanvas } from '@crystalflow/react';
 
 <WorkflowCanvas
   nodes={reactFlowNodes}
@@ -170,7 +170,7 @@ import { WorkflowCanvas } from '@reactflo/react';
 Displays available node types with category grouping and search:
 
 ```tsx
-import { NodePalette } from '@reactflo/react';
+import { NodePalette } from '@crystalflow/react';
 
 <NodePalette
   nodes={paletteItems}
@@ -192,7 +192,7 @@ import { NodePalette } from '@reactflo/react';
 Modern property inspector with @Property decorator support:
 
 ```tsx
-import { PropertyPanel } from '@reactflo/react';
+import { PropertyPanel } from '@crystalflow/react';
 
 <PropertyPanel
   selectedNodeId={nodeId}
@@ -216,7 +216,7 @@ import { PropertyPanel } from '@reactflo/react';
 Reusable panel with drag-to-resize functionality:
 
 ```tsx
-import { ResizablePanel } from '@reactflo/react';
+import { ResizablePanel } from '@crystalflow/react';
 
 <ResizablePanel
   minWidth={200}
@@ -242,7 +242,7 @@ import { ResizablePanel } from '@reactflo/react';
 Provides workflow action buttons:
 
 ```tsx
-import { Toolbar } from '@reactflo/react';
+import { Toolbar } from '@crystalflow/react';
 
 <Toolbar
   canExecute={true}
@@ -267,7 +267,7 @@ import { Toolbar } from '@reactflo/react';
 Provides theme to all child components with CSS variable injection:
 
 ```tsx
-import { ThemeProvider } from '@reactflo/react';
+import { ThemeProvider } from '@crystalflow/react';
 
 function App() {
   return (
@@ -281,7 +281,7 @@ function App() {
 #### Custom Theme
 
 ```tsx
-import { defaultTheme, type DefaultTheme } from '@reactflo/react';
+import { defaultTheme, type DefaultTheme } from '@crystalflow/react';
 
 const customTheme: Partial<DefaultTheme> = {
   colors: {
@@ -315,7 +315,7 @@ const customTheme: Partial<DefaultTheme> = {
 Centralized icon mapping using react-icons (Feather Icons):
 
 ```tsx
-import { categoryIcons, statusIcons, uiIcons } from '@reactflo/react';
+import { categoryIcons, statusIcons, uiIcons } from '@crystalflow/react';
 
 // Category icons
 const DataIcon = categoryIcons['Data Processing']; // FiDatabase
@@ -332,14 +332,14 @@ const SettingsIcon = uiIcons.settings; // FiSettings
 
 ### Hooks
 
-ReactFlo provides 7 focused hooks, each with a single responsibility:
+CrystalFlow provides 7 focused hooks, each with a single responsibility:
 
 #### useWorkflow
 
 Core workflow operations and state management:
 
 ```tsx
-import { useWorkflow } from '@reactflo/react';
+import { useWorkflow } from '@crystalflow/react';
 
 const {
   workflow,
@@ -359,7 +359,7 @@ const {
 React Flow state management (nodes, edges, selection):
 
 ```tsx
-import { useReactFlowState } from '@reactflo/react';
+import { useReactFlowState } from '@crystalflow/react';
 
 const {
   nodes,
@@ -378,7 +378,7 @@ const {
 Workflow execution logic:
 
 ```tsx
-import { useWorkflowExecution } from '@reactflo/react';
+import { useWorkflowExecution } from '@crystalflow/react';
 
 const {
   execute,
@@ -397,7 +397,7 @@ const {
 Save/load operations with error handling:
 
 ```tsx
-import { useWorkflowFileOperations } from '@reactflo/react';
+import { useWorkflowFileOperations } from '@crystalflow/react';
 
 const {
   saveWorkflow,
@@ -419,7 +419,7 @@ const { nodes, edges } = await loadWorkflow();
 Drag & drop logic and node creation:
 
 ```tsx
-import { useNodePalette } from '@reactflo/react';
+import { useNodePalette } from '@crystalflow/react';
 
 const {
   handleNodeDragStart,
@@ -434,7 +434,7 @@ const {
 Access to registered node types:
 
 ```tsx
-import { useNodeRegistry } from '@reactflo/react';
+import { useNodeRegistry } from '@crystalflow/react';
 
 const {
   registry,
@@ -450,7 +450,7 @@ const {
 Workflow execution with event handlers:
 
 ```tsx
-import { useExecution } from '@reactflo/react';
+import { useExecution } from '@crystalflow/react';
 
 const {
   execute,
@@ -573,7 +573,7 @@ Components (UI Layer)
     ↓
 Hooks (Business Logic)
     ↓
-@reactflo/core (Execution Engine)
+@crystalflow/core (Execution Engine)
     ↓
 Workflow Execution & Results
 ```
@@ -582,12 +582,12 @@ Workflow Execution & Results
 1. User drags node from NodePalette → `useNodePalette` hook
 2. Node dropped on canvas → `useReactFlowState` updates state
 3. User clicks Execute → `useWorkflowExecution` hook
-4. Workflow executed → `@reactflo/core` Executor
+4. Workflow executed → `@crystalflow/core` Executor
 5. Results displayed → Components update
 
 ## Property System
 
-ReactFlo distinguishes between configuration and data flow:
+CrystalFlow distinguishes between configuration and data flow:
 
 - **@Property** = Static configuration values (shown in properties panel)
 - **@Input** = Dynamic data flow connections (connected via handles)
@@ -668,14 +668,14 @@ class HttpRequestNode extends Node {
 - [React 18+](https://react.dev/) - UI library
 - [React Flow v12](https://reactflow.dev/) - Canvas and node rendering
 - [react-icons](https://react-icons.github.io/react-icons/) - Icon system (Feather Icons)
-- [@reactflo/core](../core) - Workflow execution engine
-- [@reactflo/types](../types) - Shared type definitions
+- [@crystalflow/core](../core) - Workflow execution engine
+- [@crystalflow/types](../types) - Shared type definitions
 - [TypeScript 5.3+](https://www.typescriptlang.org/) - Type safety
 - [Vite 7.3+](https://vitejs.dev/) - Build tool
 
 ## Examples
 
-See the [@reactflo/examples](../examples) package for:
+See the [@crystalflow/examples](../examples) package for:
 - Complete workflow with property system
 - Input nodes (NumberInput, StringInput, ConfigDemoNode)
 - Math nodes (Add, Multiply, Subtract)
@@ -688,4 +688,4 @@ MIT
 
 ---
 
-**Note:** This package is part of the ReactFlo monorepo. For full documentation, see the [main README](../../README.md) and [documentation site](../docs-site).
+**Note:** This package is part of the CrystalFlow monorepo. For full documentation, see the [main README](../../README.md) and [documentation site](../docs-site).

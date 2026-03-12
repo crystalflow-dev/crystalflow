@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { Node as ReactFlowNode } from '@xyflow/react';
-import { NodeConstructor } from '@reactflo/core';
+import { NodeConstructor } from '@crystalflow/core';
 import { convertNodeToReactFlow, getNodePaletteItems } from '../utils/nodeConverter';
 
 /**

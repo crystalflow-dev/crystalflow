@@ -3,7 +3,7 @@
 **Status**: In Progress - Phase 2 (Conditional Flow)  
 **Version**: 1.0  
 **Date**: January 28, 2026  
-**Epic**: REACTFLO-83 (Control Flow & Advanced Execution)  
+**Epic**: CRYSTALFLOW-83 (Control Flow & Advanced Execution)  
 **Branch**: `feature/conditional-flow-execution`
 
 ## Implementation Progress
@@ -31,7 +31,7 @@
   - ✅ Throws errors for unsupported step types (Phase 2-4)
   - ✅ Debugging method stubs for Phase 5 (pause, resume, stepOver, etc.)
   - ✅ 20 unit tests passing
-  - ✅ Exported from @reactflo/core
+  - ✅ Exported from @crystalflow/core
 - ✅ **Task 2**: Implement NodeExecutionStep execution (COMPLETED - part of Task 1)
 - ✅ **Task 3**: Add debugging support (stub methods) (COMPLETED - part of Task 1)
 - ✅ **Task 4**: Switch Executor to use PlanExecutor (COMPLETED)
@@ -64,8 +64,8 @@
 - [x] Add `evaluateCondition(): string` method signature
 - [x] Add JSDoc documentation with usage examples
 - [x] Export interface from `packages/types/src/index.ts`
-- [x] Run lint: `npm run lint -w @reactflo/types`
-- [x] Run tests: `npm test -w @reactflo/types`
+- [x] Run lint: `npm run lint -w @crystalflow/types`
+- [x] Run tests: `npm test -w @crystalflow/types`
 - [x] Commit: "feat(types): add IConditionalNode interface for conditional flow nodes" (9be54cd)
 
 **Task 2.2: Add Conditional Node Type Checking** [2 hours] - ✅ COMPLETE
@@ -73,8 +73,8 @@
 - [x] Add `isConditionalNode(node: Node): node is IConditionalNode` type guard method
 - [x] Check if node implements IConditionalNode interface
 - [x] Add unit tests for type checking in `packages/core/src/__tests__/ExecutionPlanBuilder.test.ts`
-- [x] Run lint: `npm run lint -w @reactflo/core`
-- [x] Run tests: `npm test -w @reactflo/core`
+- [x] Run lint: `npm run lint -w @crystalflow/core`
+- [x] Run tests: `npm test -w @crystalflow/core`
 - [x] Commit: "feat(core): add conditional node type checking in ExecutionPlanBuilder" (b97179d)
 
 **Task 2.3: Implement ConditionalStep Building - Part 1 (Graph Analysis)** [4 hours] - ✅ COMPLETE
@@ -84,8 +84,8 @@
 - [x] Implement logic to detect output ports of conditional node
 - [x] For each output port, find connected downstream nodes
 - [x] Add unit tests for graph analysis logic
-- [x] Run lint: `npm run lint -w @reactflo/core`
-- [x] Run tests: `npm test -w @reactflo/core`
+- [x] Run lint: `npm run lint -w @crystalflow/core`
+- [x] Run tests: `npm test -w @crystalflow/core`
 - [x] Commit: "feat(core): implement graph analysis for conditional step building" (a5d5e41)
 
 **Task 2.4: Implement ConditionalStep Building - Part 2 (Recursive Branch Building)** [4 hours] - ✅ COMPLETE
@@ -97,8 +97,8 @@
 - [x] Handle visited nodes to prevent infinite recursion
 - [x] Add comprehensive unit tests with mock workflows (7 new tests)
 - [x] Test nested conditional scenarios
-- [x] Run lint: `npm run lint -w @reactflo/core`
-- [x] Run tests: `npm test -w @reactflo/core`
+- [x] Run lint: `npm run lint -w @crystalflow/core`
+- [x] Run tests: `npm test -w @crystalflow/core`
 - [x] Commit: "feat(core): implement recursive branch building for conditional steps" (cfcef7e)
 - [x] Refactoring commits: conditionInput removal (1788fb5), conditionalType removal (fe2f23d)
 
@@ -109,8 +109,8 @@
 - [x] Added `areAllDependenciesVisited()` for dependency-aware traversal
 - [x] Updated `buildStepsForNode()` to always recurse with dependency checking
 - [x] Add integration tests with conditional workflows (6 new tests)
-- [x] Run lint: `npm run lint -w @reactflo/core`
-- [x] Run tests: `npm test -w @reactflo/core`
+- [x] Run lint: `npm run lint -w @crystalflow/core`
+- [x] Run tests: `npm test -w @crystalflow/core`
 - [x] Commit: "feat(core): integrate conditional building with entry-point recursion" (4527043)
 
 **Task 2.5.1: Remove Legacy Topological Sort Dependencies** [2 hours] - ✅ COMPLETE
@@ -130,8 +130,8 @@
 - [x] Updated ExecutionPlanBuilder.test.ts: removed cycle detection test
 - [x] Updated Executor.test.ts: removed 42 lines of _graph test setup
 - [x] Updated integration.test.ts: removed 23 lines of _graph test setup
-- [x] Run lint: `npm run lint -w @reactflo/core` - 0 errors
-- [x] Run tests: `npm test -w @reactflo/core` - 364 tests passing
+- [x] Run lint: `npm run lint -w @crystalflow/core` - 0 errors
+- [x] Run tests: `npm test -w @crystalflow/core` - 364 tests passing
 - [x] Run benchmarks: Performance improved (see Phase 2 benchmarks)
 - [x] Commit: "refactor(core): remove Graph class - redundant with execution plan architecture"
 
@@ -222,7 +222,7 @@
 - [x] Create file: `packages/core/src/builtin/flow/index.ts` (empty for now)
 - [x] Create file: `packages/core/src/builtin/index.ts` (export flow nodes)
 - [x] Update `packages/core/src/index.ts` to export from builtin
-- [x] Run lint: `npm run lint -w @reactflo/core`
+- [x] Run lint: `npm run lint -w @crystalflow/core`
 - [x] Commit: "feat(core): create flow control nodes directory structure"
 
 **Task 2.10: Implement IfNode** [4 hours] - ✅ COMPLETE
@@ -239,8 +239,8 @@
 - [x] Export from `packages/core/src/builtin/flow/index.ts`
 - [x] Create test file: `packages/core/src/__tests__/builtin/IfNode.test.ts`
 - [x] Write comprehensive unit tests (38 tests: metadata, execution paths, edge cases)
-- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors)
-- [x] Run tests: `npm test -w @reactflo/core` (416 tests passing)
+- [x] Run lint: `npm run lint -w @crystalflow/core` (0 errors)
+- [x] Run tests: `npm test -w @crystalflow/core` (416 tests passing)
 - [x] Commit: "feat(core): implement IfNode for if/else conditional flow"
 
 **Task 2.11: Implement SwitchNode** [4 hours] - ✅ COMPLETE
@@ -266,8 +266,8 @@
   - [x] Type matching with strict equality
   - [x] Multiple executions with state clearing
   - [x] Edge cases (NaN, objects, duplicates)
-- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors, 4 warnings)
-- [x] Run tests: `npm test -w @reactflo/core` (474 tests passing)
+- [x] Run lint: `npm run lint -w @crystalflow/core` (0 errors, 4 warnings)
+- [x] Run tests: `npm test -w @crystalflow/core` (474 tests passing)
 - [x] Commit: "feat(core): implement SwitchNode with dynamic case outputs (Task 2.11)"
 
 **Task 2.12: Integration Testing - Simple Conditionals** [3 hours] - ✅ COMPLETE
@@ -283,8 +283,8 @@
   * SwitchNode case matching and default
   * Data passthrough verification
   * Branch execution isolation (only active branch runs)
-- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors)
-- [x] Run tests: `npm test -w @reactflo/core` (484 tests passing)
+- [x] Run lint: `npm run lint -w @crystalflow/core` (0 errors)
+- [x] Run tests: `npm test -w @crystalflow/core` (484 tests passing)
 - [x] Commit: "test(core): add integration tests for simple conditional workflows (Task 2.12)"
 
 **Task 2.13: Integration Testing - Nested Conditionals** [3 hours] - ✅ COMPLETE
@@ -304,8 +304,8 @@
   * Deep nesting (3 levels)
 - [x] Verify nested execution works correctly
 - [x] Verify data flows through multiple nesting levels
-- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors)
-- [x] Run tests: `npm test -w @reactflo/core` (492 tests passing, 8 new)
+- [x] Run lint: `npm run lint -w @crystalflow/core` (0 errors)
+- [x] Run tests: `npm test -w @crystalflow/core` (492 tests passing, 8 new)
 - [x] Commit: "test(core): add integration tests for nested conditional workflows (Task 2.13)"
 
 **Task 2.14: Error Handling & Edge Cases** [2 hours] - ✅ COMPLETE
@@ -324,8 +324,8 @@
   * SwitchNode with empty cases array
   * IfNode with undefined condition (falsy behavior)
 - [x] Add proper error messages and context
-- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors)
-- [x] Run tests: `npm test -w @reactflo/core` (503 tests passing, 11 new)
+- [x] Run lint: `npm run lint -w @crystalflow/core` (0 errors)
+- [x] Run tests: `npm test -w @crystalflow/core` (503 tests passing, 11 new)
 - [x] Commit: "test(core): add error handling tests for conditional flow (Task 2.14)"
 
 **Task 2.14.5: UI Integration Testing for Builtin Conditional Nodes** [3 hours] - ✅ COMPLETE
@@ -338,7 +338,7 @@
   - [x] RangeCheckNode - Check if number in min-max range
   - [x] ModuloNode - Calculate remainder for switch routing
 - [x] File: `packages/examples/src/examples/ConditionalNodesDemo.tsx`
-- [x] Registered IfNode and SwitchNode from @reactflo/core
+- [x] Registered IfNode and SwitchNode from @crystalflow/core
 - [x] Created comprehensive example with 7 workflow scenarios
 - [x] Added navigation between Simple Workflow and Conditional Flow examples
 - [x] Verified nodes appear in NodePalette with correct categories (Flow Control, Logic)
@@ -372,11 +372,11 @@
   - [x] Verified PropertyPanel correctly displays @Property for cases
 - [x] ConditionalNodesDemo includes:
   - [x] All logic nodes (5 boolean-returning nodes + 1 math node)
-  - [x] IfNode and SwitchNode from @reactflo/core
+  - [x] IfNode and SwitchNode from @crystalflow/core
   - [x] 7 documented workflow scenarios
   - [x] Instructions for testing conditional flow
-- [x] Run tests: `npm test -w @reactflo/core` (499 tests passing)
-- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors)
+- [x] Run tests: `npm test -w @crystalflow/core` (499 tests passing)
+- [x] Run lint: `npm run lint -w @crystalflow/core` (0 errors)
 - [x] Verified no console errors in browser
 - [x] Commit 1: "fix(core): require explicit boolean for IfNode condition + add logic test nodes (Task 2.14.5)" (2fa8432)
 - [x] Commit 2: "feat(react): improve array property UI + dynamic outputs for SwitchNode (Task 2.14.5)" (41da50e)
@@ -390,12 +390,12 @@
 - [x] File: `docs/execution-plan-architecture.md`
 - [x] Update Phase 2 status to COMPLETE
 - [x] Add completion date
-- [x] Run lint: `npm run lint -w @reactflo/core`
+- [x] Run lint: `npm run lint -w @crystalflow/core`
 - [x] Commit: "docs: update documentation for Phase 2 conditional flow implementation"
 
 **Task 2.16: Final Phase 2 Validation** [2 hours] - ✅ COMPLETE
-- [x] Run full test suite: `npm test -w @reactflo/core`
-- [x] Run full test suite: `npm test -w @reactflo/types`
+- [x] Run full test suite: `npm test -w @crystalflow/core`
+- [x] Run full test suite: `npm test -w @crystalflow/types`
 - [x] Verify all tests pass (expect 380+ tests)
 - [x] Run lint on all packages: `npm run lint`
 - [x] Build all packages: `npm run build`
@@ -523,7 +523,7 @@ This task adds comprehensive documentation for the Phase 2 Conditional Flow impl
 - [x] Document all builtin nodes:
   - [x] IfNode (full API with all inputs/outputs)
   - [x] SwitchNode (full API with property and dynamic outputs)
-- [x] Add import examples from '@reactflo/core'
+- [x] Add import examples from '@crystalflow/core'
 - [x] Link to guides and examples
 - [x] Commit: "docs(site): add API reference for conditional nodes"
 
@@ -596,7 +596,7 @@ This task adds comprehensive documentation for the Phase 2 Conditional Flow impl
 
 ## Overview
 
-The Execution Plan Architecture is a fundamental redesign of ReactFlo's execution engine to support advanced control flow patterns including conditionals, loops, parallel execution, and step-by-step debugging.
+The Execution Plan Architecture is a fundamental redesign of CrystalFlow's execution engine to support advanced control flow patterns including conditionals, loops, parallel execution, and step-by-step debugging.
 
 ### Key Goals
 
@@ -772,7 +772,7 @@ cd packages/core
 npm run test:benchmark
 
 # From project root
-npm run test:benchmark -w @reactflo/core
+npm run test:benchmark -w @crystalflow/core
 
 # Save results to file
 npm run test:benchmark > benchmark-results.txt 2>&1
@@ -2465,7 +2465,7 @@ class Executor extends AsyncEventEmitter<ExecutorEvents> {
 ### Example 1: Simple If/Else Workflow
 
 ```typescript
-import { Workflow, Executor } from '@reactflo/core';
+import { Workflow, Executor } from '@crystalflow/core';
 import { NumberInputNode, IfNode, AddNode, MultiplyNode, DisplayNode } from './nodes';
 
 // Create workflow
@@ -2497,7 +2497,7 @@ console.log('Result:', result);
 ### Example 2: For Loop Workflow
 
 ```typescript
-import { Workflow, Executor } from '@reactflo/core';
+import { Workflow, Executor } from '@crystalflow/core';
 import { ForLoopNode, AddNode, DisplayNode } from './nodes';
 
 // Create workflow
@@ -2527,7 +2527,7 @@ const result = await executor.execute(workflow);
 ### Example 3: Parallel Execution Workflow
 
 ```typescript
-import { Workflow, Executor } from '@reactflo/core';
+import { Workflow, Executor } from '@crystalflow/core';
 import { ParallelNode, HttpRequestNode, MergeNode, DisplayNode } from './nodes';
 
 // Create workflow
@@ -2567,7 +2567,7 @@ const result = await executor.execute(workflow);
 ### Example 4: Debugging Workflow
 
 ```typescript
-import { Workflow, Executor } from '@reactflo/core';
+import { Workflow, Executor } from '@crystalflow/core';
 
 const workflow = new Workflow('debug-example', 'Debug Example');
 // ... add nodes ...
@@ -2610,7 +2610,7 @@ The phased implementation approach ensures steady progress with working features
 **Total Estimated Time**: 12 weeks (480 hours)
 **Team Size**: 1-2 developers
 **Complexity**: High
-**Impact**: Transformational for ReactFlo
+**Impact**: Transformational for CrystalFlow
 
 **Next Steps**:
 

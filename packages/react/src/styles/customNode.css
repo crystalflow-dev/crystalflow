@@ -101,11 +101,11 @@
 
 .port-label {
   margin-bottom: 2px;
-  color: var(--reactflo-text-secondary, #888);
+  color: var(--crystalflow-text-secondary, #888);
 }
 
 .port-value {
-  color: var(--reactflo-text-primary, #555);
+  color: var(--crystalflow-text-primary, #555);
   font-weight: bold;
 }
 

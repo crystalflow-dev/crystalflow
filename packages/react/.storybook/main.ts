@@ -31,8 +31,8 @@ const config: StorybookConfig = {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@reactflo/core': resolve(__dirname, '../../core/src'),
-      '@reactflo/types': resolve(__dirname, '../../types/src'),
+      '@crystalflow/core': resolve(__dirname, '../../core/src'),
+      '@crystalflow/types': resolve(__dirname, '../../types/src'),
     };
     return config;
   },

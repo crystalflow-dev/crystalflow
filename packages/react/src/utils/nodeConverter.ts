@@ -1,10 +1,10 @@
 import 'reflect-metadata';
 import { Node as ReactFlowNode } from '@xyflow/react';
-import { NodeMetadata, PortDefinition, PropertyDefinition } from '@reactflo/types';
-import { NodeConstructor } from '@reactflo/core';
+import { NodeMetadata, PortDefinition, PropertyDefinition } from '@crystalflow/types';
+import { NodeConstructor } from '@crystalflow/core';
 
 /**
- * Convert a ReactFlo Node class (with decorators) to React Flow node format
+ * Convert a CrystalFlow Node class (with decorators) to React Flow node format
  *
  * This utility extracts metadata from @defineNode, @Input, and @Output decorators
  * and transforms it into a React Flow compatible node structure.

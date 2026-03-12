@@ -1,5 +1,5 @@
 /**
- * React hooks for ReactFlo
+ * React hooks for CrystalFlow
  */
 
 export { useWorkflow } from './useWorkflow';

@@ -5,7 +5,7 @@ import { NodeRegistry } from '../../node/NodeRegistry';
 import { defineNode, Input, Output } from '../../node/decorators';
 import { IfNode } from '../../builtin/flow/IfNode';
 import { SwitchNode } from '../../builtin/flow/SwitchNode';
-import { IConditionalNode } from '@reactflo/types';
+import { IConditionalNode } from '@crystalflow/types';
 
 /**
  * Malformed conditional node - evaluateCondition returns empty string.

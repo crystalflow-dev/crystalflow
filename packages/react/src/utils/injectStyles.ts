@@ -15,7 +15,7 @@ export function injectStyles(css: string, styleId: string): void {
   }
 
   const style = document.createElement('style');
-  style.setAttribute('data-reactflo-style', styleId);
+  style.setAttribute('data-crystalflow-style', styleId);
   style.textContent = css;
   document.head.appendChild(style);
   injectedStyles.add(styleId);
@@ -25,7 +25,7 @@ export function injectStyles(css: string, styleId: string): void {
  * Remove injected styles (useful for cleanup)
  */
 export function removeStyles(styleId: string): void {
-  const style = document.querySelector(`[data-reactflo-style="${styleId}"]`);
+  const style = document.querySelector(`[data-crystalflow-style="${styleId}"]`);
   if (style) {
     style.remove();
     injectedStyles.delete(styleId);

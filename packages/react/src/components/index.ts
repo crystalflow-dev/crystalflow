@@ -1,5 +1,5 @@
 /**
- * React components for ReactFlo
+ * React components for CrystalFlow
  */
 
 // Main workflow builder

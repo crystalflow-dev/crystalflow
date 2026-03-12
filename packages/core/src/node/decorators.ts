@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { NodeMetadata, PortDefinition, PropertyDefinition } from '@reactflo/types';
+import { NodeMetadata, PortDefinition, PropertyDefinition } from '@crystalflow/types';
 import { NodeRegistry, NodeConstructor } from './NodeRegistry';
 
 /**

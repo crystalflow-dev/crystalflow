@@ -1,7 +1,7 @@
 {
-  "name": "@reactflo/core",
+  "name": "@crystalflow/core",
   "version": "0.1.0",
-  "description": "Core workflow engine for ReactFlo",
+  "description": "Core workflow engine for CrystalFlow",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -22,10 +22,10 @@
     "node-system",
     "execution"
   ],
-  "author": "ReactFlo Team",
+  "author": "CrystalFlow Team",
   "license": "MIT",
   "dependencies": {
-    "@reactflo/types": "*",
+    "@crystalflow/types": "*",
     "reflect-metadata": "^0.2.0"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-import { NodeConstructor } from '@reactflo/core';
+import { NodeConstructor } from '@crystalflow/core';
 import React, { useMemo, useState } from 'react';
 import { NodePaletteClasses, NodePaletteStyles } from '../../types/styling';
 import { cn, mergeStyles } from '../../utils/styling';
@@ -249,7 +249,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
   return (
     <div
-      className={cn('reactflo-node-palette', className, classes?.root)}
+      className={cn('crystalflow-node-palette', className, classes?.root)}
       style={mergeStyles(defaultRootStyle, styles?.root, style)}
     >
       {/* Header */}

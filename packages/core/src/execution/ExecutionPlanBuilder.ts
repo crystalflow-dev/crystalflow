@@ -16,7 +16,7 @@ import {
   IConditionalNode,
   ConditionalStep,
   ConditionalBranch,
-} from '@reactflo/types';
+} from '@crystalflow/types';
 import { Node } from '../node/Node';
 
 /**

@@ -1,7 +1,7 @@
 {
-  "name": "@reactflo/react",
+  "name": "@crystalflow/react",
   "version": "0.1.0",
-  "description": "React components for ReactFlo workflow builder",
+  "description": "React components for CrystalFlow workflow builder",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -33,12 +33,12 @@
     "node-editor",
     "reactflow"
   ],
-  "author": "ReactFlo Team",
+  "author": "CrystalFlow Team",
   "license": "MIT",
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
-    "@reactflo/core": "^0.1.0",
-    "@reactflo/types": "^0.1.0",
+    "@crystalflow/core": "^0.1.0",
+    "@crystalflow/types": "^0.1.0",
     "@vitejs/plugin-react": "^5.1.2",
     "react-icons": "^5.5.0",
     "react-resizable-panels": "^4.5.9",

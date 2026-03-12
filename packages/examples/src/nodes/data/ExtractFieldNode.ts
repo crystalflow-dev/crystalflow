@@ -1,4 +1,4 @@
-import { Node, Input, Output, Property, defineNode } from '@reactflo/core';
+import { Node, Input, Output, Property, defineNode } from '@crystalflow/core';
 
 /**
  * Extract Field Node - Extracts a specific field from a JSON object

@@ -1,5 +1,5 @@
 /**
- * Theme Provider for ReactFlo
+ * Theme Provider for CrystalFlow
  * Manages theme state and applies CSS custom properties
  */
 

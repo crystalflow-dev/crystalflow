@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import * as ReactFloReact from '../index';
+import * as CrystalFlowReact from '../index';
 
-describe('@reactflo/react', () => {
+describe('@crystalflow/react', () => {
   it('should export types', () => {
-    expect(ReactFloReact).toBeDefined();
+    expect(CrystalFlowReact).toBeDefined();
   });
 });

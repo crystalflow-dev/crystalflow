@@ -1,10 +1,10 @@
-# 📖 ReactFlo Documentation Index
+# 📖 CrystalFlow Documentation Index
 
-Welcome to ReactFlo! This index will help you navigate all project documentation.
+Welcome to CrystalFlow! This index will help you navigate all project documentation.
 
 ## 🚀 Start Here
 
-**New to ReactFlo?** Start with these files in order:
+**New to CrystalFlow?** Start with these files in order:
 
 1. **[docs/guides/get-started.md](guides/get-started.md)** - Complete overview and quick start guide
 2. **[README.md](../README.md)** - Project vision, features, and roadmap
@@ -14,7 +14,7 @@ Welcome to ReactFlo! This index will help you navigate all project documentation
 
 ### Guides (Getting Started)
 
-- **[docs/guides/getting-started.md](guides/getting-started.md)** - How to use ReactFlo in your project
+- **[docs/guides/getting-started.md](guides/getting-started.md)** - How to use CrystalFlow in your project
 - **[docs/guides/get-started.md](guides/get-started.md)** - Complete overview and quick start guide
 - **[docs/guides/quick-reference.md](guides/quick-reference.md)** - Commands, conventions, and best practices
 
@@ -33,7 +33,7 @@ Welcome to ReactFlo! This index will help you navigate all project documentation
 
 ### Development & Contributing
 
-- **[CONTRIBUTING.md](../CONTRIBUTING.md)** - How to contribute to ReactFlo
+- **[CONTRIBUTING.md](../CONTRIBUTING.md)** - How to contribute to CrystalFlow
 - **[docs/development/development-workflow.md](development/development-workflow.md)** - Development workflow and best practices
 - **[docs/development/project-structure.md](development/project-structure.md)** - Complete file structure guide
 - **[docs/development/project-status.md](development/project-status.md)** - Current progress and what's next
@@ -47,16 +47,16 @@ Welcome to ReactFlo! This index will help you navigate all project documentation
 
 ## 📦 Package Documentation
 
-### @reactflo/core
+### @crystalflow/core
 
 - **[packages/core/README.md](packages/core/README.md)** - Core workflow engine
 - **[packages/core/src/index.ts](packages/core/src/index.ts)** - API exports
 
-### @reactflo/types
+### @crystalflow/types
 
 - **[packages/types/README.md](packages/types/README.md)** - TypeScript type definitions
 
-### @reactflo/docs-site
+### @crystalflow/docs-site
 
 - **[packages/docs-site/](packages/docs-site/)** - Official documentation site (Mintlify)
 - **Run locally:** `cd packages/docs-site && mint dev --port 3333`
@@ -101,7 +101,7 @@ See **[docs/development/project-status.md](development/project-status.md)** for 
 **...understand the project vision**
 → Read [README.md](../README.md)
 
-**...start using ReactFlo**
+**...start using CrystalFlow**
 → Read [docs/guides/getting-started.md](guides/getting-started.md)
 
 **...contribute code**
@@ -135,7 +135,7 @@ See **[docs/development/project-status.md](development/project-status.md)** for 
 ---
 
 <div align="center">
-  <strong>ReactFlo Framework</strong>
+  <strong>CrystalFlow Framework</strong>
   <br>
   <em>Version 0.1.0-alpha</em>
   <br><br>

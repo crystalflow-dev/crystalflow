@@ -1,5 +1,5 @@
 import { Executor } from '../../execution/Executor';
-import { ExecutionStatus, CancellationReason } from '@reactflo/types';
+import { ExecutionStatus, CancellationReason } from '@crystalflow/types';
 import { Workflow } from '../../workflow/Workflow';
 import { Node } from '../../node/Node';
 import { defineNode, Input, Output } from '../../node/decorators';

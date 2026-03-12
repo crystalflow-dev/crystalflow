@@ -1,4 +1,4 @@
-import { defineNode, Input, Node } from '@reactflo/core';
+import { defineNode, Input, Node } from '@crystalflow/core';
 
 /**
  * Display Result Node

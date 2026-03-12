@@ -3,14 +3,14 @@ title: "Execution & Events"
 description: "Master workflow execution and the event system"
 ---
 
-ReactFlo's execution engine provides a powerful event system for monitoring and controlling workflow execution.
+CrystalFlow's execution engine provides a powerful event system for monitoring and controlling workflow execution.
 
 ## Execution Basics
 
 Execute a workflow with the `Executor`:
 
 ```typescript
-import { Executor } from '@reactflo/core';
+import { Executor } from '@crystalflow/core';
 
 const executor = new Executor();
 const result = await executor.execute(workflow);
@@ -187,7 +187,7 @@ if (result.status === 'success') {
 ## Complete Example
 
 ```typescript
-import { Executor, ExecutionError, NodeExecutionError } from '@reactflo/core';
+import { Executor, ExecutionError, NodeExecutionError } from '@crystalflow/core';
 
 async function executeWorkflow(workflow) {
   const executor = new Executor();
@@ -292,7 +292,7 @@ Integrate events with React UI:
 
 ```tsx
 import React, { useState } from 'react';
-import { Executor } from '@reactflo/core';
+import { Executor } from '@crystalflow/core';
 
 function WorkflowExecutor({ workflow }) {
   const [status, setStatus] = useState('idle');

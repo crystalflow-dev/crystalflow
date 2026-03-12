@@ -5,13 +5,13 @@ import { useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { SandpackProvider, SandpackCodeEditor, SandpackLayout } from '@codesandbox/sandpack-react';
 import dynamic from 'next/dynamic';
-import type { NodeConstructor } from '@reactflo/core';
+import type { NodeConstructor } from '@crystalflow/core';
 import {
   MockAPINode,
   ExtractFieldNode,
   FormatTextNode,
   DisplayNode,
-} from '@reactflo/examples/src/nodes';
+} from '@crystalflow/examples/src/nodes';
 
 // Import node source code strings (embedded for Next.js compatibility)
 import {
@@ -23,7 +23,7 @@ import {
 
 // Dynamically import WorkflowBuilder to avoid SSR issues
 const WorkflowBuilder = dynamic(
-  () => import('@reactflo/react').then((mod) => mod.WorkflowBuilder),
+  () => import('@crystalflow/react').then((mod) => mod.WorkflowBuilder),
   {
     ssr: false,
     loading: () => (

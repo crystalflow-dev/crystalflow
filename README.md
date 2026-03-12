@@ -1,20 +1,20 @@
 <div align="center">
-  <img src="assets/logo/reactflo-logo-blue.png" alt="ReactFlo Logo" width="500" />
+  <img src="assets/logo/crystalflow-logo-blue-dark.png" alt="CrystalFlow Logo" width="500" />
 </div>
 
 <br/>
 
 <p align="center">
-  <a href="https://github.com/fladeed/reactflo/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/reactflo/reactflo/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
-  <a href="https://github.com/fladeed/reactflo/releases"><img src="https://img.shields.io/github/v/release/reactflo/reactflo?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
+  <a href="https://github.com/fladeed/crystalflow/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/crystalflow/crystalflow/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
+  <a href="https://github.com/fladeed/crystalflow/releases"><img src="https://img.shields.io/github/v/release/crystalflow/crystalflow?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
 </p>
 
-# ReactFlo
+# CrystalFlow
 
 **A declarative framework for building visual workflow editors.**
 
-ReactFlo gives you everything needed to build custom workflow applications—AI agent platforms, automation tools, data pipelines, or no-code builders. Define nodes with TypeScript decorators, get a production-ready visual editor with execution engine included.
+CrystalFlow gives you everything needed to build custom workflow applications—AI agent platforms, automation tools, data pipelines, or no-code builders. Define nodes with TypeScript decorators, get a production-ready visual editor with execution engine included.
 
 **We build the how, you focus on the what.**
 
@@ -31,16 +31,16 @@ The AI automation space is exploding. Every team needs workflow builders:
 
 But building a workflow editor is hard. Visual canvas, execution engine, JSON serialization, type-safe connections, validation, debugging—it's a lot.
 
-**ReactFlo gives you all of this.** Stop reinventing the wheel.
+**CrystalFlow gives you all of this.** Stop reinventing the wheel.
 
-ReactFlo is a framework, not a finished product. It provides the infrastructure so you can focus on your unique features and domain-specific nodes.
+CrystalFlow is a framework, not a finished product. It provides the infrastructure so you can focus on your unique features and domain-specific nodes.
 
 ## Quick Start
 
 **Define nodes with decorators:**
 
 ```typescript
-import { Node, Input, Output, defineNode } from '@reactflo/core';
+import { Node, Input, Output, defineNode } from '@crystalflow/core';
 
 @defineNode({
   type: 'math.add',
@@ -61,7 +61,7 @@ class AddNode extends Node {
 **Get a visual builder:**
 
 ```tsx
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 
 <WorkflowBuilder
   nodes={[AddNode]}
@@ -87,14 +87,14 @@ More details: [Development Workflow](https://docs.crystalflow.dev/guides/develop
 
 ## Documentation
 
-- [Getting Started](https://docs.crystalflow.dev/getting-started) - Complete guide to using ReactFlo
+- [Getting Started](https://docs.crystalflow.dev/getting-started) - Complete guide to using CrystalFlow
 - [Core Concepts](https://docs.crystalflow.dev/core-concepts) - Nodes, workflows, and execution
 - [API Reference](https://docs.crystalflow.dev/api-reference) - Complete API documentation
 - [Examples](https://docs.crystalflow.dev/examples) - Sample workflows and use cases
 
 ## What You Can Build
 
-ReactFlo is perfect for:
+CrystalFlow is perfect for:
 
 - AI agent orchestration platforms (LangFlow/Flowise alternatives)
 - No-code automation tools (Zapier, Make.com, n8n alternatives)
@@ -106,30 +106,30 @@ ReactFlo is perfect for:
 
 ## Packages
 
-ReactFlo is organized as a monorepo:
+CrystalFlow is organized as a monorepo:
 
-- `@reactflo/core` - Core workflow engine and node system
-- `@reactflo/types` - TypeScript type definitions
-- `@reactflo/react` - React components bridging decorators to React Flow
-- `@reactflo/examples` - Example applications
-- `@reactflo/landing` - Marketing/landing page
-- `@reactflo/docs-site` - Official documentation site
-- `@reactflo/cli` - CLI tools (planned)
-- `@reactflo/plugins` - Official plugins (planned)
+- `@crystalflow/core` - Core workflow engine and node system
+- `@crystalflow/types` - TypeScript type definitions
+- `@crystalflow/react` - React components bridging decorators to React Flow
+- `@crystalflow/examples` - Example applications
+- `@crystalflow/landing` - Marketing/landing page
+- `@crystalflow/docs-site` - Official documentation site
+- `@crystalflow/cli` - CLI tools (planned)
+- `@crystalflow/plugins` - Official plugins (planned)
 
 **Built on:** React Flow, TypeScript with decorators
 
 ## Architecture
 
-ReactFlo adds a declarative layer and execution engine on top of React Flow:
+CrystalFlow adds a declarative layer and execution engine on top of React Flow:
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e8f4f8','primaryTextColor':'#1a1a1a','primaryBorderColor':'#2563eb','lineColor':'#2563eb','secondaryColor':'#f0fdf4','tertiaryColor':'#fef3c7'}}}%%
 graph TB
     A["<b>👤 User Applications</b><br/><br/>Define nodes with @decorators<br/>TypeScript classes with metadata"]
-    B["<b>🔗 @reactflo/react</b><br/><br/>Workflow Builder Component<br/>Bridges decorators ↔ React Flow<br/>Visual editor, palette, properties"]
+    B["<b>🔗 @crystalflow/react</b><br/><br/>Workflow Builder Component<br/>Bridges decorators ↔ React Flow<br/>Visual editor, palette, properties"]
     C["<b>🎨 React Flow</b><br/><br/>Canvas & UI Layer<br/>Pan, zoom, drag & drop<br/>Node & edge rendering"]
-    D["<b>⚙️ @reactflo/core</b><br/><br/>Workflow Engine<br/>Node system & registry<br/>Execution & validation"]
+    D["<b>⚙️ @crystalflow/core</b><br/><br/>Workflow Engine<br/>Node system & registry<br/>Execution & validation"]
     
     A -->|"registers nodes"| B
     B -->|"renders UI"| C
@@ -143,7 +143,7 @@ graph TB
     classDef default font-size:14px,font-family:system-ui
 ```
 
-We leverage React Flow for the UI layer and focus ReactFlo on declarative node definitions, automatic registration, and powerful execution.
+We leverage React Flow for the UI layer and focus CrystalFlow on declarative node definitions, automatic registration, and powerful execution.
 
 ## Contributing
 

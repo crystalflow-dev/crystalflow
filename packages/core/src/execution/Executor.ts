@@ -17,7 +17,7 @@ import {
   NodeState,
   ExecutionId,
   CancellationReason,
-} from '@reactflo/types';
+} from '@crystalflow/types';
 import { AsyncEventEmitter } from '../utils/AsyncEventEmitter';
 import { ExecutionPlan } from './ExecutionPlan';
 import { ExecutionPlanBuilder } from './ExecutionPlanBuilder';

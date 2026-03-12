@@ -1,5 +1,5 @@
 /**
- * @reactflo/types
+ * @crystalflow/types
  * Shared TypeScript type definitions
  */
 

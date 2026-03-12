@@ -1,4 +1,4 @@
-import { Node, Output, Property, defineNode } from '@reactflo/core';
+import { Node, Output, Property, defineNode } from '@crystalflow/core';
 
 /**
  * Mock API Node - Simulates an API response with user data
@@ -53,7 +53,7 @@ export class MockAPINode extends Node {
         status: 200,
         data: {
           id: 101,
-          title: 'Getting Started with ReactFlo',
+          title: 'Getting Started with CrystalFlow',
           author: 'Jane Smith',
           views: 2543,
           likes: 189,

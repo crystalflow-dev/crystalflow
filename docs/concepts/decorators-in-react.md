@@ -1,6 +1,6 @@
-# Decorators in React with ReactFlo
+# Decorators in React with CrystalFlow
 
-## How Decorators Work in ReactFlo
+## How Decorators Work in CrystalFlow
 
 ### ✅ The Pattern
 
@@ -8,7 +8,7 @@
 
 ```typescript
 // nodes/AddNode.ts
-import { Node, defineNode, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'math.add',
@@ -36,7 +36,7 @@ export class AddNode extends Node {
 ```tsx
 // App.tsx
 import React from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { AddNode } from './nodes/AddNode';
 
 function App() {
@@ -55,7 +55,7 @@ function App() {
 ### 2. React Components are Separate
 
 - ✅ React components (functional) **consume** the decorated nodes
-- ✅ `@reactflo/react` converts decorated nodes → React Flow nodes
+- ✅ `@crystalflow/react` converts decorated nodes → React Flow nodes
 - ✅ No decorators on React components themselves
 
 ### 3. TypeScript Configuration
@@ -83,14 +83,14 @@ Already set up in `tsconfig.json`:
                    │
                    ↓
 ┌──────────────────────────────────────────────────┐
-│  2. Register with ReactFlo                      │
+│  2. Register with CrystalFlow                      │
 │                                                  │
 │  <WorkflowBuilder nodes={[AddNode]} />         │
 └──────────────────┬───────────────────────────────┘
                    │
                    ↓
 ┌──────────────────────────────────────────────────┐
-│  3. ReactFlo Converts to React Flow             │
+│  3. CrystalFlow Converts to React Flow             │
 │                                                  │
 │  - Reads decorator metadata                     │
 │  - Creates React Flow node components           │
@@ -156,8 +156,8 @@ function App() {
 ### Pattern 3: Plugin System
 
 ```typescript
-import { coreNodes } from '@reactflo/plugins/core';
-import { httpNodes } from '@reactflo/plugins/http';
+import { coreNodes } from '@crystalflow/plugins/core';
+import { httpNodes } from '@crystalflow/plugins/http';
 import { customNodes } from './custom-nodes';
 
 <WorkflowBuilder
@@ -203,7 +203,7 @@ Decorators compile to standard JavaScript, so they work in:
 
 - You use them for **Node class definitions** (business logic)
 - React components **consume** those nodes (no decorators needed)
-- ReactFlo bridges the gap between decorated classes and React Flow
+- CrystalFlow bridges the gap between decorated classes and React Flow
 - Everything compiles to standard JavaScript
 
 This separation is actually a strength - your node logic is framework-agnostic while your UI is pure React.

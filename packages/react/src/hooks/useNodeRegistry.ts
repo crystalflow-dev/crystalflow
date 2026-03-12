@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
-import { NodeConstructor, NodeRegistry } from '@reactflo/core';
-import type { NodeMetadata, NodeDefinition } from '@reactflo/types';
+import { NodeConstructor, NodeRegistry } from '@crystalflow/core';
+import type { NodeMetadata, NodeDefinition } from '@crystalflow/types';
 
 /**
  * Hook for accessing the NodeRegistry

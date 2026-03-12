@@ -1,7 +1,7 @@
 import { Node } from '../../node/Node';
 import { defineNode } from '../../node/decorators';
 import { Input, Output } from '../../node/decorators';
-import { IConditionalNode } from '@reactflo/types';
+import { IConditionalNode } from '@crystalflow/types';
 
 /**
  * IfNode provides if/else conditional flow control.

@@ -1,6 +1,6 @@
 /**
- * @reactflo/core
- * Core workflow engine for ReactFlo
+ * @crystalflow/core
+ * Core workflow engine for CrystalFlow
  */
 
 // Node System

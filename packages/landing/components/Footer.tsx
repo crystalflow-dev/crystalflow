@@ -7,7 +7,12 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div className="space-y-4">
-            <Image src="/logo/reactflo-logo-blue.svg" alt="ReactFlo Logo" width={150} height={45} />
+            <Image
+              src="/logo/crystalflow-logo-blue-dark.svg"
+              alt="CrystalFlow Logo"
+              width={150}
+              height={45}
+            />
             <p className="text-sm text-light-grey">
               Declarative workflow builder framework for modern web applications.
             </p>
@@ -60,7 +65,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-light-grey">
               <li>
                 <a
-                  href="https://github.com/fladeed/reactflo"
+                  href="https://github.com/fladeed/crystalflow"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-primary transition-colors"
@@ -70,7 +75,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://twitter.com/reactflo"
+                  href="https://twitter.com/crystalflow"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-primary transition-colors"
@@ -80,7 +85,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://discord.gg/reactflo"
+                  href="https://discord.gg/crystalflow"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-primary transition-colors"
@@ -106,7 +111,7 @@ export default function Footer() {
               </a>
               . All rights reserved.
             </p>
-            <p className="text-xs">ReactFlo is released under the MIT License.</p>
+            <p className="text-xs">CrystalFlow is released under the MIT License.</p>
           </div>
           <div className="flex gap-6">
             <Link href="/privacy" className="hover:text-primary transition-colors">

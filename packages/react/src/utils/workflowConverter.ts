@@ -1,15 +1,20 @@
 /**
- * Utilities for converting between React Flow and ReactFlo Workflow formats
+ * Utilities for converting between React Flow and CrystalFlow Workflow formats
  */
 
 import { Node as ReactFlowNode, Edge } from '@xyflow/react';
-import { Workflow, serializeWorkflow, deserializeWorkflow, NodeConstructor } from '@reactflo/core';
-import { WorkflowData } from '@reactflo/types';
+import {
+  Workflow,
+  serializeWorkflow,
+  deserializeWorkflow,
+  NodeConstructor,
+} from '@crystalflow/core';
+import { WorkflowData } from '@crystalflow/types';
 import { convertNodeToReactFlow } from './nodeConverter';
 import { CustomNodeData } from '../components/Node/CustomNode';
 
 /**
- * Convert React Flow nodes and edges to ReactFlo Workflow
+ * Convert React Flow nodes and edges to CrystalFlow Workflow
  */
 export function reactFlowToWorkflow(
   nodes: ReactFlowNode[],
@@ -65,7 +70,7 @@ export function reactFlowToWorkflow(
 }
 
 /**
- * Convert ReactFlo Workflow to React Flow nodes and edges
+ * Convert CrystalFlow Workflow to React Flow nodes and edges
  */
 export function workflowToReactFlow(workflow: Workflow): {
   nodes: ReactFlowNode[];

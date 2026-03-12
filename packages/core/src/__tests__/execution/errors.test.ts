@@ -6,7 +6,7 @@ import {
   CancellationError,
   UserCancelledError,
 } from '../../execution/errors';
-import { CancellationReason } from '@reactflo/types';
+import { CancellationReason } from '@crystalflow/types';
 
 describe('Execution Errors', () => {
   describe('ExecutionError', () => {

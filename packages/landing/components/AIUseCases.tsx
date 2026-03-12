@@ -74,7 +74,7 @@ export default function AIUseCases() {
             What Can You Build?
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-light-grey max-w-3xl mx-auto px-4">
-            From AI automation platforms to no-code tools—ReactFlo powers the next generation of
+            From AI automation platforms to no-code tools—CrystalFlow powers the next generation of
             workflow applications
           </p>
         </motion.div>
@@ -139,7 +139,7 @@ export default function AIUseCases() {
           className="text-center mt-12 sm:mt-16 px-4"
         >
           <p className="text-base sm:text-lg text-light-grey mb-4 sm:mb-6">
-            Don't see your use case? ReactFlo is a framework—build{' '}
+            Don't see your use case? CrystalFlow is a framework—build{' '}
             <span className="text-primary font-semibold">anything</span>.
           </p>
           <a

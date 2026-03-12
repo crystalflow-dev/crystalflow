@@ -15,7 +15,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'ReactFlo',
+      name: 'CrystalFlow',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'js' : 'cjs'}`,
     },
@@ -25,8 +25,8 @@ export default defineConfig({
         'react-dom',
         'react/jsx-runtime',
         '@xyflow/react',
-        '@reactflo/core',
-        '@reactflo/types',
+        '@crystalflow/core',
+        '@crystalflow/types',
         '@monaco-editor/react',
       ],
       output: {
@@ -35,8 +35,8 @@ export default defineConfig({
           'react-dom': 'ReactDOM',
           'react/jsx-runtime': 'jsxRuntime',
           '@xyflow/react': 'ReactFlow',
-          '@reactflo/core': 'ReactFloCore',
-          '@reactflo/types': 'ReactFloTypes',
+          '@crystalflow/core': 'CrystalFlowCore',
+          '@crystalflow/types': 'CrystalFlowTypes',
           '@monaco-editor/react': 'MonacoReact',
         },
         assetFileNames: (assetInfo) => {
@@ -49,8 +49,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@reactflo/core': resolve(__dirname, '../core/src'),
-      '@reactflo/types': resolve(__dirname, '../types/src'),
+      '@crystalflow/core': resolve(__dirname, '../core/src'),
+      '@crystalflow/types': resolve(__dirname, '../types/src'),
     },
   },
 });

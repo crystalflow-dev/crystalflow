@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Node } from '../node/Node';
 import { defineNode, Input, Output } from '../node/decorators';
-import { NodeState } from '@reactflo/types';
+import { NodeState } from '@crystalflow/types';
 
 // Test node classes
 @defineNode({

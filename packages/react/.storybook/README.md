@@ -1,6 +1,6 @@
-# Storybook for ReactFlo
+# Storybook for CrystalFlow
 
-This directory contains the Storybook setup for the ReactFlo React package, providing an interactive development environment for building and testing components in isolation.
+This directory contains the Storybook setup for the CrystalFlow React package, providing an interactive development environment for building and testing components in isolation.
 
 ## What is Storybook?
 
@@ -25,7 +25,7 @@ npm run storybook
 Or from the root of the monorepo:
 
 ```bash
-npm run storybook --workspace=@reactflo/react
+npm run storybook --workspace=@crystalflow/react
 ```
 
 This will start Storybook on http://localhost:6006
@@ -130,11 +130,11 @@ Switch between light and dark backgrounds to test component appearance.
 
 Storybook uses Vite as the build tool. The configuration in `vite.config.ts` is automatically merged with Storybook's config, providing:
 
-- Path aliases for @reactflo/core and @reactflo/types
+- Path aliases for @crystalflow/core and @crystalflow/types
 - React plugin for JSX support
 - Fast hot module replacement (HMR)
 
-## Integration with ReactFlo
+## Integration with CrystalFlow
 
 The Storybook setup is configured to work with:
 

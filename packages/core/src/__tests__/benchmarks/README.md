@@ -1,6 +1,6 @@
 # Executor Performance Benchmarks
 
-This directory contains comprehensive performance benchmarks for the ReactFlo execution engine.
+This directory contains comprehensive performance benchmarks for the CrystalFlow execution engine.
 
 ## Purpose
 
@@ -21,7 +21,7 @@ npm run test:benchmark
 ### Run from project root:
 
 ```bash
-npm run test:benchmark -w @reactflo/core
+npm run test:benchmark -w @crystalflow/core
 ```
 
 ### Run specific scenario:

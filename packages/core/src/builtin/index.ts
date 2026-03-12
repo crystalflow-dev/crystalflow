@@ -1,6 +1,6 @@
 /**
  * Node exports
- * Built-in nodes provided by ReactFlo
+ * Built-in nodes provided by CrystalFlow
  */
 
 export * from './flow';

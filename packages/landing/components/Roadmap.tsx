@@ -373,7 +373,7 @@ export default function Roadmap() {
           <p className="text-xs sm:text-sm text-light-grey/60">
             Want to contribute? Check out our{' '}
             <a
-              href="https://github.com/reactflo/reactflo"
+              href="https://github.com/crystalflow/crystalflow"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:text-primary/80 transition-colors"

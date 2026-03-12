@@ -1,10 +1,10 @@
-# @reactflo/core
+# @crystalflow/core
 
-Core workflow engine for ReactFlo framework.
+Core workflow engine for CrystalFlow framework.
 
 ## Overview
 
-This package contains the fundamental building blocks of ReactFlo:
+This package contains the fundamental building blocks of CrystalFlow:
 
 - **Node System:** Base classes and decorators for defining nodes
 - **Workflow Engine:** Graph structure and connection management
@@ -16,7 +16,7 @@ This package contains the fundamental building blocks of ReactFlo:
 ## Installation
 
 ```bash
-npm install @reactflo/core
+npm install @crystalflow/core
 ```
 
 ## Usage
@@ -24,7 +24,7 @@ npm install @reactflo/core
 ### Define Nodes
 
 ```typescript
-import { Node, defineNode, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'math.add',
@@ -50,7 +50,7 @@ class AddNode extends Node {
 ### Execute Workflows
 
 ```typescript
-import { Executor } from '@reactflo/core';
+import { Executor } from '@crystalflow/core';
 
 const executor = new Executor();
 
@@ -70,7 +70,7 @@ const result = await executor.execute(workflow, {
 
 ### Cancellation Support
 
-ReactFlo provides comprehensive workflow cancellation:
+CrystalFlow provides comprehensive workflow cancellation:
 
 #### Timeout-Based Cancellation
 
@@ -87,7 +87,7 @@ if (result.status === 'cancelled') {
 #### User-Initiated Cancellation
 
 ```typescript
-import { CancellationReason } from '@reactflo/core';
+import { CancellationReason } from '@crystalflow/core';
 
 // Start execution
 const promise = executor.execute(workflow);
@@ -176,7 +176,7 @@ executor.on('onError', (error) => {
 ### Import/Export Workflows
 
 ```typescript
-import { Workflow, serializeWorkflow, deserializeWorkflow } from '@reactflo/core';
+import { Workflow, serializeWorkflow, deserializeWorkflow } from '@crystalflow/core';
 
 const workflow = new Workflow();
 // ... build workflow ...
@@ -200,7 +200,7 @@ import {
   CancellationError,
   TimeoutError,
   UserCancelledError,
-} from '@reactflo/core';
+} from '@crystalflow/core';
 
 try {
   const result = await executor.execute(workflow, { timeout: 5000 });

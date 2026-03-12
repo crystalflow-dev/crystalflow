@@ -18,7 +18,7 @@ We'll create a workflow that:
 ### NumberInputNode
 
 ```typescript
-import { Node, defineNode, Property, Output } from '@reactflo/core';
+import { Node, defineNode, Property, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'input.number',
@@ -48,7 +48,7 @@ export class NumberInputNode extends Node {
 ### AddNode
 
 ```typescript
-import { Node, defineNode, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'math.add',
@@ -76,7 +76,7 @@ export class AddNode extends Node {
 ### MultiplyNode
 
 ```typescript
-import { Node, defineNode, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'math.multiply',
@@ -104,7 +104,7 @@ export class MultiplyNode extends Node {
 ### DisplayNode
 
 ```typescript
-import { Node, defineNode, Input } from '@reactflo/core';
+import { Node, defineNode, Input } from '@crystalflow/core';
 
 @defineNode({
   type: 'output.display',
@@ -126,7 +126,7 @@ export class DisplayNode extends Node {
 ### Programmatic Creation
 
 ```typescript
-import { Workflow } from '@reactflo/core';
+import { Workflow } from '@crystalflow/core';
 import { NumberInputNode, AddNode, MultiplyNode, DisplayNode } from './nodes';
 
 // Create workflow
@@ -198,7 +198,7 @@ Node multiply-1: { result: 15 }
 
 ```tsx
 import React from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { NumberInputNode, AddNode, MultiplyNode, DisplayNode } from './nodes';
 
 function MathCalculator() {
@@ -323,7 +323,7 @@ Save the workflow as JSON:
 Add detailed event tracking:
 
 ```typescript
-import { Executor } from '@reactflo/core';
+import { Executor } from '@crystalflow/core';
 
 const executor = new Executor();
 

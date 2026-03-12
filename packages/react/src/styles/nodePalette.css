@@ -1,12 +1,12 @@
 /* NodePalette modern styling */
 
 /* Hide scrollbar */
-.reactflo-node-palette {
+.crystalflow-node-palette {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
 }
 
-.reactflo-node-palette::-webkit-scrollbar {
+.crystalflow-node-palette::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
 

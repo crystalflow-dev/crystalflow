@@ -1,9 +1,9 @@
 ---
 title: "Built-in Nodes"
-description: "API reference for ReactFlo's built-in nodes"
+description: "API reference for CrystalFlow's built-in nodes"
 ---
 
-ReactFlo includes built-in nodes for common workflow patterns. These nodes are production-ready and fully tested.
+CrystalFlow includes built-in nodes for common workflow patterns. These nodes are production-ready and fully tested.
 
 ## Flow Control Nodes
 
@@ -12,7 +12,7 @@ ReactFlo includes built-in nodes for common workflow patterns. These nodes are p
 Classic if/else conditional branching.
 
 ```typescript
-import { IfNode } from '@reactflo/core';
+import { IfNode } from '@crystalflow/core';
 ```
 
 **Type:** `'flow.if'`  
@@ -64,7 +64,7 @@ Returns `'thenOutput'` if condition is true, `'elseOutput'` if false.
 #### Example
 
 ```typescript
-import { Workflow, IfNode, BooleanInputNode, DisplayNode } from '@reactflo/core';
+import { Workflow, IfNode, BooleanInputNode, DisplayNode } from '@crystalflow/core';
 
 const workflow = new Workflow();
 
@@ -89,8 +89,8 @@ await workflow.execute();
 #### Usage in WorkflowBuilder
 
 ```tsx
-import { WorkflowBuilder } from '@reactflo/react';
-import { IfNode } from '@reactflo/core';
+import { WorkflowBuilder } from '@crystalflow/react';
+import { IfNode } from '@crystalflow/core';
 
 <WorkflowBuilder
   nodes={[IfNode, /* other nodes */]}
@@ -106,7 +106,7 @@ The IfNode appears in the "Flow Control" category of the node palette.
 Multi-way branching with case matching (switch/case pattern).
 
 ```typescript
-import { SwitchNode } from '@reactflo/core';
+import { SwitchNode } from '@crystalflow/core';
 ```
 
 **Type:** `'flow.switch'`  
@@ -173,7 +173,7 @@ if no case matches.
 #### Example
 
 ```typescript
-import { Workflow, SwitchNode, StringInputNode, DisplayNode } from '@reactflo/core';
+import { Workflow, SwitchNode, StringInputNode, DisplayNode } from '@crystalflow/core';
 
 const workflow = new Workflow();
 
@@ -229,8 +229,8 @@ console.log(switchNode.getOutputs());
 #### Usage in WorkflowBuilder
 
 ```tsx
-import { WorkflowBuilder } from '@reactflo/react';
-import { SwitchNode } from '@reactflo/core';
+import { WorkflowBuilder } from '@crystalflow/react';
+import { SwitchNode } from '@crystalflow/core';
 
 <WorkflowBuilder
   nodes={[SwitchNode, /* other nodes */]}

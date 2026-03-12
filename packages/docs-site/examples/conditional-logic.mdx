@@ -4,7 +4,7 @@ description: "Build workflows with branching and conditional execution"
 icon: "code-branch"
 ---
 
-This example demonstrates building workflows with conditional logic using ReactFlo's built-in `IfNode` and `SwitchNode`.
+This example demonstrates building workflows with conditional logic using CrystalFlow's built-in `IfNode` and `SwitchNode`.
 
 ## Overview
 
@@ -19,7 +19,7 @@ Conditional workflows enable:
 The `IfNode` provides classic if/else conditional branching:
 
 ```typescript
-import { Workflow, IfNode, BooleanInputNode, DisplayNode } from '@reactflo/core';
+import { Workflow, IfNode, BooleanInputNode, DisplayNode } from '@crystalflow/core';
 
 const workflow = new Workflow('if-else-example');
 
@@ -74,7 +74,7 @@ const result = await workflow.execute();
 Use comparison nodes to generate boolean conditions:
 
 ```typescript
-import { NumberInputNode, CompareNode, IfNode, DisplayNode } from '@reactflo/core';
+import { NumberInputNode, CompareNode, IfNode, DisplayNode } from '@crystalflow/core';
 
 const workflow = new Workflow('comparison-example');
 
@@ -123,7 +123,7 @@ workflow.connect(ifNode.id, 'elseOutput', lowDisplay.id, 'message');
 The `SwitchNode` provides multi-way branching:
 
 ```typescript
-import { Workflow, SwitchNode, StringInputNode, DisplayNode } from '@reactflo/core';
+import { Workflow, SwitchNode, StringInputNode, DisplayNode } from '@crystalflow/core';
 
 const workflow = new Workflow('switch-example');
 
@@ -318,7 +318,7 @@ workflow.connect(stateSwitch.id, 'case_3', errorHandler.id, 'event');
 
 ```tsx
 import React from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import {
   IfNode,
   SwitchNode,
@@ -327,7 +327,7 @@ import {
   StringInputNode,
   CompareNode,
   DisplayNode
-} from '@reactflo/core';
+} from '@crystalflow/core';
 
 function ConditionalWorkflowExample() {
   const nodes = [
@@ -385,10 +385,10 @@ export default ConditionalWorkflowExample;
 
 ## Try It Yourself
 
-The ReactFlo examples package includes a complete `ConditionalNodesDemo.tsx` with:
+The CrystalFlow examples package includes a complete `ConditionalNodesDemo.tsx` with:
 
 - All logic test nodes (CompareNode, IsPositiveNode, IsEvenNode, etc.)
-- IfNode and SwitchNode from @reactflo/core
+- IfNode and SwitchNode from @crystalflow/core
 - 7 documented workflow scenarios
 - Full interactive UI with property panel for configuring cases
 

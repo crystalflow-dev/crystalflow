@@ -53,7 +53,7 @@ export default function Contributors() {
             Become an Early Contributor
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-light-grey max-w-3xl mx-auto mb-6 sm:mb-8 px-4">
-            ReactFlo is open source and growing fast. Join us in building the future of workflow
+            CrystalFlow is open source and growing fast. Join us in building the future of workflow
             automation.
             <br />
             <span className="text-primary font-semibold">
@@ -105,7 +105,7 @@ export default function Contributors() {
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <a
-                href="https://github.com/fladeed/reactflo"
+                href="https://github.com/fladeed/crystalflow"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white font-semibold text-sm sm:text-base rounded-lg hover:shadow-[0_0_30px_rgba(42,65,255,0.5)] transition-all duration-300 hover:scale-105"
@@ -114,7 +114,7 @@ export default function Contributors() {
                 View on GitHub
               </a>
               <a
-                href="https://github.com/fladeed/reactflo/blob/main/CONTRIBUTING.md"
+                href="https://github.com/fladeed/crystalflow/blob/main/CONTRIBUTING.md"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-transparent border border-light-grey/30 text-white font-semibold text-sm sm:text-base rounded-lg hover:border-primary transition-all duration-300"

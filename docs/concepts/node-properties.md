@@ -7,7 +7,7 @@ Node properties are configuration values that can be set in the UI properties pa
 Use the `@Property` decorator to define properties on your node class:
 
 ```typescript
-import { Node, defineNode, Input, Output, Property } from '@reactflo/core';
+import { Node, defineNode, Input, Output, Property } from '@crystalflow/core';
 
 @defineNode({
   type: 'network.http-request',
@@ -233,14 +233,14 @@ Properties are edited in the PropertyPanel component and changes are applied imm
 
 ## Global Properties and Inheritance
 
-ReactFlo supports property inheritance, allowing you to create base classes with global properties that are shared across multiple node types. This is useful for organization-wide configuration, common settings, or specialized node categories.
+CrystalFlow supports property inheritance, allowing you to create base classes with global properties that are shared across multiple node types. This is useful for organization-wide configuration, common settings, or specialized node categories.
 
 ### Creating Base Classes
 
 You can create your own base classes by extending the `Node` class and defining common properties:
 
 ```typescript
-import { Node, defineNode, Property } from '@reactflo/core';
+import { Node, defineNode, Property } from '@crystalflow/core';
 
 // Create a base class for your organization's nodes
 abstract class MyAppBaseNode extends Node {

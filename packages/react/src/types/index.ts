@@ -1,5 +1,5 @@
 /**
- * @reactflo/react types
+ * @crystalflow/react types
  */
 
 export * from './jsonEditor';

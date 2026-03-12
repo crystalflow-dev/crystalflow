@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Node as ReactFlowNode, Edge } from '@xyflow/react';
-import { Workflow } from '@reactflo/core';
+import { Workflow } from '@crystalflow/core';
 import { CustomNodeData } from '../components/Node/CustomNode';
 
 /**

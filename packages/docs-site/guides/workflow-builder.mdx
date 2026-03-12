@@ -3,11 +3,11 @@ title: "Workflow Builder UI"
 description: "Build visual workflow interfaces with React"
 ---
 
-The ReactFlo React package provides components to create visual workflow builder interfaces powered by React Flow.
+The CrystalFlow React package provides components to create visual workflow builder interfaces powered by React Flow.
 
 ## Overview
 
-The `@reactflo/react` package includes:
+The `@crystalflow/react` package includes:
 
 <CardGroup cols={2}>
   <Card title="WorkflowBuilder" icon="diagram-project">
@@ -27,14 +27,14 @@ The `@reactflo/react` package includes:
 ## Installation
 
 ```bash
-npm install @reactflo/react @reactflo/core reflect-metadata react react-dom
+npm install @crystalflow/react @crystalflow/core reflect-metadata react react-dom
 ```
 
 ## Basic Usage
 
 ```tsx App.tsx
 import React from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { AddNode, MultiplyNode } from './nodes';
 
 function App() {
@@ -87,7 +87,7 @@ export default App;
 
 ```tsx
 import React, { useState } from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { 
   NumberInputNode,
   AddNode,
@@ -140,7 +140,7 @@ import {
   useWorkflow, 
   useNodeRegistry,
   useExecution 
-} from '@reactflo/react';
+} from '@crystalflow/react';
 
 function CustomWorkflowEditor() {
   const { workflow, addNode, removeNode, connect } = useWorkflow();
@@ -177,7 +177,7 @@ function CustomWorkflowEditor() {
 The node palette allows users to drag and drop nodes:
 
 ```tsx
-import { NodePalette } from '@reactflo/react';
+import { NodePalette } from '@crystalflow/react';
 
 <NodePalette
   nodes={[AddNode, MultiplyNode]}
@@ -192,7 +192,7 @@ import { NodePalette } from '@reactflo/react';
 The property panel displays node properties and inputs:
 
 ```tsx
-import { PropertyPanel } from '@reactflo/react';
+import { PropertyPanel } from '@crystalflow/react';
 
 <PropertyPanel
   node={selectedNode}
@@ -209,7 +209,7 @@ import { PropertyPanel } from '@reactflo/react';
 </Warning>
 
 ```tsx
-import { Toolbar } from '@reactflo/react';
+import { Toolbar } from '@crystalflow/react';
 
 <Toolbar
   onSave={() => {
@@ -233,7 +233,7 @@ import { Toolbar } from '@reactflo/react';
 ### Custom Node Renderer
 
 ```tsx
-import { CustomNode } from '@reactflo/react';
+import { CustomNode } from '@crystalflow/react';
 
 <WorkflowBuilder
   nodeRenderer={(node) => (
@@ -253,23 +253,23 @@ import { CustomNode } from '@reactflo/react';
 ### Styling
 
 ```css styles.css
-.reactflo-node {
+.crystalflow-node {
   background: white;
   border: 2px solid #3b82f6;
   border-radius: 8px;
   padding: 16px;
 }
 
-.reactflo-node-header {
+.crystalflow-node-header {
   font-weight: bold;
   margin-bottom: 12px;
 }
 
-.reactflo-input-handle {
+.crystalflow-input-handle {
   background: #10b981;
 }
 
-.reactflo-output-handle {
+.crystalflow-output-handle {
   background: #ef4444;
 }
 ```
@@ -280,7 +280,7 @@ WorkflowBuilder is built on React Flow. Access React Flow features:
 
 ```tsx
 import { ReactFlowProvider } from 'reactflow';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 
 <ReactFlowProvider>
   <WorkflowBuilder nodes={[AddNode]} />
@@ -320,7 +320,7 @@ Planned keyboard shortcuts:
 Save and load workflows:
 
 ```tsx
-import { serializeWorkflow, deserializeWorkflow } from '@reactflo/core';
+import { serializeWorkflow, deserializeWorkflow } from '@crystalflow/core';
 
 // Save
 const saveWorkflow = () => {

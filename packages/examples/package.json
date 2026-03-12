@@ -1,8 +1,8 @@
 {
-  "name": "@reactflo/examples",
+  "name": "@crystalflow/examples",
   "version": "0.1.0",
   "private": true,
-  "description": "Examples and demos for ReactFlo",
+  "description": "Examples and demos for CrystalFlow",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,9 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@reactflo/core": "*",
-    "@reactflo/react": "*",
-    "@reactflo/types": "*",
+    "@crystalflow/core": "*",
+    "@crystalflow/react": "*",
+    "@crystalflow/types": "*",
     "@xyflow/react": "^12.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

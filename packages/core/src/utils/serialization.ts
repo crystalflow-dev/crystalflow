@@ -2,7 +2,7 @@
  * Workflow serialization utilities
  */
 
-import { WorkflowData } from '@reactflo/types';
+import { WorkflowData } from '@crystalflow/types';
 
 /**
  * Serializes a workflow to JSON string

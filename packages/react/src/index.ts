@@ -1,5 +1,5 @@
 /**
- * @reactflo/react
+ * @crystalflow/react
  * React components for workflow builder (built on React Flow)
  */
 

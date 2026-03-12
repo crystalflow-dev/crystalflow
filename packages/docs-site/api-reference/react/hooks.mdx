@@ -3,7 +3,7 @@ title: "Hooks"
 description: "React hooks API reference"
 ---
 
-ReactFlo provides several hooks for building custom workflow UIs.
+CrystalFlow provides several hooks for building custom workflow UIs.
 
 ## useWorkflow
 
@@ -25,7 +25,7 @@ function useWorkflow(initialWorkflow?: Workflow): {
 **Example:**
 
 ```tsx
-import { useWorkflow } from '@reactflo/react';
+import { useWorkflow } from '@crystalflow/react';
 import { AddNode } from './nodes';
 
 function MyComponent() {
@@ -60,7 +60,7 @@ function useNodeRegistry(nodes?: Array<typeof Node>): {
 **Example:**
 
 ```tsx
-import { useNodeRegistry } from '@reactflo/react';
+import { useNodeRegistry } from '@crystalflow/react';
 import { AddNode, MultiplyNode } from './nodes';
 
 function NodeList() {
@@ -101,7 +101,7 @@ function useExecution(): {
 **Example:**
 
 ```tsx
-import { useExecution } from '@reactflo/react';
+import { useExecution } from '@crystalflow/react';
 
 function ExecuteButton({ workflow }) {
   const { execute, isExecuting, result, error } = useExecution();
@@ -149,7 +149,7 @@ function useReactFlowState(workflow: Workflow): {
 **Example:**
 
 ```tsx
-import { useReactFlowState } from '@reactflo/react';
+import { useReactFlowState } from '@crystalflow/react';
 import { ReactFlow } from 'reactflow';
 
 function CustomCanvas({ workflow }) {
@@ -188,7 +188,7 @@ function useWorkflowExecution(workflow: Workflow): {
 **Example:**
 
 ```tsx
-import { useWorkflowExecution } from '@reactflo/react';
+import { useWorkflowExecution } from '@crystalflow/react';
 
 function ExecutionPanel({ workflow }) {
   const { execute, isExecuting, progress, result, error, cancel } =
@@ -232,7 +232,7 @@ function useWorkflowFileOperations(workflow: Workflow): {
 **Example:**
 
 ```tsx
-import { useWorkflowFileOperations } from '@reactflo/react';
+import { useWorkflowFileOperations } from '@crystalflow/react';
 
 function FileMenu({ workflow, onLoad }) {
   const { save, load } = useWorkflowFileOperations(workflow);
@@ -273,7 +273,7 @@ function useNodePalette(nodeTypes: Array<typeof Node>): {
 **Example:**
 
 ```tsx
-import { useNodePalette } from '@reactflo/react';
+import { useNodePalette } from '@crystalflow/react';
 
 function NodePalette({ nodeTypes }) {
   const { categories, onDragStart, onDragEnd } = useNodePalette(nodeTypes);
@@ -312,7 +312,7 @@ import {
   useExecution,
   useNodeRegistry,
   useWorkflowFileOperations
-} from '@reactflo/react';
+} from '@crystalflow/react';
 import { AddNode, MultiplyNode } from './nodes';
 
 function CustomWorkflowBuilder() {

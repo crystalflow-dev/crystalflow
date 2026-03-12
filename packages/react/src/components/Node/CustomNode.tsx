@@ -1,7 +1,7 @@
 import React from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
-import { PortDefinition, PropertyDefinition } from '@reactflo/types';
-import { NodeConstructor } from '@reactflo/core';
+import { PortDefinition, PropertyDefinition } from '@crystalflow/types';
+import { NodeConstructor } from '@crystalflow/core';
 
 /**
  * Custom node data

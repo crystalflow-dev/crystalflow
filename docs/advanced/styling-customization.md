@@ -2,14 +2,14 @@
 
 ## Overview
 
-ReactFlo provides a comprehensive styling system that allows you to customize every aspect of the workflow builder UI. The API is inspired by popular UI libraries like Material-UI and Chakra UI, offering multiple approaches to styling:
+CrystalFlow provides a comprehensive styling system that allows you to customize every aspect of the workflow builder UI. The API is inspired by popular UI libraries like Material-UI and Chakra UI, offering multiple approaches to styling:
 
 1. **Class Names** - Apply custom CSS classes to components
 2. **Inline Styles** - Use React style objects for direct styling
 3. **ReactFlow Props** - Pass props directly to underlying ReactFlow components
 4. **Component Props** - Customize individual sub-components
 
-This flexibility allows you to integrate ReactFlo seamlessly into any design system or brand guidelines.
+This flexibility allows you to integrate CrystalFlow seamlessly into any design system or brand guidelines.
 
 ## Table of Contents
 
@@ -29,13 +29,13 @@ This flexibility allows you to integrate ReactFlo seamlessly into any design sys
 
 ## Theme System
 
-ReactFlo includes a comprehensive theme system with built-in light and dark modes, using a unified set of CSS variables for easy customization.
+CrystalFlow includes a comprehensive theme system with built-in light and dark modes, using a unified set of CSS variables for easy customization.
 
 ### Unified CSS Variables
 
-ReactFlo uses a **single set of CSS variables** (`--reactflo-*`) that control the appearance of **all** components:
+CrystalFlow uses a **single set of CSS variables** (`--crystalflow-*`) that control the appearance of **all** components:
 
-- **ReactFlo Components**: Toolbar, NodePalette, PropertyPanel, CustomNode
+- **CrystalFlow Components**: Toolbar, NodePalette, PropertyPanel, CustomNode
 - **ReactFlow Components**: Controls, MiniMap, Background, Edges, Handles
 
 This unified approach means:
@@ -47,16 +47,16 @@ This unified approach means:
 
 ### How Theme Detection Works
 
-ReactFlo applies theme CSS variables to the WorkflowBuilder root element via inline styles. These CSS variables cascade to all child components:
+CrystalFlow applies theme CSS variables to the WorkflowBuilder root element via inline styles. These CSS variables cascade to all child components:
 
-- **ReactFlo Components**: Directly use `--reactflo-*` variables in their styles
-- **ReactFlow Components**: CSS overrides map ReactFlow's hardcoded colors to `--reactflo-*` variables
+- **CrystalFlow Components**: Directly use `--crystalflow-*` variables in their styles
+- **ReactFlow Components**: CSS overrides map ReactFlow's hardcoded colors to `--crystalflow-*` variables
 
 The theme system automatically:
 
-1. Sets all `--reactflo-*` CSS variables based on the theme
+1. Sets all `--crystalflow-*` CSS variables based on the theme
 2. ReactFlow components inherit these via CSS overrides
-3. Applies theme class (`.reactflo-theme-light` or `.reactflo-theme-dark`) for additional customization
+3. Applies theme class (`.crystalflow-theme-light` or `.crystalflow-theme-dark`) for additional customization
 4. Adds `data-theme` attribute for custom CSS targeting
 
 This ensures consistent theming across all UI elements with a single source of truth.
@@ -66,7 +66,7 @@ This ensures consistent theming across all UI elements with a single source of t
 Simply pass the `theme` prop to WorkflowBuilder:
 
 ```tsx
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 
 // Light theme (default)
 <WorkflowBuilder theme="light" nodes={nodeClasses} />
@@ -84,7 +84,7 @@ Create an interactive theme switcher:
 
 ```tsx
 import { useState } from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 
 function ThemedWorkflow() {
   const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('light');
@@ -108,7 +108,7 @@ function ThemedWorkflow() {
 Create a custom theme with the `createTheme` helper:
 
 ```tsx
-import { WorkflowBuilder, createTheme } from '@reactflo/react';
+import { WorkflowBuilder, createTheme } from '@crystalflow/react';
 
 // Create custom light theme
 const customLight = createTheme('light', {
@@ -151,7 +151,7 @@ const customDark = createTheme('dark', {
 For complete control, provide a full theme object:
 
 ```tsx
-import { WorkflowBuilder, Theme } from '@reactflo/react';
+import { WorkflowBuilder, Theme } from '@crystalflow/react';
 
 const myTheme: Theme = {
   mode: 'dark',
@@ -222,46 +222,46 @@ const myTheme: Theme = {
 
 ### CSS Variables
 
-All themes use CSS variables that control **both ReactFlo and ReactFlow** components. Override them in your CSS to customize any aspect:
+All themes use CSS variables that control **both CrystalFlow and ReactFlow** components. Override them in your CSS to customize any aspect:
 
 ```css
 /* Override specific theme variables - affects ALL components */
 .my-workflow {
-  --reactflo-node-bg: #ffffff;
-  --reactflo-node-border: #e0e0e0;
-  --reactflo-node-text: #333333;
-  --reactflo-toolbar-bg: #f5f5f5;
-  --reactflo-button-primary: #007bff;
+  --crystalflow-node-bg: #ffffff;
+  --crystalflow-node-border: #e0e0e0;
+  --crystalflow-node-text: #333333;
+  --crystalflow-toolbar-bg: #f5f5f5;
+  --crystalflow-button-primary: #007bff;
   /* These variables also style ReactFlow controls, minimap, edges, etc. */
 }
 
 /* Dark mode overrides */
 [data-theme='dark'] .my-workflow {
-  --reactflo-node-bg: #2d2d2d;
-  --reactflo-node-border: #404040;
-  --reactflo-node-text: #e0e0e0;
+  --crystalflow-node-bg: #2d2d2d;
+  --crystalflow-node-border: #404040;
+  --crystalflow-node-text: #e0e0e0;
 }
 ```
 
-**Available CSS Variables (used by both ReactFlo & ReactFlow):**
+**Available CSS Variables (used by both CrystalFlow & ReactFlow):**
 
 | Variable                      | Affects                          | Light Default | Dark Default |
 | ----------------------------- | -------------------------------- | ------------- | ------------ |
-| `--reactflo-bg-primary`       | Canvas, main backgrounds         | `#ffffff`     | `#1e1e1e`    |
-| `--reactflo-bg-secondary`     | Toolbar, MiniMap background      | `#f9f9f9`     | `#2d2d2d`    |
-| `--reactflo-text-primary`     | All text, Controls icons         | `#333333`     | `#e0e0e0`    |
-| `--reactflo-text-secondary`   | Secondary labels                 | `#666666`     | `#b0b0b0`    |
-| `--reactflo-border-primary`   | Edges, borders, Controls         | `#dddddd`     | `#404040`    |
-| `--reactflo-node-bg`          | Custom nodes, MiniMap nodes      | `#ffffff`     | `#2d2d2d`    |
-| `--reactflo-node-border`      | Node borders, MiniMap strokes    | `#dddddd`     | `#404040`    |
-| `--reactflo-toolbar-bg`       | Toolbar background               | `#f9f9f9`     | `#2d2d2d`    |
-| `--reactflo-button-primary`   | Buttons, Handles, selected edges | `#3498db`     | `#5dade2`    |
-| `--reactflo-button-secondary` | Controls buttons                 | `#f9f9f9`     | `#2d2d2d`    |
-| `--reactflo-button-hover`     | Button hover, Controls hover     | `#e3e3e3`     | `#3a3a3a`    |
-| `--reactflo-canvas-bg`        | Canvas background                | `#ffffff`     | `#1e1e1e`    |
-| `--reactflo-canvas-grid`      | Background pattern               | `#e3e3e3`     | `#2a2a2a`    |
-| `--reactflo-status-success`   | Success indicators               | `#27ae60`     | `#2ecc71`    |
-| `--reactflo-status-error`     | Error indicators                 | `#e74c3c`     | `#e74c3c`    |
+| `--crystalflow-bg-primary`       | Canvas, main backgrounds         | `#ffffff`     | `#1e1e1e`    |
+| `--crystalflow-bg-secondary`     | Toolbar, MiniMap background      | `#f9f9f9`     | `#2d2d2d`    |
+| `--crystalflow-text-primary`     | All text, Controls icons         | `#333333`     | `#e0e0e0`    |
+| `--crystalflow-text-secondary`   | Secondary labels                 | `#666666`     | `#b0b0b0`    |
+| `--crystalflow-border-primary`   | Edges, borders, Controls         | `#dddddd`     | `#404040`    |
+| `--crystalflow-node-bg`          | Custom nodes, MiniMap nodes      | `#ffffff`     | `#2d2d2d`    |
+| `--crystalflow-node-border`      | Node borders, MiniMap strokes    | `#dddddd`     | `#404040`    |
+| `--crystalflow-toolbar-bg`       | Toolbar background               | `#f9f9f9`     | `#2d2d2d`    |
+| `--crystalflow-button-primary`   | Buttons, Handles, selected edges | `#3498db`     | `#5dade2`    |
+| `--crystalflow-button-secondary` | Controls buttons                 | `#f9f9f9`     | `#2d2d2d`    |
+| `--crystalflow-button-hover`     | Button hover, Controls hover     | `#e3e3e3`     | `#3a3a3a`    |
+| `--crystalflow-canvas-bg`        | Canvas background                | `#ffffff`     | `#1e1e1e`    |
+| `--crystalflow-canvas-grid`      | Background pattern               | `#e3e3e3`     | `#2a2a2a`    |
+| `--crystalflow-status-success`   | Success indicators               | `#27ae60`     | `#2ecc71`    |
+| `--crystalflow-status-error`     | Error indicators                 | `#e74c3c`     | `#e74c3c`    |
 
 **Key Benefits:**
 
@@ -274,7 +274,7 @@ See the full list with all categories in the [API Reference](#api-reference) sec
 
 ### System Theme Detection
 
-When using `theme="auto"`, ReactFlo automatically detects the user's system preference:
+When using `theme="auto"`, CrystalFlow automatically detects the user's system preference:
 
 ```tsx
 <WorkflowBuilder
@@ -309,7 +309,7 @@ If some components aren't respecting the theme:
 
 ```css
 /* Override with higher specificity */
-.reactflo-theme-dark .reactflow-controls button {
+.crystalflow-theme-dark .reactflow-controls button {
   background: var(--xy-controls-button-background-color);
 }
 ```
@@ -340,7 +340,7 @@ See [ThemeDemo example](../packages/examples/src/examples/ThemeDemo.tsx) for a c
 - Smooth theme transitions
 
 ```tsx
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 
 <WorkflowBuilder
   theme="auto"
@@ -612,11 +612,11 @@ Customize the mini-map overview:
 
 ## Node Styling
 
-ReactFlo uses ReactFlow's built-in class-based styling system for nodes. This allows you to customize node appearance using standard CSS while leveraging ReactFlow's optimized rendering.
+CrystalFlow uses ReactFlow's built-in class-based styling system for nodes. This allows you to customize node appearance using standard CSS while leveraging ReactFlow's optimized rendering.
 
 ### Default Node Classes
 
-ReactFlo automatically applies these CSS classes to custom nodes:
+CrystalFlow automatically applies these CSS classes to custom nodes:
 
 ```
 .react-flow__node-custom          - Root node wrapper (applied by ReactFlow)
@@ -819,7 +819,7 @@ import './StyledWorkflow.css';
 
 ## Custom Rendering
 
-ReactFlo provides powerful custom rendering capabilities that give you complete control over how components are displayed. This goes beyond styling to allow you to completely replace the rendering logic for nodes, palette items, and toolbar.
+CrystalFlow provides powerful custom rendering capabilities that give you complete control over how components are displayed. This goes beyond styling to allow you to completely replace the rendering logic for nodes, palette items, and toolbar.
 
 ### Custom Node Content Rendering
 
@@ -828,7 +828,7 @@ The `renderNodeContent` prop allows you to completely customize what's displayed
 **Basic Example:**
 
 ```tsx
-import { WorkflowBuilder, CustomNodeData } from '@reactflo/react';
+import { WorkflowBuilder, CustomNodeData } from '@crystalflow/react';
 
 <WorkflowBuilder
   nodes={nodeClasses}
@@ -1074,7 +1074,7 @@ See [CustomRenderWorkflow example](../packages/examples/src/examples/CustomRende
 
 ## Toolbar Customization
 
-Beyond custom rendering, ReactFlo provides fine-grained control over toolbar buttons.
+Beyond custom rendering, CrystalFlow provides fine-grained control over toolbar buttons.
 
 ### Toolbar Options
 
@@ -1454,7 +1454,7 @@ function MyWorkflow() {
 ### Example 1: Minimal Styling
 
 ```tsx
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { AddNode, MultiplyNode } from './nodes';
 
 export function MinimalWorkflow() {
@@ -1465,7 +1465,7 @@ export function MinimalWorkflow() {
 ### Example 2: Custom Theme
 
 ```tsx
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { BackgroundVariant } from 'reactflow';
 import { AddNode, MultiplyNode, DisplayNode } from './nodes';
 
@@ -1598,7 +1598,7 @@ When customizing styles, maintain accessibility:
 TypeScript provides excellent autocomplete and type safety:
 
 ```tsx
-import { WorkflowBuilderProps } from '@reactflo/react';
+import { WorkflowBuilderProps } from '@crystalflow/react';
 
 const myTheme: Partial<WorkflowBuilderProps> = {
   classes: {

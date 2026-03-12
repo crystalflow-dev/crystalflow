@@ -14,14 +14,14 @@ const meta = {
 export default meta;
 
 /**
- * # ReactFlo Component Library
+ * # CrystalFlow Component Library
  *
- * Welcome to the ReactFlo Storybook! This is an interactive showcase of all the React components
- * that make up the ReactFlo workflow builder framework.
+ * Welcome to the CrystalFlow Storybook! This is an interactive showcase of all the React components
+ * that make up the CrystalFlow workflow builder framework.
  *
- * ## What is ReactFlo?
+ * ## What is CrystalFlow?
  *
- * ReactFlo is a declarative workflow builder framework that provides tools for creating custom
+ * CrystalFlow is a declarative workflow builder framework that provides tools for creating custom
  * workflow applications. It uses TypeScript decorators for node definitions, React Flow for the
  * UI layer, and includes a complete execution engine with JSON serialization.
  *
@@ -66,7 +66,7 @@ export default meta;
  *
  * ## Resources
  *
- * - [ReactFlo Documentation](https://github.com/fladeed/reactflo)
+ * - [CrystalFlow Documentation](https://github.com/fladeed/crystalflow)
  * - [React Flow Documentation](https://reactflow.dev/)
  * - [Monaco Editor Documentation](https://microsoft.github.io/monaco-editor/)
  *

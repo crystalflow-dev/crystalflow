@@ -1,13 +1,13 @@
 ---
 title: "Error Handling"
-description: "Handle errors gracefully in ReactFlo workflows"
+description: "Handle errors gracefully in CrystalFlow workflows"
 ---
 
-ReactFlo provides a comprehensive error handling system with typed exceptions and detailed error context.
+CrystalFlow provides a comprehensive error handling system with typed exceptions and detailed error context.
 
 ## Error Types
 
-ReactFlo includes several specialized error types:
+CrystalFlow includes several specialized error types:
 
 <CardGroup cols={2}>
   <Card title="ExecutionError" icon="triangle-exclamation">
@@ -33,7 +33,7 @@ ReactFlo includes several specialized error types:
 ## Basic Error Handling
 
 ```typescript
-import { Executor, ExecutionError } from '@reactflo/core';
+import { Executor, ExecutionError } from '@crystalflow/core';
 
 try {
   const result = await executor.execute(workflow);
@@ -54,7 +54,7 @@ try {
 When a node fails, a `NodeExecutionError` is thrown with detailed context:
 
 ```typescript
-import { NodeExecutionError } from '@reactflo/core';
+import { NodeExecutionError } from '@crystalflow/core';
 
 try {
   const result = await executor.execute(workflow);
@@ -98,7 +98,7 @@ try {
 Thrown when workflow validation fails:
 
 ```typescript
-import { ValidationError } from '@reactflo/core';
+import { ValidationError } from '@crystalflow/core';
 
 try {
   const result = await executor.execute(workflow);
@@ -118,7 +118,7 @@ try {
 Thrown when execution exceeds the timeout limit:
 
 ```typescript
-import { TimeoutError } from '@reactflo/core';
+import { TimeoutError } from '@crystalflow/core';
 
 try {
   const result = await executor.execute(workflow, {
@@ -137,7 +137,7 @@ try {
 Thrown when execution is cancelled:
 
 ```typescript
-import { UserCancelledError, CancellationError } from '@reactflo/core';
+import { UserCancelledError, CancellationError } from '@crystalflow/core';
 
 try {
   const result = await executor.execute(workflow);
@@ -323,7 +323,7 @@ import {
   ValidationError,
   TimeoutError,
   UserCancelledError
-} from '@reactflo/core';
+} from '@crystalflow/core';
 
 async function executeWorkflowWithErrorHandling(workflow) {
   const executor = new Executor();
@@ -410,7 +410,7 @@ Show errors to users in React:
 
 ```tsx
 import React, { useState } from 'react';
-import { Executor, NodeExecutionError } from '@reactflo/core';
+import { Executor, NodeExecutionError } from '@crystalflow/core';
 
 function WorkflowExecutor({ workflow }) {
   const [error, setError] = useState(null);

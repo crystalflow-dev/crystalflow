@@ -1,13 +1,13 @@
 ---
 title: "JSON Schema"
-description: "Understanding ReactFlo's workflow JSON format and schema"
+description: "Understanding CrystalFlow's workflow JSON format and schema"
 ---
 
-ReactFlo workflows are fully serializable to JSON, enabling version control, sharing, and programmatic manipulation of workflows.
+CrystalFlow workflows are fully serializable to JSON, enabling version control, sharing, and programmatic manipulation of workflows.
 
 ## Overview
 
-Every ReactFlo workflow can be:
+Every CrystalFlow workflow can be:
 - **Serialized** to JSON for storage
 - **Deserialized** from JSON to recreate workflows
 - **Validated** against a formal JSON Schema
@@ -174,7 +174,7 @@ Each connection in the `connections` array:
 Convert a workflow to JSON:
 
 ```typescript
-import { serializeWorkflow } from '@reactflo/core';
+import { serializeWorkflow } from '@crystalflow/core';
 
 // Get workflow data
 const workflowData = workflow.toJSON();
@@ -192,7 +192,7 @@ fs.writeFileSync('workflow.json', json);
 Load a workflow from JSON:
 
 ```typescript
-import { deserializeWorkflow, Workflow } from '@reactflo/core';
+import { deserializeWorkflow, Workflow } from '@crystalflow/core';
 import fs from 'fs';
 
 // Read JSON file
@@ -210,7 +210,7 @@ const workflow = Workflow.fromJSON(workflowData);
 Validate workflow JSON against the schema:
 
 ```typescript
-import { validateWorkflowJSON } from '@reactflo/core';
+import { validateWorkflowJSON } from '@crystalflow/core';
 
 const json = fs.readFileSync('workflow.json', 'utf-8');
 const errors = validateWorkflowJSON(json);
@@ -315,7 +315,7 @@ Here's a complete workflow JSON with multiple nodes and connections:
 ## Loading This Workflow
 
 ```typescript
-import { deserializeWorkflow, Workflow, Executor } from '@reactflo/core';
+import { deserializeWorkflow, Workflow, Executor } from '@crystalflow/core';
 import fs from 'fs';
 
 // Load from file
@@ -338,7 +338,7 @@ The formal JSON Schema is available at `schema/workflow.schema.json` in the repo
 
 ```typescript
 import Ajv from 'ajv';
-import schema from '@reactflo/core/schema/workflow.schema.json';
+import schema from '@crystalflow/core/schema/workflow.schema.json';
 
 const ajv = new Ajv();
 const validate = ajv.compile(schema);
@@ -396,7 +396,7 @@ git checkout HEAD~1 workflows/my-workflow.json
 Create workflows programmatically from JSON:
 
 ```typescript
-import { Workflow } from '@reactflo/core';
+import { Workflow } from '@crystalflow/core';
 
 const workflowData = {
   version: '1.0.0',
@@ -422,7 +422,7 @@ const workflow = Workflow.fromJSON(workflowData);
 When the schema version changes, use migration utilities:
 
 ```typescript
-import { migrateWorkflow } from '@reactflo/core';
+import { migrateWorkflow } from '@crystalflow/core';
 
 // Migrate from old version to current
 const migratedData = migrateWorkflow(oldWorkflowData, {

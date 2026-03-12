@@ -1,4 +1,4 @@
-# ReactFlo Quick Reference
+# CrystalFlow Quick Reference
 
 ## 🚀 Quick Commands
 
@@ -27,8 +27,8 @@ npm run clean                   # Clean build artifacts
 
 ```bash
 # Run command in specific package
-npm run build -w @reactflo/core
-npm test -w @reactflo/types
+npm run build -w @crystalflow/core
+npm test -w @crystalflow/types
 
 # Run command in all packages
 npm run build --workspaces

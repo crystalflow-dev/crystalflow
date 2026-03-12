@@ -1,6 +1,6 @@
-# JSON Editor in ReactFlo
+# JSON Editor in CrystalFlow
 
-The ReactFlo workflow builder includes a powerful integrated JSON editor, allowing users to work with workflows in both visual and text formats.
+The CrystalFlow workflow builder includes a powerful integrated JSON editor, allowing users to work with workflows in both visual and text formats.
 
 ## Features
 
@@ -32,7 +32,7 @@ Both visual and JSON editors side-by-side with real-time synchronization.
 ### Basic Setup
 
 ```tsx
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 
 function App() {
   return <WorkflowBuilder nodes={[...myNodes]} showJsonEditor={true} editorMode="split" />;
@@ -275,7 +275,7 @@ The editor provides clear error messages:
 Compare workflow versions:
 
 ```tsx
-import { WorkflowDiffViewer } from '@reactflo/react';
+import { WorkflowDiffViewer } from '@crystalflow/react';
 
 <WorkflowDiffViewer original={previousWorkflow} modified={currentWorkflow} theme="vs-dark" />;
 ```
@@ -328,7 +328,7 @@ Save common patterns as JSON templates:
 Control the editor programmatically:
 
 ```tsx
-import { useWorkflowEditor } from '@reactflo/react';
+import { useWorkflowEditor } from '@crystalflow/react';
 
 function MyComponent() {
   const editor = useWorkflowEditor();

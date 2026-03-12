@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { NodeConstructor } from '@reactflo/core';
+import { NodeConstructor } from '@crystalflow/core';
 import { Node as ReactFlowNode, Edge, ReactFlowProvider } from '@xyflow/react';
 import { injectStyles } from '../../utils/injectStyles';
 import { globalStyles, componentStyles } from '../../styles/cssInJs';
@@ -31,8 +31,8 @@ import { cn, mergeStyles } from '../../utils/styling';
 
 // Inject styles at module level to ensure they're loaded before any component renders
 // This prevents FOUC (Flash of Unstyled Content)
-injectStyles(globalStyles, 'reactflo-global');
-injectStyles(componentStyles, 'reactflo-components');
+injectStyles(globalStyles, 'crystalflow-global');
+injectStyles(componentStyles, 'crystalflow-components');
 
 /**
  * WorkflowBuilder Props
@@ -478,7 +478,7 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
   return (
     <ReactFlowProvider>
       <div
-        className={cn(className, classes?.root, `reactflo-theme-${resolvedTheme.mode}`)}
+        className={cn(className, classes?.root, `crystalflow-theme-${resolvedTheme.mode}`)}
         style={mergeStyles(defaultRootStyle, styles?.root, style)}
         data-theme={resolvedTheme.mode}
       >
@@ -500,7 +500,7 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
               minWidth={200}
               maxWidth={400}
               defaultWidth={280}
-              storageKey="reactflo-node-palette-width"
+              storageKey="crystalflow-node-palette-width"
               resizeHandle="right"
             >
               <NodePalette
@@ -526,7 +526,7 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
             onDrop={handleDrop}
             onDragOver={nodePalette.onDragOver}
             onReactFlowInit={handleReactFlowInit}
-            className={`${classes?.canvas || ''} reactflo-theme-${resolvedTheme.mode}`}
+            className={`${classes?.canvas || ''} crystalflow-theme-${resolvedTheme.mode}`}
             style={styles?.canvas}
             colorMode={resolvedTheme.mode === 'dark' ? 'dark' : 'light'}
             reactFlowCustomization={{
@@ -544,7 +544,7 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
               minWidth={250}
               maxWidth={600}
               defaultWidth={350}
-              storageKey="reactflo-property-panel-width"
+              storageKey="crystalflow-property-panel-width"
               resizeHandle="left"
             >
               <PropertyPanel

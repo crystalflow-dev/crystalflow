@@ -2,7 +2,7 @@
 
 ## ✅ Task Completed: Set up Storybook for component development
 
-Storybook has been successfully configured for the ReactFlo React package, providing an interactive development environment for building and testing React components in isolation.
+Storybook has been successfully configured for the CrystalFlow React package, providing an interactive development environment for building and testing React components in isolation.
 
 ## What Was Done
 
@@ -33,7 +33,7 @@ Storybook has been successfully configured for the ReactFlo React package, provi
 **`vite.config.ts`**
 
 - Created Vite configuration for React
-- Added path aliases for `@reactflo/core` and `@reactflo/types`
+- Added path aliases for `@crystalflow/core` and `@crystalflow/types`
 - Integrated React plugin for JSX support
 
 ### 3. Story Files Created
@@ -61,7 +61,7 @@ All components now have corresponding story files with multiple variations:
   - How to run and build Storybook
   - File structure and organization
   - Story writing guidelines
-  - Integration with ReactFlo ecosystem
+  - Integration with CrystalFlow ecosystem
   - Tips for component development
 
 ### 5. Package Scripts
@@ -91,7 +91,7 @@ npm run storybook
 Or from the root:
 
 ```bash
-npm run storybook --workspace=@reactflo/react
+npm run storybook --workspace=@crystalflow/react
 ```
 
 Storybook will be available at: **http://localhost:6006/**
@@ -136,7 +136,7 @@ Output will be in `storybook-static/` directory.
 - Monaco editor theme options (vs-dark, vs-light, hc-black)
 - React Flow styles pre-loaded
 
-## Integration with ReactFlo
+## Integration with CrystalFlow
 
 Storybook is configured to work seamlessly with:
 

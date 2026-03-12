@@ -1,7 +1,7 @@
 import { Node } from '../../node/Node';
 import { defineNode } from '../../node/decorators';
 import { Input, Property } from '../../node/decorators';
-import { IConditionalNode, PortDefinition } from '@reactflo/types';
+import { IConditionalNode, PortDefinition } from '@crystalflow/types';
 
 /**
  * SwitchNode provides switch/case conditional flow control.

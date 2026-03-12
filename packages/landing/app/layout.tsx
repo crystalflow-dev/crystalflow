@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'ReactFlo - Declarative Workflow Builder Framework',
+  title: 'CrystalFlow - Declarative Workflow Builder Framework',
   description:
     'Build powerful workflow applications with TypeScript decorators, visual editing, and JSON serialization. Zero dependencies, 100% type-safe.',
   keywords: [
@@ -27,31 +27,31 @@ export const metadata: Metadata = {
     'flow',
     'automation',
   ],
-  authors: [{ name: 'ReactFlo Team' }],
-  creator: 'ReactFlo',
+  authors: [{ name: 'CrystalFlow Team' }],
+  creator: 'CrystalFlow',
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://reactflo.dev',
-    title: 'ReactFlo - Declarative Workflow Builder Framework',
+    url: 'https://crystalflow.dev',
+    title: 'CrystalFlow - Declarative Workflow Builder Framework',
     description:
       'Build powerful workflow applications with TypeScript decorators, visual editing, and JSON serialization.',
-    siteName: 'ReactFlo',
+    siteName: 'CrystalFlow',
     images: [
       {
-        url: '/logo/reactflo-logo.svg',
+        url: '/logo/crystalflow-logo-blue-dark.svg',
         width: 1200,
         height: 630,
-        alt: 'ReactFlo Logo',
+        alt: 'CrystalFlow Logo',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ReactFlo - Declarative Workflow Builder Framework',
+    title: 'CrystalFlow - Declarative Workflow Builder Framework',
     description:
       'Build powerful workflow applications with TypeScript decorators, visual editing, and JSON serialization.',
-    images: ['/logo/reactflo-logo.svg'],
+    images: ['/logo/crystalflow-logo-blue-dark.svg'],
   },
   icons: {
     icon: '/favicon.ico',

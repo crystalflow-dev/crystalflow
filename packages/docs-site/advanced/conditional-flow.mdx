@@ -32,7 +32,7 @@ Conditional flow allows workflows to:
 
 ## Architecture
 
-ReactFlo's conditional flow is built on three key components:
+CrystalFlow's conditional flow is built on three key components:
 
 ### 1. IConditionalNode Interface
 
@@ -88,14 +88,14 @@ At runtime:
 
 ## Built-in Conditional Nodes
 
-ReactFlo includes two powerful conditional nodes out of the box.
+CrystalFlow includes two powerful conditional nodes out of the box.
 
 ### IfNode
 
 The `IfNode` provides classic if/else conditional logic:
 
 ```typescript
-import { IfNode } from '@reactflo/core';
+import { IfNode } from '@crystalflow/core';
 
 @defineNode({
   type: 'flow.if',
@@ -174,7 +174,7 @@ export class IfNode extends Node implements IConditionalNode {
 The `SwitchNode` provides multi-way branching with case matching:
 
 ```typescript
-import { SwitchNode } from '@reactflo/core';
+import { SwitchNode } from '@crystalflow/core';
 
 @defineNode({
   type: 'flow.switch',
@@ -310,7 +310,7 @@ You can create custom conditional nodes for specialized branching logic:
 ### Example: GreaterThanNode
 
 ```typescript
-import { Node, defineNode, Input, Output, IConditionalNode } from '@reactflo/core';
+import { Node, defineNode, Input, Output, IConditionalNode } from '@crystalflow/core';
 
 @defineNode({
   type: 'logic.greater-than',
@@ -591,7 +591,7 @@ AuthCheck (If) → thenOutput → RoleSwitch (Switch) → Admin/User/Guest
 
 ### Deep Nesting
 
-ReactFlo supports arbitrary nesting depth:
+CrystalFlow supports arbitrary nesting depth:
 
 ```typescript
 If → then → If → then → If → then → ProcessNode
@@ -603,7 +603,7 @@ If → then → If → then → If → then → ProcessNode
 ```
 
 <Warning>
-  While ReactFlo supports deep nesting, consider refactoring complex decision
+  While CrystalFlow supports deep nesting, consider refactoring complex decision
   trees into smaller, reusable workflows for better maintainability.
 </Warning>
 

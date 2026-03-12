@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Node as ReactFlowNode } from '@xyflow/react';
 import { FiSettings, FiX, FiBox, FiChevronRight, FiZap, FiPlus, FiTrash2 } from 'react-icons/fi';
 import { CustomNodeData } from '../Node/CustomNode';
-import { PropertyDefinition } from '@reactflo/types';
+import { PropertyDefinition } from '@crystalflow/types';
 import { PropertyPanelClasses, PropertyPanelStyles } from '../../types/styling';
 import { cn, mergeStyles } from '../../utils/styling';
 

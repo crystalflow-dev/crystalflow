@@ -2,7 +2,7 @@
  * Node System
  *
  * Provides the base Node class and related utilities for creating
- * workflow nodes in ReactFlo.
+ * workflow nodes in CrystalFlow.
  */
 
 export { Node } from './Node';

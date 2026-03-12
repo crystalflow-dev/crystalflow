@@ -1,6 +1,6 @@
 # Core Concepts
 
-Understanding the fundamental concepts of ReactFlo.
+Understanding the fundamental concepts of CrystalFlow.
 
 ## Nodes
 
@@ -61,7 +61,7 @@ await workflow.execute();
 
 ### Workflow Execution
 
-ReactFlo automatically determines the execution order based on connections:
+CrystalFlow automatically determines the execution order based on connections:
 
 1. **Topological Sort** - Nodes are ordered based on dependencies
 2. **Parallel Execution** - Independent nodes can run in parallel
@@ -79,7 +79,7 @@ Connections link outputs of one node to inputs of another.
 
 ### Type System
 
-ReactFlo includes a built-in type system:
+CrystalFlow includes a built-in type system:
 
 - `string` - Text data
 - `number` - Numeric data
@@ -90,7 +90,7 @@ ReactFlo includes a built-in type system:
 
 ## Events
 
-ReactFlo emits events during workflow execution:
+CrystalFlow emits events during workflow execution:
 
 ```typescript
 workflow.on('node:start', (nodeId) => {
@@ -113,7 +113,7 @@ workflow.on('workflow:complete', (result) => {
 Execute workflows with the Executor:
 
 ```typescript
-import { Executor } from '@reactflo/core';
+import { Executor } from '@crystalflow/core';
 
 const executor = new Executor();
 const result = await executor.execute(workflow);
@@ -124,7 +124,7 @@ console.log(result.duration); // Execution time in ms
 
 ### Cancellation Support
 
-ReactFlo provides comprehensive cancellation support for workflows:
+CrystalFlow provides comprehensive cancellation support for workflows:
 
 #### 1. Timeout-Based Cancellation
 
@@ -231,7 +231,7 @@ executor.on('onCancellation', (executionId, reason, cancelledAt) => {
 
 ### Cancellation Reasons
 
-ReactFlo tracks why execution was cancelled:
+CrystalFlow tracks why execution was cancelled:
 
 - `timeout` - Execution exceeded timeout limit
 - `user-cancelled` - User explicitly cancelled
@@ -241,7 +241,7 @@ ReactFlo tracks why execution was cancelled:
 ### Error Handling with Cancellation
 
 ```typescript
-import { CancellationError, TimeoutError, UserCancelledError } from '@reactflo/core';
+import { CancellationError, TimeoutError, UserCancelledError } from '@crystalflow/core';
 
 try {
   const result = await executor.execute(workflow, { timeout: 5000 });

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Test script for ReactFlo monorepo
+# Test script for CrystalFlow monorepo
 
 set -e
 
-echo "🧪 Running tests for ReactFlo..."
+echo "🧪 Running tests for CrystalFlow..."
 
 # Run linting
 echo "🔍 Running linter..."

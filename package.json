@@ -1,5 +1,5 @@
 {
-  "name": "reactflo-monorepo",
+  "name": "crystalflow-monorepo",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,9 +10,9 @@
   "scripts": {
     "bootstrap": "npm install",
     "build": "npm run build --workspaces",
-    "dev": "concurrently --names \"types,core,react,examples\" -c \"cyan,magenta,blue,green\" \"npm run dev -w @reactflo/types\" \"npm run dev -w @reactflo/core\" \"npm run dev -w @reactflo/react\" \"npm run dev -w @reactflo/examples\"",
-    "dev:examples": "npm run dev -w @reactflo/examples",
-    "dev:landing": "npm run dev -w @reactflo/landing",
+    "dev": "concurrently --names \"types,core,react,examples\" -c \"cyan,magenta,blue,green\" \"npm run dev -w @crystalflow/types\" \"npm run dev -w @crystalflow/core\" \"npm run dev -w @crystalflow/react\" \"npm run dev -w @crystalflow/examples\"",
+    "dev:examples": "npm run dev -w @crystalflow/examples",
+    "dev:landing": "npm run dev -w @crystalflow/landing",
     "dev:docs": "cd packages/docs-site && mint dev",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -55,14 +55,14 @@
     "typescript",
     "framework"
   ],
-  "author": "ReactFlo Team",
+  "author": "CrystalFlow Team",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Fladeed/reactflo.git"
+    "url": "https://github.com/Fladeed/crystalflow.git"
   },
   "bugs": {
-    "url": "https://github.com/Fladeed/reactflo/issues"
+    "url": "https://github.com/Fladeed/crystalflow/issues"
   },
-  "homepage": "https://github.com/Fladeed/reactflo#readme"
+  "homepage": "https://github.com/Fladeed/crystalflow#readme"
 }

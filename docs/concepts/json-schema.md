@@ -1,6 +1,6 @@
-# ReactFlo Workflow JSON Schema
+# CrystalFlow Workflow JSON Schema
 
-ReactFlo workflows are fully serializable to and from JSON with a well-structured schema.
+CrystalFlow workflows are fully serializable to and from JSON with a well-structured schema.
 
 ## Schema Version
 
@@ -321,7 +321,7 @@ Current version: **1.0.0**
 ### Export Workflow
 
 ```typescript
-import { Workflow } from '@reactflo/core';
+import { Workflow } from '@crystalflow/core';
 
 const workflow = new Workflow();
 // ... build workflow ...
@@ -337,7 +337,7 @@ await fs.writeFile('workflow.json', JSON.stringify(json, null, 2));
 ### Import Workflow
 
 ```typescript
-import { Workflow } from '@reactflo/core';
+import { Workflow } from '@crystalflow/core';
 
 // Load from file
 const json = await fs.readFile('workflow.json', 'utf-8');
@@ -353,7 +353,7 @@ const result = await workflow.execute();
 ### Validation
 
 ```typescript
-import { validateWorkflowJSON } from '@reactflo/core';
+import { validateWorkflowJSON } from '@crystalflow/core';
 
 const json = await fs.readFile('workflow.json', 'utf-8');
 const workflowData = JSON.parse(json);
@@ -433,10 +433,10 @@ Use descriptions liberally:
 
 ## Migration
 
-If the schema version changes, ReactFlo will provide migration utilities:
+If the schema version changes, CrystalFlow will provide migration utilities:
 
 ```typescript
-import { migrateWorkflow } from '@reactflo/core';
+import { migrateWorkflow } from '@crystalflow/core';
 
 const oldWorkflow = JSON.parse(oldJson);
 const newWorkflow = migrateWorkflow(oldWorkflow, '2.0.0');
@@ -453,7 +453,7 @@ A formal JSON Schema definition is available at:
 
 - **Online Validator**: Coming soon
 - **VS Code Extension**: Coming soon (with autocomplete)
-- **CLI Validator**: `reactflo validate workflow.json`
+- **CLI Validator**: `crystalflow validate workflow.json`
 
 ## See Also
 

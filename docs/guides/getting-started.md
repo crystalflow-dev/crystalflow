@@ -1,6 +1,6 @@
-# Getting Started with ReactFlo
+# Getting Started with CrystalFlow
 
-This guide will help you get started with ReactFlo, a declarative workflow builder framework. Choose your path:
+This guide will help you get started with CrystalFlow, a declarative workflow builder framework. Choose your path:
 
 - **Visual Builder** - Drag-and-drop UI for building workflows (recommended for most users)
 - **Core** - Programmatic workflow creation and execution
@@ -14,13 +14,13 @@ The visual builder provides a drag-and-drop interface for creating workflows wit
 ### Installation
 
 ```bash
-npm install @reactflo/core @reactflo/react
+npm install @crystalflow/core @crystalflow/react
 ```
 
 Or using yarn:
 
 ```bash
-yarn add @reactflo/core @reactflo/react
+yarn add @crystalflow/core @crystalflow/react
 ```
 
 ### Using the Visual Builder
@@ -29,7 +29,7 @@ Create a React component with the WorkflowBuilder:
 
 ```tsx
 import React from 'react';
-import { WorkflowBuilder } from '@reactflo/react';
+import { WorkflowBuilder } from '@crystalflow/react';
 import { AddNode } from './nodes/AddNode';
 
 function App() {
@@ -53,7 +53,7 @@ export default App;
 Define nodes using decorators to use them in the visual builder:
 
 ```typescript
-import { Node, defineNode, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'math.add',
@@ -105,13 +105,13 @@ Use the core package for programmatic workflow creation and execution without a 
 ### Installation
 
 ```bash
-npm install @reactflo/core
+npm install @crystalflow/core
 ```
 
 Or using yarn:
 
 ```bash
-yarn add @reactflo/core
+yarn add @crystalflow/core
 ```
 
 ### Creating Your First Node
@@ -119,7 +119,7 @@ yarn add @reactflo/core
 Define nodes using decorators:
 
 ```typescript
-import { Node, defineNode, Input, Output } from '@reactflo/core';
+import { Node, defineNode, Input, Output } from '@crystalflow/core';
 
 @defineNode({
   type: 'math.add',
@@ -157,7 +157,7 @@ export class AddNode extends Node {
 ### Building and Executing a Workflow
 
 ```typescript
-import { Workflow } from '@reactflo/core';
+import { Workflow } from '@crystalflow/core';
 import { AddNode } from './nodes/AddNode';
 
 // Create a workflow
@@ -198,5 +198,5 @@ console.log(result.duration); // execution time in ms
 
 ## Need Help?
 
-- [GitHub Issues](https://github.com/yourusername/reactflo/issues)
-- [Discussions](https://github.com/yourusername/reactflo/discussions)
+- [GitHub Issues](https://github.com/yourusername/crystalflow/issues)
+- [Discussions](https://github.com/yourusername/crystalflow/discussions)
