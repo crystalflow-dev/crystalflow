@@ -12,6 +12,7 @@
     "build": "rm -rf packages/*/dist packages/*/*.tsbuildinfo && npm run build -w @crystalflow/types && npm run build -w @crystalflow/core && npm run build -w @crystalflow/react && npm run build --workspaces --if-present",
     "dev": "concurrently --names \"types,core,react,examples\" -c \"cyan,magenta,blue,green\" \"npm run dev -w @crystalflow/types\" \"npm run dev -w @crystalflow/core\" \"npm run dev -w @crystalflow/react\" \"npm run dev -w @crystalflow/examples\"",
     "dev:examples": "npm run dev -w @crystalflow/examples",
+    "build:landing": "npm run build -w @crystalflow/types && npm run build -w @crystalflow/core && npm run build -w @crystalflow/react && npm run build -w @crystalflow/landing",
     "dev:landing": "npm run dev -w @crystalflow/landing",
     "dev:docs": "cd packages/docs-site && mint dev",
     "test": "jest",
