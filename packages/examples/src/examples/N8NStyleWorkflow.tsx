@@ -11,7 +11,7 @@
  */
 
 import React, { useCallback } from 'react';
-import { WorkflowBuilder, CustomNodeData } from '@reactflo/react';
+import { WorkflowBuilder, CustomNodeData } from '@crystalflow/react';
 import { BackgroundVariant, ConnectionLineType } from '@xyflow/react';
 import './N8NStyleWorkflow.css';
 import { n8nStyleWorkflow } from '../workflows/defaultWorkflows';

@@ -1,4 +1,4 @@
-import { Node, Output, Property, defineNode } from '@reactflo/core';
+import { Node, Output, Property, defineNode } from '@crystalflow/core';
 
 /**
  * Webhook Trigger Node - Starts workflow from an HTTP webhook

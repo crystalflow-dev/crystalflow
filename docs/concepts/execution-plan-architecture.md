@@ -296,8 +296,8 @@
   - SwitchNode case matching and default
   - Data passthrough verification
   - Branch execution isolation (only active branch runs)
-- [x] Run lint: `npm run lint -w @reactflo/core` (0 errors)
-- [x] Run tests: `npm test -w @reactflo/core` (484 tests passing)
+- [x] Run lint: `npm run lint -w @crystalflow/core` (0 errors)
+- [x] Run tests: `npm test -w @crystalflow/core` (484 tests passing)
 - [x] Commit: "test(core): add integration tests for simple conditional workflows (Task 2.12)"
 
 **Task 2.13: Integration Testing - Nested Conditionals** [3 hours] - ✅ COMPLETE

@@ -14,6 +14,7 @@ module.exports = {
     '^.+\\.(ts|tsx)$': [
       'ts-jest',
       {
+        isolatedModules: true, // Transpile-only mode: no language service, no file watchers
         tsconfig: {
           noUnusedLocals: false,
           noUnusedParameters: false,

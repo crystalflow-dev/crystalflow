@@ -243,20 +243,20 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
     context: ExecutionContext
   ): Promise<void> {
     const startTime = new Date();
+    // Capture a local reference to avoid concurrent mutation from other executions
+    // setting this._stateTracker to null in their finally blocks
+    const stateTracker = this._stateTracker;
 
     try {
       // Update state tracker - node queued then running
-      if (this._stateTracker) {
+      if (stateTracker) {
         // First set to queued (node is about to execute)
-        this._stateTracker.setNodeState(node.id, 'queued');
-        await this.emitAsync('onStateChange', this._stateTracker.getState());
-
-        // Small delay to visualize queued state
-        await new Promise((resolve) => setTimeout(resolve, 150));
+        stateTracker.setNodeState(node.id, 'queued');
+        await this.emitAsync('onStateChange', stateTracker.getState());
 
         // Then set to running
-        this._stateTracker.setNodeState(node.id, 'running');
-        await this.emitAsync('onStateChange', this._stateTracker.getState());
+        stateTracker.setNodeState(node.id, 'running');
+        await this.emitAsync('onStateChange', stateTracker.getState());
       }
 
       // Emit node start event
@@ -286,10 +286,10 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       context.setNodeResult(node.id, result);
 
       // Update state tracker - node completed successfully
-      if (this._stateTracker) {
-        this._stateTracker.setNodeState(node.id, 'success');
-        this._stateTracker.setNodeOutput(node.id, result.outputs);
-        await this.emitAsync('onStateChange', this._stateTracker.getState());
+      if (stateTracker) {
+        stateTracker.setNodeState(node.id, 'success');
+        stateTracker.setNodeOutput(node.id, result.outputs);
+        await this.emitAsync('onStateChange', stateTracker.getState());
       }
 
       // Emit node complete event
@@ -329,9 +329,9 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       context.setNodeResult(node.id, result);
 
       // Update state tracker - node failed
-      if (this._stateTracker) {
-        this._stateTracker.setNodeState(node.id, 'error');
-        await this.emitAsync('onStateChange', this._stateTracker.getState());
+      if (stateTracker) {
+        stateTracker.setNodeState(node.id, 'error');
+        await this.emitAsync('onStateChange', stateTracker.getState());
       }
 
       // Emit node error event
@@ -369,6 +369,9 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
     targetNodeId: string,
     workflow: Workflow
   ): Promise<void> {
+    // Capture a local reference to avoid concurrent mutation from other executions
+    const stateTracker = this._stateTracker;
+
     for (const connection of workflow.connections.values()) {
       if (connection.targetNodeId === targetNodeId) {
         const sourceNode = workflow.nodes.get(connection.sourceNodeId);
@@ -379,10 +382,10 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
           const sourceValue = sourceNode.getOutput(connection.sourcePort);
 
           // Track connection activation
-          if (this._stateTracker) {
+          if (stateTracker) {
             const connectionId = `${connection.sourceNodeId}-${connection.sourcePort}-${connection.targetNodeId}-${connection.targetPort}`;
 
-            this._stateTracker.setConnectionActive(
+            stateTracker.setConnectionActive(
               connectionId,
               connection.sourceNodeId,
               connection.sourcePort,
@@ -392,25 +395,22 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
             );
 
             // Emit connection active event
-            const connectionState = this._stateTracker.getConnectionState(connectionId);
+            const connectionState = stateTracker.getConnectionState(connectionId);
             if (connectionState) {
               await this.emitAsync('onConnectionActive', connectionState);
             }
           }
 
-          // Small delay to visualize data flow (100ms per connection)
-          await new Promise((resolve) => setTimeout(resolve, 100));
-
           // Transfer the data
           connection.transferData(sourceNode, targetNode);
 
           // Mark connection as completed
-          if (this._stateTracker) {
+          if (stateTracker) {
             const connectionId = `${connection.sourceNodeId}-${connection.sourcePort}-${connection.targetNodeId}-${connection.targetPort}`;
-            this._stateTracker.setConnectionCompleted(connectionId);
+            stateTracker.setConnectionCompleted(connectionId);
 
             // Emit connection complete event
-            const connectionState = this._stateTracker.getConnectionState(connectionId);
+            const connectionState = stateTracker.getConnectionState(connectionId);
             if (connectionState) {
               await this.emitAsync('onConnectionComplete', connectionState);
             }

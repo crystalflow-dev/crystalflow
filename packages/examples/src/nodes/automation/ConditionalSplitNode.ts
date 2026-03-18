@@ -1,4 +1,4 @@
-import { Node, Input, Output, Property, defineNode } from '@reactflo/core';
+import { Node, Input, Output, Property, defineNode } from '@crystalflow/core';
 
 /**
  * Conditional Split Node - Routes data based on conditions

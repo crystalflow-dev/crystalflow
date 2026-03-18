@@ -1,4 +1,4 @@
-import { Node, Output, Property, defineNode } from '@reactflo/core';
+import { Node, Output, Property, defineNode } from '@crystalflow/core';
 
 /**
  * Schedule Trigger Node - Triggers workflow on a schedule

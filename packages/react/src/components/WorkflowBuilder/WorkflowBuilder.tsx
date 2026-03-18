@@ -421,6 +421,9 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
     {
       autoReset: false, // Keep execution path visible (don't auto-clear)
       autoResetDelay: 3000,
+      // Visual pacing delays (moved from core Executor to keep engine overhead-free)
+      nodeTransitionDelay: 120, // ms to show 'queued' state before 'running'
+      connectionActiveDuration: 100, // minimum ms to show an active edge
     },
     workflowVersion // Pass version to trigger connection map rebuild
   );

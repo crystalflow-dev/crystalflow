@@ -8,7 +8,7 @@
  * React Flow's visual representation.
  */
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Node as ReactFlowNode } from '@xyflow/react';
 import { Executor, Connection } from '@crystalflow/core';
 import { ExecutionState, ConnectionExecutionState, NodeExecutionStatus } from '@crystalflow/types';
@@ -50,6 +50,18 @@ export interface UseExecutionVisualsOptions {
   autoReset?: boolean;
   /** Delay in ms before auto-reset (default: 3000) */
   autoResetDelay?: number;
+  /**
+   * How long (ms) to display a node in 'queued' state before showing 'running'.
+   * This is the visual pacing delay that was previously baked into the core executor.
+   * Set to 0 to disable (default: 0). Recommended: 120ms for good UX.
+   */
+  nodeTransitionDelay?: number;
+  /**
+   * Minimum duration (ms) to display a connection as active.
+   * Ensures the animated edge is visible even for very fast data transfers.
+   * Set to 0 to disable (default: 0). Recommended: 100ms for good UX.
+   */
+  connectionActiveDuration?: number;
 }
 
 /**
@@ -94,12 +106,26 @@ export function useExecutionVisuals(
   options: UseExecutionVisualsOptions = {},
   version?: number
 ): ReactFlowExecutionState {
-  const { autoReset = false, autoResetDelay = 3000 } = options;
+  const {
+    autoReset = false,
+    autoResetDelay = 3000,
+    nodeTransitionDelay = 0,
+    connectionActiveDuration = 0,
+  } = options;
 
   // State
   const [executionState, setExecutionState] = useState<ExecutionState | null>(null);
   const [activeConnectionIds, setActiveConnectionIds] = useState<Set<string>>(new Set());
   const [completedConnectionIds, setCompletedConnectionIds] = useState<Set<string>>(new Set());
+
+  // Refs for pacing logic (stable across renders)
+  const stateQueue = useRef<ExecutionState[]>([]);
+  const isProcessingQueue = useRef(false);
+  const lastQueuedAppliedAt = useRef<number | null>(null);
+  const connectionActivatedAt = useRef<Map<string, number>>(new Map());
+  const pendingCompletions = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const nodeTransitionDelayRef = useRef(nodeTransitionDelay);
+  nodeTransitionDelayRef.current = nodeTransitionDelay;
 
   // Build connection-to-edge ID map from workflow connections
   // Each workflow connection maps to a React Flow edge ID
@@ -114,12 +140,68 @@ export function useExecutionVisuals(
     return map;
   }, [connections, version]); // Add version to dependencies
 
+  // Process queued state updates with optional delay between queued→running transitions.
+  //
+  // The Executor awaits emitAsync() between each onStateChange, so states arrive one at a
+  // time — the queue never has multiple items when we first check. We therefore track *when*
+  // a queued-state was applied and delay the *next* arriving state by the remaining hold
+  // time, giving React time to paint the "queued" visual before transitioning to "running".
+  const flushStateQueue = useCallback(() => {
+    if (isProcessingQueue.current || stateQueue.current.length === 0) return;
+    isProcessingQueue.current = true;
+
+    const processNext = () => {
+      const state = stateQueue.current.shift();
+      if (!state) {
+        isProcessingQueue.current = false;
+        return;
+      }
+
+      const delay = nodeTransitionDelayRef.current;
+
+      // If we recently applied a queued-state, hold the next update until the
+      // visual has been visible long enough — even if it arrived immediately.
+      if (delay > 0 && lastQueuedAppliedAt.current !== null) {
+        const remaining = delay - (Date.now() - lastQueuedAppliedAt.current);
+        if (remaining > 0) {
+          stateQueue.current.unshift(state);
+          setTimeout(() => {
+            lastQueuedAppliedAt.current = null;
+            processNext();
+          }, remaining);
+          return; // isProcessingQueue stays true; new arrivals just queue up
+        }
+        lastQueuedAppliedAt.current = null;
+      }
+
+      setExecutionState(state);
+
+      // Record when a queued-node state is applied so the next update can be held
+      if (delay > 0) {
+        const hasQueuedNodes = [...state.nodeStates.values()].some((s) => s === 'queued');
+        if (hasQueuedNodes) {
+          lastQueuedAppliedAt.current = Date.now();
+        }
+      }
+
+      // Process next state via macrotask so React can commit this render first
+      if (stateQueue.current.length > 0) {
+        setTimeout(processNext, 0);
+      } else {
+        isProcessingQueue.current = false;
+      }
+    };
+
+    processNext();
+  }, []);
+
   // Subscribe to execution state changes
   useEffect(() => {
     if (!executor) return;
 
     const handleStateChange = (state: ExecutionState) => {
-      setExecutionState(state);
+      stateQueue.current.push(state);
+      flushStateQueue();
     };
 
     const handleConnectionActive = (connection: ConnectionExecutionState) => {
@@ -128,6 +210,7 @@ export function useExecutionVisuals(
       const edgeId = connectionToEdgeId.get(connKey);
 
       if (edgeId) {
+        connectionActivatedAt.current.set(edgeId, Date.now());
         setActiveConnectionIds((prev) => new Set(prev).add(edgeId));
       }
     };
@@ -138,12 +221,31 @@ export function useExecutionVisuals(
       const edgeId = connectionToEdgeId.get(connKey);
 
       if (edgeId) {
-        setActiveConnectionIds((prev) => {
-          const next = new Set(prev);
-          next.delete(edgeId);
-          return next;
-        });
-        setCompletedConnectionIds((prev) => new Set(prev).add(edgeId));
+        // Cancel any previously scheduled completion for this edge
+        const existingTimer = pendingCompletions.current.get(edgeId);
+        if (existingTimer !== undefined) clearTimeout(existingTimer);
+
+        const activatedAt = connectionActivatedAt.current.get(edgeId) ?? Date.now();
+        const elapsed = Date.now() - activatedAt;
+        const remaining = Math.max(0, connectionActiveDuration - elapsed);
+
+        // Delay completion if the edge hasn't been visible long enough
+        const completeEdge = () => {
+          pendingCompletions.current.delete(edgeId);
+          setActiveConnectionIds((prev) => {
+            const next = new Set(prev);
+            next.delete(edgeId);
+            return next;
+          });
+          setCompletedConnectionIds((prev) => new Set(prev).add(edgeId));
+        };
+
+        if (remaining > 0) {
+          const timer = setTimeout(completeEdge, remaining);
+          pendingCompletions.current.set(edgeId, timer);
+        } else {
+          completeEdge();
+        }
       }
     };
 
@@ -157,8 +259,14 @@ export function useExecutionVisuals(
       executor.off('onStateChange', handleStateChange);
       executor.off('onConnectionActive', handleConnectionActive);
       executor.off('onConnectionComplete', handleConnectionComplete);
+      // Clear any pending timers
+      pendingCompletions.current.forEach((timer) => clearTimeout(timer));
+      pendingCompletions.current.clear();
+      stateQueue.current = [];
+      isProcessingQueue.current = false;
+      lastQueuedAppliedAt.current = null;
     };
-  }, [executor, connectionToEdgeId]);
+  }, [executor, connectionToEdgeId, connectionActiveDuration, flushStateQueue]);
 
   // Auto-reset after execution completes
   useEffect(() => {
