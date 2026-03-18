@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://crystalflow.dev'),
   title: 'CrystalFlow - Declarative Workflow Builder Framework',
   description:
     'Build powerful workflow applications with TypeScript decorators, visual editing, and JSON serialization. Zero dependencies, 100% type-safe.',
@@ -39,10 +40,10 @@ export const metadata: Metadata = {
     siteName: 'CrystalFlow',
     images: [
       {
-        url: '/logo/crystalflow-logo-blue-dark.svg',
+        url: 'https://crystalflow.dev/landing.png',
         width: 1200,
         height: 630,
-        alt: 'CrystalFlow Logo',
+        alt: 'CrystalFlow - Declarative Workflow Builder Framework',
       },
     ],
   },
@@ -51,7 +52,12 @@ export const metadata: Metadata = {
     title: 'CrystalFlow - Declarative Workflow Builder Framework',
     description:
       'Build powerful workflow applications with TypeScript decorators, visual editing, and JSON serialization.',
-    images: ['/logo/crystalflow-logo-blue-dark.svg'],
+    images: [
+      {
+        url: 'https://crystalflow.dev/landing.png',
+        alt: 'CrystalFlow - Declarative Workflow Builder Framework',
+      },
+    ],
   },
   icons: {
     icon: '/favicon.ico',

@@ -1,0 +1,9 @@
+{
+  "name": "crystalflow-landing",
+  "compatibility_date": "2026-03-12",
+  "main": "./worker.js",
+  "assets": {
+    "directory": "./packages/landing/out",
+    "binding": "ASSETS"
+  }
+}
