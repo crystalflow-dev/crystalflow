@@ -7,6 +7,7 @@ React components for CrystalFlow workflow builder, built on top of React Flow.
 This package provides production-ready React components that bridge your decorated node definitions to React Flow's visual canvas. It features a modern, themeable UI with comprehensive workflow management capabilities.
 
 **Key Features:**
+
 - Converting `@defineNode` decorated classes to React Flow nodes
 - Rendering custom nodes with decorator metadata (@Input, @Output, @Property)
 - Managing connections with type validation
@@ -114,25 +115,20 @@ import { WorkflowBuilder } from '@crystalflow/react';
   // Node configuration
   nodes={[AddNode, MultiplyNode]}
   initialWorkflow={savedWorkflow}
-  
   // UI visibility
   showPalette={true}
   showProperties={true}
   showToolbar={true}
   showJsonEditor={false}
-  
   // Theme configuration
   theme="light" // 'light', 'dark', 'auto', or custom Theme object
-  
   // Editor mode
   editorMode="visual" // 'visual', 'json', 'split'
   jsonEditorTheme="vs-light" // Monaco editor theme
-  
   // Callbacks
   onWorkflowChange={(nodes, edges) => {}}
   onExecute={(result) => {}}
   onError={(error) => {}}
-  
   // Custom styling (optional)
   className="my-workflow"
   style={{ border: '1px solid #ccc' }}
@@ -140,6 +136,7 @@ import { WorkflowBuilder } from '@crystalflow/react';
 ```
 
 **Features:**
+
 - Single Responsibility: Orchestrates components, doesn't handle implementation
 - Automatic style injection (CSS-in-JS on mount)
 - Theme system with CSS variable injection
@@ -163,7 +160,8 @@ import { WorkflowCanvas } from '@crystalflow/react';
   fitView={true}
 />;
 ```
-```
+
+````
 
 #### NodePalette
 
@@ -179,9 +177,10 @@ import { NodePalette } from '@crystalflow/react';
   showSearch={true}
   className="custom-palette"
 />
-```
+````
 
 **Features:**
+
 - Category-based grouping with icons (react-icons/fi)
 - Search functionality
 - Drag-and-drop with visual feedback
@@ -199,10 +198,11 @@ import { PropertyPanel } from '@crystalflow/react';
   selectedNode={node}
   onPropertyChange={(nodeId, property, value) => {}}
   onClose={() => {}}
-/>
+/>;
 ```
 
 **Features:**
+
 - Collapsible sections (Properties, Inputs, Outputs)
 - Type-aware controls (string, number, boolean, select, array)
 - @Property decorator support (static configuration values)
@@ -227,15 +227,17 @@ import { ResizablePanel } from '@crystalflow/react';
   onWidthChange={(width) => console.log(width)}
 >
   <YourContent />
-</ResizablePanel>
+</ResizablePanel>;
 ```
 
 **Features:**
+
 - Drag-to-resize with visual feedback
 - Min/max constraints
 - localStorage persistence
 - Smooth animations and transitions
-```
+
+````
 
 #### Toolbar
 
@@ -252,9 +254,10 @@ import { Toolbar } from '@crystalflow/react';
   onLoad={() => {}}
   onClear={() => {}}
 />
-```
+````
 
 **Features:**
+
 - Execute workflow with loading state
 - Save/Load workflow (JSON file operations)
 - Clear workflow
@@ -321,14 +324,15 @@ import { categoryIcons, statusIcons, uiIcons } from '@crystalflow/react';
 const DataIcon = categoryIcons['Data Processing']; // FiDatabase
 const MathIcon = categoryIcons['Math']; // FiHash
 
-// Status icons  
+// Status icons
 const IdleIcon = statusIcons.idle; // FiCircle
 const RunningIcon = statusIcons.running; // FiZap
 
 // UI icons
 const SettingsIcon = uiIcons.settings; // FiSettings
 ```
-```
+
+````
 
 ### Hooks
 
@@ -352,7 +356,7 @@ const {
   exportJSON,
   importJSON,
 } = useWorkflow();
-```
+````
 
 #### useReactFlowState
 
@@ -380,12 +384,7 @@ Workflow execution logic:
 ```tsx
 import { useWorkflowExecution } from '@crystalflow/react';
 
-const {
-  execute,
-  isExecuting,
-  result,
-  error,
-} = useWorkflowExecution({
+const { execute, isExecuting, result, error } = useWorkflowExecution({
   workflow,
   onComplete: (result) => {},
   onError: (error) => {},
@@ -399,13 +398,7 @@ Save/load operations with error handling:
 ```tsx
 import { useWorkflowFileOperations } from '@crystalflow/react';
 
-const {
-  saveWorkflow,
-  loadWorkflow,
-  isSaving,
-  isLoading,
-  error,
-} = useWorkflowFileOperations();
+const { saveWorkflow, loadWorkflow, isSaving, isLoading, error } = useWorkflowFileOperations();
 
 // Save
 await saveWorkflow(nodes, edges);
@@ -421,12 +414,7 @@ Drag & drop logic and node creation:
 ```tsx
 import { useNodePalette } from '@crystalflow/react';
 
-const {
-  handleNodeDragStart,
-  handleDragOver,
-  handleDrop,
-  createNode,
-} = useNodePalette(nodeTypes);
+const { handleNodeDragStart, handleDragOver, handleDrop, createNode } = useNodePalette(nodeTypes);
 ```
 
 #### useNodeRegistry
@@ -436,13 +424,10 @@ Access to registered node types:
 ```tsx
 import { useNodeRegistry } from '@crystalflow/react';
 
-const {
-  registry,
-  nodes,
-  register,
-  getNodeMetadata,
-  hasNode,
-} = useNodeRegistry([AddNode, MultiplyNode]);
+const { registry, nodes, register, getNodeMetadata, hasNode } = useNodeRegistry([
+  AddNode,
+  MultiplyNode,
+]);
 ```
 
 #### useExecution
@@ -452,12 +437,7 @@ Workflow execution with event handlers:
 ```tsx
 import { useExecution } from '@crystalflow/react';
 
-const {
-  execute,
-  isExecuting,
-  result,
-  error,
-} = useExecution({
+const { execute, isExecuting, result, error } = useExecution({
   onNodeStart: (nodeId, node) => console.log('Starting', nodeId),
   onNodeComplete: (nodeId, result) => console.log('Completed', nodeId),
   onNodeError: (nodeId, error) => console.error('Error', nodeId, error),
@@ -468,6 +448,7 @@ const {
 ## Features
 
 ### Core Features
+
 - ✅ Built on React Flow v12 - leverages battle-tested canvas
 - ✅ Automatic node rendering from decorators (@defineNode, @Input, @Output, @Property)
 - ✅ Type-safe connections with validation
@@ -476,6 +457,7 @@ const {
 - ✅ Modern UI with 2026 startup aesthetic (inspired by n8n)
 
 ### Theme System
+
 - ✅ Complete theme system (light, dark, auto, custom)
 - ✅ CSS custom properties with theme fallbacks
 - ✅ Icon system using react-icons (Feather Icons)
@@ -483,6 +465,7 @@ const {
 - ✅ Comprehensive design tokens (colors, typography, spacing, shadows)
 
 ### UI Components
+
 - ✅ WorkflowBuilder - Main orchestrator with refactored architecture
 - ✅ WorkflowCanvas - Pure React Flow rendering
 - ✅ PropertyPanel - Modern inspector with collapsible sections
@@ -492,6 +475,7 @@ const {
 - ✅ CustomNode - Full renderer with metadata parsing
 
 ### Developer Experience
+
 - ✅ 7 focused React hooks (Single Responsibility Principle)
 - ✅ CSS-in-JS architecture (zero-config styling)
 - ✅ Automatic CSS import via import.meta.glob()
@@ -515,11 +499,13 @@ The React package follows a clear separation of concerns with Single Responsibil
 WorkflowBuilder was refactored from 300+ lines to 80 lines:
 
 **Before (Monolithic):**
+
 - WorkflowBuilder handled everything (state, execution, file ops, React Flow)
 - Difficult to test and maintain
 - Props drilling issues
 
 **After (Single Responsibility):**
+
 - **WorkflowBuilder**: Pure orchestrator (80 lines)
 - **useReactFlowState**: React Flow state management
 - **useWorkflowExecution**: Execution logic
@@ -528,6 +514,7 @@ WorkflowBuilder was refactored from 300+ lines to 80 lines:
 - Each piece is testable in isolation
 
 **Benefits:**
+
 - ✅ Testability: Each piece tested independently
 - ✅ Reusability: Hooks used in other components
 - ✅ Maintainability: Changes don't affect others
@@ -545,6 +532,7 @@ All component styles are centralized in the `src/styles/` folder:
 - **Centralized Injection**: All styles inject once when WorkflowBuilder mounts (not per-component)
 
 **Adding New Styles:**
+
 ```css
 /* src/styles/myComponent.css */
 .my-component {
@@ -557,6 +545,7 @@ All component styles are centralized in the `src/styles/` folder:
 That's it! No imports needed. The file is automatically detected and injected.
 
 **Current CSS Files:**
+
 - `global.css` - CSS variables, Inter font, base styles
 - `propertyPanel.css` - PropertyPanel component styles
 - `customNode.css` - CustomNode component styles
@@ -579,6 +568,7 @@ Workflow Execution & Results
 ```
 
 **Example Flow:**
+
 1. User drags node from NodePalette → `useNodePalette` hook
 2. Node dropped on canvas → `useReactFlowState` updates state
 3. User clicks Execute → `useWorkflowExecution` hook
@@ -632,6 +622,7 @@ class HttpRequestNode extends Node {
 ```
 
 **Property Panel automatically:**
+
 - Groups properties by type (Properties, Inputs, Outputs)
 - Renders type-appropriate controls (text, number, select, boolean, array)
 - Shows required fields with asterisk
@@ -643,6 +634,7 @@ class HttpRequestNode extends Node {
 **Current Phase:** Phase 4 - React Package ✅ 100% COMPLETE
 
 **Completed:**
+
 - ✅ Package structure and architecture
 - ✅ All core components fully implemented
 - ✅ Property system (@Property decorator support)
@@ -658,6 +650,7 @@ class HttpRequestNode extends Node {
 - ✅ All tests passing (279 tests)
 
 **Next Steps:**
+
 - ⏳ Monaco JSON editor integration (Phase 5)
 - ⏳ Dual-mode editing (visual + JSON with sync)
 - ⏳ Undo/redo system

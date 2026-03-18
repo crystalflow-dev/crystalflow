@@ -1,0 +1,218 @@
+/**
+ * n8n-Style Workflow CSS
+ *
+ * Recreates the visual style of n8n's workflow automation tool:
+ * - Clean, modern design
+ * - Category-based node colors
+ * - Purple/pink brand accent (#EA4B71)
+ * - Smooth animations and transitions
+ * - Polished, professional appearance
+ *
+ * IMPORTANT: No transforms on nodes or handles that affect layout positioning
+ */
+
+/* ============================================
+   Container & Layout
+   ============================================ */
+
+.n8n-workflow-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.n8n-workflow-root {
+  background: #f7f7f7 !important;
+}
+
+[data-theme='dark'] .n8n-workflow-root {
+  background: #1a1a1a !important;
+}
+
+/* ============================================
+   Toolbar Styling
+   ============================================ */
+
+.n8n-toolbar {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  padding: 12px 20px !important;
+}
+
+[data-theme='dark'] .n8n-toolbar {
+  background: #2a2a2a !important;
+  border-bottom: 1px solid #3a3a3a !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+.n8n-toolbar button {
+  background: #ea4b71 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 8px 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: background 0.2s ease, box-shadow 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.n8n-toolbar button:hover {
+  background: #d63f62 !important;
+  box-shadow: 0 2px 8px rgba(234, 75, 113, 0.3) !important;
+}
+
+.n8n-toolbar button:disabled {
+  background: #bbb !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* ============================================
+   Node Palette Styling
+   ============================================ */
+
+.n8n-palette {
+  background: #ffffff !important;
+  border-right: 1px solid #e0e0e0 !important;
+}
+
+[data-theme='dark'] .n8n-palette {
+  background: #2a2a2a !important;
+  border-right: 1px solid #3a3a3a !important;
+}
+
+.n8n-palette .palette-search {
+  border-color: #e0e0e0 !important;
+  border-radius: 6px !important;
+}
+
+.n8n-palette .palette-search:focus {
+  border-color: #ea4b71 !important;
+  box-shadow: 0 0 0 3px rgba(234, 75, 113, 0.1) !important;
+}
+
+[data-theme='dark'] .n8n-palette .palette-search {
+  border-color: #3a3a3a !important;
+  background: #1a1a1a !important;
+  color: #e0e0e0 !important;
+}
+
+.n8n-palette .palette-category {
+  border-bottom: 1px solid #f0f0f0 !important;
+}
+
+.n8n-palette .palette-category-header {
+  background: #f9f9f9 !important;
+  color: #555 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  padding: 10px 16px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+[data-theme='dark'] .n8n-palette .palette-category-header {
+  background: #1a1a1a !important;
+  color: #aaa !important;
+}
+
+.n8n-palette .palette-item {
+  padding: 10px 16px !important;
+  border-radius: 6px !important;
+  margin: 4px 8px !important;
+  transition: background 0.2s ease !important;
+  cursor: grab !important;
+}
+
+.n8n-palette .palette-item:hover {
+  background: #f5f5f5 !important;
+}
+
+[data-theme='dark'] .n8n-palette .palette-item:hover {
+  background: #3a3a3a !important;
+}
+
+.n8n-palette .palette-item:active {
+  cursor: grabbing !important;
+}
+
+/* ============================================
+   Properties Panel Styling
+   ============================================ */
+
+.n8n-properties {
+  background: #ffffff !important;
+  border-left: 1px solid #e0e0e0 !important;
+}
+
+[data-theme='dark'] .n8n-properties {
+  background: #2a2a2a !important;
+  border-left: 1px solid #3a3a3a !important;
+}
+
+.n8n-properties .properties-header {
+  background: #f9f9f9 !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  padding: 16px 20px !important;
+}
+
+[data-theme='dark'] .n8n-properties .properties-header {
+  background: #1a1a1a !important;
+  border-bottom: 1px solid #3a3a3a !important;
+  color: #e0e0e0 !important;
+}
+
+.n8n-properties .property-group {
+  border-bottom: 1px solid #f0f0f0 !important;
+  padding: 16px 20px !important;
+}
+
+.n8n-properties label {
+  color: #555 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  margin-bottom: 6px !important;
+}
+
+[data-theme='dark'] .n8n-properties label {
+  color: #aaa !important;
+}
+
+[data-theme='dark'] .n8n-properties input,
+[data-theme='dark'] .n8n-properties select,
+[data-theme='dark'] .n8n-properties textarea {
+  border: 1px solid #3a3a3a !important;
+  background: #1a1a1a !important;
+  color: #e0e0e0 !important;
+}
+
+/* ============================================
+   Canvas Styling
+   Only container styles - no ReactFlow element styling
+   ============================================ */
+
+.n8n-canvas {
+  background: #f7f7f7 !important;
+}
+
+[data-theme='dark'] .n8n-canvas {
+  background: #1a1a1a !important;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+@media (max-width: 768px) {
+  .n8n-palette {
+    width: 200px !important;
+  }
+
+  .n8n-properties {
+    width: 250px !important;
+  }
+}

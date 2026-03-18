@@ -5,6 +5,7 @@
 export { Executor } from './Executor';
 export type { ExecutorEvents } from './Executor';
 export { ExecutionContext } from './ExecutionContext';
+export { ExecutionStateTracker } from './ExecutionStateTracker';
 export { ExecutionPlan } from './ExecutionPlan';
 export type { SerializedExecutionPlan } from './ExecutionPlan';
 export { ExecutionPlanBuilder } from './ExecutionPlanBuilder';

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   Node as ReactFlowNode,
   Edge,
@@ -6,31 +6,87 @@ import {
   EdgeChange,
   applyNodeChanges,
   applyEdgeChanges,
-  addEdge,
   Connection,
 } from '@xyflow/react';
 import { PortDefinition } from '@crystalflow/types';
-import { NodeConstructor } from '@crystalflow/core';
+import { NodeConstructor, Workflow } from '@crystalflow/core';
+import { connectionsToEdges } from '../utils/connectionConverter';
 
 /**
  * Hook for managing React Flow state (nodes, edges, selection)
+ *
+ * Edges are synced between React Flow and workflow:
+ * - React Flow manages edge state for UI interactions
+ * - Workflow stores connections as source of truth
+ * - Changes propagate in both directions
  */
-export function useReactFlowState() {
+export function useReactFlowState(workflow: Workflow | null, version?: number) {
   const [nodes, setNodes] = useState<ReactFlowNode[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [selectedNode, setSelectedNode] = useState<ReactFlowNode | null>(null);
   const [nodeIdCounter, setNodeIdCounter] = useState(1);
 
-  const onNodesChange = useCallback((changes: NodeChange[]) => {
-    setNodes((nds) => applyNodeChanges(changes, nds));
-  }, []);
+  // Sync edges from workflow connections whenever workflow changes
+  useEffect(() => {
+    if (!workflow) {
+      setEdges([]);
+      return;
+    }
+    const derivedEdges = connectionsToEdges(workflow.connections);
+    setEdges(derivedEdges);
+  }, [workflow, version]); // version forces re-sync when workflow mutates
 
-  const onEdgesChange = useCallback((changes: EdgeChange[]) => {
-    setEdges((eds) => applyEdgeChanges(changes, eds));
-  }, []);
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      setNodes((nds) => {
+        // Apply changes to get new node list
+        const newNodes = applyNodeChanges(changes, nds);
 
-  const onConnect = useCallback((connection: Connection) => {
-    setEdges((eds) => addEdge(connection, eds));
+        // Sync node deletions with workflow
+        if (workflow) {
+          changes.forEach((change) => {
+            if (change.type === 'remove') {
+              workflow.removeNode(change.id);
+            }
+          });
+        }
+
+        return newNodes;
+      });
+    },
+    [workflow]
+  );
+
+  // Handle edge changes in React Flow (deletions, selections, etc.)
+  const onEdgesChange = useCallback(
+    (changes: EdgeChange[]) => {
+      setEdges((eds) => {
+        const newEdges = applyEdgeChanges(changes, eds);
+
+        // Sync edge deletions with workflow
+        if (workflow) {
+          changes.forEach((change) => {
+            if (change.type === 'remove') {
+              // Find and remove the connection from workflow
+              const connection = Array.from(workflow.connections.values()).find(
+                (conn) => conn.id === change.id
+              );
+              if (connection) {
+                workflow.removeConnection(connection.id);
+              }
+            }
+          });
+        }
+
+        return newEdges;
+      });
+    },
+    [workflow]
+  );
+
+  // onConnect now handled by parent (WorkflowBuilder) which updates workflow
+  const onConnect = useCallback((_connection: Connection) => {
+    // No-op - parent handles this via workflow.connect()
   }, []);
 
   const onNodeClick = useCallback((_event: React.MouseEvent, node: ReactFlowNode) => {
@@ -91,13 +147,13 @@ export function useReactFlowState() {
 
   const clearWorkflow = useCallback(() => {
     setNodes([]);
-    setEdges([]);
+    // edges are derived from workflow, no need to clear
     setSelectedNode(null);
   }, []);
 
-  const loadWorkflow = useCallback((newNodes: ReactFlowNode[], newEdges: Edge[]) => {
+  const loadWorkflow = useCallback((newNodes: ReactFlowNode[]) => {
     setNodes(newNodes);
-    setEdges(newEdges);
+    // edges are derived from workflow, no need to load
     setSelectedNode(null);
   }, []);
 

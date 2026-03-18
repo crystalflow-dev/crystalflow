@@ -183,17 +183,9 @@ export function loadWorkflowFromFile(): Promise<{
         const text = await file.text();
         const workflowData: WorkflowData = deserializeWorkflow(text);
 
-        // Create workflow from JSON
-        const workflow = Workflow.fromJSON(workflowData);
-
-        // Convert to React Flow format
-        const { nodes, edges } = workflowToReactFlow(workflow);
-
-        resolve({
-          nodes,
-          edges,
-          workflowName: workflow.name,
-        });
+        // Use the shared loadWorkflowFromData function
+        const result = loadWorkflowFromData(workflowData);
+        resolve(result);
       } catch (error) {
         console.error('Failed to load workflow:', error);
         reject(error);
@@ -202,4 +194,31 @@ export function loadWorkflowFromFile(): Promise<{
 
     input.click();
   });
+}
+
+/**
+ * Load workflow from WorkflowData object
+ * This is the core loading logic shared by both file loading and initial workflow loading
+ */
+export function loadWorkflowFromData(workflowData: WorkflowData): {
+  nodes: ReactFlowNode[];
+  edges: Edge[];
+  workflowName: string;
+} {
+  try {
+    // Create workflow from JSON
+    const workflow = Workflow.fromJSON(workflowData);
+
+    // Convert to React Flow format
+    const { nodes, edges } = workflowToReactFlow(workflow);
+
+    return {
+      nodes,
+      edges,
+      workflowName: workflow.name,
+    };
+  } catch (error) {
+    console.error('Failed to load workflow from data:', error);
+    throw error;
+  }
 }

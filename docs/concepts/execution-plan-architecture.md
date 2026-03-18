@@ -59,6 +59,7 @@
 #### Week 3: Conditional Infrastructure - ✅ COMPLETE
 
 **Task 2.1: Define IConditionalNode Interface** [2 hours] - ✅ COMPLETE
+
 - [x] File: `packages/types/src/node.ts`
 - [x] Add `IConditionalNode` interface extending base Node
 - [x] Add `evaluateCondition(): string` method signature
@@ -69,6 +70,7 @@
 - [x] Commit: "feat(types): add IConditionalNode interface for conditional flow nodes" (9be54cd)
 
 **Task 2.2: Add Conditional Node Type Checking** [2 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
 - [x] Add `isConditionalNode(node: Node): node is IConditionalNode` type guard method
 - [x] Check if node implements IConditionalNode interface
@@ -78,6 +80,7 @@
 - [x] Commit: "feat(core): add conditional node type checking in ExecutionPlanBuilder" (b97179d)
 
 **Task 2.3: Implement ConditionalStep Building - Part 1 (Graph Analysis)** [4 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
 - [x] Add `getDownstreamNodesForPort(nodeId, portId, workflow): NodeId[]` helper
 - [x] Add `buildConditionalStep(node, workflow, visited): ConditionalStep` method stub
@@ -89,6 +92,7 @@
 - [x] Commit: "feat(core): implement graph analysis for conditional step building" (a5d5e41)
 
 **Task 2.4: Implement ConditionalStep Building - Part 2 (Recursive Branch Building)** [4 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
 - [x] Complete `buildConditionalStep()` implementation
 - [x] Add `buildStepsForNode()` helper for recursive step building
@@ -103,6 +107,7 @@
 - [x] Refactoring commits: conditionInput removal (1788fb5), conditionalType removal (fe2f23d)
 
 **Task 2.5: Integrate Conditional Building into Main Build Flow** [2 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/execution/ExecutionPlanBuilder.ts`
 - [x] Refactored `build()` method to use entry-point based recursion
 - [x] Added `getWorkflowEntryNodes()` utility (replaces topological sort dependency)
@@ -114,6 +119,7 @@
 - [x] Commit: "feat(core): integrate conditional building with entry-point recursion" (4527043)
 
 **Task 2.5.1: Remove Legacy Topological Sort Dependencies** [2 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/workflow/Workflow.ts`
 - [x] Removed `getExecutionOrder()` method (no longer used)
 - [x] Removed `_graph` property and all Graph usages
@@ -128,14 +134,15 @@
 - [x] Deleted entire test file (262 lines removed)
 - [x] Updated Workflow.test.ts: removed cycle detection tests
 - [x] Updated ExecutionPlanBuilder.test.ts: removed cycle detection test
-- [x] Updated Executor.test.ts: removed 42 lines of _graph test setup
-- [x] Updated integration.test.ts: removed 23 lines of _graph test setup
+- [x] Updated Executor.test.ts: removed 42 lines of \_graph test setup
+- [x] Updated integration.test.ts: removed 23 lines of \_graph test setup
 - [x] Run lint: `npm run lint -w @crystalflow/core` - 0 errors
 - [x] Run tests: `npm test -w @crystalflow/core` - 364 tests passing
 - [x] Run benchmarks: Performance improved (see Phase 2 benchmarks)
 - [x] Commit: "refactor(core): remove Graph class - redundant with execution plan architecture"
 
 **Task 2.6: Implement ConditionalStep Execution** [6 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/execution/PlanExecutor.ts`
 - [x] Added `executeConditionalStep(step, workflow, context, executor): Promise<void>` method
 - [x] Executes the conditional node first to update its state
@@ -161,6 +168,7 @@
 - [x] Commit: "feat(core): implement conditional step execution in PlanExecutor"
 
 **Task 2.7: Add Branch Execution Events** [2 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/execution/Executor.ts`
 - [x] Added `onBranchEnter` event to `ExecutorEvents` interface
   - Parameters: nodeId (string), branchId (string), condition (string)
@@ -200,6 +208,7 @@
 - [x] Commit: "feat(core): add step and branch execution events"
 
 **Task 2.8: Wire Conditional Execution to Main Loop** [1 hour] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/execution/PlanExecutor.ts`
 - [x] Removed "ConditionalStep not yet implemented" throw statement
 - [x] Added case for `ExecutionStepType.Conditional` in `executeStep()` switch
@@ -218,6 +227,7 @@
 #### Week 4: Conditional Nodes - 🚧 IN PROGRESS
 
 **Task 2.9: Create Flow Nodes Directory Structure** [1 hour] - ✅ COMPLETE
+
 - [x] Create directory: `packages/core/src/builtin/flow/` (renamed from nodes to builtin)
 - [x] Create file: `packages/core/src/builtin/flow/index.ts` (empty for now)
 - [x] Create file: `packages/core/src/builtin/index.ts` (export flow nodes)
@@ -226,6 +236,7 @@
 - [x] Commit: "feat(core): create flow control nodes directory structure"
 
 **Task 2.10: Implement IfNode** [4 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/builtin/flow/IfNode.ts`
 - [x] Create `IfNode` class extending `Node` and implementing `IConditionalNode`
 - [x] Add `@defineNode` decorator with metadata (type: 'flow.if', category: 'Flow Control')
@@ -244,6 +255,7 @@
 - [x] Commit: "feat(core): implement IfNode for if/else conditional flow"
 
 **Task 2.11: Implement SwitchNode** [4 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/builtin/flow/SwitchNode.ts`
 - [x] Create `SwitchNode` class extending `Node` and implementing `IConditionalNode`
 - [x] Add `@defineNode` decorator with metadata (type: 'flow.switch', category: 'Flow Control')
@@ -251,7 +263,7 @@
 - [x] Add `@Property` for `cases` (array, defaultValue: []) - defines output structure
 - [x] Add `@Input` for `data` (any, optional) - data to pass through to matching output
 - [x] Dynamic outputs: Override `getOutputs()` to generate case_0, case_1, ..., case_N, default
-- [x] Use direct property assignment pattern: `this[`case_${i}`] = data`
+- [x] Use direct property assignment pattern: `this[`case\_${i}`] = data`
 - [x] Implement `execute()` method - clears old outputs, sets only matching output
 - [x] Implement `evaluateCondition()` method - returns 'case_0', 'case_1', or 'default'
 - [x] Uses strict equality (===) for type-safe matching
@@ -271,6 +283,7 @@
 - [x] Commit: "feat(core): implement SwitchNode with dynamic case outputs (Task 2.11)"
 
 **Task 2.12: Integration Testing - Simple Conditionals** [3 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/__tests__/builtin/ConditionalIntegration.test.ts`
 - [x] Create test workflow with IfNode (condition true path)
 - [x] Create test workflow with IfNode (condition false path)
@@ -279,15 +292,16 @@
 - [x] Verify only active branch executes
 - [x] Verify data flows correctly through branches
 - [x] 10 comprehensive tests covering:
-  * IfNode true/false path execution
-  * SwitchNode case matching and default
-  * Data passthrough verification
-  * Branch execution isolation (only active branch runs)
+  - IfNode true/false path execution
+  - SwitchNode case matching and default
+  - Data passthrough verification
+  - Branch execution isolation (only active branch runs)
 - [x] Run lint: `npm run lint -w @crystalflow/core` (0 errors)
 - [x] Run tests: `npm test -w @crystalflow/core` (484 tests passing)
 - [x] Commit: "test(core): add integration tests for simple conditional workflows (Task 2.12)"
 
 **Task 2.13: Integration Testing - Nested Conditionals** [3 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/__tests__/builtin/ConditionalIntegration.test.ts`
 - [x] Create test workflow with nested IfNode (if inside then branch)
 - [x] Create test workflow with nested IfNode (if inside else branch)
@@ -295,13 +309,13 @@
 - [x] Create test workflow with SwitchNode inside IfNode branch
 - [x] Create deep nesting test (3 levels: if -> if -> if)
 - [x] 8 comprehensive nested conditional tests:
-  * IfNode in IfNode then branch (true/false)
-  * IfNode in IfNode else branch
-  * IfNode in SwitchNode matching case
-  * IfNode in SwitchNode non-matching case
-  * SwitchNode in IfNode then branch
-  * SwitchNode in IfNode else branch (not executed)
-  * Deep nesting (3 levels)
+  - IfNode in IfNode then branch (true/false)
+  - IfNode in IfNode else branch
+  - IfNode in SwitchNode matching case
+  - IfNode in SwitchNode non-matching case
+  - SwitchNode in IfNode then branch
+  - SwitchNode in IfNode else branch (not executed)
+  - Deep nesting (3 levels)
 - [x] Verify nested execution works correctly
 - [x] Verify data flows through multiple nesting levels
 - [x] Run lint: `npm run lint -w @crystalflow/core` (0 errors)
@@ -309,26 +323,28 @@
 - [x] Commit: "test(core): add integration tests for nested conditional workflows (Task 2.13)"
 
 **Task 2.14: Error Handling & Edge Cases** [2 hours] - ✅ COMPLETE
+
 - [x] File: `packages/core/src/__tests__/builtin/ConditionalErrors.test.ts`
 - [x] Test conditional node with empty evaluateCondition return value (fails properly)
 - [x] Test evaluateCondition returning invalid branch name (fails with error)
 - [x] Test conditional node with no matching branch
 - [x] Test error propagation from within conditional branches
 - [x] 11 comprehensive error and edge case tests:
-  * Empty branch name handling
-  * Invalid branch name handling
-  * Error propagation from IfNode then/else branches
-  * Error propagation from SwitchNode case/default branches
-  * Error propagation from nested conditionals
-  * IfNode/SwitchNode with no connections
-  * SwitchNode with empty cases array
-  * IfNode with undefined condition (falsy behavior)
+  - Empty branch name handling
+  - Invalid branch name handling
+  - Error propagation from IfNode then/else branches
+  - Error propagation from SwitchNode case/default branches
+  - Error propagation from nested conditionals
+  - IfNode/SwitchNode with no connections
+  - SwitchNode with empty cases array
+  - IfNode with undefined condition (falsy behavior)
 - [x] Add proper error messages and context
 - [x] Run lint: `npm run lint -w @crystalflow/core` (0 errors)
 - [x] Run tests: `npm test -w @crystalflow/core` (503 tests passing, 11 new)
 - [x] Commit: "test(core): add error handling tests for conditional flow (Task 2.14)"
 
 **Task 2.14.5: UI Integration Testing for Builtin Conditional Nodes** [3 hours] - ✅ COMPLETE
+
 - [x] Fixed design issue: IfNode now requires explicit boolean condition (no default false)
 - [x] Created logic test nodes for comprehensive conditional testing:
   - [x] BooleanInputNode - Manual true/false input
@@ -364,11 +380,11 @@
   - [x] Update node outputs in real-time in React Flow
 - [x] File: `packages/react/src/components/PropertyPanel/PropertyPanel.tsx`
   - [x] Implemented improved array property UI:
-    * Input field with "+ Add" button (also supports Enter key)
-    * Clean list display without index numbers
-    * Red "✕" button to remove individual items
-    * Auto-parse values as numbers, booleans, or strings
-    * "No items added" message when empty
+    - Input field with "+ Add" button (also supports Enter key)
+    - Clean list display without index numbers
+    - Red "✕" button to remove individual items
+    - Auto-parse values as numbers, booleans, or strings
+    - "No items added" message when empty
   - [x] Verified PropertyPanel correctly displays @Property for cases
 - [x] ConditionalNodesDemo includes:
   - [x] All logic nodes (5 boolean-returning nodes + 1 math node)
@@ -550,8 +566,6 @@ This task adds comprehensive documentation for the Phase 2 Conditional Flow impl
 - **Features**: If/Else conditionals, Switch/Case conditionals, Branch execution
 - **Documentation**: Comprehensive docs site updates with guides, examples, and API reference
 
-
-
 #### Phase 2 Future Enhancements (Post-MVP)
 
 - **conditionInput field**: Add optional `conditionInput` field to `ConditionalStep` interface
@@ -717,30 +731,32 @@ After implementing the execution plan architecture, we should maintain:
 **Status**: ✅ Complete - Performance Improved
 
 **Key Changes:**
+
 - Removed Graph class entirely (524 lines of code removed)
 - Eliminated topological sort algorithm
 - Removed redundant node/edge tracking (Workflow already has this data)
 - Simplified validation (no cycle detection - impossible by design)
 
-| Scenario | Phase 1 Avg | Phase 2 Avg | Difference | % Change | Status |
-|----------|-------------|-------------|------------|----------|--------|
-| Linear: 10 Fast | 0.523 ms | 0.085 ms | -0.438 ms | -83.7% | ✅ Improved |
-| Linear: 50 Fast | 1.092 ms | 0.368 ms | -0.724 ms | -66.3% | ✅ Improved |
-| Linear: 100 Fast | 2.106 ms | 1.008 ms | -1.098 ms | -52.1% | ✅ Improved |
-| Linear: 20 Medium | 1.567 ms | 0.369 ms | -1.198 ms | -76.5% | ✅ Improved |
-| Linear: 10 Slow | 9.171 ms | 2.403 ms | -6.768 ms | -73.8% | ✅ Improved |
-| Fan-Out: 10 | 0.669 ms | 0.189 ms | -0.480 ms | -71.7% | ✅ Improved |
-| Fan-Out: 50 | 1.048 ms | 0.378 ms | -0.670 ms | -63.9% | ✅ Improved |
-| Diamond: 5 | 0.419 ms | 0.111 ms | -0.308 ms | -73.5% | ✅ Improved |
-| Complex: 50 | 1.756 ms | 0.623 ms | -1.133 ms | -64.5% | ✅ Improved |
-| Async: 20 | 23.167 ms | 22.683 ms | -0.484 ms | -2.1% | ✅ Improved |
-| Events: 20 | 0.549 ms | 0.173 ms | -0.376 ms | -68.5% | ✅ Improved |
-| Validation: 100 | 0.074 ms | 0.009 ms | -0.065 ms | -87.8% | ✅ Improved |
+| Scenario            | Phase 1 Avg  | Phase 2 Avg  | Difference    | % Change   | Status      |
+| ------------------- | ------------ | ------------ | ------------- | ---------- | ----------- |
+| Linear: 10 Fast     | 0.523 ms     | 0.085 ms     | -0.438 ms     | -83.7%     | ✅ Improved |
+| Linear: 50 Fast     | 1.092 ms     | 0.368 ms     | -0.724 ms     | -66.3%     | ✅ Improved |
+| Linear: 100 Fast    | 2.106 ms     | 1.008 ms     | -1.098 ms     | -52.1%     | ✅ Improved |
+| Linear: 20 Medium   | 1.567 ms     | 0.369 ms     | -1.198 ms     | -76.5%     | ✅ Improved |
+| Linear: 10 Slow     | 9.171 ms     | 2.403 ms     | -6.768 ms     | -73.8%     | ✅ Improved |
+| Fan-Out: 10         | 0.669 ms     | 0.189 ms     | -0.480 ms     | -71.7%     | ✅ Improved |
+| Fan-Out: 50         | 1.048 ms     | 0.378 ms     | -0.670 ms     | -63.9%     | ✅ Improved |
+| Diamond: 5          | 0.419 ms     | 0.111 ms     | -0.308 ms     | -73.5%     | ✅ Improved |
+| Complex: 50         | 1.756 ms     | 0.623 ms     | -1.133 ms     | -64.5%     | ✅ Improved |
+| Async: 20           | 23.167 ms    | 22.683 ms    | -0.484 ms     | -2.1%      | ✅ Improved |
+| Events: 20          | 0.549 ms     | 0.173 ms     | -0.376 ms     | -68.5%     | ✅ Improved |
+| Validation: 100     | 0.074 ms     | 0.009 ms     | -0.065 ms     | -87.8%     | ✅ Improved |
 | **Overall Average** | **3.512 ms** | **2.367 ms** | **-1.145 ms** | **-32.6%** | ✅ Improved |
 
 ### Performance Analysis
 
 **🚀 Exceptional Improvements:**
+
 - **Overall impact**: -32.6% average reduction in execution time
 - **All scenarios improved**: 12 out of 12 scenarios show significant performance gains
 - **Fast operations**: 52-84% faster (massive improvement on lightweight workflows)
@@ -749,6 +765,7 @@ After implementing the execution plan architecture, we should maintain:
 - **Complex workflows**: 65% faster execution of 50-node mixed graphs
 
 **Key Findings:**
+
 1. **Eliminated redundant work**: No Graph maintenance during workflow operations
 2. **Simpler validation**: Removed cycle detection that was unnecessary
 3. **Reduced memory overhead**: One less data structure to maintain
@@ -756,6 +773,7 @@ After implementing the execution plan architecture, we should maintain:
 5. **Better cache locality**: Fewer object allocations and traversals
 
 **Comparison to Baseline (Pre-Phase 1):**
+
 - Phase 2 is now **faster than baseline** in most scenarios
 - Linear 10 Fast: 0.474ms (baseline) → 0.085ms (Phase 2) = **82% faster**
 - Linear 50 Fast: 0.981ms (baseline) → 0.368ms (Phase 2) = **62% faster**

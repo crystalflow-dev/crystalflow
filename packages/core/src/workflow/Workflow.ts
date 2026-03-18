@@ -128,6 +128,15 @@ export class Workflow {
   }
 
   /**
+   * Add an existing node instance to the workflow
+   * Useful when you already have a constructed node instance
+   */
+  addNodeInstance(node: Node): void {
+    this._nodes.set(node.id, node);
+    this.invalidate();
+  }
+
+  /**
    * Remove a node from the workflow
    */
   removeNode(nodeId: string): boolean {

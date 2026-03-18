@@ -13,6 +13,7 @@ import {
   Connection,
   useReactFlow,
 } from '@xyflow/react';
+import { LuRefreshCcw } from 'react-icons/lu';
 import { CustomNode } from '../Node/CustomNode';
 import {
   ReactFlowCustomization,
@@ -21,6 +22,7 @@ import {
   MiniMapCustomProps,
 } from '../../types/styling';
 import { mergeStyles } from '../../utils/styling';
+import { ReactFlowExecutionState } from '../../hooks/useExecutionVisuals';
 
 // Register CustomNode with React Flow
 // IMPORTANT: Define outside component to maintain stable reference across renders
@@ -121,6 +123,13 @@ export interface WorkflowCanvasProps {
   onReactFlowInit?: (instance: {
     screenToFlowPosition: (pos: { x: number; y: number }) => { x: number; y: number };
   }) => void;
+  onClearExecution?: () => void;
+
+  /**
+   * Optional execution visual state (from useExecutionVisuals hook)
+   * When provided, nodes and edges will be styled based on execution status
+   */
+  executionState?: ReactFlowExecutionState;
 
   /**
    * ReactFlow customization (props for ReactFlow and its sub-components)
@@ -158,6 +167,8 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   onDrop,
   onDragOver,
   onReactFlowInit,
+  onClearExecution,
+  executionState,
   reactFlowCustomization,
   className,
   style,
@@ -173,6 +184,73 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     showMiniMap = true,
   } = reactFlowCustomization || {};
 
+  // Apply execution visual state to nodes
+  const enhancedNodes = useMemo(() => {
+    if (!executionState) return nodes;
+
+    return nodes.map((node) => {
+      const visualData = executionState.nodeVisualData.get(node.id);
+      if (!visualData) return node;
+
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          executionStatus: visualData.executionStatus,
+          executionOutputs: visualData.outputs,
+        },
+      };
+    });
+  }, [nodes, executionState]);
+
+  // Apply execution visual state to edges
+  const enhancedEdges = useMemo(() => {
+    // Always return edges array, never undefined/null
+    if (!edges || edges.length === 0) {
+      return [];
+    }
+
+    // If no execution state, return original edges
+    if (!executionState) {
+      return edges;
+    }
+
+    // Enhance edges with execution state using inline styles (more reliable than CSS classes)
+    return edges.map((edge) => {
+      const edgeState = executionState.edgeStates.get(edge.id);
+
+      // If no state for this edge, return it unchanged
+      if (!edgeState) {
+        return edge;
+      }
+
+      // Apply execution-specific styles directly
+      let style: React.CSSProperties = { ...edge.style };
+
+      if (edgeState.isActive) {
+        // Active edge: bright green, thicker stroke
+        style = {
+          ...style,
+          stroke: '#10b981', // green-500
+          strokeWidth: 2.5,
+        };
+      } else if (edgeState.isCompleted) {
+        // Completed edge: softer green
+        style = {
+          ...style,
+          stroke: '#22c55e', // green-400
+          strokeWidth: 2,
+        };
+      }
+
+      return {
+        ...edge,
+        style,
+        animated: edgeState.isActive, // React Flow built-in animation
+      };
+    });
+  }, [edges, executionState]);
+
   const defaultReactFlowProps = useMemo(
     () => ({
       connectionMode: ConnectionMode.Loose,
@@ -181,7 +259,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
       proOptions: { hideAttribution: true },
       minZoom: 0.1,
       maxZoom: 4,
-      nodeOrigin: [0.5, 0.5] as [number, number], // Center origin for better drag performance
+      nodeOrigin: [0, 0] as [number, number], // Top-left origin for accurate positioning
       defaultEdgeOptions: {
         type: 'smoothstep',
         animated: false,
@@ -190,6 +268,14 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     []
   );
 
+  // Determine if there are cached execution results to show the clear button
+  // Only show if execution has completed and there are actual execution results
+  const hasExecutionCache =
+    executionState &&
+    !executionState.isExecuting &&
+    executionState.executionProgress.total > 0 &&
+    (executionState.nodeVisualData.size > 0 || executionState.edgeStates.size > 0);
+
   return (
     <div
       className={className}
@@ -197,9 +283,45 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
       onDrop={onDrop}
       onDragOver={onDragOver}
     >
+      {/* Floating Clear Execution Button */}
+      {hasExecutionCache && onClearExecution && (
+        <button
+          onClick={onClearExecution}
+          title="Clear execution visual state"
+          style={{
+            position: 'absolute',
+            top: 'var(--space-3)',
+            right: 'var(--space-3)',
+            zIndex: 5,
+            width: '28px',
+            height: '28px',
+            borderRadius: 'var(--radius-sm)',
+            border: '1px solid var(--color-border-light)',
+            backgroundColor: 'var(--color-bg-elevated)',
+            color: 'var(--color-text-tertiary)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '14px',
+            boxShadow: 'var(--shadow-sm)',
+            transition: 'all var(--transition-fast) var(--ease-out)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)';
+            e.currentTarget.style.color = 'var(--color-text-secondary)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
+            e.currentTarget.style.color = 'var(--color-text-tertiary)';
+          }}
+        >
+          <LuRefreshCcw />
+        </button>
+      )}
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
+        nodes={enhancedNodes}
+        edges={enhancedEdges}
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}

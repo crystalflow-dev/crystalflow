@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { NodeConstructor } from '@crystalflow/core';
 import { Node as ReactFlowNode, Edge, ReactFlowProvider } from '@xyflow/react';
 import { injectStyles } from '../../utils/injectStyles';
 import { globalStyles, componentStyles } from '../../styles/cssInJs';
@@ -10,10 +9,11 @@ import { Toolbar, ToolbarProps, ToolbarOptions, ToolbarIcons } from '../Toolbar/
 import { ResizablePanel } from '../ResizablePanel/ResizablePanel';
 import { CustomNodeData } from '../Node/CustomNode';
 import {
+  useWorkflow,
   useReactFlowState,
-  useWorkflowExecution,
   useWorkflowFileOperations,
   useNodePalette,
+  useExecutionVisuals,
 } from '../../hooks';
 import {
   WorkflowBuilderClasses,
@@ -28,6 +28,8 @@ import {
   themeToCSSVariables,
 } from '../../types/theme';
 import { cn, mergeStyles } from '../../utils/styling';
+import { Executor, NodeConstructor, Workflow } from '@crystalflow/core';
+import { WorkflowData } from '@crystalflow/types';
 
 // Inject styles at module level to ensure they're loaded before any component renders
 // This prevents FOUC (Flash of Unstyled Content)
@@ -44,9 +46,9 @@ export interface WorkflowBuilderProps {
   nodes?: NodeConstructor[];
 
   /**
-   * Initial workflow data
+   * Initial workflow data (WorkflowData format)
    */
-  initialWorkflow?: unknown;
+  initialWorkflow?: WorkflowData;
 
   /**
    * Whether to show the node palette
@@ -231,6 +233,7 @@ export interface WorkflowBuilderProps {
     onSave: () => void;
     onLoad: () => void;
     onClear: () => void;
+    onClearExecution: () => void;
     canExecute: boolean;
   }) => React.ReactNode;
 }
@@ -271,6 +274,7 @@ export interface WorkflowBuilderProps {
  */
 export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
   nodes = [],
+  initialWorkflow,
   showPalette = true,
   showProperties = true,
   showToolbar = true,
@@ -348,10 +352,81 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
   }, []);
 
   // State management hooks
-  const reactFlowState = useReactFlowState();
-  const { executeWorkflow } = useWorkflowExecution();
-  const { saveWorkflow, loadWorkflow } = useWorkflowFileOperations();
+  const workflowState = useWorkflow();
+  const { workflow } = workflowState;
+
+  // Force re-render when workflow connections change
+  const [workflowVersion, setWorkflowVersion] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize workflow
+  useEffect(() => {
+    if (!isInitialized) {
+      if (!workflow) {
+        workflowState.createWorkflow();
+      }
+      setIsInitialized(true);
+    }
+  }, [workflow, workflowState, isInitialized]);
+
+  const reactFlowState = useReactFlowState(workflow, workflowVersion);
+  const { saveWorkflow, loadWorkflow, loadFromData } = useWorkflowFileOperations();
   const nodePalette = useNodePalette(nodes, screenToFlowPosition);
+
+  // Load initial workflow data (similar to file loading)
+  useEffect(() => {
+    if (initialWorkflow && isInitialized && reactFlowState.nodes.length === 0 && workflow) {
+      try {
+        // Create workflow from JSON data (includes all connections)
+        const loadedWorkflow = Workflow.fromJSON(initialWorkflow);
+
+        // Replace the workflow in context with the loaded one
+        workflowState.setWorkflow(loadedWorkflow);
+
+        // Convert workflow to React Flow format
+        const result = loadFromData(initialWorkflow);
+        if (result.success && result.nodes) {
+          // Inject renderNodeContent into all loaded nodes
+          const nodesWithRenderer = renderNodeContent
+            ? result.nodes.map((node) => ({
+                ...node,
+                data: { ...node.data, renderNodeContent },
+              }))
+            : result.nodes;
+
+          reactFlowState.loadWorkflow(nodesWithRenderer);
+          // Force re-render to sync edges from workflow connections
+          setWorkflowVersion((v) => v + 1);
+        }
+      } catch (error) {
+        console.error('Failed to load initial workflow:', error);
+      }
+    }
+  }, [
+    initialWorkflow,
+    isInitialized,
+    loadFromData,
+    reactFlowState,
+    workflow,
+    workflowState,
+    renderNodeContent,
+  ]);
+
+  // Execution visual state hook
+  const [executor] = useState(() => new Executor());
+  const executionVisuals = useExecutionVisuals(
+    executor,
+    reactFlowState.nodes,
+    workflow?.connections || new Map(),
+    {
+      autoReset: false, // Keep execution path visible (don't auto-clear)
+      autoResetDelay: 3000,
+      // Visual pacing delays (moved from core Executor to keep engine overhead-free)
+      nodeTransitionDelay: 120, // ms to show 'queued' state before 'running'
+      connectionActiveDuration: 100, // minimum ms to show an active edge
+    },
+    workflowVersion // Pass version to trigger connection map rebuild
+  );
 
   // Callback to capture React Flow instance
   const handleReactFlowInit = useCallback(
@@ -361,6 +436,34 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
       setScreenToFlowPosition(() => instance.screenToFlowPosition);
     },
     [] // Empty deps - only create once
+  );
+
+  // Handle connection creation (syncs with workflow)
+  const handleConnect = useCallback(
+    (connection: {
+      source: string | null;
+      sourceHandle: string | null;
+      target: string | null;
+      targetHandle: string | null;
+    }) => {
+      if (
+        workflow &&
+        connection.source &&
+        connection.target &&
+        connection.sourceHandle &&
+        connection.targetHandle
+      ) {
+        workflowState.connect(
+          connection.source,
+          connection.sourceHandle,
+          connection.target,
+          connection.targetHandle
+        );
+        // Force re-render to sync edges
+        setWorkflowVersion((v) => v + 1);
+      }
+    },
+    [workflow, workflowState]
   );
 
   // Note: renderNodeContent is injected into nodes when they're created
@@ -377,19 +480,47 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
   const handleLoad = useCallback(async () => {
     const result = await loadWorkflow();
     if (result.success) {
-      reactFlowState.loadWorkflow(result.nodes!, result.edges!);
+      reactFlowState.loadWorkflow(result.nodes!);
     } else {
       console.error('Load failed:', result.error);
     }
   }, [loadWorkflow, reactFlowState]);
 
   const handleExecute = useCallback(async () => {
+    if (!workflow) {
+      console.error('No workflow to execute');
+      return;
+    }
+
     try {
-      await executeWorkflow(reactFlowState.nodes, reactFlowState.edges);
+      // Clear previous execution visual state
+      executionVisuals.reset();
+
+      // Sync node property values from React Flow to workflow before execution
+      reactFlowState.nodes.forEach((rfNode) => {
+        const workflowNode = workflow.getNode(rfNode.id);
+        if (workflowNode && rfNode.data.properties) {
+          // Update property values from React Flow node data
+          Object.keys(rfNode.data.properties).forEach((propKey) => {
+            if (rfNode.data[propKey] !== undefined) {
+              workflowNode[propKey] = rfNode.data[propKey];
+            }
+          });
+        }
+      });
+
+      // Execute the existing workflow instance with the executor
+      await executor.execute(workflow, {
+        timeout: 30000,
+      });
     } catch (error) {
       console.error('Execution failed:', error);
     }
-  }, [executeWorkflow, reactFlowState.nodes, reactFlowState.edges]);
+  }, [workflow, executor, reactFlowState.nodes, executionVisuals]);
+
+  const handleClearExecution = useCallback(() => {
+    executionVisuals.reset();
+  }, [executionVisuals]);
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
@@ -397,11 +528,30 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
         if (renderNodeContent) {
           node.data = { ...node.data, renderNodeContent };
         }
+
+        // Add to React Flow
         reactFlowState.addNode(node);
+
+        // Also add to workflow if we have both workflow and nodeClass
+        if (workflow && node.data.nodeClass) {
+          try {
+            // Create workflow node instance
+            const NodeClass = node.data.nodeClass as NodeConstructor;
+            const workflowNode = new NodeClass(node.id);
+
+            // Copy position
+            workflowNode.position = node.position;
+
+            // Add to workflow's internal nodes map
+            workflow.addNodeInstance(workflowNode);
+          } catch (error) {
+            console.error('Failed to add node to workflow:', error);
+          }
+        }
       };
       nodePalette.onDrop(event, reactFlowState.generateNodeId, addNodeWithRenderContent);
     },
-    [nodePalette, reactFlowState, renderNodeContent]
+    [nodePalette, reactFlowState, renderNodeContent, workflow]
   );
 
   // Notify parent of changes
@@ -415,10 +565,12 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
     onSave: () => void;
     onLoad: () => void;
     onClear: () => void;
+    onClearExecution: () => void;
     canExecute: boolean;
   }) => (
     <Toolbar
       onClear={actions.onClear}
+      onClearExecution={actions.onClearExecution}
       onSave={actions.onSave}
       onLoad={actions.onLoad}
       onExecute={actions.onExecute}
@@ -489,6 +641,7 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
             onSave: handleSave,
             onLoad: handleLoad,
             onClear: reactFlowState.clearWorkflow,
+            onClearExecution: handleClearExecution,
             canExecute: reactFlowState.nodes.length > 0,
           })}
 
@@ -520,13 +673,15 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
             edges={reactFlowState.edges}
             onNodesChange={reactFlowState.onNodesChange}
             onEdgesChange={reactFlowState.onEdgesChange}
-            onConnect={reactFlowState.onConnect}
+            onConnect={handleConnect}
             onNodeClick={reactFlowState.onNodeClick}
             onPaneClick={reactFlowState.onPaneClick}
             onDrop={handleDrop}
             onDragOver={nodePalette.onDragOver}
             onReactFlowInit={handleReactFlowInit}
             className={`${classes?.canvas || ''} crystalflow-theme-${resolvedTheme.mode}`}
+            onClearExecution={handleClearExecution}
+            executionState={executionVisuals}
             style={styles?.canvas}
             colorMode={resolvedTheme.mode === 'dark' ? 'dark' : 'light'}
             reactFlowCustomization={{

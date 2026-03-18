@@ -17,11 +17,15 @@ import {
   NodeState,
   ExecutionId,
   CancellationReason,
+  ExecutionState,
+  ConnectionExecutionState,
+  ExecutionStepType,
 } from '@crystalflow/types';
 import { AsyncEventEmitter } from '../utils/AsyncEventEmitter';
 import { ExecutionPlan } from './ExecutionPlan';
 import { ExecutionPlanBuilder } from './ExecutionPlanBuilder';
 import { PlanExecutor } from './PlanExecutor';
+import { ExecutionStateTracker } from './ExecutionStateTracker';
 
 /**
  * Executor events
@@ -48,6 +52,9 @@ export interface ExecutorEvents {
   ) => void | Promise<void>;
   onBranchEnter: (nodeId: string, branchId: string, condition: string) => void | Promise<void>;
   onBranchExit: (nodeId: string, branchId: string) => void | Promise<void>;
+  onStateChange: (state: ExecutionState) => void | Promise<void>;
+  onConnectionActive: (connection: ConnectionExecutionState) => void | Promise<void>;
+  onConnectionComplete: (connection: ConnectionExecutionState) => void | Promise<void>;
 }
 
 /**
@@ -77,6 +84,7 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
   private _activeExecutions: Map<ExecutionId, ExecutionContext> = new Map();
   private _planBuilder: ExecutionPlanBuilder = new ExecutionPlanBuilder();
   private _planExecutor: PlanExecutor = new PlanExecutor();
+  private _stateTracker: ExecutionStateTracker | null = null;
 
   /**
    * Execute a workflow
@@ -143,6 +151,16 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       context.executionPlan = executionPlan;
       await this.emitAsync('onPlanBuilt', executionPlan);
 
+      // Initialize state tracker
+      this._stateTracker = new ExecutionStateTracker(executionId, workflow.id);
+
+      // Extract node execution order from plan
+      const executionOrder = this.extractExecutionOrder(executionPlan);
+      this._stateTracker.startExecution(executionOrder);
+
+      // Emit initial state
+      await this.emitAsync('onStateChange', this._stateTracker.getState());
+
       // Execute the plan
       await this._planExecutor.execute(executionPlan, workflow, context, this);
 
@@ -204,6 +222,13 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
         options.abortSignal.removeEventListener('abort', abortListener);
       }
 
+      // Complete state tracking
+      if (this._stateTracker) {
+        this._stateTracker.completeExecution();
+        await this.emitAsync('onStateChange', this._stateTracker.getState());
+        this._stateTracker = null;
+      }
+
       // Remove from active executions
       this._activeExecutions.delete(executionId);
     }
@@ -218,13 +243,27 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
     context: ExecutionContext
   ): Promise<void> {
     const startTime = new Date();
+    // Capture a local reference to avoid concurrent mutation from other executions
+    // setting this._stateTracker to null in their finally blocks
+    const stateTracker = this._stateTracker;
 
     try {
+      // Update state tracker - node queued then running
+      if (stateTracker) {
+        // First set to queued (node is about to execute)
+        stateTracker.setNodeState(node.id, 'queued');
+        await this.emitAsync('onStateChange', stateTracker.getState());
+
+        // Then set to running
+        stateTracker.setNodeState(node.id, 'running');
+        await this.emitAsync('onStateChange', stateTracker.getState());
+      }
+
       // Emit node start event
       await this.emitAsync('onNodeStart', node.id, node);
 
-      // Transfer data from connected nodes
-      this.transferNodeData(node.id, workflow);
+      // Transfer data from connected nodes (and track connections)
+      await this.transferNodeDataWithTracking(node.id, workflow);
 
       // Inject execution context into node for cancellation support
       node._executionContext = context;
@@ -245,6 +284,13 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
       };
 
       context.setNodeResult(node.id, result);
+
+      // Update state tracker - node completed successfully
+      if (stateTracker) {
+        stateTracker.setNodeState(node.id, 'success');
+        stateTracker.setNodeOutput(node.id, result.outputs);
+        await this.emitAsync('onStateChange', stateTracker.getState());
+      }
 
       // Emit node complete event
       await this.emitAsync('onNodeComplete', node.id, result);
@@ -282,6 +328,12 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
 
       context.setNodeResult(node.id, result);
 
+      // Update state tracker - node failed
+      if (stateTracker) {
+        stateTracker.setNodeState(node.id, 'error');
+        await this.emitAsync('onStateChange', stateTracker.getState());
+      }
+
       // Emit node error event
       await this.emitAsync('onNodeError', node.id, nodeError);
 
@@ -295,6 +347,7 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
 
   /**
    * Transfer data from connected nodes to the target node
+   * Legacy method - use transferNodeDataWithTracking for state tracking
    */
   private transferNodeData(targetNodeId: string, workflow: Workflow): void {
     for (const connection of workflow.connections.values()) {
@@ -304,6 +357,64 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
 
         if (sourceNode && targetNode) {
           connection.transferData(sourceNode, targetNode);
+        }
+      }
+    }
+  }
+
+  /**
+   * Transfer data from connected nodes with state tracking
+   */
+  private async transferNodeDataWithTracking(
+    targetNodeId: string,
+    workflow: Workflow
+  ): Promise<void> {
+    // Capture a local reference to avoid concurrent mutation from other executions
+    const stateTracker = this._stateTracker;
+
+    for (const connection of workflow.connections.values()) {
+      if (connection.targetNodeId === targetNodeId) {
+        const sourceNode = workflow.nodes.get(connection.sourceNodeId);
+        const targetNode = workflow.nodes.get(connection.targetNodeId);
+
+        if (sourceNode && targetNode) {
+          // Get the data being transferred
+          const sourceValue = sourceNode.getOutput(connection.sourcePort);
+
+          // Track connection activation
+          if (stateTracker) {
+            const connectionId = `${connection.sourceNodeId}-${connection.sourcePort}-${connection.targetNodeId}-${connection.targetPort}`;
+
+            stateTracker.setConnectionActive(
+              connectionId,
+              connection.sourceNodeId,
+              connection.sourcePort,
+              connection.targetNodeId,
+              connection.targetPort,
+              sourceValue
+            );
+
+            // Emit connection active event
+            const connectionState = stateTracker.getConnectionState(connectionId);
+            if (connectionState) {
+              await this.emitAsync('onConnectionActive', connectionState);
+            }
+          }
+
+          // Transfer the data
+          connection.transferData(sourceNode, targetNode);
+
+          // Mark connection as completed
+          if (stateTracker) {
+            const connectionId = `${connection.sourceNodeId}-${connection.sourcePort}-${connection.targetNodeId}-${connection.targetPort}`;
+            stateTracker.setConnectionCompleted(connectionId);
+
+            // Emit connection complete event
+            const connectionState = stateTracker.getConnectionState(connectionId);
+            if (connectionState) {
+              await this.emitAsync('onConnectionComplete', connectionState);
+            }
+          }
         }
       }
     }
@@ -398,5 +509,33 @@ export class Executor extends AsyncEventEmitter<ExecutorEvents> {
    */
   getActiveExecutionCount(): number {
     return this._activeExecutions.size;
+  }
+
+  /**
+   * Get current execution state
+   * Returns null if no execution is currently active
+   * @returns Current execution state or null
+   */
+  getExecutionState(): ExecutionState | null {
+    return this._stateTracker ? this._stateTracker.getState() : null;
+  }
+
+  /**
+   * Extract node execution order from execution plan
+   * Gets all node IDs in the order they appear in the plan
+   * @param plan - Execution plan
+   * @returns Array of node IDs in execution order
+   */
+  private extractExecutionOrder(plan: ExecutionPlan): string[] {
+    const nodeIds: string[] = [];
+    const allSteps = plan.flatten();
+
+    for (const step of allSteps) {
+      if (step.type === ExecutionStepType.NodeExecution) {
+        nodeIds.push(step.nodeId);
+      }
+    }
+
+    return nodeIds;
   }
 }

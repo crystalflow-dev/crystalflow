@@ -20,6 +20,7 @@ import {
   IsEvenNode,
   RangeCheckNode,
 } from '../nodes';
+import { conditionalWorkflow } from '../workflows/defaultWorkflows';
 
 interface ConditionalNodesDemoProps {
   theme?: 'light' | 'dark';
@@ -48,6 +49,7 @@ function ConditionalNodesDemo({ theme = 'light' }: ConditionalNodesDemoProps) {
             SwitchNode,
             DisplayNode,
           ]}
+          initialWorkflow={conditionalWorkflow}
           showPalette={true}
           showProperties={true}
           showToolbar={true}
