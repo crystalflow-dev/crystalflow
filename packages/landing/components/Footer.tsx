@@ -65,7 +65,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-light-grey">
               <li>
                 <a
-                  href="https://github.com/fladeed/crystalflow"
+                  href="https://github.com/crystalflow-dev/crystalflow"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-primary transition-colors"
