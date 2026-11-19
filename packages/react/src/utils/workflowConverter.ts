@@ -97,7 +97,10 @@ export function workflowToReactFlow(workflow: Workflow): {
       // Copy actual values from the node instance
       const nodeData: Record<string, unknown> = node.toJSON ? node.toJSON() : {};
       const savedData = (nodeData.data as Record<string, unknown> | undefined) ?? {};
-      const editable = { ...rfNode.data.inputs, ...rfNode.data.properties };
+      const editable = {
+        ...(rfNode.data.inputs as Record<string, unknown>),
+        ...(rfNode.data.properties as Record<string, unknown>),
+      };
       const savedValues = Object.fromEntries(
         Object.entries(savedData).filter(([key]) => key in editable)
       );
