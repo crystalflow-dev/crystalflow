@@ -71,7 +71,27 @@
   .cf-code { display: none; }
 }
 
-/* the three forms: one drawn window per step, inside the pinned-chapters moment */
+/* the three forms: every step's text stays on screen; a click changes the window beside it */
+.cf-forms { display: grid; gap: var(--s-3); margin: 0; padding: 0; list-style: none; }
+.cf-forms__step {
+  display: grid; gap: var(--s-2); width: 100%; padding: var(--s-4) var(--s-5); text-align: left; font: inherit; color: var(--p-ink);
+  background: none; border: 0; border-left: 2px solid color-mix(in oklab, var(--p-ink) 14%, transparent); cursor: pointer;
+}
+.cf-forms__step:hover { background: color-mix(in oklab, var(--p-ink) 3.5%, var(--p-bg)); }
+.cf-forms__step[aria-pressed="true"] { border-left-color: var(--p-accent); background: color-mix(in oklab, var(--p-accent) 6%, var(--p-bg)); }
+.cf-forms__step:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 2px; }
+.cf-forms__title { font-size: var(--t-lead); font-weight: 500; line-height: 1.3; }
+.cf-forms__line { font-size: var(--t-body); line-height: 1.6; }
+.cf-forms__frame { height: 440px; }
+.cf-forms__inline { display: none; }
+/* below the split there is no window beside the steps: each step carries its own, and nothing needs a tap */
+@media (max-width: 1023px) {
+  #workflow { --h: 2; --hm: 2; }
+  .cf-forms__frame { display: none; }
+  .cf-forms__inline { display: block; margin-top: var(--s-3); }
+  .cf-forms { gap: var(--s-6); }
+  .cf-forms__step, .cf-forms__step:hover, .cf-forms__step[aria-pressed="true"] { padding: 0; border-left: 0; background: none; cursor: default; }
+}
 .cf-pane {
   display: flex; flex-direction: column; width: 100%; height: 100%;
   background: var(--p-bg); border: 1px solid color-mix(in oklab, var(--p-ink) 14%, transparent); border-radius: var(--r-md); overflow: hidden;

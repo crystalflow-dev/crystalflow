@@ -1,3 +1,7 @@
+'use client';
+
+import { useState } from 'react';
+
 const classCode = `class AddNode extends Node {
   @Input({ type: 'number' })
   a = 0;
@@ -101,56 +105,68 @@ function CanvasPane() {
   );
 }
 
-export default function ThreeForms() {
+const forms = [
+  {
+    title: 'A TypeScript class',
+    line: 'Decorators declare the ports and the settings of a node. Its execute method holds the logic, typed like the rest of your code.',
+  },
+  {
+    title: 'A node on the canvas',
+    line: 'The React package reads the same decorators and draws the node, its ports and its property panel. People wire nodes together by dragging.',
+  },
+  {
+    title: 'A JSON document',
+    line: 'The graph saves to JSON and loads back from it, so a workflow fits in a database row, an API response or a pull request.',
+  },
+];
+
+function FormPane({ index }: { index: number }) {
+  if (index === 0) {
+    return (
+      <Pane file="AddNode.ts" label="The AddNode class with two inputs and one output">
+        {classCode}
+      </Pane>
+    );
+  }
+  if (index === 1) return <CanvasPane />;
   return (
-    <section
-      className="section"
-      id="workflow"
-      style={{ '--h': 2 } as React.CSSProperties}
-      data-moment="pinned-chapters"
-      aria-labelledby="workflow-h"
-    >
-      <div className="wrap mo-pc__grid">
-        <div className="mo-pc__text">
+    <Pane file="add.workflow.json" label="The same workflow saved as JSON">
+      {jsonCode}
+    </Pane>
+  );
+}
+
+export default function ThreeForms() {
+  const [active, setActive] = useState(0);
+  return (
+    <section className="section" id="workflow" aria-labelledby="workflow-h">
+      <div className="wrap">
+        <div className="section-head">
           <h2 id="workflow-h">One workflow in three forms</h2>
-          <ol className="mo-pc__steps">
-            <li className="mo-pc__step">
-              <h3>A TypeScript class</h3>
-              <p>
-                Decorators declare the ports and the settings of a node. Its execute method holds
-                the logic, typed like the rest of your code.
-              </p>
-              <figure className="mo-pc__visual">
-                <Pane file="AddNode.ts" label="The AddNode class with two inputs and one output">
-                  {classCode}
-                </Pane>
-              </figure>
-            </li>
-            <li className="mo-pc__step">
-              <h3>A node on the canvas</h3>
-              <p>
-                The React package reads the same decorators and draws the node, its ports and its
-                property panel. People wire nodes together by dragging.
-              </p>
-              <figure className="mo-pc__visual">
-                <CanvasPane />
-              </figure>
-            </li>
-            <li className="mo-pc__step">
-              <h3>A JSON document</h3>
-              <p>
-                The graph saves to JSON and loads back from it, so a workflow fits in a database
-                row, an API response or a pull request.
-              </p>
-              <figure className="mo-pc__visual">
-                <Pane file="add.workflow.json" label="The same workflow saved as JSON">
-                  {jsonCode}
-                </Pane>
-              </figure>
-            </li>
-          </ol>
         </div>
-        <div className="mo-pc__visuals frame"></div>
+        <div className="grid grid--top fill">
+          <ol className="cf-forms span-5">
+            {forms.map((form, i) => (
+              <li key={form.title}>
+                <button
+                  type="button"
+                  className="cf-forms__step"
+                  aria-pressed={active === i}
+                  onClick={() => setActive(i)}
+                >
+                  <span className="cf-forms__title">{form.title}</span>
+                  <span className="cf-forms__line">{form.line}</span>
+                </button>
+                <div className="cf-forms__inline">
+                  <FormPane index={i} />
+                </div>
+              </li>
+            ))}
+          </ol>
+          <div className="cf-forms__frame span-6 start-7">
+            <FormPane index={active} />
+          </div>
+        </div>
       </div>
     </section>
   );

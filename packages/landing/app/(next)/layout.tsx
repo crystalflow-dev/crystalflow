@@ -53,15 +53,6 @@ const tokens = `:root {
 const enter =
   "document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)";
 
-const moments =
-  "document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)";
-
-const momentModules = [
-  '/assets/moments/moments.js',
-  '/assets/moments/lib.js',
-  '/assets/moments/pinned-chapters/moment.js',
-];
-
 export default function NextLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
@@ -84,10 +75,6 @@ export default function NextLayout({ children }: Readonly<{ children: React.Reac
         ))}
         <style dangerouslySetInnerHTML={{ __html: tokens }} />
         <script dangerouslySetInnerHTML={{ __html: enter }} />
-        <script dangerouslySetInnerHTML={{ __html: moments }} />
-        {momentModules.map((href) => (
-          <link key={href} rel="modulepreload" href={href} />
-        ))}
         <script src="/assets/backgrounds/backgrounds.js" />
       </head>
       <body suppressHydrationWarning>
