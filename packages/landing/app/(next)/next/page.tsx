@@ -1,5 +1,6 @@
 import HeroDemo from '@/components/next/HeroDemo';
 import ThreeForms from '@/components/next/ThreeForms';
+import Uses from '@/components/next/Uses';
 
 const GITHUB = 'https://github.com/crystalflow-dev/crystalflow';
 
@@ -24,6 +25,11 @@ export default function NextHome() {
             <div className="nav__item">
               <a className="nav__link" href="#workflow">
                 Workflow
+              </a>
+            </div>
+            <div className="nav__item">
+              <a className="nav__link" href="#uses">
+                Uses
               </a>
             </div>
             <div className="nav__item">
@@ -85,6 +91,7 @@ export default function NextHome() {
         </section>
 
         <ThreeForms />
+        <Uses />
       </main>
 
       <footer className="footer closing" id="contact" aria-labelledby="close-h">

@@ -130,3 +130,7 @@
   .cf-forms > li { min-width: 0; }
   .cf-pane__code { font-size: 11px; line-height: 18px; }
 }
+
+/* the uses section: the example workflow's window fills the split's frame */
+.cf-usesframe { padding: 0; border: 0; background: none; }
+.cf-usesframe .cf-pane__canvas { background: radial-gradient(color-mix(in oklab, var(--p-ink) 16%, transparent) 1px, transparent 1.5px) 0 0 / 16px 16px; }
