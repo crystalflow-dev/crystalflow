@@ -20,6 +20,13 @@
   ],
   "author": "CrystalFlow Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crystalflow-dev/crystalflow.git",
+    "directory": "packages/types"
+  },
+  "homepage": "https://crystalflow.dev",
+  "bugs": "https://github.com/crystalflow-dev/crystalflow/issues",
   "devDependencies": {
     "typescript": "^5.3.0"
   },

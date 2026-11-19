@@ -9,7 +9,14 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
       include: ['src/**/*.ts', 'src/**/*.tsx'],
-      exclude: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'src/**/*.stories.tsx'],
+      exclude: [
+        'src/**/*.test.ts',
+        'src/**/*.test.tsx',
+        'src/**/*.stories.tsx',
+        'src/**/__tests__/**',
+        'src/stories/**',
+        'src/examples/**',
+      ],
     }),
   ],
   build: {
@@ -27,7 +34,6 @@ export default defineConfig({
         '@xyflow/react',
         '@crystalflow/core',
         '@crystalflow/types',
-        '@monaco-editor/react',
       ],
       output: {
         globals: {
@@ -37,7 +43,6 @@ export default defineConfig({
           '@xyflow/react': 'ReactFlow',
           '@crystalflow/core': 'CrystalFlowCore',
           '@crystalflow/types': 'CrystalFlowTypes',
-          '@monaco-editor/react': 'MonacoReact',
         },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name === 'style.css') return 'react.css';

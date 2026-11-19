@@ -24,15 +24,21 @@
   ],
   "author": "CrystalFlow Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crystalflow-dev/crystalflow.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://crystalflow.dev",
+  "bugs": "https://github.com/crystalflow-dev/crystalflow/issues",
   "dependencies": {
-    "@crystalflow/types": "*",
+    "@crystalflow/types": "^0.1.0",
     "reflect-metadata": "^0.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.3.0"
   },
-  "peerDependencies": {},
   "publishConfig": {
     "access": "public"
   }
