@@ -70,3 +70,20 @@
 @media (max-width: 639px) {
   .cf-code { display: none; }
 }
+
+/* the three forms: one drawn window per step, inside the pinned-chapters moment */
+.cf-pane {
+  display: flex; flex-direction: column; width: 100%; height: 100%;
+  background: var(--p-bg); border: 1px solid color-mix(in oklab, var(--p-ink) 14%, transparent); border-radius: var(--r-md); overflow: hidden;
+}
+.cf-pane__bar { padding: 10px 16px; font-family: var(--font-mono); font-size: 13px; color: var(--p-muted); background: color-mix(in oklab, var(--p-ink) 3.5%, var(--p-bg)); border-bottom: 1px solid color-mix(in oklab, var(--p-ink) 9%, transparent); }
+.cf-pane__code { margin: 0; padding: 16px; font-family: var(--font-mono); font-size: 13px; line-height: 20px; color: var(--p-ink); white-space: pre; }
+.cf-pane__canvas { width: 100%; height: auto; flex: 1 1 auto; max-width: none; font-family: var(--font-text); font-size: 13px; }
+.cf-pane__dots { color: var(--p-ink); }
+.cf-pane__canvas pattern circle { fill: color-mix(in oklab, var(--p-ink) 16%, transparent); }
+.cf-pane__edge { fill: none; stroke: color-mix(in oklab, var(--p-ink) 30%, transparent); stroke-width: 1.5; }
+.cf-pane__node rect { fill: var(--p-bg); stroke: color-mix(in oklab, var(--p-ink) 18%, transparent); stroke-width: 1.5; }
+.cf-pane__node text { fill: var(--p-ink); font-weight: 500; }
+.cf-pane__node .cf-pane__val { fill: var(--p-muted); font-family: var(--font-mono); font-weight: 400; }
+.cf-pane__node--on rect { stroke: var(--p-accent); }
+.cf-pane__port circle { fill: var(--p-accent); }
