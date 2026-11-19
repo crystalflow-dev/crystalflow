@@ -7,12 +7,11 @@ export const metadata: Metadata = {
   title: 'CrystalFlow: TypeScript framework for workflow editors',
   description:
     'Write each node as a decorated TypeScript class. CrystalFlow gives you the React canvas, the execution engine and JSON save and load.',
-  robots: { index: false },
   openGraph: {
     type: 'website',
     title: 'CrystalFlow: TypeScript framework for workflow editors',
     description: 'Node classes in, a visual workflow editor out.',
-    images: ['/landing.png'],
+    images: ['/share.jpg'],
   },
   twitter: { card: 'summary_large_image' },
   icons: { icon: '/logo/crystalflow-icon-blue-light.svg' },
