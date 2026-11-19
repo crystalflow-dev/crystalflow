@@ -55,3 +55,6 @@ storybook-static
 
 # Other
 packages/core/benchmark-baseline.txt
+# design-taste-frontend working files
+.taste-skill/
+shots/

@@ -12,6 +12,8 @@ export default [
       '**/.next/**',
       '**/out/**',
       '**/coverage/**',
+      '**/public/assets/**',
+      '**/.taste-skill/**',
       '**/*.d.ts',
       '.eslintcache',
     ],
