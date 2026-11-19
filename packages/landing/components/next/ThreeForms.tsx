@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const classCode = `class AddNode extends Node {
   @Input({ type: 'number' })
@@ -136,10 +136,55 @@ function FormPane({ index }: { index: number }) {
   );
 }
 
+const PINNED =
+  '(min-width: 1024px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)';
+
 export default function ThreeForms() {
+  const sectionRef = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
+  const [fill, setFill] = useState(0);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const media = window.matchMedia(PINNED);
+    let frame = 0;
+    const read = () => {
+      frame = 0;
+      if (!media.matches) return;
+      const travel = section.offsetHeight - window.innerHeight;
+      if (travel <= 0) return;
+      const progress = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / travel));
+      const position = Math.min(forms.length - 0.0001, progress * forms.length);
+      setActive(Math.floor(position));
+      setFill(position - Math.floor(position));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(read);
+    };
+    read();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const choose = (index: number) => {
+    const section = sectionRef.current;
+    if (!section || !window.matchMedia(PINNED).matches) {
+      setActive(index);
+      return;
+    }
+    const travel = section.offsetHeight - window.innerHeight;
+    const top = section.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: top + ((index + 0.5) / forms.length) * travel, behavior: 'smooth' });
+  };
+
   return (
-    <section className="section" id="workflow" aria-labelledby="workflow-h">
+    <section className="section" id="workflow" aria-labelledby="workflow-h" ref={sectionRef}>
       <div className="wrap">
         <div className="section-head">
           <h2 id="workflow-h">One workflow in three forms</h2>
@@ -152,7 +197,13 @@ export default function ThreeForms() {
                   type="button"
                   className="cf-forms__step"
                   aria-pressed={active === i}
-                  onClick={() => setActive(i)}
+                  data-done={i < active ? '' : undefined}
+                  style={
+                    active === i
+                      ? ({ '--cf-fill': fill.toFixed(3) } as React.CSSProperties)
+                      : undefined
+                  }
+                  onClick={() => choose(i)}
                 >
                   <span className="cf-forms__title">{form.title}</span>
                   <span className="cf-forms__line">{form.line}</span>
@@ -164,7 +215,15 @@ export default function ThreeForms() {
             ))}
           </ol>
           <div className="cf-forms__frame span-6 start-7">
-            <FormPane index={active} />
+            {forms.map((form, i) => (
+              <div
+                key={form.title}
+                className="cf-forms__pane"
+                data-on={active === i ? '' : undefined}
+              >
+                <FormPane index={i} />
+              </div>
+            ))}
           </div>
         </div>
       </div>
