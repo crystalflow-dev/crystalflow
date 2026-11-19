@@ -5,8 +5,8 @@
 <br/>
 
 <p align="center">
-  <a href="https://github.com/fladeed/crystalflow/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/crystalflow/crystalflow/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
-  <a href="https://github.com/fladeed/crystalflow/releases"><img src="https://img.shields.io/github/v/release/crystalflow/crystalflow?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
+  <a href="https://github.com/crystalflow-dev/crystalflow/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/crystalflow-dev/crystalflow/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
+  <a href="https://github.com/crystalflow-dev/crystalflow/releases"><img src="https://img.shields.io/github/v/release/crystalflow-dev/crystalflow?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
 </p>
 

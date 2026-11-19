@@ -339,7 +339,7 @@ For questions about brand usage or to request additional assets:
 
 - **Team**: Fladeed
 - **Project**: CrystalFlow
-- **Repository**: github.com/fladeed-org/crystalflow
+- **Repository**: github.com/crystalflow-dev/crystalflow
 - **Guidelines Version**: 1.0 (January 2026)
 
 ---

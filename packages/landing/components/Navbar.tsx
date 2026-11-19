@@ -82,7 +82,7 @@ export default function Navbar() {
               )}
             </Link>
             <a
-              href="https://github.com/fladeed/crystalflow"
+              href="https://github.com/crystalflow-dev/crystalflow"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 bg-transparent border border-light-grey/30 text-white rounded-lg font-semibold hover:border-primary transition-all duration-200"
@@ -153,7 +153,7 @@ export default function Navbar() {
                 )}
               </Link>
               <a
-                href="https://github.com/fladeed/crystalflow"
+                href="https://github.com/crystalflow-dev/crystalflow"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 px-6 py-2 bg-transparent border border-light-grey/30 text-white rounded-lg font-semibold hover:border-primary transition-all duration-200"

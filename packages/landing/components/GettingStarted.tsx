@@ -101,7 +101,7 @@ export default function GettingStarted() {
           className="text-center mt-16"
         >
           <Link
-            href="https://github.com/fladeed/crystalflow"
+            href="https://github.com/crystalflow-dev/crystalflow"
             className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-lg font-semibold text-lg hover:bg-primary/80 transition-all duration-300 hover:shadow-[0_0_30px_rgba(42,65,255,0.5)]"
           >
             View Documentation

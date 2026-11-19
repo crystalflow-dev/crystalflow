@@ -66,7 +66,7 @@ export default meta;
  *
  * ## Resources
  *
- * - [CrystalFlow Documentation](https://github.com/fladeed/crystalflow)
+ * - [CrystalFlow Documentation](https://github.com/crystalflow-dev/crystalflow)
  * - [React Flow Documentation](https://reactflow.dev/)
  * - [Monaco Editor Documentation](https://microsoft.github.io/monaco-editor/)
  *
