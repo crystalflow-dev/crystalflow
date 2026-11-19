@@ -5,5 +5,8 @@
   "assets": {
     "directory": "./packages/landing/out",
     "binding": "ASSETS"
-  }
+  },
+  // Required by `npx wrangler preview`, which Workers Builds runs for
+  // non-production branches. Empty: previews use the top-level settings.
+  "previews": {}
 }
