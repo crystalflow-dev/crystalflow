@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import KitScripts from '@/components/next/KitScripts';
 import './next.css';
 
 export const metadata: Metadata = {
@@ -34,8 +35,6 @@ const kitStyles = [
   '/assets/icons/icon.css',
   '/assets/ui/base.css',
 ];
-
-const kitScripts = ['/assets/system.js', '/assets/motion/motion.js', '/assets/layout/layout.js'];
 
 const tokens = `:root {
   --p-bg: #ffffff; --p-surface: #f4f4f4; --p-ink: #111111; --p-muted: #686868;
@@ -80,9 +79,7 @@ export default function NextLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body suppressHydrationWarning>
         {children}
-        {kitScripts.map((src) => (
-          <script key={src} type="module" src={src} />
-        ))}
+        <KitScripts />
       </body>
     </html>
   );
