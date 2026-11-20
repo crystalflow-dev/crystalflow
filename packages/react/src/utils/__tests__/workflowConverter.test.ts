@@ -40,6 +40,7 @@ const workflowWith = (data: Record<string, unknown>): WorkflowData => ({
 
 describe('loadWorkflowFromData', () => {
   it('uses the saved property value on the React Flow node when the workflow sets one', () => {
+    // reference the class so it is not dropped and @defineNode registers it
     expect(ConverterNumberNode).toBeDefined();
     const { nodes } = loadWorkflowFromData(workflowWith({ inputValue: 5 }));
     expect(nodes[0].data.inputValue).toBe(5);
@@ -53,6 +54,12 @@ describe('loadWorkflowFromData', () => {
   it('keeps the input default on the React Flow node when the workflow holds an input value', () => {
     const { nodes } = loadWorkflowFromData(workflowWith({ inputValue: 5, offset: 7 }));
     expect(nodes[0].data.offset).toBe(0);
+  });
+
+  it('keeps the serialized node record off the React Flow node', () => {
+    const { nodes } = loadWorkflowFromData(workflowWith({ inputValue: 5 }));
+    expect(nodes[0].data.data).toBeUndefined();
+    expect(nodes[0].data.state).toBeUndefined();
   });
 });
 

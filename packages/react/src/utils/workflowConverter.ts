@@ -94,7 +94,6 @@ export function workflowToReactFlow(workflow: Workflow): {
       // Create React Flow node using the converter
       const rfNode = convertNodeToReactFlow(nodeClass, nodeId, position);
 
-      // Copy actual values from the node instance
       const nodeData: Record<string, unknown> = node.toJSON ? node.toJSON() : {};
       const savedData = (nodeData.data as Record<string, unknown> | undefined) ?? {};
       // Lift the saved property values to where the property panel and execution read them.
@@ -105,7 +104,6 @@ export function workflowToReactFlow(workflow: Workflow): {
       );
       rfNode.data = {
         ...rfNode.data,
-        ...nodeData,
         ...savedValues,
       };
 
