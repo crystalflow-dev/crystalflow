@@ -4,6 +4,7 @@ import 'reflect-metadata';
 import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
 import type { NodeConstructor } from '@crystalflow/core';
+import Code from '@/components/next/Code';
 import { AddNode, AddThreeNode, NumberNode, heroWorkflow } from '@/lib/heroNodes';
 
 const WorkflowBuilder = dynamic(
@@ -11,16 +12,16 @@ const WorkflowBuilder = dynamic(
   { ssr: false }
 );
 
-type Line = { text: string; kind?: 'dec' | 'new'; key?: boolean };
+type Line = { text: string; kind?: 'new'; key?: boolean };
 
 function codeLines(third: boolean): Line[] {
   return [
-    { text: "@defineNode({ type: 'add', label: 'Add',", kind: 'dec' },
-    { text: "              category: 'Math' })", kind: 'dec' },
+    { text: "@defineNode({ type: 'add', label: 'Add'," },
+    { text: "              category: 'Math' })" },
     { text: 'class AddNode extends Node {' },
-    { text: "  @Input({ type: 'number', label: 'A' })", kind: 'dec', key: true },
+    { text: "  @Input({ type: 'number', label: 'A' })", key: true },
     { text: '  a = 0;' },
-    { text: "  @Input({ type: 'number', label: 'B' })", kind: 'dec', key: true },
+    { text: "  @Input({ type: 'number', label: 'B' })", key: true },
     { text: '  b = 0;' },
     ...(third
       ? ([
@@ -28,7 +29,7 @@ function codeLines(third: boolean): Line[] {
           { text: '  c = 0;', kind: 'new' },
         ] as Line[])
       : []),
-    { text: "  @Output({ type: 'number' })", kind: 'dec', key: true },
+    { text: "  @Output({ type: 'number' })", key: true },
     { text: '  sum = 0;' },
     { text: '' },
     { text: '  execute() {' },
@@ -89,7 +90,7 @@ export default function HeroDemo() {
               key={`${i}-${line.text}`}
               className={`cf-line${line.kind ? ` cf-line--${line.kind}` : ''}${line.key ? ' cf-line--key' : ''}`}
             >
-              {line.text || ' '}
+              {line.text ? <Code code={line.text} lang="ts" /> : ' '}
               {'\n'}
             </span>
           ))}

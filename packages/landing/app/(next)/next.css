@@ -36,8 +36,15 @@
 }
 .cf-code code { font: inherit; display: block; }
 .cf-line { display: block; padding: 0 16px; white-space: pre; border-left: 2px solid transparent; }
-.cf-line--dec, .cf-line--new { color: var(--p-accent); }
 .cf-line--new { background: var(--u-tint); border-left-color: var(--p-accent); }
+
+/* code colours, one set for every snippet on the page. Decorators carry the accent because they are what
+   CrystalFlow adds to a class; strings take the one warm tone on the page, the accent's opposite; keywords are
+   the ink a step heavier and punctuation steps back to the muted grey. Green stays out: it means "ran" here. */
+.cf-tok--dec { color: var(--p-accent); }
+.cf-tok--kw { font-weight: 500; }
+.cf-tok--str, .cf-tok--num { color: #a8400c; }
+.cf-tok--punct, .cf-tok--com { color: var(--p-muted); }
 
 .cf-canvas { position: relative; flex: 1 1 0; min-height: 200px; }
 .cf-canvas > * { position: absolute; inset: 0; }
