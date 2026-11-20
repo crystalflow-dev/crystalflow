@@ -17,6 +17,8 @@ export default defineConfig({
         'src/stories/**',
         'src/examples/**',
       ],
+      // keep the package names in the published declarations; the aliases below point at monorepo source
+      aliasesExclude: ['@crystalflow/core', '@crystalflow/types'],
     }),
   ],
   build: {
@@ -43,10 +45,6 @@ export default defineConfig({
           '@xyflow/react': 'ReactFlow',
           '@crystalflow/core': 'CrystalFlowCore',
           '@crystalflow/types': 'CrystalFlowTypes',
-        },
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name === 'style.css') return 'react.css';
-          return assetInfo.name || 'asset';
         },
       },
     },
