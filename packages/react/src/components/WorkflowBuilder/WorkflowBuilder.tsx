@@ -603,6 +603,8 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
         right: 0,
         bottom: 0,
         zIndex: 9999,
+        // the canvas is transparent: without a ground the host page shows through it
+        background: 'var(--color-bg-primary)',
       }),
       ...themeToCSSVariables(resolvedTheme),
     }),
