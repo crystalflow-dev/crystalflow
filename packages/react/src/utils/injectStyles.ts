@@ -10,6 +10,10 @@ const injectedStyles = new Set<string>();
  * Only injects once per unique styleId
  */
 export function injectStyles(css: string, styleId: string): void {
+  if (typeof document === 'undefined') {
+    return; // No DOM: server-side rendering or plain Node
+  }
+
   if (injectedStyles.has(styleId)) {
     return; // Already injected
   }
@@ -25,6 +29,10 @@ export function injectStyles(css: string, styleId: string): void {
  * Remove injected styles (useful for cleanup)
  */
 export function removeStyles(styleId: string): void {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
   const style = document.querySelector(`[data-crystalflow-style="${styleId}"]`);
   if (style) {
     style.remove();
