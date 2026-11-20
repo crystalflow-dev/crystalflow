@@ -141,3 +141,8 @@
 .cf-steppane { height: 360px; margin-top: var(--s-4); }
 /* stacked, the three steps are as tall as their code and the section grows with them */
 @media (max-width: 1023px) { .cf-steppane { height: auto; } }
+
+/* roadmap: the status of a phase; green means built, as on the canvas */
+.cf-status { font-size: var(--t-small); color: var(--p-muted); }
+.cf-status[data-status="Done"] { color: #0a7d55; font-weight: 500; }
+.cf-status[data-status="In progress"] { color: var(--p-accent); font-weight: 500; }
