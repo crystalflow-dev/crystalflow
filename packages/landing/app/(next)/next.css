@@ -236,7 +236,8 @@ main > section.cf-demo > .wrap { z-index: auto; }
 .cf-engine .cf-engine__line:is([data-event="beforeExecute"], [data-event="afterExecute"]) .cf-engine__name { font-weight: 500; }
 /* stacked: the nodes keep their rows and the log gets a fixed window under them */
 @media (max-width: 1023px) {
-  .cf-engine .cf-engine__body { grid-template-columns: minmax(0, 1fr); }
+  /* the window is as tall as its rows here, so the body must not shrink to the nothing a 0 basis gives it */
+  .cf-engine .cf-engine__body { grid-template-columns: minmax(0, 1fr); flex: none; }
   .cf-engine .cf-engine__nodes { border-right: 0; border-bottom: 1px solid var(--u-line); }
   .cf-engine .cf-engine__node { padding: 14px 16px; }
   .cf-engine .cf-engine__node:not(:last-child)::after { left: 20.5px; }
