@@ -207,7 +207,11 @@ main > section.cf-demo > .wrap { z-index: auto; }
 
 /* the engine section: one window, the workflow's nodes on the left in run order and the executor's events
    on the right as they arrive. Green means "ran", as on the canvas; the accent marks the node running now. */
-.cf-engine .cf-engine__body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); flex: 1 1 0; min-height: 0; }
+/* the window fills what the section leaves; where the section has no fixed height (under 1280px) the body
+   still keeps room for the ten lines of a full run, so it neither collapses nor grows as lines arrive */
+main > #engine > .wrap > .fill { display: flex; flex-direction: column; }
+#engine .fill > .cf-win { flex: 1 1 auto; height: auto; }
+.cf-engine .cf-engine__body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); flex: 1 1 auto; min-height: 320px; }
 .cf-engine .cf-engine__nodes { display: grid; grid-auto-rows: 1fr; margin: 0; padding: 0; list-style: none; border-right: 1px solid var(--u-line); }
 .cf-engine .cf-engine__node { position: relative; display: flex; align-items: center; gap: 12px; padding: 16px 24px; border-bottom: 1px solid var(--u-line); transition: background-color 200ms ease; }
 .cf-engine .cf-engine__node:last-child { border-bottom: 0; }
