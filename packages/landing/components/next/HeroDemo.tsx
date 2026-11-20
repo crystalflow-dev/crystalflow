@@ -97,8 +97,7 @@ export default function HeroDemo() {
       <div className="cf-canvas">
         <WorkflowBuilder
           key={third ? 'add3' : 'add'}
-          // @ts-expect-error - TypeScript sees src/ and dist/ as different types in monorepo
-          nodes={nodes}
+          nodes={nodes as never}
           initialWorkflow={workflow}
           theme="light"
           showPalette={false}
