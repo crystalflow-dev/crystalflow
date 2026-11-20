@@ -1,8 +1,19 @@
-const steps = [
+import Code from '@/components/next/Code';
+import type { Lang } from '@/lib/highlight';
+
+const steps: {
+  title: string;
+  line: string;
+  file: string;
+  lang: Lang;
+  label: string;
+  code: string;
+}[] = [
   {
     title: 'Install the packages',
     line: 'The core engine and the React components install from npm.',
     file: 'Terminal',
+    lang: 'sh',
     label: 'The npm install command for the core and React packages',
     code: `npm install @crystalflow/core \\
             @crystalflow/react`,
@@ -11,6 +22,7 @@ const steps = [
     title: 'Define a node',
     line: 'One decorated class is one node. Its ports are its fields.',
     file: 'nodes.ts',
+    lang: 'ts',
     label: 'A node class with an input, an output and an execute method',
     code: `@defineNode({ type: 'shout',
               label: 'Shout',
@@ -31,6 +43,7 @@ class ShoutNode extends Node {
     title: 'Mount WorkflowBuilder',
     line: 'Pass your node classes to one component and the editor is on the page.',
     file: 'App.tsx',
+    lang: 'ts',
     label: 'A React component that renders WorkflowBuilder with the node class',
     code: `import { WorkflowBuilder }
   from '@crystalflow/react';
@@ -63,13 +76,7 @@ export default function QuickStart() {
                   {step.file}
                 </div>
                 <pre className="cf-pane__code" aria-hidden="true">
-                  {step.code.split('ShoutNode]').map((part, n, all) => (
-                    <span key={n}>
-                      {part}
-                      {n < all.length - 1 && <span>ShoutNode</span>}
-                      {n < all.length - 1 && ']'}
-                    </span>
-                  ))}
+                  <Code code={step.code} lang={step.lang} />
                 </pre>
               </div>
             </article>
