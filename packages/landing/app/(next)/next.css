@@ -72,7 +72,7 @@
 }
 
 /* the three forms. From 1024px the section holds the screen while the page scrolls through its three steps:
-   each step gets three quarters of a screen of scroll, so a flick of the wheel cannot pass one, and the line
+   each step gets a whole screen of scroll, so a flick of the wheel cannot pass one, and the line
    beside the open step fills as its share is used up. Below that, and under reduced motion, nothing is held. */
 .cf-forms { display: grid; gap: var(--s-3); margin: 0; padding: 0; list-style: none; }
 .cf-forms__step {
@@ -94,7 +94,7 @@
 .cf-forms__pane[data-on] { opacity: 1; visibility: visible; transition: opacity 280ms ease; }
 .cf-forms__inline { display: none; }
 @media (min-width: 1024px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
-  main > #workflow.section { height: 325svh; padding-top: 0; padding-bottom: 0; }
+  main > #workflow.section { height: 400svh; padding-top: 0; padding-bottom: 0; }
   main > #workflow.section > .wrap { position: sticky; top: 0; height: 100svh; box-sizing: border-box; padding-top: var(--padt); padding-bottom: var(--padb); }
 }
 /* below the split there is no window beside the steps: each step carries its own, and nothing needs a tap */
@@ -124,4 +124,9 @@
 @media (max-width: 639px) {
   .cf-pane__bar { padding: 6px 12px; }
   .cf-pane__code { padding: 10px 12px; }
+}
+/* the narrowest phones: the JSON's longest line still ends inside its window */
+@media (max-width: 359px) {
+  .cf-forms > li { min-width: 0; }
+  .cf-pane__code { font-size: 11px; line-height: 18px; }
 }
