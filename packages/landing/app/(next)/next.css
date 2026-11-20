@@ -183,6 +183,10 @@ main > section.cf-demo > .wrap { display: block; height: auto; }
 .cf-demo__tabs { display: flex; gap: 8px; }
 .cf-demo__builder { position: relative; flex: 1 1 0; min-height: 0; }
 .cf-demo__builder > * { position: absolute; inset: 0; }
+/* the builder's fullscreen mode is position: fixed with no ground of its own: give it one, and keep
+   the wrap out of the kit's z-index: 1 layer, which holds it under the nav */
+main > section.cf-demo > .wrap { z-index: auto; }
+.cf-demo__builder > * { background: var(--u-bg); }
 .cf-demo__builder svg { max-width: none; }
 .cf-demo__code { display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; }
 .cf-demo__files { display: flex; gap: 4px; padding: 0 8px; overflow-x: auto; border-bottom: 1px solid var(--u-line); }
