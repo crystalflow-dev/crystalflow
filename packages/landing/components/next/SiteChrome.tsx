@@ -3,7 +3,19 @@ const GITHUB = 'https://github.com/crystalflow-dev/crystalflow';
 function Logo({ href }: { href: string }) {
   return (
     <a className="nav__logo" href={href}>
-      <img src="/logo/crystalflow-logo-blue-light.svg" alt="CrystalFlow" width={150} height={32} />
+      {/* the wordmark is dark ink on a light ground and white on a dark one */}
+      <picture>
+        <source
+          srcSet="/logo/crystalflow-logo-blue-dark.svg"
+          media="(prefers-color-scheme: dark)"
+        />
+        <img
+          src="/logo/crystalflow-logo-blue-light.svg"
+          alt="CrystalFlow"
+          width={150}
+          height={32}
+        />
+      </picture>
     </a>
   );
 }

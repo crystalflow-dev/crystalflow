@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import SiteDocument from '@/components/next/SiteDocument';
+import { dark, light } from '@/lib/palette';
 import './next.css';
 
 export const metadata: Metadata = {
@@ -22,7 +23,10 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#ffffff',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: light['--p-bg'] },
+    { media: '(prefers-color-scheme: dark)', color: dark['--p-bg'] },
+  ],
 };
 
 export default function NextLayout({ children }: Readonly<{ children: React.ReactNode }>) {
