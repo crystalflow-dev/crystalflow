@@ -74,10 +74,15 @@ const block = (palette: Palette) =>
     .map(([name, value]) => `${name}: ${value};`)
     .join(' ');
 
-/** The palette as CSS: light by default, dark under a dark system scheme. */
+/**
+ * The palette as CSS: light by default, dark under a dark system scheme, and either one
+ * when the visitor has chosen it (data-scheme on the root, set by the header's toggle).
+ */
 export function paletteCss(): string {
+  const darkBlock = `color-scheme: dark; ${block(dark)}`;
   return [
     `:root { color-scheme: light; ${block(light)} }`,
-    `@media (prefers-color-scheme: dark) { :root { color-scheme: dark; ${block(dark)} } }`,
+    `@media (prefers-color-scheme: dark) { :root:not([data-scheme="light"]) { ${darkBlock} } }`,
+    `:root[data-scheme="dark"] { ${darkBlock} }`,
   ].join('\n');
 }
