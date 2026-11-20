@@ -19,14 +19,41 @@ const WorkflowBuilder = dynamic(
   { ssr: false }
 );
 
-type NodeView = { label?: string; type?: string; executionStatus?: string };
+type Ports = Record<string, { label?: string }>;
+type NodeView = {
+  label?: string;
+  category?: string;
+  color?: string;
+  inputs?: Ports;
+  outputs?: Ports;
+  executionStatus?: string;
+};
 
-/** The page's own node: a name and its type on one line, in place of the built-in header and body. */
+const portNames = (ports?: Ports) => Object.keys(ports ?? {});
+
+/**
+ * The page's own node, in place of the built-in header and body: a dark card with the node's
+ * colour as a badge, its category above its name, and the ports it reads and writes.
+ */
 function MyNode(data: NodeView) {
+  const reads = portNames(data.inputs);
+  const writes = portNames(data.outputs);
   return (
-    <div className="cf-look" data-status={data.executionStatus}>
+    <div
+      className="cf-look"
+      data-status={data.executionStatus}
+      style={{ '--look': data.color } as React.CSSProperties}
+    >
+      <span className="cf-look__badge" aria-hidden="true">
+        {data.label?.charAt(0)}
+      </span>
+      <span className="cf-look__category">{data.category}</span>
       <span className="cf-look__label">{data.label}</span>
-      <span className="cf-look__type">{data.type}</span>
+      <span className="cf-look__ports">
+        <span>{reads.length ? reads.join(', ') : 'start'}</span>
+        <span aria-hidden="true">→</span>
+        <span>{writes.length ? writes.join(', ') : 'end'}</span>
+      </span>
     </div>
   );
 }
