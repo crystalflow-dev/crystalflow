@@ -262,9 +262,15 @@ export const darkTheme: Theme = {
 };
 
 /**
+ * The colors a custom theme changes: any group, and within it any color.
+ * Everything left out comes from the base theme.
+ */
+export type ThemeOverrides = { [Group in keyof ThemeColors]?: Partial<ThemeColors[Group]> };
+
+/**
  * Create custom theme based on light or dark theme
  */
-export function createTheme(mode: 'light' | 'dark', overrides?: Partial<ThemeColors>): Theme {
+export function createTheme(mode: 'light' | 'dark', overrides?: ThemeOverrides): Theme {
   const baseTheme = mode === 'dark' ? darkTheme : lightTheme;
 
   if (!overrides) {
