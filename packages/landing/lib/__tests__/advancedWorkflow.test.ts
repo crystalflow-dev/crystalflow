@@ -10,7 +10,7 @@ import {
   ReceiptNode,
   ReminderNode,
 } from '../../../examples/src/nodes/triage';
-import { advancedWorkflow } from '../advancedWorkflow';
+import { advancedWorkflow, advancedWorkflowCompact } from '../advancedWorkflow';
 
 // naming the classes registers them with the engine
 const classes = [
@@ -80,5 +80,16 @@ describe('the advanced example', () => {
       withProperties({ order: { pick: '1044' }, switch: { cases: ['refunded', 'pending'] } })
     );
     expect(result.messages).toEqual({ receipt: 'Receipt to Kiln Studio' });
+  });
+
+  it('has a compact layout that differs in positions only', async () => {
+    const bare = (data: WorkflowData) => ({
+      ...data,
+      nodes: data.nodes.map((node) => ({ ...node, position: undefined })),
+    });
+    expect(bare(advancedWorkflowCompact)).toEqual(bare(advancedWorkflow));
+    expect(advancedWorkflowCompact.nodes.map((node) => node.position)).not.toEqual(
+      advancedWorkflow.nodes.map((node) => node.position)
+    );
   });
 });
