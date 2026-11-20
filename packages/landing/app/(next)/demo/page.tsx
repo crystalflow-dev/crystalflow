@@ -5,7 +5,7 @@ import { SiteFooter, SiteNav } from '@/components/next/SiteChrome';
 export const metadata: Metadata = {
   title: 'CrystalFlow demo: build and run a workflow in the browser',
   description:
-    'A live WorkflowBuilder with four example nodes. Wire them on the canvas, change their properties and run the workflow.',
+    'A live WorkflowBuilder with an orders report already wired. Run it, change a property or drag in another node.',
 };
 
 export default function DemoPage() {
@@ -18,7 +18,7 @@ export default function DemoPage() {
             <div className="cf-demo__head">
               <h1 id="demo-h">Run a workflow in the WorkflowBuilder</h1>
               <p>
-                Four example nodes are wired up. Run them, change a property or rewire the canvas.
+                An orders report is wired up. Run it, change a property or drag in another node.
               </p>
             </div>
             <DemoBuilder />

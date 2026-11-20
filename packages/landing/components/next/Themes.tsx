@@ -2,15 +2,9 @@
 
 import 'reflect-metadata';
 import dynamic from 'next/dynamic';
-import { useEffect, useMemo, useState } from 'react';
-import type { NodeConstructor } from '@crystalflow/core';
-import {
-  DisplayNode,
-  ExtractFieldNode,
-  FormatTextNode,
-  MockAPINode,
-} from '@crystalflow/examples/src/nodes';
+import { useEffect, useState } from 'react';
 import Code from '@/components/next/Code';
+import { demoNodes } from '@/lib/demoNodes';
 import { demoWorkflow } from '@/lib/demoWorkflow';
 import { looks } from '@/lib/looks';
 
@@ -69,11 +63,6 @@ export default function Themes() {
     media.addEventListener('change', read);
     return () => media.removeEventListener('change', read);
   }, []);
-  const nodes = useMemo(
-    () =>
-      [MockAPINode, ExtractFieldNode, FormatTextNode, DisplayNode] as unknown as NodeConstructor[],
-    []
-  );
   const look = looks[chosen];
 
   return (
@@ -110,7 +99,7 @@ export default function Themes() {
             </div>
             <div className="cf-themes__builder">
               <WorkflowBuilder
-                nodes={nodes as never}
+                nodes={demoNodes as never}
                 initialWorkflow={demoWorkflow}
                 key={look.ownNodes ? 'own' : 'built-in'}
                 theme={look.theme}

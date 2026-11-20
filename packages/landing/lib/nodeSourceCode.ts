@@ -1,195 +1,258 @@
 /**
- * The source of the four demo nodes, shown on the demo page beside the builder.
- * Copied from packages/examples so the static build needs no file access.
+ * The source of the demo's node classes, shown on the demo page beside the builder.
+ * Copied from packages/examples/src/nodes/orders so the static build needs no file access;
+ * a test holds each copy to its file.
  */
-
-export const MockAPINodeCode = `import { Node, Output, Property, defineNode } from '@crystalflow/core';
+export const nodeSources: { name: string; code: string }[] = [
+  {
+    name: 'OrdersNode.ts',
+    code: `import { Node, Output, Property, defineNode } from '@crystalflow/core';
+import { ordersByPeriod, type Order } from './orders';
+import { pause } from './pace';
 
 /**
- * Mock API Node - Simulates an API response with user data
- * In a real scenario, this would make an actual HTTP request
+ * Orders Node - the start of the workflow: the shop's orders for one period.
+ * A real one would read them from an API or a database.
  */
 @defineNode({
-  type: 'data.mockapi',
-  label: 'Mock API',
-  category: 'Data',
-  description: 'Simulates an API response with user data',
+  type: 'orders.source',
+  label: 'Orders',
+  category: 'Orders',
+  description: 'Loads the orders of a period',
   color: '#2196F3',
 })
-export class MockAPINode extends Node {
+export class OrdersNode extends Node {
   @Property({
     type: 'select',
-    label: 'Endpoint',
-    defaultValue: 'users',
+    label: 'Period',
+    defaultValue: 'today',
     options: [
-      { value: 'users', label: 'Users API' },
-      { value: 'posts', label: 'Posts API' },
-      { value: 'products', label: 'Products API' },
+      { value: 'today', label: 'Today' },
+      { value: 'yesterday', label: 'Yesterday' },
+      { value: 'week', label: 'Last 7 days' },
     ],
   })
-  endpoint: string = 'users';
+  period: string = 'today';
 
-  @Output({ type: 'object', label: 'Response' })
-  response: any = {};
+  @Output({ type: 'array', label: 'Orders' })
+  orders: Order[] = [];
 
-  execute() {
-    // Simulate API responses based on endpoint
-    const mockData = {
-      users: {
-        status: 200,
-        data: {
-          id: 1,
-          name: 'John Doe',
-          email: 'john.doe@example.com',
-          username: 'johndoe',
-          address: {
-            street: '123 Main St',
-            city: 'San Francisco',
-            country: 'USA',
-          },
-          stats: {
-            followers: 1523,
-            posts: 42,
-            likes: 8934,
-          },
-        },
-      },
-      posts: {
-        status: 200,
-        data: {
-          id: 101,
-          title: 'Getting Started with CrystalFlow',
-          content: 'Build visual workflows with ease...',
-          author: 'John Doe',
-          likes: 245,
-          comments: 18,
-        },
-      },
-      products: {
-        status: 200,
-        data: {
-          id: 501,
-          name: 'Premium Subscription',
-          price: 29.99,
-          currency: 'USD',
-          features: ['Unlimited workflows', 'Priority support', 'Advanced analytics'],
-        },
-      },
-    };
-
-    this.response = mockData[this.endpoint as keyof typeof mockData] || mockData.users;
+  async execute() {
+    await pause();
+    this.orders = ordersByPeriod[this.period] ?? ordersByPeriod.today;
   }
-}`;
-
-export const ExtractFieldNodeCode = `import { Node, Input, Output, Property, defineNode } from '@crystalflow/core';
+}
+`,
+  },
+  {
+    name: 'KeepStatusNode.ts',
+    code: `import { Node, Input, Output, Property, defineNode } from '@crystalflow/core';
+import type { Order } from './orders';
+import { pause } from './pace';
 
 /**
- * Extract Field Node - Extracts a specific field from a JSON object
- * Supports nested path notation (e.g., "data.address.city")
+ * Keep by Status Node - passes on only the orders in one status.
  */
 @defineNode({
-  type: 'data.extract',
-  label: 'Extract Field',
-  category: 'Data',
-  description: 'Extracts a field from JSON using dot notation',
+  type: 'orders.keep',
+  label: 'Keep by status',
+  category: 'Orders',
+  description: 'Keeps the orders that are in the chosen status',
   color: '#4CAF50',
 })
-export class ExtractFieldNode extends Node {
-  @Input({ type: 'object', label: 'JSON Object' })
-  jsonObject: any;
+export class KeepStatusNode extends Node {
+  @Input({ type: 'array', label: 'Orders' })
+  orders: Order[] = [];
 
   @Property({
-    type: 'string',
-    label: 'Field Path',
-    defaultValue: 'data.name',
-    description: 'Use dot notation for nested fields (e.g., data.address.city)',
+    type: 'select',
+    label: 'Status',
+    defaultValue: 'paid',
+    options: [
+      { value: 'paid', label: 'Paid' },
+      { value: 'pending', label: 'Pending' },
+      { value: 'refunded', label: 'Refunded' },
+    ],
   })
-  fieldPath: string = 'data.name';
+  status: string = 'paid';
 
-  @Output({ type: 'any', label: 'Value' })
-  value: any = undefined;
+  @Output({ type: 'array', label: 'Kept' })
+  kept: Order[] = [];
 
-  execute() {
-    if (!this.jsonObject) {
-      throw new Error('No JSON object provided');
-    }
-
-    // Split the path and traverse the object
-    const path = this.fieldPath.split('.');
-    let current = this.jsonObject;
-
-    for (const key of path) {
-      if (current && typeof current === 'object' && key in current) {
-        current = current[key];
-      } else {
-        throw new Error(\`Field "\${this.fieldPath}" not found in JSON object\`);
-      }
-    }
-
-    this.value = current;
+  async execute() {
+    await pause();
+    this.kept = (this.orders ?? []).filter((order) => order.status === this.status);
   }
-}`;
-
-export const FormatTextNodeCode = `import { Node, Input, Output, Property, defineNode } from '@crystalflow/core';
+}
+`,
+  },
+  {
+    name: 'TotalNode.ts',
+    code: `import { Node, Input, Output, defineNode } from '@crystalflow/core';
+import type { Order } from './orders';
+import { pause } from './pace';
 
 /**
- * Format Text Node - Formats text with a custom template
- * Use {value} as a placeholder for the input value
+ * Total Node - Adds up the totals of the orders.
  */
 @defineNode({
-  type: 'data.format',
-  label: 'Format Text',
-  category: 'Data',
-  description: 'Formats text using a template with placeholders',
+  type: 'orders.total',
+  label: 'Total',
+  category: 'Math',
+  description: 'Adds up the totals of the orders',
   color: '#9C27B0',
 })
-export class FormatTextNode extends Node {
-  @Input({ type: 'any', label: 'Value' })
-  inputValue: any;
+export class TotalNode extends Node {
+  @Input({ type: 'array', label: 'Orders' })
+  orders: Order[] = [];
+
+  @Output({ type: 'number', label: 'Total' })
+  total: number = 0;
+
+  async execute() {
+    await pause();
+    const orders = this.orders ?? [];
+    this.total = orders.reduce((sum, order) => sum + order.total, 0);
+  }
+}
+`,
+  },
+  {
+    name: 'CountNode.ts',
+    code: `import { Node, Input, Output, defineNode } from '@crystalflow/core';
+import type { Order } from './orders';
+import { pause } from './pace';
+
+/**
+ * Count Node - Counts the orders.
+ */
+@defineNode({
+  type: 'orders.count',
+  label: 'Count',
+  category: 'Math',
+  description: 'Counts the orders',
+  color: '#00897B',
+})
+export class CountNode extends Node {
+  @Input({ type: 'array', label: 'Orders' })
+  orders: Order[] = [];
+
+  @Output({ type: 'number', label: 'Count' })
+  count: number = 0;
+
+  async execute() {
+    await pause();
+    const orders = this.orders ?? [];
+    this.count = orders.length;
+  }
+}
+`,
+  },
+  {
+    name: 'ReportNode.ts',
+    code: `import { Node, Input, Output, Property, defineNode } from '@crystalflow/core';
+import { pause } from './pace';
+
+/**
+ * Report Node - the end of the workflow: one sentence from a count and an amount.
+ * The sentence is an output, so it shows on the node after a run.
+ */
+@defineNode({
+  type: 'orders.report',
+  label: 'Report',
+  category: 'Output',
+  description: 'Writes a count and an amount into a sentence',
+  color: '#FF9800',
+})
+export class ReportNode extends Node {
+  @Input({ type: 'number', label: 'Count' })
+  count: number = 0;
+
+  @Input({ type: 'number', label: 'Amount' })
+  amount: number = 0;
 
   @Property({
     type: 'string',
-    label: 'Template',
-    defaultValue: 'User: {value}',
-    description: 'Use {value} as placeholder',
+    label: 'Sentence',
+    defaultValue: '{count} orders, {amount} €',
+    description: 'Use {count} and {amount} as placeholders',
   })
-  template: string = 'User: {value}';
+  sentence: string = '{count} orders, {amount} €';
 
-  @Output({ type: 'string', label: 'Formatted Text' })
-  formattedText: string = '';
+  @Output({ type: 'string', label: 'Report' })
+  report: string = '';
 
-  execute() {
-    // Convert value to string if it's an object
-    let valueStr: string;
-    if (typeof this.inputValue === 'object') {
-      valueStr = JSON.stringify(this.inputValue, null, 2);
-    } else {
-      valueStr = String(this.inputValue);
-    }
-
-    // Replace {value} placeholder with actual value
-    this.formattedText = this.template.replace(/{value}/g, valueStr);
+  async execute() {
+    await pause();
+    const amount = Number(this.amount ?? 0).toLocaleString('en-US', { maximumFractionDigits: 2 });
+    this.report = this.sentence
+      .replace(/{count}/g, String(this.count ?? 0))
+      .replace(/{amount}/g, amount);
   }
-}`;
-
-export const DisplayNodeCode = `import { defineNode, Input, Node } from '@crystalflow/core';
+}
+`,
+  },
+  {
+    name: 'AverageNode.ts',
+    code: `import { Node, Input, Output, defineNode } from '@crystalflow/core';
+import type { Order } from './orders';
+import { pause } from './pace';
 
 /**
- * Display Result Node
- * Displays a value to the console
+ * Average Node - Gives the average total of the orders, 0 when there are none.
  */
 @defineNode({
-  type: 'output.display',
-  label: 'Display',
-  category: 'Output',
-  description: 'Displays a value',
-  color: '#FF9800',
+  type: 'orders.average',
+  label: 'Average',
+  category: 'Math',
+  description: 'Gives the average total of the orders, 0 when there are none',
+  color: '#5C6BC0',
 })
-export class DisplayNode extends Node {
-  @Input({ type: 'any', label: 'Value', required: true })
-  value: unknown;
+export class AverageNode extends Node {
+  @Input({ type: 'array', label: 'Orders' })
+  orders: Order[] = [];
 
-  execute(): void {
-    alert(\`Display: \${this.value}\`);
+  @Output({ type: 'number', label: 'Average' })
+  average: number = 0;
+
+  async execute() {
+    await pause();
+    const orders = this.orders ?? [];
+    const sum = orders.reduce((all, order) => all + order.total, 0);
+    this.average = orders.length ? Math.round((sum / orders.length) * 100) / 100 : 0;
   }
-}`;
+}
+`,
+  },
+  {
+    name: 'LargestNode.ts',
+    code: `import { Node, Input, Output, defineNode } from '@crystalflow/core';
+import type { Order } from './orders';
+import { pause } from './pace';
+
+/**
+ * Largest Node - Gives the largest total among the orders, 0 when there are none.
+ */
+@defineNode({
+  type: 'orders.largest',
+  label: 'Largest',
+  category: 'Math',
+  description: 'Gives the largest total among the orders, 0 when there are none',
+  color: '#D81B60',
+})
+export class LargestNode extends Node {
+  @Input({ type: 'array', label: 'Orders' })
+  orders: Order[] = [];
+
+  @Output({ type: 'number', label: 'Largest' })
+  largest: number = 0;
+
+  async execute() {
+    await pause();
+    const orders = this.orders ?? [];
+    this.largest = orders.reduce((top, order) => Math.max(top, order.total), 0);
+  }
+}
+`,
+  },
+];
