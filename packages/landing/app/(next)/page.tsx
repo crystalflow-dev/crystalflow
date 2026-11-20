@@ -3,6 +3,7 @@ import HeroDemo from '@/components/next/HeroDemo';
 import QuickStart from '@/components/next/QuickStart';
 import RoadmapRows from '@/components/next/RoadmapRows';
 import { SiteFooter, SiteNav } from '@/components/next/SiteChrome';
+import Themes from '@/components/next/Themes';
 import ThreeForms from '@/components/next/ThreeForms';
 import Uses from '@/components/next/Uses';
 
@@ -43,6 +44,7 @@ export default function NextHome() {
         <ThreeForms />
         <Execution />
         <Uses />
+        <Themes />
         <QuickStart />
         <RoadmapRows />
       </main>
