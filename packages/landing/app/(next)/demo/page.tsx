@@ -15,11 +15,10 @@ export default function DemoPage() {
       <main id="top">
         <section className="section cf-demo" aria-labelledby="demo-h">
           <div className="wrap">
-            <div className="section-head">
+            <div className="cf-demo__head">
               <h1 id="demo-h">Run a workflow in the WorkflowBuilder</h1>
               <p>
-                Four example nodes fetch a mock API response, extract a field, format it and display
-                it. Run the workflow, then change a property or rewire the nodes.
+                Four example nodes are wired up. Run them, change a property or rewire the canvas.
               </p>
             </div>
             <DemoBuilder />
