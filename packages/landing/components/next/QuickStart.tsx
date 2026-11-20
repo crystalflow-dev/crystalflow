@@ -13,7 +13,8 @@ const steps = [
     file: 'nodes.ts',
     label: 'A node class with an input, an output and an execute method',
     code: `@defineNode({ type: 'shout',
-              label: 'Shout' })
+              label: 'Shout',
+              category: 'Text' })
 class ShoutNode extends Node {
   @Input({ type: 'string' })
   text = '';
