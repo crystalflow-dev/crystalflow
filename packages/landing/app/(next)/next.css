@@ -157,7 +157,7 @@
    Up to 1279px the kit already lets sections grow; only the block that fills the rest of the screen must not
    shrink under its content. From 1280px sections are a fixed height, so a low window gets the same treatment. */
 @media (max-width: 1279px) {
-  main > :is(#workflow, #uses) > .wrap > .fill, #uses .grid.fill > .frame--fill { flex: 1 0 auto; }
+  main > :is(#workflow, #engine, #uses) > .wrap > .fill, #uses .grid.fill > .frame--fill { flex: 1 0 auto; }
 }
 /* stacked under the words, the hero's window keeps room for its bar, its canvas and the Run button */
 @media (max-width: 639px) { main > .hero--split .hero__media { min-height: 300px; } }
@@ -204,3 +204,49 @@ main > section.cf-demo > .wrap { z-index: auto; }
 .cf-demo__file:focus-visible { outline: 2px solid var(--p-accent); outline-offset: -2px; }
 .cf-demo__code .cf-pane__code { flex: 1 1 0; min-height: 0; overflow: auto; }
 .cf-demo__code .cf-pane__code:focus-visible { outline: 2px solid var(--p-accent); outline-offset: -2px; }
+
+/* the engine section: one window, the workflow's nodes on the left in run order and the executor's events
+   on the right as they arrive. Green means "ran", as on the canvas; the accent marks the node running now. */
+/* the window fills what the section leaves; where the section has no fixed height (under 1280px) the body
+   still keeps room for the ten lines of a full run, so it neither collapses nor grows as lines arrive */
+main > #engine > .wrap > .fill { display: flex; flex-direction: column; }
+#engine .fill > .cf-win { flex: 1 1 auto; height: auto; }
+.cf-engine .cf-engine__body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); flex: 1 1 auto; min-height: 320px; }
+.cf-engine .cf-engine__nodes { display: grid; grid-auto-rows: 1fr; margin: 0; padding: 0; list-style: none; border-right: 1px solid var(--u-line); }
+.cf-engine .cf-engine__node { position: relative; display: flex; align-items: center; gap: 12px; padding: 16px 24px; border-bottom: 1px solid var(--u-line); transition: background-color 200ms ease; }
+.cf-engine .cf-engine__node:last-child { border-bottom: 0; }
+/* the line that joins one node's dot to the next */
+.cf-engine .cf-engine__node:not(:last-child)::after { content: ""; position: absolute; left: 28.5px; top: calc(50% + 9px); width: 1px; height: calc(100% - 18px); background: var(--u-line-2); }
+.cf-engine .cf-engine__dot { flex: none; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--u-line-2); background: var(--u-bg); transition: background-color 200ms ease, border-color 200ms ease; }
+.cf-engine .cf-engine__label { font-size: 15px; font-weight: 500; color: var(--u-ink); }
+.cf-engine .cf-engine__out { margin-left: auto; font-family: var(--font-mono); font-size: 13px; color: var(--u-muted); text-align: right; }
+.cf-engine .cf-engine__node[data-status="running"] { background: var(--u-tint); }
+.cf-engine .cf-engine__node[data-status="running"] .cf-engine__dot { border-color: var(--p-accent); background: var(--p-accent); }
+.cf-engine .cf-engine__node[data-status="running"] .cf-engine__out { color: var(--p-accent); }
+.cf-engine .cf-engine__node[data-status="done"] .cf-engine__dot { border-color: #0a7d55; background: #0a7d55; }
+.cf-engine .cf-engine__node[data-status="done"] .cf-engine__out { color: #0a7d55; font-weight: 500; }
+.cf-engine .cf-engine__node[data-status="skipped"] .cf-engine__label { color: var(--u-muted); }
+@media (prefers-reduced-motion: no-preference) {
+  .cf-engine .cf-engine__node[data-status="running"] .cf-engine__dot { animation: cf-engine-pulse 900ms ease-in-out infinite; }
+}
+@keyframes cf-engine-pulse { 50% { box-shadow: 0 0 0 5px color-mix(in oklab, var(--p-accent) 22%, transparent); } }
+.cf-engine .cf-engine__log { margin: 0; padding: 16px 0; list-style: none; overflow: auto; font-family: var(--font-mono); font-size: 13px; line-height: 20px; color: var(--u-ink); background: var(--u-fill); }
+.cf-engine .cf-engine__log:focus-visible { outline: 2px solid var(--p-accent); outline-offset: -2px; }
+.cf-engine .cf-engine__line { display: grid; grid-template-columns: 9ch minmax(0, 1fr); gap: 16px; padding: 2px 24px; }
+.cf-engine .cf-engine__at { color: var(--u-muted); text-align: right; }
+.cf-engine .cf-engine__detail, .cf-engine .cf-engine__line--hint { color: var(--u-muted); }
+.cf-engine .cf-engine__line[data-event="onNodeComplete"] .cf-engine__name { color: #0a7d55; }
+.cf-engine .cf-engine__line[data-event="onCancellation"] .cf-engine__name { color: #a8400c; }
+.cf-engine .cf-engine__line:is([data-event="beforeExecute"], [data-event="afterExecute"]) .cf-engine__name { font-weight: 500; }
+/* stacked: the nodes keep their rows and the log gets a fixed window under them */
+@media (max-width: 1023px) {
+  /* the window is as tall as its rows here, so the body must not shrink to the nothing a 0 basis gives it */
+  .cf-engine .cf-engine__body { grid-template-columns: minmax(0, 1fr); flex: none; }
+  .cf-engine .cf-engine__nodes { border-right: 0; border-bottom: 1px solid var(--u-line); }
+  .cf-engine .cf-engine__node { padding: 14px 16px; }
+  .cf-engine .cf-engine__node:not(:last-child)::after { left: 20.5px; }
+  .cf-engine .cf-engine__log { height: 248px; padding: 12px 0; }
+  .cf-engine .cf-engine__line { grid-template-columns: 8ch minmax(0, 1fr); gap: 12px; padding: 2px 16px; }
+  #engine .cf-win__file { display: none; }
+  #engine .cf-win__bar { justify-content: flex-end; }
+}
