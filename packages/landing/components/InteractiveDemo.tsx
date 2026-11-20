@@ -123,7 +123,6 @@ export default function InteractiveDemo() {
             <div style={{ height: '600px', width: '100%', background: '#1E1E1E' }}>
               {nodes.length > 0 ? (
                 <WorkflowBuilder
-                  // @ts-expect-error - TypeScript sees src/ and dist/ as different types in monorepo
                   nodes={nodes}
                   theme="dark"
                   showJsonEditor={false}

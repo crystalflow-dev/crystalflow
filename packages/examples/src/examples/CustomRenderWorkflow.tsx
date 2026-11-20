@@ -8,7 +8,7 @@
 import React from 'react';
 import { WorkflowBuilder } from '@crystalflow/react';
 import type { CustomNodeData } from '@crystalflow/react';
-import { BackgroundVariant } from 'reactflow';
+import { BackgroundVariant } from '@xyflow/react';
 
 // Import example nodes
 import {
