@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { NodeExecutionStatus, PortDefinition, PropertyDefinition } from '@crystalflow/types';
 import { NodeConstructor } from '@crystalflow/core';
+import { previewValue } from '../../utils/previewValue';
 
 /**
  * Custom node data
@@ -85,10 +86,11 @@ const defaultRenderNodeContent = (data: CustomNodeData): React.ReactNode => (
                 style={{
                   fontFamily: 'var(--font-family-mono)',
                   fontWeight: 'var(--font-weight-medium)',
+                  textAlign: 'right',
+                  overflowWrap: 'anywhere',
                 }}
               >
-                {String(value).slice(0, 20)}
-                {String(value).length > 20 ? '...' : ''}
+                {previewValue(value)}
               </span>
             </div>
           ))}
