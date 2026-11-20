@@ -37,9 +37,9 @@ export function ResizablePanel({
   style = {},
   onWidthChange,
 }: ResizablePanelProps) {
-  // Load initial width from localStorage or use default
+  // Load initial width from localStorage or use default. On the server there is no storage, so the default is used.
   const [width, setWidth] = useState<number>(() => {
-    if (storageKey) {
+    if (storageKey && typeof localStorage !== 'undefined') {
       const stored = localStorage.getItem(storageKey);
       if (stored) {
         const parsed = parseInt(stored, 10);
