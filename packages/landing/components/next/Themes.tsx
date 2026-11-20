@@ -33,10 +33,10 @@ function MyNode(data: NodeView) {
 
 export default function Themes() {
   const [chosen, setChosen] = useState(1);
-  // a phone has room for the canvas only
+  // stacked under the heading, the window has room for the canvas only
   const [compact, setCompact] = useState(false);
   useEffect(() => {
-    const media = window.matchMedia('(max-width: 767px)');
+    const media = window.matchMedia('(max-width: 1023px)');
     const read = () => setCompact(media.matches);
     read();
     media.addEventListener('change', read);

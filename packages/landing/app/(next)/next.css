@@ -252,14 +252,15 @@ main > #engine > .wrap > .fill { display: flex; flex-direction: column; }
 }
 
 /* the themes section: one live builder, restyled by the buttons in its bar */
-.cf-themes__builder { position: relative; flex: 1 1 0; min-height: 0; }
+main > #themes > .wrap > .fill { display: flex; flex-direction: column; }
+#themes .fill > .cf-win { flex: 1 1 auto; height: auto; }
+.cf-themes__builder { position: relative; flex: 1 1 auto; min-height: 400px; }
 .cf-themes__builder > * { position: absolute; inset: 0; }
 .cf-themes__builder svg { max-width: none; }
 .cf-look { display: grid; gap: 2px; min-width: 132px; padding: 10px 14px; border-left: 3px solid var(--p-accent); font-family: var(--font-text); }
 .cf-look__label { font-size: 13px; font-weight: 600; color: var(--u-ink); }
 .cf-look__type { font-family: var(--font-mono); font-size: 11px; color: var(--u-muted); }
 @media (max-width: 1023px) {
-  .cf-themes__builder { flex: 1 1 auto; min-height: 420px; }
   #themes .cf-win__file { display: none; }
   #themes .cf-win__bar { justify-content: flex-end; }
 }
