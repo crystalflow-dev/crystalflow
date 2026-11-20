@@ -175,3 +175,23 @@
 @media (min-width: 1024px) and (max-height: 759px) {
   main > .hero--split .hero__media { min-height: 460px; }
 }
+
+/* the demo page: one section as tall as its window, which takes what the screen leaves under the heading */
+main > section.cf-demo { display: block; height: auto; min-height: 100svh; }
+main > section.cf-demo > .wrap { display: block; height: auto; }
+.cf-demo__win { height: clamp(560px, 100svh - 320px, 860px); }
+.cf-demo__tabs { display: flex; gap: 8px; }
+.cf-demo__builder { position: relative; flex: 1 1 0; min-height: 0; }
+.cf-demo__builder > * { position: absolute; inset: 0; }
+.cf-demo__builder svg { max-width: none; }
+.cf-demo__code { display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; }
+.cf-demo__files { display: flex; gap: 4px; padding: 0 8px; overflow-x: auto; border-bottom: 1px solid var(--u-line); }
+.cf-demo__file {
+  flex: none; min-height: 40px; padding: 0 12px; font-family: var(--font-mono); font-size: 13px; color: var(--u-muted);
+  background: none; border: 0; border-bottom: 2px solid transparent; cursor: pointer;
+}
+.cf-demo__file:hover { color: var(--u-ink); }
+.cf-demo__file[aria-pressed="true"] { color: var(--u-ink); border-bottom-color: var(--p-accent); }
+.cf-demo__file:focus-visible { outline: 2px solid var(--p-accent); outline-offset: -2px; }
+.cf-demo__code .cf-pane__code { flex: 1 1 0; min-height: 0; overflow: auto; }
+.cf-demo__code .cf-pane__code:focus-visible { outline: 2px solid var(--p-accent); outline-offset: -2px; }

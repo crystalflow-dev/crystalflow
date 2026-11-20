@@ -1,6 +1,6 @@
 /**
- * Node source code for Sandpack editor
- * These are manually copied to work with Next.js build
+ * The source of the four demo nodes, shown on the demo page beside the builder.
+ * Copied from packages/examples so the static build needs no file access.
  */
 
 export const MockAPINodeCode = `import { Node, Output, Property, defineNode } from '@crystalflow/core';
