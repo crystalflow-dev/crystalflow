@@ -2,35 +2,17 @@
 
 import 'reflect-metadata';
 import dynamic from 'next/dynamic';
-import { useEffect, useMemo, useState } from 'react';
-import type { NodeConstructor } from '@crystalflow/core';
-import {
-  DisplayNode,
-  ExtractFieldNode,
-  FormatTextNode,
-  MockAPINode,
-} from '@crystalflow/examples/src/nodes';
+import { useEffect, useState } from 'react';
 import Code from '@/components/next/Code';
+import { demoNodes } from '@/lib/demoNodes';
 import { demoWorkflow } from '@/lib/demoWorkflow';
+import { nodeSources as files } from '@/lib/nodeSourceCode';
 import { useScheme } from '@/lib/useScheme';
-import {
-  DisplayNodeCode,
-  ExtractFieldNodeCode,
-  FormatTextNodeCode,
-  MockAPINodeCode,
-} from '@/lib/nodeSourceCode';
 
 const WorkflowBuilder = dynamic(
   () => import('@crystalflow/react').then((mod) => mod.WorkflowBuilder),
   { ssr: false }
 );
-
-const files = [
-  { name: 'MockAPINode.ts', code: MockAPINodeCode },
-  { name: 'ExtractFieldNode.ts', code: ExtractFieldNodeCode },
-  { name: 'FormatTextNode.ts', code: FormatTextNodeCode },
-  { name: 'DisplayNode.ts', code: DisplayNodeCode },
-];
 
 export default function DemoBuilder() {
   const [view, setView] = useState<'builder' | 'code'>('builder');
@@ -45,12 +27,6 @@ export default function DemoBuilder() {
     media.addEventListener('change', read);
     return () => media.removeEventListener('change', read);
   }, []);
-  const nodes = useMemo(
-    () =>
-      [MockAPINode, ExtractFieldNode, FormatTextNode, DisplayNode] as unknown as NodeConstructor[],
-    []
-  );
-
   return (
     <div className="ui cf-win cf-demo__win">
       <div className="cf-win__bar">
@@ -76,7 +52,7 @@ export default function DemoBuilder() {
       {/* the builder stays mounted behind the code, so a workflow in progress survives a look at it */}
       <div className="cf-demo__builder" hidden={view !== 'builder'}>
         <WorkflowBuilder
-          nodes={nodes as never}
+          nodes={demoNodes as never}
           initialWorkflow={demoWorkflow}
           theme={scheme}
           showJsonEditor={false}

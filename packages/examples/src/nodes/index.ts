@@ -29,5 +29,8 @@ export * from './async';
 // Automation nodes (n8n-style)
 export * from './automation';
 
+// Orders nodes (the landing page's demo)
+export * from './orders';
+
 // Demo nodes
 export { ConfigDemoNode } from './ConfigDemoNode';
