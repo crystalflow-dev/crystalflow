@@ -1,6 +1,7 @@
 /* Page CSS for /next: only what sits inside the hero's window. Everything else is the kit in public/assets. */
 
 .nav__logo img { display: block; height: 28px; width: auto; }
+.nav__logo picture { display: block; }
 
 .cf-win {
   --u-bg: var(--p-bg); --u-ink: var(--p-ink); --u-muted: var(--p-muted);
@@ -43,7 +44,7 @@
    the ink a step heavier and punctuation steps back to the muted grey. Green stays out: it means "ran" here. */
 .cf-tok--dec { color: var(--p-accent); }
 .cf-tok--kw { font-weight: 500; }
-.cf-tok--str, .cf-tok--num { color: #a8400c; }
+.cf-tok--str, .cf-tok--num { color: var(--cf-warm); }
 .cf-tok--punct, .cf-tok--com { color: var(--p-muted); }
 
 .cf-canvas { position: relative; flex: 1 1 0; min-height: 200px; }
@@ -53,7 +54,7 @@
 .cf-node { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; min-width: 104px; padding: 10px 14px; font-family: var(--font-text); }
 .cf-node__label { font-size: 13px; font-weight: 500; }
 .cf-node__value { font-family: var(--font-mono); font-size: 13px; color: var(--u-muted); }
-.cf-node[data-status="success"] .cf-node__value { color: #0a7d55; font-weight: 500; }
+.cf-node[data-status="success"] .cf-node__value { color: var(--cf-ok); font-weight: 500; }
 
 @media (max-width: 1023px) {
   .cf-line:not(.cf-line--key) { display: none; }
@@ -149,7 +150,7 @@
 
 /* roadmap: the status of a phase; green means built, as on the canvas */
 .cf-status { font-size: var(--t-small); color: var(--p-muted); }
-.cf-status[data-status="Done"] { color: #0a7d55; font-weight: 500; }
+.cf-status[data-status="Done"] { color: var(--cf-ok); font-weight: 500; }
 .cf-status[data-status="In progress"] { color: var(--p-accent); font-weight: 500; }
 
 /* a screen shorter than what a section holds (a small phone, a landscape tablet, a laptop with a low window):
@@ -223,8 +224,8 @@ main > #engine > .wrap > .fill { display: flex; flex-direction: column; }
 .cf-engine .cf-engine__node[data-status="running"] { background: var(--u-tint); }
 .cf-engine .cf-engine__node[data-status="running"] .cf-engine__dot { border-color: var(--p-accent); background: var(--p-accent); }
 .cf-engine .cf-engine__node[data-status="running"] .cf-engine__out { color: var(--p-accent); }
-.cf-engine .cf-engine__node[data-status="done"] .cf-engine__dot { border-color: #0a7d55; background: #0a7d55; }
-.cf-engine .cf-engine__node[data-status="done"] .cf-engine__out { color: #0a7d55; font-weight: 500; }
+.cf-engine .cf-engine__node[data-status="done"] .cf-engine__dot { border-color: var(--cf-ok); background: var(--cf-ok); }
+.cf-engine .cf-engine__node[data-status="done"] .cf-engine__out { color: var(--cf-ok); font-weight: 500; }
 .cf-engine .cf-engine__node[data-status="skipped"] .cf-engine__label { color: var(--u-muted); }
 @media (prefers-reduced-motion: no-preference) {
   .cf-engine .cf-engine__node[data-status="running"] .cf-engine__dot { animation: cf-engine-pulse 900ms ease-in-out infinite; }
@@ -235,8 +236,8 @@ main > #engine > .wrap > .fill { display: flex; flex-direction: column; }
 .cf-engine .cf-engine__line { display: grid; grid-template-columns: 9ch minmax(0, 1fr); gap: 16px; padding: 2px 24px; }
 .cf-engine .cf-engine__at { color: var(--u-muted); text-align: right; }
 .cf-engine .cf-engine__detail, .cf-engine .cf-engine__line--hint { color: var(--u-muted); }
-.cf-engine .cf-engine__line[data-event="onNodeComplete"] .cf-engine__name { color: #0a7d55; }
-.cf-engine .cf-engine__line[data-event="onCancellation"] .cf-engine__name { color: #a8400c; }
+.cf-engine .cf-engine__line[data-event="onNodeComplete"] .cf-engine__name { color: var(--cf-ok); }
+.cf-engine .cf-engine__line[data-event="onCancellation"] .cf-engine__name { color: var(--cf-warm); }
 .cf-engine .cf-engine__line:is([data-event="beforeExecute"], [data-event="afterExecute"]) .cf-engine__name { font-weight: 500; }
 /* stacked: the nodes keep their rows and the log gets a fixed window under them */
 @media (max-width: 1023px) {
