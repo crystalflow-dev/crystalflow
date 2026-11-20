@@ -31,21 +31,29 @@ const wires = [
   { from: 'switch', out: 'default', to: 'archive', in: 'order' },
 ];
 
+/** The workflow with its nodes `across` apart, and the rows `down` times their usual distance. */
+function laidOut(across: number, down: number): WorkflowData {
+  return {
+    version: '1.0.0',
+    id: 'advanced',
+    name: 'Order triage',
+    nodes: placed.map((node) => ({
+      id: node.id,
+      type: node.type,
+      position: { x: (node.x / 340) * across, y: node.y * down },
+      data: { id: node.id, type: node.type, state: 'idle' as const, data: node.data ?? {} },
+    })),
+    connections: wires.map((wire, i) => ({
+      id: `c${i}`,
+      source: { nodeId: wire.from, portId: wire.out },
+      target: { nodeId: wire.to, portId: wire.in },
+    })),
+    metadata: {},
+  };
+}
+
 /** The advanced example's starting point: one order routed by an If and a Switch. */
-export const advancedWorkflow: WorkflowData = {
-  version: '1.0.0',
-  id: 'advanced',
-  name: 'Order triage',
-  nodes: placed.map((node) => ({
-    id: node.id,
-    type: node.type,
-    position: { x: node.x, y: node.y },
-    data: { id: node.id, type: node.type, state: 'idle' as const, data: node.data ?? {} },
-  })),
-  connections: wires.map((wire, i) => ({
-    id: `c${i}`,
-    source: { nodeId: wire.from, portId: wire.out },
-    target: { nodeId: wire.to, portId: wire.in },
-  })),
-  metadata: {},
-};
+export const advancedWorkflow: WorkflowData = laidOut(340, 1);
+
+/** The same workflow set closer, for the example's own node, which is smaller than the built-in one. */
+export const advancedWorkflowCompact: WorkflowData = laidOut(280, 0.5);
