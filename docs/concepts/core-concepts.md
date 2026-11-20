@@ -193,6 +193,7 @@ Long-running nodes should check for cancellation:
 @defineNode({
   type: 'processing.longRunning',
   label: 'Long Running Task',
+  category: 'Processing',
 })
 class LongRunningNode extends Node {
   @Output({ type: 'array' })

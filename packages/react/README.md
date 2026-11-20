@@ -584,7 +584,7 @@ CrystalFlow distinguishes between configuration and data flow:
 - **@Output** = Computed results (generated during execution)
 
 ```typescript
-@defineNode({ type: 'http.request', label: 'HTTP Request' })
+@defineNode({ type: 'http.request', label: 'HTTP Request', category: 'HTTP' })
 class HttpRequestNode extends Node {
   // Property: Static configuration (not connected)
   @Property({

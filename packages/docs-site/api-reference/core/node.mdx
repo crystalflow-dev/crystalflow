@@ -57,7 +57,7 @@ abstract execute(): void | Promise<void>;
 **Example:**
 
 ```typescript
-@defineNode({ type: 'math.add', label: 'Add' })
+@defineNode({ type: 'math.add', label: 'Add', category: 'Math' })
 class AddNode extends Node {
   @Input({ type: 'number', label: 'A' })
   a: number = 0;
