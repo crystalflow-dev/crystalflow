@@ -132,6 +132,7 @@ Long-running nodes should check for cancellation:
 @defineNode({
   type: 'processing.batch',
   label: 'Batch Processor',
+  category: 'Processing',
 })
 class BatchProcessorNode extends Node {
   @Input({ type: 'array' })

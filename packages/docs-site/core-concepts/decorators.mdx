@@ -10,7 +10,7 @@ CrystalFlow uses **TypeScript decorators** to define nodes declaratively. Decora
 Decorators are special annotations that add metadata to classes and properties:
 
 ```typescript
-@defineNode({ type: 'math.add', label: 'Add' })
+@defineNode({ type: 'math.add', label: 'Add', category: 'Math' })
 class AddNode extends Node {
   @Input({ type: 'number', label: 'A' })
   a: number = 0;
