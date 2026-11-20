@@ -1,21 +1,25 @@
+import ThemeToggle from './ThemeToggle';
+
 const GITHUB = 'https://github.com/crystalflow-dev/crystalflow';
 
 function Logo({ href }: { href: string }) {
   return (
     <a className="nav__logo" href={href}>
-      {/* the wordmark is dark ink on a light ground and white on a dark one */}
-      <picture>
-        <source
-          srcSet="/logo/crystalflow-logo-blue-dark.svg"
-          media="(prefers-color-scheme: dark)"
-        />
-        <img
-          src="/logo/crystalflow-logo-blue-light.svg"
-          alt="CrystalFlow"
-          width={150}
-          height={32}
-        />
-      </picture>
+      {/* the wordmark is dark ink on a light ground and white on a dark one; CSS shows the one that fits */}
+      <img
+        className="cf-logo cf-logo--light"
+        src="/logo/crystalflow-logo-blue-light.svg"
+        alt="CrystalFlow"
+        width={150}
+        height={32}
+      />
+      <img
+        className="cf-logo cf-logo--dark"
+        src="/logo/crystalflow-logo-blue-dark.svg"
+        alt="CrystalFlow"
+        width={150}
+        height={32}
+      />
     </a>
   );
 }
@@ -70,6 +74,7 @@ export function SiteNav({ onDemo = false, offHome = onDemo }: Where) {
           </div>
         </nav>
         <div className="nav__actions">
+          <ThemeToggle />
           <a className="btn btn--primary" href="/docs/">
             Read the docs
           </a>
