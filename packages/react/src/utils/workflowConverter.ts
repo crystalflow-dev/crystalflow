@@ -40,11 +40,11 @@ export function reactFlowToWorkflow(
         position: rfNode.position,
       });
 
-      // Set input values from node data
-      if (rfNode.data.inputs) {
-        Object.keys(rfNode.data.inputs).forEach((inputKey) => {
-          if (rfNode.data[inputKey] !== undefined) {
-            node[inputKey] = rfNode.data[inputKey];
+      // Copy the property values edited on the canvas. Inputs are left alone: they are filled at run time.
+      if (rfNode.data.properties) {
+        Object.keys(rfNode.data.properties).forEach((propKey) => {
+          if (rfNode.data[propKey] !== undefined) {
+            node[propKey] = rfNode.data[propKey];
           }
         });
       }
@@ -94,11 +94,17 @@ export function workflowToReactFlow(workflow: Workflow): {
       // Create React Flow node using the converter
       const rfNode = convertNodeToReactFlow(nodeClass, nodeId, position);
 
-      // Copy actual values from the node instance
-      const nodeData = node.toJSON ? node.toJSON() : {};
+      const nodeData: Record<string, unknown> = node.toJSON ? node.toJSON() : {};
+      const savedData = (nodeData.data as Record<string, unknown> | undefined) ?? {};
+      // Lift the saved property values to where the property panel and execution read them.
+      // Inputs stay out: they are filled at run time.
+      const properties = (rfNode.data.properties as Record<string, unknown> | undefined) ?? {};
+      const savedValues = Object.fromEntries(
+        Object.entries(savedData).filter(([key]) => key in properties)
+      );
       rfNode.data = {
         ...rfNode.data,
-        ...nodeData,
+        ...savedValues,
       };
 
       nodes.push(rfNode);
