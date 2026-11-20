@@ -256,11 +256,12 @@ main > #engine > .wrap > .fill { display: flex; flex-direction: column; }
 main > #themes > .wrap > .fill { display: flex; flex-direction: column; }
 #themes .fill > .cf-win { flex: 1 1 auto; height: auto; }
 .cf-themes__builder { position: relative; flex: 1 1 auto; min-height: 400px; }
-.cf-themes__builder > * { position: absolute; inset: 0; }
+/* the builder paints its own theme whatever the page around it wears: the library's colours, not the page's */
+.cf-themes__builder > * { position: absolute; inset: 0; background: var(--color-bg-primary); color: var(--color-text-primary); }
 .cf-themes__builder svg { max-width: none; }
 .cf-look { display: grid; gap: 2px; min-width: 132px; padding: 10px 14px; border-left: 3px solid var(--p-accent); font-family: var(--font-text); }
-.cf-look__label { font-size: 13px; font-weight: 600; color: var(--u-ink); }
-.cf-look__type { font-family: var(--font-mono); font-size: 11px; color: var(--u-muted); }
+.cf-look__label { font-size: 13px; font-weight: 600; color: var(--color-text-primary); }
+.cf-look__type { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-secondary); }
 @media (max-width: 1023px) {
   #themes .cf-win__file { display: none; }
   #themes .cf-win__bar { justify-content: flex-end; }
