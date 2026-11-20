@@ -20,6 +20,9 @@ export default function DemoPage() {
               <p>
                 An orders report is wired up. Run it, change a property or drag in another node.
               </p>
+              <a className="cf-demo__more" href="/demo/advanced/">
+                Advanced example
+              </a>
             </div>
             <DemoBuilder />
           </div>

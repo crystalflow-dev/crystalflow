@@ -32,5 +32,8 @@ export * from './automation';
 // Orders nodes (the landing page's demo)
 export * from './orders';
 
+// Triage nodes (the landing page's advanced example)
+export * from './triage';
+
 // Demo nodes
 export { ConfigDemoNode } from './ConfigDemoNode';
