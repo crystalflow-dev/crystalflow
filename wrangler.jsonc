@@ -4,7 +4,9 @@
   "main": "./worker.js",
   "assets": {
     "directory": "./packages/landing/out",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    // an address with no file gets the site's 404.html and a 404 status, not an empty response
+    "not_found_handling": "404-page"
   },
   // Required by `npx wrangler preview`, which Workers Builds runs for
   // non-production branches. Empty: previews use the top-level settings.
