@@ -7,9 +7,9 @@
 /* Main node container - ReactFlow applies .react-flow__node class automatically */
 .react-flow__node-custom {
   padding: 0;
-  border: 2px solid var(--color-border-light);
+  border: 2px solid var(--crystalflow-custom-node-border, var(--color-border-light));
   border-radius: var(--radius-md);
-  background: var(--color-bg-elevated);
+  background: var(--crystalflow-custom-node-bg, var(--color-bg-elevated));
   color: var(--color-text-primary);
   min-width: 200px;
   box-shadow: var(--shadow-sm);
@@ -150,7 +150,7 @@
 
 /* Handles - improved styling and connection states */
 .react-flow__node-custom .react-flow__handle {
-  background: var(--color-primary-500);
+  background: var(--crystalflow-custom-handle, var(--color-primary-500));
   width: 12px;
   height: 12px;
   border: 3px solid var(--color-bg-elevated);
@@ -167,7 +167,7 @@
 
 /* Connected handle state */
 .react-flow__node-custom .react-flow__handle.connected {
-  background: var(--color-primary-500);
+  background: var(--crystalflow-custom-handle, var(--color-primary-500));
   opacity: 1;
 }
 

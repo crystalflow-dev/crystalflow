@@ -8,7 +8,7 @@
    ============================================================================ */
 
 .react-flow__edge-path {
-  stroke: var(--color-border-medium);
+  stroke: var(--crystalflow-custom-edge, var(--color-border-medium));
   stroke-width: 2px;
   transition: stroke var(--transition-fast) var(--ease-out),
               stroke-width var(--transition-fast) var(--ease-out);

@@ -262,9 +262,15 @@ export const darkTheme: Theme = {
 };
 
 /**
+ * The colors a custom theme changes: any group, and within it any color.
+ * Everything left out comes from the base theme.
+ */
+export type ThemeOverrides = { [Group in keyof ThemeColors]?: Partial<ThemeColors[Group]> };
+
+/**
  * Create custom theme based on light or dark theme
  */
-export function createTheme(mode: 'light' | 'dark', overrides?: Partial<ThemeColors>): Theme {
+export function createTheme(mode: 'light' | 'dark', overrides?: ThemeOverrides): Theme {
   const baseTheme = mode === 'dark' ? darkTheme : lightTheme;
 
   if (!overrides) {
@@ -347,6 +353,70 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
     '--crystalflow-controls-bg': theme.colors.reactflow.controlsBackground,
     '--crystalflow-controls-shadow': theme.colors.reactflow.controlsShadow,
   };
+}
+
+/**
+ * The CSS variables the components read, for each theme color that reaches the screen.
+ * The `--color-*` and `--xy-*` names are the ones the stylesheets already use; the
+ * `--crystalflow-custom-*` names are read by the node, edge and handle rules ahead of their defaults.
+ */
+const CUSTOM_COLOR_VARIABLES: { [Group in keyof ThemeColors]?: Record<string, string[]> } = {
+  background: {
+    primary: ['--color-bg-primary', '--color-bg-elevated'],
+    secondary: ['--color-bg-secondary'],
+    tertiary: ['--color-bg-tertiary'],
+  },
+  text: {
+    primary: ['--color-text-primary'],
+    secondary: ['--color-text-secondary'],
+    disabled: ['--color-text-tertiary'],
+  },
+  border: {
+    primary: ['--color-border-medium'],
+    secondary: ['--color-border-light'],
+  },
+  button: {
+    primary: ['--color-primary-500'],
+    hover: ['--color-primary-600'],
+    active: ['--color-primary-700'],
+  },
+  status: {
+    success: ['--color-success-500'],
+    error: ['--color-error-500'],
+    warning: ['--color-warning-500'],
+  },
+  canvas: {
+    background: ['--xy-background-color'],
+    grid: ['--xy-background-pattern-color'],
+  },
+  node: {
+    background: ['--crystalflow-custom-node-bg'],
+    border: ['--crystalflow-custom-node-border'],
+  },
+  reactflow: {
+    edge: ['--crystalflow-custom-edge'],
+    handle: ['--crystalflow-custom-handle'],
+  },
+};
+
+/**
+ * CSS variables for the colors in which a theme differs from the built-in theme of its mode.
+ *
+ * The built-in themes are drawn by the stylesheets, so they yield nothing here. A theme made with
+ * `createTheme` yields one entry per color it changes, and only those colors move on screen.
+ */
+export function customThemeVariables(theme: Theme): Record<string, string> {
+  const base = theme.mode === 'dark' ? darkTheme : lightTheme;
+  const variables: Record<string, string> = {};
+  for (const [group, colors] of Object.entries(CUSTOM_COLOR_VARIABLES)) {
+    const own = theme.colors[group as keyof ThemeColors] as Record<string, string>;
+    const builtIn = base.colors[group as keyof ThemeColors] as Record<string, string>;
+    for (const [color, names] of Object.entries(colors)) {
+      if (own[color] === undefined || own[color] === builtIn[color]) continue;
+      for (const name of names) variables[name] = own[color];
+    }
+  }
+  return variables;
 }
 
 /**
