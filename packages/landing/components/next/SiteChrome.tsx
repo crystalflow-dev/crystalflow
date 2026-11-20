@@ -8,16 +8,23 @@ function Logo({ href }: { href: string }) {
   );
 }
 
-/** The header of every page. On the demo page the section links lead back to the homepage. */
-export function SiteNav({ onDemo = false }: { onDemo?: boolean }) {
-  const home = onDemo ? '/' : '';
+type Where = {
+  /** the demo page: its link is marked as the current page */
+  onDemo?: boolean;
+  /** any page but the homepage: the section links and the logo lead back to it */
+  offHome?: boolean;
+};
+
+/** The header of every page. Off the homepage the section links lead back to it. */
+export function SiteNav({ onDemo = false, offHome = onDemo }: Where) {
+  const home = offHome ? '/' : '';
   return (
     <header className="nav nav--centre">
       <div className="wrap nav__bar">
         <a className="skip-link" href="#top">
           Skip to content
         </a>
-        <Logo href={onDemo ? '/' : '#top'} />
+        <Logo href={offHome ? '/' : '#top'} />
         <nav className="nav__links" aria-label="Main">
           <div className="nav__item">
             <a className="nav__link" href={`${home}#workflow`}>
@@ -71,7 +78,7 @@ export function SiteNav({ onDemo = false }: { onDemo?: boolean }) {
 }
 
 /** The closing call to action and the footer links of every page. */
-export function SiteFooter({ onDemo = false }: { onDemo?: boolean }) {
+export function SiteFooter({ onDemo = false, offHome = onDemo }: Where) {
   return (
     <footer className="footer closing" id="contact" aria-labelledby="close-h">
       <div className="wrap">
@@ -91,7 +98,7 @@ export function SiteFooter({ onDemo = false }: { onDemo?: boolean }) {
         <div className="closing__links">
           <div className="grid">
             <div className="span-4 stack-4">
-              <Logo href={onDemo ? '/' : '#top'} />
+              <Logo href={offHome ? '/' : '#top'} />
               <p className="footer__lede">
                 An open-source TypeScript framework for building visual workflow editors.
               </p>
