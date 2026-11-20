@@ -61,6 +61,8 @@ const defaultRenderNodeContent = (data: CustomNodeData): React.ReactNode => (
           style={{
             marginTop: 'var(--space-2)',
             padding: 'var(--space-2)',
+            // a long value wraps here; without a width of its own the preview would stretch the node
+            maxWidth: '240px',
             background: 'var(--color-bg-tertiary)',
             borderRadius: 'var(--radius-sm)',
             fontSize: 'var(--font-size-xs)',
