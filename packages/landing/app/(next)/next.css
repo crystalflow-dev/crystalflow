@@ -139,5 +139,5 @@
 
 /* quick start: three code windows of one height */
 .cf-steppane { height: 360px; margin-top: var(--s-4); }
-@media (min-width: 640px) and (max-width: 1023px) { #start { --h: 2; } .cf-steppane { height: auto; min-height: 340px; } }
-@media (max-width: 639px) { #start { --hm: 2; } .cf-steppane { height: auto; } }
+/* stacked, the three steps are as tall as their code and the section grows with them */
+@media (max-width: 1023px) { .cf-steppane { height: auto; } }

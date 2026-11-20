@@ -22,12 +22,13 @@ class ShoutNode extends Node {
   loud = '';
 
   execute() {
-    this.loud = this.text.toUpperCase();
+    this.loud =
+      this.text.toUpperCase();
   }
 }`,
   },
   {
-    title: 'Mount the builder',
+    title: 'Mount WorkflowBuilder',
     line: 'Pass your node classes to one component and the editor is on the page.',
     file: 'App.tsx',
     label: 'A React component that renders WorkflowBuilder with the node class',
