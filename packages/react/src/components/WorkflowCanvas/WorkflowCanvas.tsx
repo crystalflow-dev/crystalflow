@@ -255,7 +255,6 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     () => ({
       connectionMode: ConnectionMode.Loose,
       fitView: false,
-      fitViewOnInit: true,
       proOptions: { hideAttribution: true },
       minZoom: 0.1,
       maxZoom: 4,
