@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react';
 import type { NodeConstructor } from '@crystalflow/core';
 import Code from '@/components/next/Code';
 import { AddNode, AddThreeNode, NumberNode, heroWorkflow } from '@/lib/heroNodes';
+import { useScheme } from '@/lib/useScheme';
 
 const WorkflowBuilder = dynamic(
   () => import('@crystalflow/react').then((mod) => mod.WorkflowBuilder),
@@ -64,6 +65,7 @@ function renderNode(data: NodeView) {
 
 export default function HeroDemo() {
   const [third, setThird] = useState(false);
+  const scheme = useScheme();
   const nodes = useMemo(
     () => [NumberNode, AddNode, AddThreeNode] as unknown as NodeConstructor[],
     []
@@ -101,7 +103,7 @@ export default function HeroDemo() {
           key={third ? 'add3' : 'add'}
           nodes={nodes as never}
           initialWorkflow={workflow}
-          theme="light"
+          theme={scheme}
           showPalette={false}
           showProperties={false}
           uiSettings={{ minimap: false, controls: false }}

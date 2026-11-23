@@ -12,6 +12,7 @@ import {
 } from '@crystalflow/examples/src/nodes';
 import Code from '@/components/next/Code';
 import { demoWorkflow } from '@/lib/demoWorkflow';
+import { useScheme } from '@/lib/useScheme';
 import {
   DisplayNodeCode,
   ExtractFieldNodeCode,
@@ -33,6 +34,7 @@ const files = [
 
 export default function DemoBuilder() {
   const [view, setView] = useState<'builder' | 'code'>('builder');
+  const scheme = useScheme();
   const [file, setFile] = useState(0);
   // a phone has room for the canvas only: the palette and the property panel would cover it
   const [compact, setCompact] = useState(false);
@@ -76,7 +78,7 @@ export default function DemoBuilder() {
         <WorkflowBuilder
           nodes={nodes as never}
           initialWorkflow={demoWorkflow}
-          theme="light"
+          theme={scheme}
           showJsonEditor={false}
           showPalette={!compact}
           showProperties={!compact}
