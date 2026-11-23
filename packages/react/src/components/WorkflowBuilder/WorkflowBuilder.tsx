@@ -24,6 +24,7 @@ import {
   Theme,
   lightTheme,
   darkTheme,
+  customThemeVariables,
   detectSystemTheme,
   themeToCSSVariables,
 } from '../../types/theme';
@@ -607,6 +608,8 @@ export const WorkflowBuilder: React.FC<WorkflowBuilderProps> = ({
         background: 'var(--color-bg-primary)',
       }),
       ...themeToCSSVariables(resolvedTheme),
+      // a custom theme's own colors, on the variables the stylesheets read
+      ...customThemeVariables(resolvedTheme),
     }),
     [resolvedTheme, isFullscreen]
   );
