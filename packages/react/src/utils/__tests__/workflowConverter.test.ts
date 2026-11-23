@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import 'reflect-metadata';
-import { defineNode, Input, Node, Output, Property } from '@crystalflow/core';
+import { defineNode, Input, Node, Output, Property, SwitchNode } from '@crystalflow/core';
 import type { WorkflowData } from '@crystalflow/types';
 import { loadWorkflowFromData, reactFlowToWorkflow } from '../workflowConverter';
 
@@ -88,5 +88,38 @@ describe('reactFlowToWorkflow', () => {
     nodes[0].data = { ...nodes[0].data, inputValue: 5 };
     const reloaded = loadWorkflowFromData(reactFlowToWorkflow(nodes, edges).toJSON());
     expect(reloaded.nodes[0].data.inputValue).toBe(5);
+  });
+});
+
+describe('a node whose outputs depend on a property', () => {
+  const switchWorkflow = (cases: unknown[]): WorkflowData => ({
+    version: '1.0.0',
+    id: 'switch-test',
+    name: 'Switch test',
+    nodes: [
+      {
+        id: 'switch',
+        type: 'flow.switch',
+        position: { x: 0, y: 0 },
+        data: { id: 'switch', type: 'flow.switch', state: 'idle', data: { cases } },
+      },
+    ],
+    connections: [],
+    metadata: {},
+  });
+  const outputsOf = (data: WorkflowData) =>
+    Object.keys(loadWorkflowFromData(data).nodes[0].data.outputs as Record<string, unknown>);
+
+  it('loads with one output per saved case, so the wires to them have a handle', () => {
+    expect(SwitchNode).toBeDefined();
+    expect(outputsOf(switchWorkflow(['paid', 'pending']))).toEqual(['case_0', 'case_1', 'default']);
+  });
+
+  it('loads with the default output alone when no case is saved', () => {
+    expect(outputsOf(switchWorkflow([]))).toEqual(['default']);
+  });
+
+  it('keeps the declared outputs of a node that has no dynamic ones', () => {
+    expect(outputsOf(workflowWith({ inputValue: 3 }))).toEqual(['value']);
   });
 });

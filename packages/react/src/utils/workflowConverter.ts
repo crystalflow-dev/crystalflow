@@ -102,9 +102,13 @@ export function workflowToReactFlow(workflow: Workflow): {
       const savedValues = Object.fromEntries(
         Object.entries(savedData).filter(([key]) => key in properties)
       );
+      // A node whose outputs depend on its properties (a Switch has one per case) must show the
+      // outputs its saved values give, or the wires to them have no handle to end on.
+      const outputs = Object.fromEntries(node.getOutputs().map((port) => [port.id, port]));
       rfNode.data = {
         ...rfNode.data,
         ...savedValues,
+        outputs,
       };
 
       nodes.push(rfNode);
