@@ -1,5 +1,6 @@
 import KitScripts from '@/components/next/KitScripts';
 import { paletteCss } from '@/lib/palette';
+import { schemeScript } from '@/lib/theme';
 
 const kitStyles = [
   '/assets/system.css',
@@ -47,6 +48,7 @@ export default function SiteDocument({ children }: Readonly<{ children: React.Re
           <link key={href} rel="stylesheet" href={href} />
         ))}
         <style dangerouslySetInnerHTML={{ __html: tokens }} />
+        <script dangerouslySetInnerHTML={{ __html: schemeScript }} />
         <script dangerouslySetInnerHTML={{ __html: enter }} />
         <script src="/assets/backgrounds/backgrounds.js" />
       </head>

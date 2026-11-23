@@ -20,3 +20,18 @@ describe('SiteNav', () => {
     expect(html).not.toContain('aria-current');
   });
 });
+
+describe('the theme toggle in the header', () => {
+  it('is a labelled button with both icons in the markup, so the server HTML fits either scheme', () => {
+    const html = renderToStaticMarkup(<SiteNav />);
+    expect(html).toContain('aria-label="Switch between the light and the dark theme"');
+    expect(html).toContain('cf-theme__moon');
+    expect(html).toContain('cf-theme__sun');
+  });
+
+  it('renders both wordmarks for CSS to choose from', () => {
+    const html = renderToStaticMarkup(<SiteNav />);
+    expect(html).toContain('crystalflow-logo-blue-light.svg');
+    expect(html).toContain('crystalflow-logo-blue-dark.svg');
+  });
+});
