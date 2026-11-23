@@ -1,4 +1,5 @@
 import KitScripts from '@/components/next/KitScripts';
+import { paletteCss } from '@/lib/palette';
 
 const kitStyles = [
   '/assets/system.css',
@@ -10,11 +11,8 @@ const kitStyles = [
   '/assets/ui/base.css',
 ];
 
-const tokens = `:root {
-  --p-bg: #ffffff; --p-surface: #f4f4f4; --p-ink: #111111; --p-muted: #686868;
-  --p-accent: #2a41ff; --p-accent-ink: #ffffff; --p-action: #2a41ff; --p-action-ink: #ffffff;
-  --p-inv-bg: #111111; --p-inv-surface: #1e1e1e; --p-inv-ink: #ffffff; --p-inv-muted: #9a9a9a;
-  --p-inv-accent: #ffffff; --p-inv-accent-ink: #111111; --p-inv-action: #ffffff; --p-inv-action-ink: #111111;
+const tokens = `${paletteCss()}
+:root {
   --font-display: "Manrope", system-ui, sans-serif;
   --font-text: "Manrope", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
