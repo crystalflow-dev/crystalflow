@@ -15,7 +15,8 @@ type Line = { text: string; kind?: 'dec' | 'new'; key?: boolean };
 
 function codeLines(third: boolean): Line[] {
   return [
-    { text: "@defineNode({ type: 'math.add', label: 'Add' })", kind: 'dec' },
+    { text: "@defineNode({ type: 'add', label: 'Add',", kind: 'dec' },
+    { text: "              category: 'Math' })", kind: 'dec' },
     { text: 'class AddNode extends Node {' },
     { text: "  @Input({ type: 'number', label: 'A' })", kind: 'dec', key: true },
     { text: '  a = 0;' },
@@ -48,7 +49,7 @@ type NodeView = {
 };
 
 function renderNode(data: NodeView) {
-  const isAdd = data.type !== 'hero.number';
+  const isAdd = data.type !== 'number';
   const sum = data.executionOutputs?.sum;
   return (
     <div className={`cf-node${isAdd ? ' cf-node--add' : ''}`} data-status={data.executionStatus}>

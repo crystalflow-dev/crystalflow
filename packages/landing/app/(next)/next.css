@@ -70,3 +70,63 @@
 @media (max-width: 639px) {
   .cf-code { display: none; }
 }
+
+/* the three forms. From 1024px the section holds the screen while the page scrolls through its three steps:
+   each step gets a whole screen of scroll, so a flick of the wheel cannot pass one, and the line
+   beside the open step fills as its share is used up. Below that, and under reduced motion, nothing is held. */
+.cf-forms { display: grid; gap: var(--s-3); margin: 0; padding: 0; list-style: none; }
+.cf-forms__step {
+  position: relative; display: grid; gap: var(--s-2); width: 100%; padding: var(--s-4) var(--s-5); text-align: left; font: inherit; color: var(--p-muted);
+  background: none; border: 0; cursor: pointer; transition: color 240ms ease;
+}
+.cf-forms__step::before, .cf-forms__step::after { content: ""; position: absolute; left: 0; top: 0; width: 2px; height: 100%; }
+.cf-forms__step::before { background: color-mix(in oklab, var(--p-ink) 14%, transparent); }
+.cf-forms__step::after { background: var(--p-accent); transform-origin: top; transform: scaleY(0); }
+.cf-forms__step[data-done]::after { transform: scaleY(1); }
+.cf-forms__step[aria-pressed="true"] { color: var(--p-ink); }
+.cf-forms__step[aria-pressed="true"]::after { transform: scaleY(var(--cf-fill, 1)); }
+.cf-forms__step:hover { color: var(--p-ink); }
+.cf-forms__step:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 2px; }
+.cf-forms__title { font-size: var(--t-lead); font-weight: 500; line-height: 1.3; color: var(--p-ink); }
+.cf-forms__line { font-size: var(--t-body); line-height: 1.6; }
+.cf-forms__frame { position: relative; height: 440px; }
+.cf-forms__pane { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity 280ms ease, visibility 0s linear 280ms; }
+.cf-forms__pane[data-on] { opacity: 1; visibility: visible; transition: opacity 280ms ease; }
+.cf-forms__inline { display: none; }
+@media (min-width: 1024px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
+  main > #workflow.section { height: 400svh; padding-top: 0; padding-bottom: 0; }
+  main > #workflow.section > .wrap { position: sticky; top: 0; height: 100svh; box-sizing: border-box; padding-top: var(--padt); padding-bottom: var(--padb); }
+}
+/* below the split there is no window beside the steps: each step carries its own, and nothing needs a tap */
+@media (max-width: 1023px) {
+  #workflow { --h: 2; --hm: 2; }
+  .cf-forms__frame { display: none; }
+  .cf-forms__inline { display: block; margin-top: var(--s-3); }
+  .cf-forms { gap: var(--s-6); }
+  .cf-forms__step, .cf-forms__step:hover { padding: 0; color: var(--p-ink); cursor: default; }
+  .cf-forms__step::before, .cf-forms__step::after { display: none; }
+}
+.cf-pane {
+  display: flex; flex-direction: column; width: 100%; height: 100%;
+  background: var(--p-bg); border: 1px solid color-mix(in oklab, var(--p-ink) 14%, transparent); border-radius: var(--r-md); overflow: hidden;
+}
+.cf-pane__bar { padding: 10px 16px; font-family: var(--font-mono); font-size: 13px; color: var(--p-muted); background: color-mix(in oklab, var(--p-ink) 3.5%, var(--p-bg)); border-bottom: 1px solid color-mix(in oklab, var(--p-ink) 9%, transparent); }
+.cf-pane__code { margin: 0; padding: 16px; font-family: var(--font-mono); font-size: 13px; line-height: 20px; color: var(--p-ink); white-space: pre; }
+.cf-pane__canvas { width: 100%; height: auto; flex: 1 1 auto; max-width: none; font-family: var(--font-text); font-size: 13px; }
+.cf-pane__dots { color: var(--p-ink); }
+.cf-pane__canvas pattern circle { fill: color-mix(in oklab, var(--p-ink) 16%, transparent); }
+.cf-pane__edge { fill: none; stroke: color-mix(in oklab, var(--p-ink) 30%, transparent); stroke-width: 1.5; }
+.cf-pane__node rect { fill: var(--p-bg); stroke: color-mix(in oklab, var(--p-ink) 18%, transparent); stroke-width: 1.5; }
+.cf-pane__node text { fill: var(--p-ink); font-weight: 500; }
+.cf-pane__node .cf-pane__val { fill: var(--p-muted); font-family: var(--font-mono); font-weight: 400; }
+.cf-pane__node--on rect { stroke: var(--p-accent); }
+.cf-pane__port circle { fill: var(--p-accent); }
+@media (max-width: 639px) {
+  .cf-pane__bar { padding: 6px 12px; }
+  .cf-pane__code { padding: 10px 12px; }
+}
+/* the narrowest phones: the JSON's longest line still ends inside its window */
+@media (max-width: 359px) {
+  .cf-forms > li { min-width: 0; }
+  .cf-pane__code { font-size: 11px; line-height: 18px; }
+}

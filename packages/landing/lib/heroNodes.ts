@@ -1,7 +1,7 @@
 import { defineNode, Input, Output, Property, Node } from '@crystalflow/core';
 import type { WorkflowData } from '@crystalflow/types';
 
-@defineNode({ type: 'hero.number', label: 'Number', category: 'Input', color: '#111111' })
+@defineNode({ type: 'number', label: 'Number', category: 'Input', color: '#111111' })
 export class NumberNode extends Node {
   @Property({ type: 'number', label: 'Value', defaultValue: 0 })
   inputValue: number = 0;
@@ -14,7 +14,7 @@ export class NumberNode extends Node {
   }
 }
 
-@defineNode({ type: 'hero.add', label: 'Add', category: 'Math', color: '#2A41FF' })
+@defineNode({ type: 'add', label: 'Add', category: 'Math', color: '#2A41FF' })
 export class AddNode extends Node {
   @Input({ type: 'number', label: 'A', defaultValue: 0 })
   a: number = 0;
@@ -30,7 +30,7 @@ export class AddNode extends Node {
   }
 }
 
-@defineNode({ type: 'hero.add3', label: 'Add', category: 'Math', color: '#2A41FF' })
+@defineNode({ type: 'add3', label: 'Add', category: 'Math', color: '#2A41FF' })
 export class AddThreeNode extends Node {
   @Input({ type: 'number', label: 'A', defaultValue: 0 })
   a: number = 0;
@@ -51,19 +51,19 @@ export class AddThreeNode extends Node {
 
 const numberNode = (id: string, y: number, inputValue: number) => ({
   id,
-  type: 'hero.number',
+  type: 'number',
   position: { x: 0, y },
-  data: { id, type: 'hero.number', state: 'idle' as const, data: { inputValue } },
+  data: { id, type: 'number', state: 'idle' as const, data: { inputValue } },
 });
 
 export function heroWorkflow(third: boolean): WorkflowData {
-  const addType = third ? 'hero.add3' : 'hero.add';
+  const addType = third ? 'add3' : 'add';
   const numbers = third
     ? [numberNode('n1', 0, 5), numberNode('n2', 110, 3), numberNode('n3', 220, 4)]
     : [numberNode('n1', 20, 5), numberNode('n2', 200, 3)];
   return {
     version: '1.0.0',
-    id: third ? 'hero-add3' : 'hero-add',
+    id: third ? 'add3' : 'add',
     name: 'Add',
     nodes: [
       ...numbers,
