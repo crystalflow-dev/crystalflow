@@ -4,7 +4,12 @@
   "main": "./worker.js",
   "assets": {
     "directory": "./packages/landing/out",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    // an address with no file gets the site's 404.html and a 404 status, not an empty response
+    "not_found_handling": "404-page",
+    // browser navigations go to the assets first and would get that 404 page for the docs;
+    // these addresses always reach the Worker, which proxies them to Mintlify
+    "run_worker_first": ["/docs", "/docs/*"]
   },
   // Required by `npx wrangler preview`, which Workers Builds runs for
   // non-production branches. Empty: previews use the top-level settings.
