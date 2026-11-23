@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Code from '@/components/next/Code';
+import type { Lang } from '@/lib/highlight';
 
 const classCode = `class AddNode extends Node {
   @Input({ type: 'number' })
@@ -34,14 +36,24 @@ const jsonCode = `{
   ]
 }`;
 
-function Pane({ file, label, children }: { file: string; label: string; children: string }) {
+function Pane({
+  file,
+  label,
+  lang,
+  children,
+}: {
+  file: string;
+  label: string;
+  lang: Lang;
+  children: string;
+}) {
   return (
     <div className="ui cf-pane" role="img" aria-label={label}>
       <div className="cf-pane__bar" aria-hidden="true">
         {file}
       </div>
       <pre className="cf-pane__code" aria-hidden="true">
-        {children}
+        <Code code={children} lang={lang} />
       </pre>
     </div>
   );
@@ -123,14 +135,14 @@ const forms = [
 function FormPane({ index }: { index: number }) {
   if (index === 0) {
     return (
-      <Pane file="AddNode.ts" label="The AddNode class with two inputs and one output">
+      <Pane file="AddNode.ts" lang="ts" label="The AddNode class with two inputs and one output">
         {classCode}
       </Pane>
     );
   }
   if (index === 1) return <CanvasPane />;
   return (
-    <Pane file="add.workflow.json" label="The same workflow saved as JSON">
+    <Pane file="add.workflow.json" lang="json" label="The same workflow saved as JSON">
       {jsonCode}
     </Pane>
   );
