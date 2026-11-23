@@ -198,6 +198,11 @@ main > section.cf-demo > .wrap { display: flex; flex-direction: column; flex: 1 
 .cf-demo__head h1 { margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; }
 .cf-demo__head p { margin: 0; font-size: 14px; line-height: 20px; color: var(--p-muted); }
 @media (max-width: 1023px) { .cf-demo__head p { display: none; } }
+/* the way to the other example, at the end of the title's line */
+.cf-demo__more { margin-left: auto; padding: 6px 12px; border: 1px solid color-mix(in oklab, var(--p-ink) 16%, transparent); border-radius: var(--r-btn); font-size: 14px; line-height: 20px; font-weight: 500; color: var(--p-ink); text-decoration: none; white-space: nowrap; }
+.cf-demo__more::after { content: " \2192"; }
+.cf-demo__more:hover { border-color: var(--p-accent); color: var(--p-accent); }
+.cf-demo__more:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 2px; }
 @media (max-width: 639px) { .cf-demo__head h1 { font-size: 17px; line-height: 24px; } }
 .cf-demo__win { flex: 1 1 0; height: auto; border-width: 1px 0; border-radius: 0; }
 .cf-demo__tabs { display: flex; gap: 8px; }
