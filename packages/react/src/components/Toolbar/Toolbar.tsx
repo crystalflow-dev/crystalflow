@@ -317,6 +317,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     padding: 'var(--space-4)',
     borderBottom: `1px solid var(--color-border-light)`,
     display: 'flex',
+    // a container narrower than the buttons wraps them, never cuts them off
+    flexWrap: 'wrap',
     gap: 'var(--space-3)',
     alignItems: 'center',
     backgroundColor: 'var(--color-bg-secondary)',
@@ -373,8 +375,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       className={cn(className, classes?.root)}
       style={mergeStyles(defaultRootStyle, styles?.root, style)}
     >
-      {/* Left Section - Main Actions */}
-      <div style={defaultSectionStyle}>
+      {/* Left Section - Main Actions. Its buttons are laid out by the root (which has the same gap),
+          so they wrap one by one and the settings icons share the last row. */}
+      <div style={{ display: 'contents' }}>
         {/* Execute Button */}
         {showExecute && (
           <button
