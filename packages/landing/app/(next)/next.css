@@ -157,7 +157,7 @@
    Up to 1279px the kit already lets sections grow; only the block that fills the rest of the screen must not
    shrink under its content. From 1280px sections are a fixed height, so a low window gets the same treatment. */
 @media (max-width: 1279px) {
-  main > :is(#workflow, #engine, #uses) > .wrap > .fill, #uses .grid.fill > .frame--fill { flex: 1 0 auto; }
+  main > :is(#workflow, #engine, #uses, #themes) > .wrap > .fill, #uses .grid.fill > .frame--fill { flex: 1 0 auto; }
 }
 /* stacked under the words, the hero's window keeps room for its bar, its canvas and the Run button */
 @media (max-width: 639px) { main > .hero--split .hero__media { min-height: 300px; } }
@@ -249,4 +249,21 @@ main > #engine > .wrap > .fill { display: flex; flex-direction: column; }
   .cf-engine .cf-engine__line { grid-template-columns: 8ch minmax(0, 1fr); gap: 12px; padding: 2px 16px; }
   #engine .cf-win__file { display: none; }
   #engine .cf-win__bar { justify-content: flex-end; }
+}
+
+/* the themes section: one live builder, restyled by the buttons in its bar */
+main > #themes > .wrap > .fill { display: flex; flex-direction: column; }
+#themes .fill > .cf-win { flex: 1 1 auto; height: auto; }
+.cf-themes__builder { position: relative; flex: 1 1 auto; min-height: 400px; }
+/* the builder paints its own theme whatever the page around it wears: the library's colours, not the page's */
+.cf-themes__builder > * { position: absolute; inset: 0; background: var(--color-bg-primary); color: var(--color-text-primary); }
+.cf-themes__builder svg { max-width: none; }
+.cf-look { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; align-items: center; min-width: 216px; padding: 12px 14px; border-radius: 6px; background: #14161c; color: #f4f5f7; font-family: var(--font-text); }
+.cf-look__badge { grid-row: span 2; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--look, #2b45ff); color: #fff; font-size: 15px; font-weight: 700; }
+.cf-look__category { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #9aa0ae; }
+.cf-look__label { font-size: 14px; font-weight: 600; }
+.cf-look__ports { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 8px; border-top: 1px solid #2a2e38; font-family: var(--font-mono); font-size: 10.5px; color: #b6bcc8; }
+@media (max-width: 1023px) {
+  #themes .cf-win__file { display: none; }
+  #themes .cf-win__bar { justify-content: flex-end; }
 }
