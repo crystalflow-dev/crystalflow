@@ -1,3 +1,4 @@
+import Execution from '@/components/next/Execution';
 import HeroDemo from '@/components/next/HeroDemo';
 import QuickStart from '@/components/next/QuickStart';
 import RoadmapRows from '@/components/next/RoadmapRows';
@@ -40,6 +41,7 @@ export default function NextHome() {
         </section>
 
         <ThreeForms />
+        <Execution />
         <Uses />
         <QuickStart />
         <RoadmapRows />
