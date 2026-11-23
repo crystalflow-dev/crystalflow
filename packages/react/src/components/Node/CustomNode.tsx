@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { NodeExecutionStatus, PortDefinition, PropertyDefinition } from '@crystalflow/types';
 import { NodeConstructor } from '@crystalflow/core';
+import { previewValue } from '../../utils/previewValue';
 
 /**
  * Custom node data
@@ -60,6 +61,8 @@ const defaultRenderNodeContent = (data: CustomNodeData): React.ReactNode => (
           style={{
             marginTop: 'var(--space-2)',
             padding: 'var(--space-2)',
+            // a long value wraps here; without a width of its own the preview would stretch the node
+            maxWidth: '240px',
             background: 'var(--color-bg-tertiary)',
             borderRadius: 'var(--radius-sm)',
             fontSize: 'var(--font-size-xs)',
@@ -85,10 +88,11 @@ const defaultRenderNodeContent = (data: CustomNodeData): React.ReactNode => (
                 style={{
                   fontFamily: 'var(--font-family-mono)',
                   fontWeight: 'var(--font-weight-medium)',
+                  textAlign: 'right',
+                  overflowWrap: 'anywhere',
                 }}
               >
-                {String(value).slice(0, 20)}
-                {String(value).length > 20 ? '...' : ''}
+                {previewValue(value)}
               </span>
             </div>
           ))}
